@@ -88,12 +88,12 @@ public partial class MainWindow : Window
             StopStream();
         }
     }
-
+    Task LoopTask { set; get; }
     private void StartStream()
     {
         _cts = new CancellationTokenSource();
         ToggleButton.Content = "Stop";
-        _ = Task.Run(() => StreamLoop(_cts.Token));
+        LoopTask = Task.Run(() => StreamLoop(_cts.Token));
     }
 
     private void StopStream()
@@ -108,22 +108,23 @@ public partial class MainWindow : Window
         StopStream();
         StartStream();
     }
-
+    int delay = 200;
     private async Task StreamLoop(CancellationToken token)
     {
         while (!token.IsCancellationRequested)
         {
             var frame = await _activeProvider.GetFrameAsync(token);
             var stats = FrameStatistics.Calculate(frame);
-
+            
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _gridRenderer.Render(frame);
                 AvgTempText.Text = $"{stats.Average:0.0}";
                 MaxTempText.Text = $"{stats.Max:0.0}";
+                var nil1 = RefreshUpDown?.Value;
+                delay =  nil1.HasValue? (int)nil1.Value:delay;
             });
 
-            var delay = (int)(RefreshUpDown.Value ?? 200);
             await Task.Delay(delay, token);
         }
     }
