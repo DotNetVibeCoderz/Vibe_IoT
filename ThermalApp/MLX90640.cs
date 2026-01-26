@@ -1,7 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Buffers.Binary;
 using System.Device.I2c;
 using System.Threading;
+using ThermalCameraMlx90640;
 namespace ThermalApp;
 public class MLX90640 : IDisposable
 {
@@ -14,27 +16,65 @@ public class MLX90640 : IDisposable
     // 24 rows * 32 columns = 768 pixels
     private const int PixelCount = 768;
 
+    ThermalCamera thermalCamera { set; get; }
+
     // MLX90640 default I2C address is 0x33
     public MLX90640(int busId = 1, int deviceAddress = 0x33)
     {
-        var settings = new I2cConnectionSettings(busId, deviceAddress);
-        _i2cDevice = I2cDevice.Create(settings);
+        thermalCamera = new ThermalCamera(deviceAddress,busId);
+
+        // Set desired refresh rate (2Hz which corresponds to 1fps)
+        thermalCamera.SetRefreshRate(ThermalCamera.RefreshRate._2Hz);
+
+        // Process frame based on your needs  
+        //var settings = new I2cConnectionSettings(busId, deviceAddress);
+        //_i2cDevice = I2cDevice.Create(settings);
         // Optional: Perform initial reset or configuration here
-        SetRefreshRate(RefreshRate.Hz_2); // Set default to 2Hz
+        //SetRefreshRate(RefreshRate.Hz_2); // Set default to 2Hz
     }
     public MLX90640(I2cDevice i2cDevice)
     {
-        _i2cDevice = i2cDevice ?? throw new ArgumentNullException(nameof(i2cDevice));
+        thermalCamera = new ThermalCamera(i2cDevice.ConnectionSettings.DeviceAddress, i2cDevice.ConnectionSettings.BusId);
+
+        // Set desired refresh rate (2Hz which corresponds to 1fps)
+        thermalCamera.SetRefreshRate(ThermalCamera.RefreshRate._2Hz);
+
+        //_i2cDevice = i2cDevice ?? throw new ArgumentNullException(nameof(i2cDevice));
 
         // Optional: Perform initial reset or configuration here
-        SetRefreshRate(RefreshRate.Hz_2); // Set default to 2Hz
+        //SetRefreshRate(RefreshRate.Hz_2); // Set default to 2Hz
     }
+    public double[,] ConvertToGrid(float[] flatData)
+    {
+        if (flatData == null || flatData.Length != 768)
+            throw new ArgumentException("Input data must contain exactly 768 pixels.");
 
+        var grid = new double[24, 32];
+
+        for (int row = 0; row < 24; row++)
+        {
+            for (int col = 0; col < 32; col++)
+            {
+                // Calculate index in the flat array
+                int index = (row * 32) + col;
+
+                // Assign and cast float to double
+                grid[row, col] = (double)flatData[index];
+            }
+        }
+
+        return grid;
+    }
     /// <summary>
     /// Reads the current frame from the sensor and returns it as a 24x32 matrix.
     /// </summary>
-    public double[,] GetFrameData()
+    public async Task<double[,]> GetFrameData()
     {
+
+        // Get current frame
+        var image = await thermalCamera.GetImage();
+        return ConvertToGrid(image);   
+        /*
         // 1. Wait for data to be ready
         WaitForDataReady();
 
@@ -63,8 +103,8 @@ public class MLX90640 : IDisposable
             // Raw values usually range ~10000-20000 depending on gain.
             data[row, col] = (double)rawValue;
         }
-
-        return data;
+        */
+        //return data;
     }
 
     private void WaitForDataReady()
