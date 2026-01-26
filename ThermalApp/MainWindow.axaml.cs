@@ -174,6 +174,7 @@ public class MockI2cFrameProvider : IFrameProvider
         // Placeholder for real MLX90640 I2C logic.
         // In Raspberry Pi, replace with I2C read using System.Device.I2c or Iot.Device.Bindings.
         var data = this.sensor?.GetFrameData(); //new double[24, 32];
+        /*
         var baseTemp = 28.0;
         for (var y = 0; y < 24; y++)
         {
@@ -181,7 +182,7 @@ public class MockI2cFrameProvider : IFrameProvider
             {
                 data[y, x] = baseTemp + (x * 0.05) + (y * 0.03);
             }
-        }
+        }*/
         return Task.FromResult(data);
     }
 }
