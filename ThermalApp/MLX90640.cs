@@ -184,6 +184,7 @@ public class MLX90640 : IDisposable
 
     public void Dispose()
     {
+        thermalCamera?.Dispose();
         _i2cDevice?.Dispose();
     }
 
