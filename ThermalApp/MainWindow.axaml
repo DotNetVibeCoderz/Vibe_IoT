@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ThermalApp.MainWindow"
+        Width="1000"
+        Height="700"
+        Title="ThermalApp - MLX90640 Thermal Viewer">
+  <Grid RowDefinitions="Auto,*" Margin="10">
+    <!-- Top Control Panel -->
+    <Border Background="#222" CornerRadius="8" Padding="12" Grid.Row="0">
+      <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto">
+        <StackPanel>
+          <TextBlock Text="Data Source" Foreground="White"/>
+          <ComboBox x:Name="DataSourceCombo" Width="180" SelectedIndex="0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1">
+          <TextBlock Text="Min Temp (°C)" Foreground="White"/>
+          <NumericUpDown x:Name="MinTempUpDown" Width="180" Minimum="-40" Maximum="300" Increment="0.5"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2">
+          <TextBlock Text="Max Temp (°C)" Foreground="White"/>
+          <NumericUpDown x:Name="MaxTempUpDown" Width="180" Minimum="-40" Maximum="300" Increment="0.5"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="3">
+          <TextBlock Text="Refresh (ms)" Foreground="White"/>
+          <NumericUpDown x:Name="RefreshUpDown" Width="180" Minimum="50" Maximum="2000" Increment="50"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+          <Button x:Name="ToggleButton" Content="Start" Width="180" Margin="0,10,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="1">
+          <TextBlock Text="Scale Mode" Foreground="White"/>
+          <ComboBox x:Name="ScaleModeCombo" Width="180" SelectedIndex="0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="2">
+          <TextBlock Text="Last Frame Avg (°C)" Foreground="White"/>
+          <TextBlock x:Name="AvgTempText" FontSize="16" Foreground="#90EE90"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Grid.Column="3">
+          <TextBlock Text="Last Frame Max (°C)" Foreground="White"/>
+          <TextBlock x:Name="MaxTempText" FontSize="16" Foreground="#FF8C8C"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- Thermal Grid -->
+    <Border Grid.Row="1" Margin="0,12,0,0" Background="#111" CornerRadius="8" Padding="12">
+      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ItemsControl x:Name="ThermalGrid"/>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</Window>
