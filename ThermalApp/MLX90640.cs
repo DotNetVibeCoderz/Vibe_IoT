@@ -21,10 +21,10 @@ public class MLX90640 : IDisposable
     // MLX90640 default I2C address is 0x33
     public MLX90640(int busId = 1, int deviceAddress = 0x33)
     {
-        //thermalCamera = new ThermalCamera(deviceAddress,busId);
+        thermalCamera = new ThermalCamera(deviceAddress,busId);
 
         // Set desired refresh rate (2Hz which corresponds to 1fps)
-        //thermalCamera.SetRefreshRate(ThermalCamera.RefreshRate._2Hz);
+        thermalCamera.SetRefreshRate(ThermalCamera.RefreshRate._2Hz);
 
         // Process frame based on your needs  
         //var settings = new I2cConnectionSettings(busId, deviceAddress);
