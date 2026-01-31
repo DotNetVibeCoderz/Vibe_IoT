@@ -1,0 +1,143 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OBDReader.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="OBDReader.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon=""
+        Title="OBD Reader - Jacky's Edition"
+        Background="#121212"
+        TransparencyLevelHint="AcrylicBlur"
+        ExtendClientAreaToDecorationsHint="True">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="TextBlock.h1">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="TextBlock.value">
+            <Setter Property="FontSize" Value="36"/>
+            <Setter Property="FontWeight" Value="Heavy"/>
+            <Setter Property="Foreground" Value="#00CED1"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#AAAAAA"/>
+        </Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BoxShadow" Value="0 4 10 0 #000000"/>
+        </Style>
+        <Style Selector="RadioButton">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="20">
+        <!-- Header / Settings -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto, Auto, Auto" Margin="0,20,0,20">
+            <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+                <TextBlock Text="OBD READER" Classes="h1"/>
+                <TextBlock Text="Pro Edition" FontSize="10" Foreground="Gray"/>
+            </StackPanel>
+            
+            <!-- Spacer -->
+            <Panel Grid.Column="1"/>
+
+            <!-- Connection Settings Area -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="15" Margin="0,0,15,0" 
+                        IsEnabled="{Binding !IsConnected}">
+                
+                <!-- Source Selection -->
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <RadioButton GroupName="Source" Content="Simulator" 
+                                 IsChecked="{Binding UseSimulator}"/>
+                    <RadioButton GroupName="Source" Content="USB Device" 
+                                 IsChecked="{Binding !UseSimulator}"/>
+                </StackPanel>
+
+                <!-- Port Selection (Visible only if not using simulator) -->
+                <StackPanel Orientation="Horizontal" IsVisible="{Binding !UseSimulator}" Spacing="5">
+                     <ComboBox ItemsSource="{Binding PortList}" 
+                              SelectedItem="{Binding SelectedPort}" 
+                              Width="120" PlaceholderText="Select Port"/>
+                    <Button Command="{Binding RefreshPortsCommand}" Content="↻"/>
+                </StackPanel>
+                
+            </StackPanel>
+            
+            <Button Grid.Column="4" Command="{Binding ConnectCommand}" 
+                     
+                    Background="{Binding IsConnected, Converter={x:Static ObjectConverters.IsNull}}"
+                    Width="100" HorizontalContentAlignment="Center">
+                <Panel>
+                    <TextBlock Text="CONNECT" IsVisible="{Binding !IsConnected}"/>
+                    <TextBlock Text="STOP" IsVisible="{Binding IsConnected}"/>
+                </Panel>
+            </Button>
+        </Grid>
+
+        <!-- Main Dashboard -->
+        <Grid Grid.Row="1" ColumnDefinitions="*, *" RowDefinitions="*, *">
+            
+            <!-- SPEED -->
+            <Border Grid.Row="0" Grid.Column="0" Classes="card">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="SPEED" Classes="label" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding Speed}" Classes="value" HorizontalAlignment="Center" FontSize="72"/>
+                    <TextBlock Text="km/h" Classes="label" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- RPM -->
+            <Border Grid.Row="0" Grid.Column="1" Classes="card">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+                    <TextBlock Text="RPM" Classes="label" HorizontalAlignment="Center"/>
+                    <ProgressBar Minimum="0" Maximum="8000" Value="{Binding Rpm}" 
+                                 Height="20" Width="200" ShowProgressText="False"/>
+                    <TextBlock Text="{Binding Rpm}" Classes="value" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- TEMP & VOLTAGE -->
+            <Grid Grid.Row="1" Grid.Column="0" ColumnDefinitions="*, *" Classes="card">
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="COOLANT" Classes="label"/>
+                    <TextBlock Text="{Binding Temp, StringFormat='{}{0}°C'}" Classes="value" FontSize="28"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="BATTERY" Classes="label"/>
+                    <TextBlock Text="{Binding Voltage, StringFormat='{}{0:F1} V'}" Classes="value" FontSize="28" Foreground="#FFD700"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- ANALYSIS -->
+            <Border Grid.Row="1" Grid.Column="1" Classes="card" Background="#333333">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="REALTIME ANALYSIS" Classes="label" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding AnalysisText}" 
+                               FontSize="18" Foreground="#FF6347" 
+                               TextWrapping="Wrap" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Footer / Status -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="10">
+             <TextBlock Text="Status:" Foreground="Gray"/>
+             <TextBlock Text="{Binding StatusMessage}" Foreground="White"/>
+        </StackPanel>
+
+    </Grid>
+
+</Window>
