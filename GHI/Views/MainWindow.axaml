@@ -1,0 +1,138 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:GHI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="GHI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon=""
+        Title="FEZ HAT Dashboard"
+        Background="#1e1e1e"
+        ExtendClientAreaToDecorationsHint="True">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Panel>
+        <ScrollViewer>
+            <StackPanel Margin="30">
+                <TextBlock Text="FEZ HAT CONTROL CENTER" Classes="h1" FontSize="24" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                <!-- DATA SOURCE SELECTION -->
+                <Border Background="#333" CornerRadius="5" Margin="0,0,0,20" Padding="15">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <TextBlock Text="DATA SOURCE:" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Margin="0,0,20,0"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="20">
+                            <RadioButton GroupName="DataSource" Content="Simulation" 
+                                         IsChecked="{Binding IsSimulation, Mode=TwoWay}" 
+                                         Foreground="White"/>
+                            <RadioButton GroupName="DataSource" Content="FezHat Device" 
+                                         IsChecked="{Binding IsDevice, Mode=TwoWay}" 
+                                         Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- SIMULATION INDICATOR -->
+                <Border Background="#FFA500" CornerRadius="5" Margin="0,0,0,20" Padding="10" IsVisible="{Binding IsSimulation}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+                         <TextBlock Text="⚠️" FontSize="20"/>
+                         <TextBlock Text="SIMULATION MODE ACTIVE - Fake Data Generated" Foreground="Black" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- SENSORS SECTION -->
+                <Border Background="#252525" CornerRadius="10" Padding="15" Margin="0,0,0,15" BorderBrush="#333" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="SENSORS" FontWeight="Bold" Foreground="#00BFFF" Margin="0,0,0,10"/>
+                        
+                        <!-- Light & Temp -->
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Light Level" Foreground="Silver"/>
+                                <ProgressBar Value="{Binding LightLevel}" Maximum="1.0" Minimum="0.0" Height="20" Margin="0,5"/>
+                                <TextBlock Text="{Binding LightLevel, StringFormat='{}{0:0.00}'}" HorizontalAlignment="Right" Foreground="White"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <TextBlock Text="Temperature" Foreground="Silver"/>
+                                <TextBlock Text="{Binding Temperature, StringFormat='{}{0:F1} °C'}" FontSize="20" Foreground="Orange" Margin="0,5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Accelerometer -->
+                        <TextBlock Text="Accelerometer (G)" Foreground="Silver" Margin="0,10,0,5"/>
+                        <Grid ColumnDefinitions="*,*,*">
+                            <TextBlock Grid.Column="0" Text="{Binding AccelX, StringFormat='X: {0:F2}'}" Foreground="White"/>
+                            <TextBlock Grid.Column="1" Text="{Binding AccelY, StringFormat='Y: {0:F2}'}" Foreground="White"/>
+                            <TextBlock Grid.Column="2" Text="{Binding AccelZ, StringFormat='Z: {0:F2}'}" Foreground="White"/>
+                        </Grid>
+
+                        <!-- Buttons -->
+                        <TextBlock Text="Buttons" Foreground="Silver" Margin="0,10,0,5"/>
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <!-- Checkboxes for clearer state -->
+                            <CheckBox IsChecked="{Binding IsButton18Pressed}" IsHitTestVisible="False" Content="DIO 18 Pressed" Foreground="White"/>
+                            <CheckBox IsChecked="{Binding IsButton22Pressed}" IsHitTestVisible="False" Content="DIO 22 Pressed" Foreground="White"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ACTUATORS SECTION -->
+                <Border Background="#252525" CornerRadius="10" Padding="15" BorderBrush="#333" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="ACTUATORS" FontWeight="Bold" Foreground="#FF69B4" Margin="0,0,0,10"/>
+
+                        <!-- LED DIO24 -->
+                        <ToggleSwitch IsChecked="{Binding Led24State}" Content="Onboard LED (DIO 24)" OffContent="Off" OnContent="On" Foreground="White"/>
+
+                        <!-- MOTORS -->
+                        <TextBlock Text="Motors (Speed -1.0 to 1.0)" Foreground="Silver" Margin="0,10,0,5"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Motor A" VerticalAlignment="Center" Foreground="White" Width="60"/>
+                            <Slider Grid.Row="0" Grid.Column="1" Value="{Binding MotorASpeed}" Minimum="-1" Maximum="1" Margin="10,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding MotorASpeed, StringFormat='{}{0:F2}'}" Foreground="White" Width="40"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Motor B" VerticalAlignment="Center" Foreground="White" Width="60"/>
+                            <Slider Grid.Row="1" Grid.Column="1" Value="{Binding MotorBSpeed}" Minimum="-1" Maximum="1" Margin="10,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding MotorBSpeed, StringFormat='{}{0:F2}'}" Foreground="White" Width="40"/>
+                        </Grid>
+
+                        <!-- SERVOS -->
+                        <TextBlock Text="Servos (Position 0.0 to 1.0)" Foreground="Silver" Margin="0,10,0,5"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Servo 1" VerticalAlignment="Center" Foreground="White" Width="60"/>
+                            <Slider Grid.Row="0" Grid.Column="1" Value="{Binding Servo1Pos}" Minimum="0" Maximum="1" Margin="10,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Servo1Pos, StringFormat='{}{0:F2}'}" Foreground="White" Width="40"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Servo 2" VerticalAlignment="Center" Foreground="White" Width="60"/>
+                            <Slider Grid.Row="1" Grid.Column="1" Value="{Binding Servo2Pos}" Minimum="0" Maximum="1" Margin="10,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Servo2Pos, StringFormat='{}{0:F2}'}" Foreground="White" Width="40"/>
+                        </Grid>
+
+                        <!-- RGB LEDS -->
+                        <TextBlock Text="RGB LEDs" Foreground="Silver" Margin="0,15,0,5"/>
+                        <Grid ColumnDefinitions="*,*">
+                            <!-- D2 -->
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="LED D2" Foreground="White" HorizontalAlignment="Center"/>
+                                <Slider Value="{Binding D2R}" Minimum="0" Maximum="1"/>
+                                <Slider Value="{Binding D2G}" Minimum="0" Maximum="1"/>
+                                <Slider Value="{Binding D2B}" Minimum="0" Maximum="1"/>
+                            </StackPanel>
+                             <!-- D3 -->
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <TextBlock Text="LED D3" Foreground="White" HorizontalAlignment="Center"/>
+                                <Slider Value="{Binding D3R}" Minimum="0" Maximum="1"/>
+                                <Slider Value="{Binding D3G}" Minimum="0" Maximum="1"/>
+                                <Slider Value="{Binding D3B}" Minimum="0" Maximum="1"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Panel>
+</Window>
