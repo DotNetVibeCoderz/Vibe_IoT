@@ -1,0 +1,68 @@
+@page "/profile"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using HomeDashboard.Services
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@inject CustomAuthenticationStateProvider AuthStateProvider
+
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h4" Class="mb-4" Style="color: white; text-shadow: 1px 1px 2px black;">My Profile</MudText>
+
+    @if (CurrentUser != null)
+    {
+        <MudPaper Class="glass-panel pa-6">
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="CurrentUser.FullName" Label="Full Name" Variant="Variant.Outlined" Class="mb-4" />
+                    <MudTextField @bind-Value="CurrentUser.Email" Label="Email" Variant="Variant.Outlined" Class="mb-4" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="CurrentUser.Username" Label="Username" Variant="Variant.Outlined" Disabled="true" Class="mb-4" />
+                    <MudTextField @bind-Value="CurrentUser.Password" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password" Class="mb-4" />
+                </MudItem>
+            </MudGrid>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveProfile">Save Changes</MudButton>
+            
+            @if (ShowSuccess)
+            {
+                <MudText Color="Color.Success" Class="mt-3">Profile updated successfully!</MudText>
+            }
+        </MudPaper>
+    }
+    else
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+</MudContainer>
+
+@code {
+    private User? CurrentUser;
+    private bool ShowSuccess = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var username = authState.User.Identity?.Name;
+        
+        if (!string.IsNullOrEmpty(username))
+        {
+            CurrentUser = await DbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
+    }
+
+    private async Task SaveProfile()
+    {
+        if (CurrentUser != null)
+        {
+            DbContext.Users.Update(CurrentUser);
+            await DbContext.SaveChangesAsync();
+            ShowSuccess = true;
+            StateHasChanged();
+            
+            await Task.Delay(3000);
+            ShowSuccess = false;
+            StateHasChanged();
+        }
+    }
+}

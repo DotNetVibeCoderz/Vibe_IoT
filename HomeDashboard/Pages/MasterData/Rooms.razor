@@ -1,0 +1,140 @@
+@page "/rooms"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using Microsoft.EntityFrameworkCore
+@using System.IO
+@using CsvHelper
+@using System.Globalization
+@inject AppDbContext DbContext
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
+
+<PageTitle>Master Data - Rooms</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4" Style="color: white; text-shadow: 1px 1px 2px black;">Room Management</MudText>
+
+<MudPaper Class="glass-panel pa-4">
+    <div class="d-flex justify-end mb-4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mr-2" OnClick="OpenAddDialog">Add Room</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ExportToCsv">Export CSV</MudButton>
+    </div>
+
+    <MudDataGrid T="Room" Items="@RoomList" Filterable="true" SortMode="SortMode.Multiple" Bordered="true" Striped="true" QuickFilter="@QuickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Rooms</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString" Placeholder="Search..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Id" Title="ID" />
+            <PropertyColumn Property="x => x.Name" Title="Name" />
+            <PropertyColumn Property="x => x.Description" Title="Description" />
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => OpenEditDialog(context.Item))" />
+                    <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" OnClick="@(() => DeleteRoom(context.Item))" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Room" />
+        </PagerContent>
+    </MudDataGrid>
+</MudPaper>
+
+@if (ShowDialog)
+{
+    <MudOverlay Visible="true" DarkBackground="true" Absolute="false">
+        <MudPaper Class="pa-4 glass-panel" Width="400px">
+            <MudText Typo="Typo.h6">@(EditingRoom.Id == 0 ? "Add" : "Edit") Room</MudText>
+            <MudTextField @bind-Value="EditingRoom.Name" Label="Name" />
+            <MudTextField @bind-Value="EditingRoom.Description" Label="Description" />
+            <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="CloseDialog" Class="mr-2">Cancel</MudButton>
+                <MudButton Color="Color.Primary" OnClick="SaveRoom">Save</MudButton>
+            </div>
+        </MudPaper>
+    </MudOverlay>
+}
+
+<script>
+    window.downloadFile = function(fileName, contentBase64, contentType) {
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = `data:${contentType};base64,${contentBase64}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+</script>
+
+@code {
+    private List<Room> RoomList = new();
+    private string searchString = string.Empty;
+    private bool ShowDialog = false;
+    private Room EditingRoom = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        RoomList = await DbContext.Rooms.ToListAsync();
+    }
+
+    private Func<Room, bool> QuickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(searchString)) return true;
+        if (x.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (x.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        return false;
+    };
+
+    private void OpenAddDialog()
+    {
+        EditingRoom = new Room();
+        ShowDialog = true;
+    }
+
+    private void OpenEditDialog(Room room)
+    {
+        EditingRoom = new Room { Id = room.Id, Name = room.Name, Description = room.Description, ImageUrl = room.ImageUrl };
+        ShowDialog = true;
+    }
+
+    private void CloseDialog() => ShowDialog = false;
+
+    private async Task SaveRoom()
+    {
+        if (EditingRoom.Id == 0) DbContext.Rooms.Add(EditingRoom);
+        else DbContext.Rooms.Update(EditingRoom);
+        
+        await DbContext.SaveChangesAsync();
+        await LoadData();
+        ShowDialog = false;
+        Snackbar.Add("Room saved", Severity.Success);
+    }
+
+    private async Task DeleteRoom(Room room)
+    {
+        DbContext.Rooms.Remove(room);
+        await DbContext.SaveChangesAsync();
+        await LoadData();
+        Snackbar.Add("Room deleted", Severity.Error);
+    }
+
+    private async Task ExportToCsv()
+    {
+        using var memoryStream = new MemoryStream();
+        using var writer = new StreamWriter(memoryStream);
+        using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+        csv.WriteRecords(RoomList);
+        await writer.FlushAsync();
+        
+        var base64 = Convert.ToBase64String(memoryStream.ToArray());
+        await JSRuntime.InvokeVoidAsync("downloadFile", "rooms.csv", base64, "text/csv");
+        Snackbar.Add("Exported successfully", Severity.Info);
+    }
+}

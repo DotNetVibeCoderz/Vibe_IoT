@@ -1,0 +1,60 @@
+@page "/register"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex justify-center align-center" Style="height: 100vh;">
+    <MudPaper Class="pa-8 auth-glass-panel" Elevation="4">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-6">Register</MudText>
+        
+        <MudTextField @bind-Value="NewUser.FullName" Label="Full Name" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="NewUser.Email" Label="Email" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="NewUser.Username" Label="Username" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="NewUser.Password" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password" Class="mb-4" />
+        
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <MudText Color="Color.Error" Class="mb-4">@ErrorMessage</MudText>
+        }
+        
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="HandleRegister">Register</MudButton>
+        <MudText Align="Align.Center" Class="mt-4">
+            Already have an account? <MudLink Href="/login">Login</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
+<style>
+    .auth-glass-panel {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+</style>
+
+@code {
+    private User NewUser = new User();
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private async Task HandleRegister()
+    {
+        if (await DbContext.Users.AnyAsync(u => u.Username == NewUser.Username))
+        {
+            ErrorMessage = "Username already exists.";
+            return;
+        }
+
+        NewUser.Role = "user"; // default role
+        NewUser.CreatedAt = DateTime.Now;
+
+        DbContext.Users.Add(NewUser);
+        await DbContext.SaveChangesAsync();
+        
+        NavigationManager.NavigateTo("/login");
+    }
+}

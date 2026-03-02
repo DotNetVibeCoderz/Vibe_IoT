@@ -1,0 +1,17 @@
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+    
+    <AuthorizeView Roles="admin">
+        <Authorized>
+            <MudNavGroup Title="Master Data" Icon="@Icons.Material.Filled.Storage" Expanded="true">
+                <MudNavLink Href="/users" Icon="@Icons.Material.Filled.People">Users</MudNavLink>
+                <MudNavLink Href="/rooms" Icon="@Icons.Material.Filled.MeetingRoom">Rooms</MudNavLink>
+                <MudNavLink Href="/devices" Icon="@Icons.Material.Filled.DeviceHub">Devices</MudNavLink>
+            </MudNavGroup>
+        </Authorized>
+    </AuthorizeView>
+
+    <MudNavLink Href="/analytics" Icon="@Icons.Material.Filled.Analytics">Analytics & Insights</MudNavLink>
+    <MudNavLink Href="/security" Icon="@Icons.Material.Filled.Security">Security Feed</MudNavLink>
+    <MudNavLink Href="/automations" Icon="@Icons.Material.Filled.Autorenew">Automations</MudNavLink>
+</MudNavMenu>

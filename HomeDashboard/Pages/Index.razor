@@ -1,0 +1,191 @@
+@page "/"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using HomeDashboard.Services
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.DependencyInjection
+@using Microsoft.Extensions.Configuration
+@implements IDisposable
+@inject IServiceScopeFactory ScopeFactory
+@inject SimulatorService SimService
+@inject IConfiguration Config
+
+<PageTitle>Smart Home Dashboard</PageTitle>
+
+<div class="d-flex justify-space-between align-center mb-4">
+    <MudText Typo="Typo.h4" Style="color: white; text-shadow: 1px 1px 2px black;">My Dashboard</MudText>
+    <MudChip T="string" Color="@(AppMode == "Simulator" ? Color.Warning : Color.Success)">Mode: @AppMode</MudChip>
+</div>
+
+<MudGrid>
+    <!-- Weather & Time Widget -->
+    <MudItem xs="12" md="6" lg="3">
+        <MudCard Class="glass-panel" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h5" Class="d-flex align-center">
+                    <MudIcon Icon="@Icons.Material.Filled.WbSunny" Class="mr-2" Color="Color.Warning" />
+                    Jakarta, @Temperature°C
+                </MudText>
+                <MudText Typo="Typo.h3" Class="mt-2">@CurrentTime.ToString("HH:mm:ss")</MudText>
+                <MudText Typo="Typo.body2">@CurrentTime.ToString("dddd, dd MMMM yyyy")</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <!-- Energy Consumption Widget -->
+    <MudItem xs="12" md="6" lg="3">
+        <MudCard Class="glass-panel" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6">Current Energy Usage</MudText>
+                <MudText Typo="Typo.h3" Color="Color.Success">@TotalPower.ToString("0.00") kW</MudText>
+                <MudText Typo="Typo.body2">Live Update @CurrentTime.ToString("HH:mm:ss")</MudText>
+                <MudProgressLinear Color="Color.Success" Value="TotalPower" Max="5" Class="mt-3" />
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <!-- News Widget -->
+    <MudItem xs="12" md="6" lg="3">
+        <MudCard Class="glass-panel" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6">Latest News</MudText>
+                <MudList T="string" Dense="true">
+                    @foreach (var news in NewsList)
+                    {
+                        <MudListItem T="string" Text="@news.Title" Icon="@Icons.Material.Filled.Article" />
+                    }
+                </MudList>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <!-- Stock Widget -->
+    <MudItem xs="12" md="6" lg="3">
+        <MudCard Class="glass-panel" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6">Market Overview</MudText>
+                @foreach (var stock in StockList)
+                {
+                    <div class="d-flex justify-space-between mt-2">
+                        <MudText>@stock.Symbol</MudText>
+                        <MudText Color="@(stock.IsUp ? Color.Success : Color.Error)">
+                            @(stock.IsUp ? "^" : "v") @stock.Price.ToString("F2")
+                        </MudText>
+                    </div>
+                }
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <!-- Centralized Device Control Overview -->
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5" Class="mb-3" Style="color: white; text-shadow: 1px 1px 2px black;">My Devices</MudText>
+        <MudGrid>
+            @foreach (var device in DeviceList)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Class="glass-panel d-flex flex-column align-center justify-center pa-4" Elevation="0">
+                        <MudIcon Icon="@GetDeviceIcon(device.Type)" Size="Size.Large" Color="@(device.IsOn ? Color.Warning : Color.Default)" />
+                        <MudText Typo="Typo.subtitle1" Class="mt-2 text-center">@device.Name</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">@device.Room?.Name | @device.Protocol</MudText>
+                        
+                        <div class="d-flex align-center mt-3">
+                            <MudSwitch T="bool" Value="@device.IsOn" ValueChanged="@((bool v) => ToggleDevice(device, v))" Color="Color.Success" Label="@(device.IsOn ? "ON" : "OFF")" />
+                        </div>
+                        @if (!string.IsNullOrEmpty(device.StatusValue))
+                        {
+                            <MudChip T="string" Size="Size.Small" Class="mt-2" Color="Color.Info">@device.StatusValue</MudChip>
+                        }
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DateTime CurrentTime = DateTime.Now;
+    private double TotalPower = 0;
+    private int Temperature = 32;
+    private string AppMode = "Real";
+    private System.Timers.Timer _timer = null!;
+    
+    private List<Device> DeviceList = new();
+    private List<NewsItem> NewsList = new();
+    private List<StockInfo> StockList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppMode = Config.GetValue<string>("AppMode") ?? "Real";
+        await LoadDataAsync();
+        
+        SimService.OnSimulationTicked += HandleSimulationUpdate;
+
+        // UI Clock update
+        _timer = new System.Timers.Timer(1000);
+        _timer.Elapsed += (s, e) =>
+        {
+            CurrentTime = DateTime.Now;
+            InvokeAsync(StateHasChanged);
+        };
+        _timer.Start();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        DeviceList = await db.Devices.Include(d => d.Room).ToListAsync();
+        NewsList = await db.NewsItems.ToListAsync();
+        StockList = await db.StockInfos.ToListAsync();
+        
+        TotalPower = DeviceList.Where(d => d.IsOn).Sum(d => d.PowerConsumption) / 1000.0; // kWh approx
+    }
+
+    private async Task ToggleDevice(Device device, bool value)
+    {
+        device.IsOn = value;
+        
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        
+        var dbDevice = await db.Devices.FindAsync(device.Id);
+        if (dbDevice != null)
+        {
+            dbDevice.IsOn = value;
+            await db.SaveChangesAsync();
+        }
+        
+        TotalPower = DeviceList.Where(d => d.IsOn).Sum(d => d.PowerConsumption) / 1000.0;
+        StateHasChanged();
+    }
+
+    private void HandleSimulationUpdate()
+    {
+        InvokeAsync(async () =>
+        {
+            await LoadDataAsync();
+            StateHasChanged();
+        });
+    }
+
+    private string GetDeviceIcon(string type)
+    {
+        return type switch
+        {
+            "Light" => Icons.Material.Filled.Lightbulb,
+            "AC" => Icons.Material.Filled.Air,
+            "Camera" => Icons.Material.Filled.Videocam,
+            "Lock" => Icons.Material.Filled.Lock,
+            "Appliance" => Icons.Material.Filled.Kitchen,
+            _ => Icons.Material.Filled.DeviceUnknown
+        };
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+        SimService.OnSimulationTicked -= HandleSimulationUpdate;
+    }
+}

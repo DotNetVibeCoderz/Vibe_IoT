@@ -1,0 +1,39 @@
+# Development Plan: HomeDashboard (IoT / Smart Home)
+
+- [x] Create Blazor Server Project
+- [x] Install Required NuGet Packages (MudBlazor, EF Core SQLite, CsvHelper)
+- [x] Define Entity Models
+  - [x] User (Roles: admin, user)
+  - [x] Room / Location
+  - [x] Device (Lights, Cameras, AC, Sensors, Smart Locks)
+  - [x] EnergyLog (for energy consumption tracking)
+  - [x] DeviceStatusLog (history and trends)
+  - [x] Scene / Automation Rules
+- [x] Setup ApplicationDbContext and Database Seeding
+  - [x] Insert admin & user default credentials (admin / admin123)
+  - [x] Insert mock rooms and devices
+  - [x] Insert mock energy logs
+- [x] Setup Authentication & Authorization (Cookie Auth / Custom AuthStateProvider)
+- [x] Implement File Storage Service (Interface + LocalFileSystem implementation, config for AWS/Azure later)
+- [x] Create UI Layout
+  - [x] Navigation Menu
+  - [x] Top Bar with User Profile and Theme Toggle (Light/Dark)
+  - [x] Glassmorphism CSS styles implementation
+- [x] Implement Dashboard (Real-time monitoring)
+  - [x] Date/Time Widget
+  - [x] Weather/Location Widget
+  - [x] News Widget (Mock)
+  - [x] Stock Info Widget (Mock)
+  - [x] Device Status Overview
+  - [x] Energy Consumption Chart
+- [x] Implement Master Data CRUD Pages (with Export, Search, Filter, Sort, Paging)
+  - [x] Users Management
+  - [x] Devices Management
+  - [x] Rooms Management
+- [x] Implement Analytics & Insights View
+- [x] Implement Security / Camera View (Mock video feed)
+- [x] Implement Automation / Scene View
+- [x] Add Application Settings for Storage
+- [x] Create README.md
+- [x] Compile & Test Code
+- [x] Finalize & Send to User

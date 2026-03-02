@@ -1,0 +1,151 @@
+@page "/security"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using HomeDashboard.Services
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.DependencyInjection
+@implements IDisposable
+@inject IServiceScopeFactory ScopeFactory
+@inject SimulatorService SimService
+
+<PageTitle>Security Feed</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4" Style="color: white; text-shadow: 1px 1px 2px black;">Security Monitoring</MudText>
+
+<MudGrid>
+    <!-- Live Camera Mock -->
+    <MudItem xs="12" md="8">
+        <MudCard Class="glass-panel" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-2">
+                    <MudIcon Icon="@Icons.Material.Filled.FiberManualRecord" Color="Color.Error" Class="mr-2 blink" /> Live Feed: Front Door
+                </MudText>
+                
+                <div class="camera-feed d-flex flex-column justify-center align-center">
+                    <MudIcon Icon="@Icons.Material.Filled.Videocam" Size="Size.Large" Color="Color.Success" />
+                    <MudText Typo="Typo.h6" Class="ml-2 mt-2">Active Stream (Simulated Video Feed)</MudText>
+                    <MudText Typo="Typo.caption" Class="mt-1" Color="Color.Info">Frames refreshing automatically...</MudText>
+                </div>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <!-- Locks & Sensors -->
+    <MudItem xs="12" md="4">
+        <MudCard Class="glass-panel h-100" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-4">Locks & Motion</MudText>
+                
+                <MudList T="string" Dense="true">
+                    @foreach (var device in SecurityDevices)
+                    {
+                        <MudListItem T="string" Icon="@(device.IsOn ? Icons.Material.Filled.Lock : Icons.Material.Filled.LockOpen)" 
+                                     IconColor="@(device.IsOn ? Color.Success : Color.Error)">
+                            <div class="d-flex justify-space-between w-100 align-center">
+                                <MudText>@device.Name</MudText>
+                                <MudSwitch T="bool" Value="@device.IsOn" ValueChanged="@((bool v) => ToggleSecurityDevice(device, v))" Color="Color.Primary" />
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+
+                <MudDivider Class="my-4" />
+                
+                <MudText Typo="Typo.h6" Class="mb-2">Recent Motion Logs</MudText>
+                <MudTimeline TimelinePosition="TimelinePosition.Start">
+                    @foreach (var log in MotionLogs)
+                    {
+                        <MudTimelineItem Color="@GetSeverityColor(log.Severity)">
+                            <MudText Typo="Typo.body2">@log.Message</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">@log.Timestamp.ToString("HH:mm:ss")</MudText>
+                        </MudTimelineItem>
+                    }
+                </MudTimeline>
+
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<style>
+    .camera-feed {
+        background-color: #2c3e50;
+        height: 400px;
+        border-radius: 8px;
+        border: 2px solid #34495e;
+        color: #ecf0f1;
+        background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px);
+    }
+    
+    .blink {
+        animation: blinker 1.5s linear infinite;
+    }
+
+    @@keyframes blinker {
+        50% { opacity: 0; }
+    }
+</style>
+
+@code {
+    private List<Device> SecurityDevices = new();
+    private List<MotionLog> MotionLogs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+        SimService.OnSimulationTicked += HandleSimulationUpdate;
+    }
+
+    private async Task LoadDataAsync()
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        SecurityDevices = await db.Devices
+            .Where(d => d.Type == "Lock" || d.Type == "Camera")
+            .ToListAsync();
+            
+        MotionLogs = await db.MotionLogs
+            .OrderByDescending(m => m.Timestamp)
+            .Take(5)
+            .ToListAsync();
+    }
+    
+    private async Task ToggleSecurityDevice(Device device, bool value)
+    {
+        device.IsOn = value;
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var dbDevice = await db.Devices.FindAsync(device.Id);
+        if(dbDevice != null)
+        {
+            dbDevice.IsOn = value;
+            await db.SaveChangesAsync();
+        }
+    }
+
+    private void HandleSimulationUpdate()
+    {
+        InvokeAsync(async () =>
+        {
+            await LoadDataAsync();
+            StateHasChanged();
+        });
+    }
+
+    private Color GetSeverityColor(string severity)
+    {
+        return severity switch
+        {
+            "Success" => Color.Success,
+            "Warning" => Color.Warning,
+            "Error" => Color.Error,
+            _ => Color.Info
+        };
+    }
+
+    public void Dispose()
+    {
+        SimService.OnSimulationTicked -= HandleSimulationUpdate;
+    }
+}

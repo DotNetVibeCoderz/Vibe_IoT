@@ -1,0 +1,58 @@
+@page "/login"
+@using HomeDashboard.Data
+@using HomeDashboard.Services
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext DbContext
+@inject CustomAuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex justify-center align-center" Style="height: 100vh;">
+    <MudPaper Class="pa-8 auth-glass-panel" Elevation="4">
+        <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-6">Sign In</MudText>
+        
+        <MudTextField @bind-Value="Username" Label="Username" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password" Class="mb-4" />
+        
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <MudText Color="Color.Error" Class="mb-4">@ErrorMessage</MudText>
+        }
+        
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="HandleLogin">Login</MudButton>
+        <MudText Align="Align.Center" Class="mt-4">
+            Don't have an account? <MudLink Href="/register">Register</MudLink>
+        </MudText>
+    </MudPaper>
+</MudContainer>
+
+<style>
+    .auth-glass-panel {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+</style>
+
+@code {
+    private string Username { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        var user = await DbContext.Users.FirstOrDefaultAsync(u => u.Username == Username && u.Password == Password);
+        
+        if (user != null)
+        {
+            await AuthStateProvider.MarkUserAsAuthenticated(user.Username, user.Role);
+            NavigationManager.NavigateTo("/", true);
+        }
+        else
+        {
+            ErrorMessage = "Invalid username or password.";
+        }
+    }
+}

@@ -1,0 +1,129 @@
+@page "/automations"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.DependencyInjection
+@inject IServiceScopeFactory ScopeFactory
+@inject ISnackbar Snackbar
+
+<PageTitle>Automations & Scenes</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4" Style="color: white; text-shadow: 1px 1px 2px black;">Automations & Scenes</MudText>
+
+<MudGrid>
+    <!-- Pre-defined Scenes -->
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5" Class="mb-3" Style="color: white;">Quick Scenes</MudText>
+        <MudGrid>
+            @foreach (var scene in Scenes)
+            {
+                <MudItem xs="12" sm="6" md="3">
+                    <MudCard Class="glass-panel text-center pa-4 cursor-pointer hover-effect" Elevation="0" @onclick='() => ActivateScene(scene.Name)'>
+                        <MudIcon Icon="@GetIcon(scene.Icon)" Size="Size.Large" Color="@GetColor(scene.Color)" />
+                        <MudText Typo="Typo.h6" Class="mt-2">@scene.Name</MudText>
+                        <MudText Typo="Typo.caption">@scene.Description</MudText>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudItem>
+
+    <!-- Automation Rules List -->
+    <MudItem xs="12" Class="mt-6">
+        <MudText Typo="Typo.h5" Class="mb-3" Style="color: white;">My Routines</MudText>
+        <MudPaper Class="glass-panel pa-4">
+            <MudList T="string">
+                @foreach(var routine in Routines)
+                {
+                    <MudListItem T="string">
+                        <div class="d-flex justify-space-between align-center">
+                            <div>
+                                <MudText Typo="Typo.subtitle1"><strong>@routine.Name</strong></MudText>
+                                <MudText Typo="Typo.body2">@routine.Description</MudText>
+                            </div>
+                            <MudSwitch T="bool" Value="@routine.IsActive" ValueChanged="@((bool v) => ToggleRoutine(routine, v))" Color="Color.Success" />
+                        </div>
+                    </MudListItem>
+                    <MudDivider />
+                }
+            </MudList>
+            
+            <div class="d-flex justify-end mt-4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add">Create Routine</MudButton>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<style>
+    .cursor-pointer { cursor: pointer; }
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        transition: 0.3s ease-in-out;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+</style>
+
+@code {
+    private List<Scene> Scenes = new();
+    private List<Routine> Routines = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        
+        Scenes = await db.Scenes.ToListAsync();
+        Routines = await db.Routines.ToListAsync();
+    }
+
+    private void ActivateScene(string sceneName)
+    {
+        Snackbar.Add($"Scene '{sceneName}' activated successfully!", Severity.Success);
+    }
+    
+    private async Task ToggleRoutine(Routine routine, bool value)
+    {
+        routine.IsActive = value;
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var dbRoutine = await db.Routines.FindAsync(routine.Id);
+        if(dbRoutine != null)
+        {
+            dbRoutine.IsActive = value;
+            await db.SaveChangesAsync();
+        }
+        Snackbar.Add($"Routine '{routine.Name}' updated.", Severity.Info);
+    }
+
+    private string GetIcon(string iconName)
+    {
+        return iconName switch
+        {
+            "WbSunny" => Icons.Material.Filled.WbSunny,
+            "Movie" => Icons.Material.Filled.Movie,
+            "DirectionsWalk" => Icons.Material.Filled.DirectionsWalk,
+            "NightsStay" => Icons.Material.Filled.NightsStay,
+            _ => Icons.Material.Filled.DeviceUnknown
+        };
+    }
+
+    private Color GetColor(string colorName)
+    {
+        return colorName switch
+        {
+            "Warning" => Color.Warning,
+            "Primary" => Color.Primary,
+            "Error" => Color.Error,
+            "Dark" => Color.Dark,
+            "Success" => Color.Success,
+            "Info" => Color.Info,
+            _ => Color.Default
+        };
+    }
+}

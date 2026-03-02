@@ -1,0 +1,117 @@
+@page "/analytics"
+@using HomeDashboard.Data
+@using HomeDashboard.Models
+@using HomeDashboard.Services
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.Extensions.DependencyInjection
+@implements IDisposable
+@inject IServiceScopeFactory ScopeFactory
+@inject SimulatorService SimService
+
+<PageTitle>Analytics & Insights</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4" Style="color: white; text-shadow: 1px 1px 2px black;">Analytics & Insights</MudText>
+
+<MudGrid>
+    <!-- Energy Consumption Summary -->
+    <MudItem xs="12" md="4">
+        <MudCard Class="glass-panel h-100" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-2">Live Power Draw</MudText>
+                <MudText Typo="Typo.h3" Color="Color.Error">@TotalPower.ToString("F2") W</MudText>
+                <MudText Typo="Typo.body2" Class="mt-2">Active devices: @ActiveDevices</MudText>
+                
+                <MudDivider Class="my-4" />
+                <MudText Typo="Typo.subtitle1">Predictive Insights:</MudText>
+                @if (TotalPower > 1500)
+                {
+                    <MudAlert Severity="Severity.Warning" Class="mt-2">Power consumption is high. Consider turning off unused AC or appliances.</MudAlert>
+                }
+                else
+                {
+                    <MudAlert Severity="Severity.Info" Class="mt-2">Power consumption is optimal.</MudAlert>
+                }
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <!-- Top Consumers Chart -->
+    <MudItem xs="12" md="8">
+        <MudCard Class="glass-panel h-100" Elevation="0">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mb-4">Energy Consumption by Device</MudText>
+                
+                @if(Labels != null && Labels.Any() && Data != null && Data.Any() && Labels.Length == Data.Length)
+                {
+                    <MudGrid>
+                        <MudItem xs="12" sm="6" Class="d-flex justify-center">
+                            <MudChart T="double" ChartType="ChartType.Donut" Width="250px" Height="250px" InputData="@Data" InputLabels="@Labels" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            @for(int i = 0; i < Labels.Length; i++)
+                            {
+                                int idx = i;
+                                <div class="mb-3">
+                                    <MudText>@Labels[idx]</MudText>
+                                    <MudProgressLinear Color="@ColorsList[idx % ColorsList.Length]" Value="@Data[idx]" Max="@TotalPower" />
+                                </div>
+                            }
+                        </MudItem>
+                    </MudGrid>
+                }
+                else
+                {
+                    <MudText>No devices are currently active.</MudText>
+                }
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private double TotalPower = 0;
+    private int ActiveDevices = 0;
+    
+    private double[] Data = Array.Empty<double>();
+    private string[] Labels = Array.Empty<string>();
+    private Color[] ColorsList = new[] { Color.Primary, Color.Secondary, Color.Warning, Color.Error, Color.Info, Color.Success };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+        SimService.OnSimulationTicked += HandleSimulationUpdate;
+    }
+
+    private async Task LoadDataAsync()
+    {
+        using var scope = ScopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var devices = await db.Devices.Where(d => d.IsOn && d.PowerConsumption > 0).ToListAsync();
+        TotalPower = devices.Sum(d => d.PowerConsumption);
+        ActiveDevices = devices.Count;
+
+        var topConsumers = devices.OrderByDescending(d => d.PowerConsumption).Take(5).ToList();
+        
+        // ensure arrays have the exact same length to prevent IndexOutOfRange Exception
+        var newData = topConsumers.Select(d => d.PowerConsumption).ToArray();
+        var newLabels = topConsumers.Select(d => $"{d.Name} ({Math.Round(d.PowerConsumption)}W)").ToArray();
+        
+        Data = newData;
+        Labels = newLabels;
+    }
+
+    private void HandleSimulationUpdate()
+    {
+        InvokeAsync(async () =>
+        {
+            await LoadDataAsync();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        SimService.OnSimulationTicked -= HandleSimulationUpdate;
+    }
+}
