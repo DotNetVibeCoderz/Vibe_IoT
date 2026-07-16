@@ -1,0 +1,112 @@
+@page "/"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject TemplateService Templates
+@inject NavigationManager Nav
+
+<PageTitle>LiteCircuit — PCB design bench</PageTitle>
+
+<div class="hero">
+    <svg class="hero-traces" viewBox="0 0 600 160" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+        <path d="M600 20 H420 L380 60 H260" />
+        <path d="M600 80 H460 L430 110 H340 L320 130 H180" />
+        <path d="M600 140 H520 L490 110" />
+        <circle cx="260" cy="60" r="5" class="via" />
+        <circle cx="180" cy="130" r="5" class="via" />
+        <circle cx="490" cy="110" r="5" class="via" />
+    </svg>
+    <div class="hero-inner">
+        <p class="eyebrow">Schematic → Layout → 3D → Fab</p>
+        <h1>From idea to <em>copper</em>.</h1>
+        <p class="hero-sub">Design PCBs in the browser with real-time DRC, an AI copilot named Electra,
+            and one-click fabrication outputs.</p>
+        <div class="hero-actions">
+            <button class="btn-copper" @onclick="NewBlank">New blank board</button>
+            <a class="btn-ghost" href="/templates">Start from a template</a>
+            <a class="btn-ghost" href="/chat">Ask Electra ⚡</a>
+        </div>
+    </div>
+</div>
+
+<section class="dash-grid">
+    <div class="panel span-2">
+        <div class="panel-head">
+            <h2>Recent projects</h2>
+            <a href="/projects" class="muted">All projects →</a>
+        </div>
+        @if (recent.Count == 0)
+        {
+            <p class="empty">No boards yet. Create a blank board or pick a template — the ESP32 clock is a good first build.</p>
+        }
+        else
+        {
+            <div class="project-cards">
+                @foreach (var p in recent)
+                {
+                    <a class="project-card" href="/project/@p.Id/pcb">
+                        <span class="project-name">@p.Name</span>
+                        <span class="project-meta">@p.Meta</span>
+                        <span class="project-updated">updated @p.Updated.ToLocalTime().ToString("dd MMM HH:mm")</span>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="panel">
+        <div class="panel-head"><h2>Templates</h2></div>
+        <ul class="mini-list">
+            @foreach (var t in Templates.All.Skip(1).Take(5))
+            {
+                <li><span class="mini-icon">@t.Icon</span> <a href="/templates">@t.Name</a> <span class="muted mono">@t.Chip</span></li>
+            }
+        </ul>
+        <a class="btn-ghost btn-block" href="/templates">Browse all @(Templates.All.Count - 1) templates</a>
+    </div>
+
+    <div class="panel">
+        <div class="panel-head"><h2>Toolchain</h2></div>
+        <ul class="mini-list">
+            <li>📐 <a href="/projects">Schematic & PCB editors</a></li>
+            <li>🧊 3D preview (Three.js)</li>
+            <li>⚡ AI auto-router & DRC</li>
+            <li>🏭 Gerber / drill / BOM export</li>
+            <li>🔌 <a href="/swagger" target="_blank">REST API + Swagger</a></li>
+            <li>⌨ <a href="/scripting">C# scripting console</a></li>
+        </ul>
+    </div>
+</section>
+
+@code {
+    private List<(Guid Id, string Name, string Meta, DateTime Updated)> recent = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var projects = await db.Projects.AsNoTracking()
+            .OrderByDescending(p => p.UpdatedAt).Take(6).ToListAsync();
+        recent = projects.Select(p =>
+        {
+            var b = PcbJson.ParseBoard(p.BoardJson);
+            return (p.Id, p.Name, $"{b.Components.Count} parts · {b.Tracks.Count} tracks · {b.Width:0}×{b.Height:0}mm", p.UpdatedAt);
+        }).ToList();
+    }
+
+    private async Task NewBlank()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var t = Templates.Find("blank")!;
+        var (sch, board) = t.Build();
+        var p = new PcbProject
+        {
+            Name = $"Untitled board {DateTime.Now:HHmm}",
+            TemplateKey = "blank",
+            SchematicJson = PcbJson.Serialize(sch),
+            BoardJson = PcbJson.Serialize(board),
+        };
+        db.Projects.Add(p);
+        await db.SaveChangesAsync();
+        Nav.NavigateTo($"/project/{p.Id}/schematic");
+    }
+}

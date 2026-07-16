@@ -1,0 +1,172 @@
+@page "/library"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject LibraryImportService Importer
+
+<PageTitle>Component library — LiteCircuit</PageTitle>
+
+<div class="page-head">
+    <h1 class="page-title">Component library</h1>
+    <div class="page-actions">
+        <span class="muted">@totalCount parts</span>
+        <button class="btn-copper btn-sm" @onclick="() => importOpen = !importOpen">
+            ⟳ Update library @(importOpen ? "▴" : "▾")
+        </button>
+    </div>
+</div>
+
+@if (importOpen)
+{
+    <section class="panel import-panel">
+        <div class="import-row">
+            <div class="import-col">
+                <h2>From KiCad official libraries</h2>
+                <p class="muted small">Pulls the latest symbols straight from
+                    <code class="mono">gitlab.com/kicad/libraries</code>. Only new parts are added — nothing is overwritten.</p>
+                <div class="filter-bar">
+                    <select @bind="kicadLib">
+                        @foreach (var (lib, cat, hint) in LibraryImportService.KiCadLibraries)
+                        {
+                            <option value="@lib">@lib — @hint (@cat)</option>
+                        }
+                    </select>
+                    <button class="btn-copper btn-sm" @onclick="ImportKiCad" disabled="@importing">
+                        @(importing ? "Importing…" : "Import from KiCad")
+                    </button>
+                </div>
+            </div>
+            <div class="import-col">
+                <h2>From a CSV URL</h2>
+                <p class="muted small">Any CSV with a <code class="mono">name</code> column; optional:
+                    category, value, footprint, manufacturer, pins, price, stock, datasheet. Works with LCSC/JLC exports.</p>
+                <div class="filter-bar">
+                    <input class="search" style="flex:1" placeholder="https://example.com/parts.csv" @bind="csvUrl" />
+                    <button class="btn-copper btn-sm" @onclick="ImportCsv" disabled="@importing">
+                        @(importing ? "Importing…" : "Import CSV")
+                    </button>
+                </div>
+            </div>
+        </div>
+        @if (importMessage is not null)
+        {
+            <div class="alert @(importOk ? "alert-info" : "alert-error")">@importMessage</div>
+        }
+    </section>
+}
+
+<div class="filter-bar">
+    <input class="search" placeholder="Search name, value, footprint…" @bind="q" @bind:event="oninput" @bind:after="Search" />
+    <select @bind="category" @bind:after="Search">
+        <option value="">All categories</option>
+        @foreach (var c in categories)
+        {
+            <option value="@c">@c</option>
+        }
+    </select>
+    <label class="inline">Max $ <input type="number" step="0.1" style="width:6rem" @bind="maxPrice" @bind:after="Search" /></label>
+    <label class="inline">Min stock <input type="number" style="width:7rem" @bind="minStock" @bind:after="Search" /></label>
+</div>
+
+<table class="data-table">
+    <thead>
+        <tr><th>Part</th><th>Category</th><th>Value</th><th>Footprint</th><th>Pins</th><th>Manufacturer</th><th class="num">Price</th><th class="num">Stock</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var c in results)
+        {
+            <tr>
+                <td class="strong">
+                    @if (string.IsNullOrEmpty(c.DatasheetUrl))
+                    {
+                        @c.Name
+                    }
+                    else
+                    {
+                        <a href="@c.DatasheetUrl" target="_blank" title="Datasheet">@c.Name ↗</a>
+                    }
+                </td>
+                <td>@c.Category</td>
+                <td class="mono">@c.Value</td>
+                <td class="mono">@c.Footprint</td>
+                <td class="num">@c.Pins</td>
+                <td>@c.Manufacturer</td>
+                <td class="num mono">$@c.PriceUsd.ToString("0.####")</td>
+                <td class="num mono">@c.Stock.ToString("N0")</td>
+                <td><span class="chip @(c.Source == "KiCad" ? "chip-kicad" : "chip-vendor")">@c.Source</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (results.Count == 0)
+{
+    <p class="empty">No parts match those filters.</p>
+}
+
+@code {
+    private string q = "";
+    private string category = "";
+    private decimal maxPrice;
+    private int minStock;
+    private List<LibComponent> results = new();
+    private List<string> categories = new();
+    private int totalCount;
+
+    // import UI state
+    private bool importOpen;
+    private bool importing;
+    private bool importOk;
+    private string? importMessage;
+    private string kicadLib = LibraryImportService.KiCadLibraries[0].Lib;
+    private string csvUrl = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    private async Task Refresh()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        categories = await db.Components.Select(c => c.Category).Distinct().OrderBy(c => c).ToListAsync();
+        totalCount = await db.Components.CountAsync();
+        await Search();
+    }
+
+    private async Task ImportKiCad()
+    {
+        importing = true;
+        importMessage = null;
+        StateHasChanged();
+        var r = await Importer.ImportKiCadAsync(kicadLib);
+        importOk = r.Ok;
+        importMessage = r.Message;
+        importing = false;
+        await Refresh();
+    }
+
+    private async Task ImportCsv()
+    {
+        if (string.IsNullOrWhiteSpace(csvUrl)) return;
+        importing = true;
+        importMessage = null;
+        StateHasChanged();
+        var r = await Importer.ImportCsvAsync(csvUrl.Trim());
+        importOk = r.Ok;
+        importMessage = r.Message;
+        importing = false;
+        await Refresh();
+    }
+
+    private async Task Search()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var query = db.Components.AsNoTracking().AsQueryable();
+        if (!string.IsNullOrWhiteSpace(q))
+            query = query.Where(c => c.Name.Contains(q) || c.Value.Contains(q) || c.Footprint.Contains(q) || c.Manufacturer.Contains(q));
+        if (!string.IsNullOrWhiteSpace(category)) query = query.Where(c => c.Category == category);
+        if (maxPrice > 0) query = query.Where(c => c.PriceUsd <= maxPrice);
+        if (minStock > 0) query = query.Where(c => c.Stock >= minStock);
+        results = await query.OrderBy(c => c.Category).ThenBy(c => c.PriceUsd).Take(200).ToListAsync();
+    }
+}

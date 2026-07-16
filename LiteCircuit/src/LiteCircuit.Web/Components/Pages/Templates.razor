@@ -1,0 +1,52 @@
+@page "/templates"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject TemplateService TemplateSvc
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject NavigationManager Nav
+
+<PageTitle>Templates — LiteCircuit</PageTitle>
+
+<div class="page-head">
+    <h1 class="page-title">Board templates</h1>
+    <p class="muted">Complete reference designs around chips you can actually buy. Pick one, rename it, make it yours.</p>
+</div>
+
+<div class="template-grid">
+    @foreach (var t in TemplateSvc.All)
+    {
+        <div class="template-card">
+            <div class="template-icon">@t.Icon</div>
+            <h2>@t.Name</h2>
+            <span class="chip mono">@t.Chip</span>
+            <p>@t.Description</p>
+            <button class="btn-copper btn-block" @onclick="() => Create(t.Key)"
+                    disabled="@(creating == t.Key)">
+                @(creating == t.Key ? "Creating…" : t.Key == "blank" ? "Start blank" : "Use template")
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    private string? creating;
+
+    private async Task Create(string key)
+    {
+        creating = key;
+        var t = TemplateSvc.Find(key)!;
+        var (sch, board) = t.Build();
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var p = new PcbProject
+        {
+            Name = t.Key == "blank" ? $"Untitled board {DateTime.Now:HHmm}" : t.Name,
+            Description = t.Key == "blank" ? "" : $"{t.Description} (from template, {t.Chip})",
+            TemplateKey = t.Key,
+            SchematicJson = PcbJson.Serialize(sch),
+            BoardJson = PcbJson.Serialize(board),
+        };
+        db.Projects.Add(p);
+        await db.SaveChangesAsync();
+        Nav.NavigateTo($"/project/{p.Id}/schematic");
+    }
+}

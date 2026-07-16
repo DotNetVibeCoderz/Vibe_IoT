@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LiteCircuit.Core/LiteCircuit.Core.csproj" />
+    <Project Path="src/LiteCircuit.Infrastructure/LiteCircuit.Infrastructure.csproj" />
+    <Project Path="src/LiteCircuit.Web/LiteCircuit.Web.csproj" />
+  </Folder>
+</Solution>

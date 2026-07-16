@@ -1,0 +1,108 @@
+@page "/projects"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject TemplateService Templates
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<PageTitle>Projects — LiteCircuit</PageTitle>
+
+<div class="page-head">
+    <h1 class="page-title">Projects</h1>
+    <div class="page-actions">
+        <input class="search" placeholder="Filter projects…" @bind="filter" @bind:event="oninput" />
+        <button class="btn-copper" @onclick="NewBlank">＋ New board</button>
+    </div>
+</div>
+
+@if (projects is null)
+{
+    <p class="muted">Loading…</p>
+}
+else if (Filtered.Count == 0)
+{
+    <p class="empty">Nothing here yet — start from <a href="/templates">a template</a> or create a blank board.</p>
+}
+else
+{
+    <table class="data-table">
+        <thead>
+            <tr><th>Name</th><th>Board</th><th>Template</th><th>Updated</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Filtered)
+            {
+                <tr>
+                    <td>
+                        <a class="strong" href="/project/@row.P.Id/pcb">@row.P.Name</a>
+                        @if (!string.IsNullOrEmpty(row.P.Description))
+                        {
+                            <div class="muted small">@row.P.Description</div>
+                        }
+                    </td>
+                    <td class="mono">@row.Meta</td>
+                    <td class="mono">@row.P.TemplateKey</td>
+                    <td class="muted">@row.P.UpdatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</td>
+                    <td class="row-actions">
+                        <a class="btn-ghost btn-sm" href="/project/@row.P.Id/schematic">Schematic</a>
+                        <a class="btn-ghost btn-sm" href="/project/@row.P.Id/pcb">PCB</a>
+                        <a class="btn-ghost btn-sm" href="/project/@row.P.Id/3d">3D</a>
+                        <a class="btn-ghost btn-sm" href="/project/@row.P.Id/manufacturing">Fab</a>
+                        <button class="btn-ghost btn-sm danger" title="Delete project"
+                                @onclick="() => Delete(row.P.Id, row.P.Name)">✕</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<(PcbProject P, string Meta)>? projects;
+    private string filter = "";
+
+    private List<(PcbProject P, string Meta)> Filtered =>
+        projects is null ? new() :
+        projects.Where(x => string.IsNullOrWhiteSpace(filter) ||
+                            x.P.Name.Contains(filter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var list = await db.Projects.AsNoTracking().OrderByDescending(p => p.UpdatedAt).ToListAsync();
+        projects = list.Select(p =>
+        {
+            var b = PcbJson.ParseBoard(p.BoardJson);
+            return (p, $"{b.Components.Count} parts · {b.Tracks.Count} tracks · {b.Width:0}×{b.Height:0}mm");
+        }).ToList();
+    }
+
+    private async Task NewBlank()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var (sch, board) = Templates.Find("blank")!.Build();
+        var p = new PcbProject
+        {
+            Name = $"Untitled board {DateTime.Now:HHmm}",
+            TemplateKey = "blank",
+            SchematicJson = PcbJson.Serialize(sch),
+            BoardJson = PcbJson.Serialize(board),
+        };
+        db.Projects.Add(p);
+        await db.SaveChangesAsync();
+        Nav.NavigateTo($"/project/{p.Id}/schematic");
+    }
+
+    private async Task Delete(Guid id, string name)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm",
+            $"Delete project \"{name}\"?\nThis also removes its history and comments, and cannot be undone.");
+        if (!confirmed) return;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        await db.Projects.Where(p => p.Id == id).ExecuteDeleteAsync();
+        await Load();
+    }
+}

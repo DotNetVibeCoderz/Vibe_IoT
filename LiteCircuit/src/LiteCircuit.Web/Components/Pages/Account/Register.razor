@@ -1,0 +1,64 @@
+@page "/account/register"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@inject SignInManager<AppUser> SignInManager
+@inject NavigationManager Nav
+
+<PageTitle>Create account — LiteCircuit</PageTitle>
+
+<div class="auth-card">
+    <div class="auth-head">
+        <h1>Create your bench</h1>
+        <p>One account for schematics, boards and Electra. Already registered? <a href="/account/login">Log in</a>.</p>
+    </div>
+
+    @if (errors is not null)
+    {
+        <div class="alert alert-error">@errors</div>
+    }
+
+    <EditForm Model="Input" method="post" OnValidSubmit="RegisterUser" FormName="register">
+        <DataAnnotationsValidator />
+        <label>Display name
+            <InputText @bind-Value="Input.DisplayName" placeholder="Ada Lovelace" />
+        </label>
+        <label>Email
+            <InputText @bind-Value="Input.Email" autocomplete="username" placeholder="you@example.com" />
+        </label>
+        <label>Password <span class="hint">(min. 8 characters)</span>
+            <InputText type="password" @bind-Value="Input.Password" autocomplete="new-password" />
+        </label>
+        <button type="submit" class="btn-copper btn-block">Create account</button>
+    </EditForm>
+</div>
+
+@code {
+    private string? errors;
+
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+
+    private async Task RegisterUser()
+    {
+        var user = new AppUser
+        {
+            UserName = Input.Email, Email = Input.Email,
+            DisplayName = Input.DisplayName, EmailConfirmed = true,
+        };
+        var result = await UserManager.CreateAsync(user, Input.Password);
+        if (!result.Succeeded)
+        {
+            errors = string.Join(" ", result.Errors.Select(e => e.Description));
+            return;
+        }
+        await SignInManager.SignInAsync(user, isPersistent: false);
+        Nav.NavigateTo("/", forceLoad: true);
+    }
+
+    private sealed class InputModel
+    {
+        [Required] public string DisplayName { get; set; } = "";
+        [Required, EmailAddress] public string Email { get; set; } = "";
+        [Required, MinLength(8)] public string Password { get; set; } = "";
+    }
+}

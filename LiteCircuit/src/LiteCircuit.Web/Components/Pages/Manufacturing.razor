@@ -1,0 +1,108 @@
+@page "/project/{Id:guid}/manufacturing"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject BomService Bom
+@inject DfmService Dfm
+@inject ComplianceService Compliance
+@inject DesignAiService DesignAi
+@inject MarkdownService Markdown
+
+<PageTitle>Manufacturing — LiteCircuit</PageTitle>
+
+<div class="editor-shell">
+    <header class="editor-bar">
+        <ProjectTabs Id="Id" Active="fab" Name="@(project?.Name ?? "")" />
+        <div class="editor-tools">
+            <a class="btn-copper btn-sm" href="/api/projects/@Id/gerber.zip">⬇ Gerber + drill + pos (.zip)</a>
+            <a class="btn-ghost btn-sm" href="/api/projects/@Id/bom.csv">⬇ BOM (.csv)</a>
+            <a class="btn-ghost btn-sm" href="/api/projects/@Id/board.stl">⬇ STL</a>
+        </div>
+    </header>
+
+    <div class="fab-grid">
+        <section class="panel span-2">
+            <div class="panel-head">
+                <h2>Bill of materials</h2>
+                <button class="btn-ghost btn-sm" @onclick="AskBomAdvice" disabled="@advising">
+                    @(advising ? "Electra is checking stock…" : "✨ AI sourcing advice")
+                </button>
+            </div>
+            @if (bom is null)
+            {
+                <p class="muted">Loading…</p>
+            }
+            else
+            {
+                <table class="data-table">
+                    <thead><tr><th>Refs</th><th class="num">Qty</th><th>Value</th><th>Footprint</th><th>Mfr</th><th class="num">Unit $</th><th class="num">Total $</th><th class="num">Stock</th></tr></thead>
+                    <tbody>
+                        @foreach (var l in bom)
+                        {
+                            <tr>
+                                <td class="mono small">@l.Refs</td>
+                                <td class="num">@l.Qty</td>
+                                <td>@l.Value</td>
+                                <td class="mono">@l.Footprint</td>
+                                <td>@l.Manufacturer</td>
+                                <td class="num mono">@l.UnitPrice.ToString("0.####")</td>
+                                <td class="num mono">@l.LineTotal.ToString("0.####")</td>
+                                <td class="num mono @(l.Stock == 0 ? "warn" : "")">@l.Stock.ToString("N0")</td>
+                            </tr>
+                        }
+                        <tr class="total-row">
+                            <td colspan="6" class="strong">Board total</td>
+                            <td class="num mono strong">$@bom.Sum(l => l.LineTotal).ToString("0.###")</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            @if (bomAdvice is not null)
+            {
+                <div class="md-note">@((MarkupString)Markdown.ToHtml(bomAdvice))</div>
+            }
+        </section>
+
+        <section class="panel">
+            <h2>DFM analysis</h2>
+            <FindingList Items="dfm" />
+        </section>
+
+        <section class="panel">
+            <h2>Compliance (IPC · RoHS · UL)</h2>
+            <FindingList Items="compliance" />
+        </section>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PcbProject? project;
+    private List<BomLine>? bom;
+    private List<CheckFinding> dfm = new();
+    private List<CheckFinding> compliance = new();
+    private string? bomAdvice;
+    private bool advising;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        project = await db.Projects.FindAsync(Id);
+        if (project is null) return;
+        var board = PcbJson.ParseBoard(project.BoardJson);
+        bom = await Bom.GenerateAsync(board);
+        dfm = Dfm.Analyze(board);
+        compliance = Compliance.Check(board);
+    }
+
+    private async Task AskBomAdvice()
+    {
+        if (bom is null) return;
+        advising = true;
+        StateHasChanged();
+        bomAdvice = await DesignAi.BomAdviceAsync(BomService.ToCsv(bom));
+        advising = false;
+    }
+}

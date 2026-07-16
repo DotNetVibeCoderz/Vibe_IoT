@@ -1,0 +1,66 @@
+@page "/project/{Id:guid}/3d"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IJSRuntime JS
+
+<PageTitle>3D preview — LiteCircuit</PageTitle>
+
+<div class="editor-shell">
+    <header class="editor-bar">
+        <ProjectTabs Id="Id" Active="3d" Name="@(project?.Name ?? "")" />
+        <div class="editor-tools">
+            <button class="btn-ghost btn-sm" @onclick="ToggleRotate">@(rotate ? "⏸ Stop rotation" : "▶ Auto-rotate")</button>
+            <button class="btn-ghost btn-sm" @onclick="ToggleComponents">@(showComponents ? "Hide components" : "Show components")</button>
+            <a class="btn-ghost btn-sm" href="/api/projects/@Id/board.stl">⬇ STL for MCAD</a>
+        </div>
+    </header>
+    <div class="editor-canvas viewer3d" id="viewer-host"></div>
+    <footer class="editor-status mono">drag to orbit · wheel to zoom · right-drag to pan</footer>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PcbProject? project;
+    private IJSObjectReference? module;
+    private bool rotate = true;
+    private bool showComponents = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        project = await db.Projects.FindAsync(Id);
+        if (project is null) return;
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/viewer3d.js");
+        await module.InvokeVoidAsync("init", "viewer-host", project.BoardJson);
+        StateHasChanged();
+    }
+
+    private async Task ToggleRotate()
+    {
+        rotate = !rotate;
+        if (module is not null) await module.InvokeVoidAsync("setAutoRotate", rotate);
+    }
+
+    private async Task ToggleComponents()
+    {
+        showComponents = !showComponents;
+        if (module is not null) await module.InvokeVoidAsync("setComponentsVisible", showComponents);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (module is not null)
+            {
+                await module.InvokeVoidAsync("destroy");
+                await module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException) { }
+    }
+}

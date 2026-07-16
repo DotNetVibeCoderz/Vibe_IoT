@@ -1,0 +1,15 @@
+<nav class="project-tabs">
+    <span class="project-tabs-name" title="@Name">@Name</span>
+    <a class="@(Active == "schematic" ? "on" : "")" href="/project/@Id/schematic">Schematic</a>
+    <a class="@(Active == "pcb" ? "on" : "")" href="/project/@Id/pcb">PCB</a>
+    <a class="@(Active == "3d" ? "on" : "")" href="/project/@Id/3d">3D</a>
+    <a class="@(Active == "sim" ? "on" : "")" href="/project/@Id/simulation">SPICE</a>
+    <a class="@(Active == "fab" ? "on" : "")" href="/project/@Id/manufacturing">Fab</a>
+    <a class="@(Active == "history" ? "on" : "")" href="/project/@Id/history">History</a>
+</nav>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    [Parameter] public string Active { get; set; } = "";
+    [Parameter] public string Name { get; set; } = "";
+}

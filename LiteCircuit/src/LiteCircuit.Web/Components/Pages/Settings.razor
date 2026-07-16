@@ -1,0 +1,60 @@
+@page "/settings"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AiOptions> AiOpts
+@inject Microsoft.Extensions.Options.IOptionsMonitor<TavilyOptions> TavilyOpts
+@inject IConfiguration Config
+
+<PageTitle>Settings — LiteCircuit</PageTitle>
+
+<div class="page-narrow">
+    <h1 class="page-title">Settings</h1>
+    <p class="muted">Runtime settings live in <code class="mono">appsettings.json</code>; the app picks up edits on restart
+        (AI settings reload live via options monitoring).</p>
+
+    <section class="panel">
+        <h2>⚡ Electra (AI)</h2>
+        <table class="kv-table">
+            <tbody>
+                <tr><th>Provider</th><td class="mono">@ai.Provider <span class="muted">(OpenAI · Anthropic · Gemini · Ollama)</span></td></tr>
+                <tr><th>Model</th><td class="mono">@ai.Resolve().Model</td></tr>
+                <tr><th>Endpoint</th><td class="mono">@(ai.Resolve().Endpoint ?? "provider default")</td></tr>
+                <tr><th>API key</th><td class="mono">@(ai.IsConfigured ? "configured ✓" : "❗ not set — set Ai:ApiKey")</td></tr>
+                <tr><th>Temperature</th><td class="mono">@ai.Temperature</td></tr>
+                <tr><th>Max tokens</th><td class="mono">@ai.MaxTokens</td></tr>
+                <tr><th>Tavily search</th><td class="mono">@(string.IsNullOrEmpty(TavilyOpts.CurrentValue.ApiKey) ? "not configured" : "configured ✓")</td></tr>
+            </tbody>
+        </table>
+        <details>
+            <summary>System prompt (persona)</summary>
+            <pre class="code-block small">@ai.SystemPrompt</pre>
+        </details>
+    </section>
+
+    <section class="panel">
+        <h2>🗄 Database & storage</h2>
+        <table class="kv-table">
+            <tbody>
+                <tr><th>Database provider</th><td class="mono">@(Config["Database:Provider"] ?? "Sqlite") <span class="muted">(Sqlite · SqlServer · Postgres · MySql)</span></td></tr>
+                <tr><th>Storage provider</th><td class="mono">@(Config["Storage:Provider"] ?? "FileSystem") <span class="muted">(FileSystem · AzureBlob · S3 · MinIO)</span></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="panel">
+        <h2>🎨 Appearance</h2>
+        <p>Theme follows your toggle in the top bar (◐) and is remembered per browser.</p>
+        <button class="btn-ghost" onclick="lc.toggleTheme()">Toggle dark / light now</button>
+    </section>
+
+    <section class="panel">
+        <h2>ℹ About</h2>
+        <p><strong>LiteCircuit</strong> — PCB design in the browser with an AI copilot.</p>
+        <p>Dibuat oleh <strong>Gravicode Studios</strong>, di-lead oleh <strong>Kang Fadhil</strong>.</p>
+        <p class="muted small">Blazor Server (.NET 10) · Three.js · Semantic Kernel · dokumentasi lengkap di folder <code class="mono">docs/</code>.</p>
+    </section>
+</div>
+
+@code {
+    private AiOptions ai => AiOpts.CurrentValue;
+}

@@ -1,0 +1,127 @@
+@page "/project/{Id:guid}/history"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject VersionControlService Vcs
+@inject AuthenticationStateProvider AuthState
+
+<PageTitle>History — LiteCircuit</PageTitle>
+
+<div class="editor-shell">
+    <header class="editor-bar">
+        <ProjectTabs Id="Id" Active="history" Name="@(project?.Name ?? "")" />
+        <div class="editor-tools">
+            <input placeholder="Commit message…" @bind="message" style="min-width:16rem" />
+            <button class="btn-copper btn-sm" @onclick="Commit">⎘ Commit snapshot</button>
+        </div>
+    </header>
+
+    <div class="history-grid">
+        <section class="panel span-2">
+            <h2>Commits</h2>
+            @if (commits.Count == 0)
+            {
+                <p class="empty">No snapshots yet. Commit the current design to start its history.</p>
+            }
+            else
+            {
+                <ul class="commit-list">
+                    @foreach (var c in commits)
+                    {
+                        <li>
+                            <div class="commit-dot"></div>
+                            <div class="commit-body">
+                                <strong>@c.Message</strong>
+                                <span class="muted small">@c.Author · @c.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</span>
+                                @if (project is not null)
+                                {
+                                    <span class="mono small">@Vcs.Diff(c.BoardJson, project.BoardJson).Summary vs current</span>
+                                }
+                            </div>
+                            <button class="btn-ghost btn-sm" @onclick="() => Restore(c.Id)">Restore</button>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+        <section class="panel">
+            <h2>Comments</h2>
+            <div class="comment-new">
+                <textarea rows="2" placeholder="Leave a note for your team…" @bind="newComment"></textarea>
+                <button class="btn-ghost btn-sm" @onclick="AddComment">Post</button>
+            </div>
+            <ul class="comment-list">
+                @foreach (var c in comments)
+                {
+                    <li class="@(c.Resolved ? "resolved" : "")">
+                        <strong>@c.Author</strong>
+                        <p>@c.Text</p>
+                        <span class="muted small">@c.CreatedAt.ToLocalTime().ToString("dd MMM HH:mm")</span>
+                        @if (!c.Resolved)
+                        {
+                            <button class="btn-ghost btn-sm" @onclick="() => Resolve(c)">✓ Resolve</button>
+                        }
+                    </li>
+                }
+            </ul>
+        </section>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PcbProject? project;
+    private List<DesignCommit> commits = new();
+    private List<DesignComment> comments = new();
+    private string message = "";
+    private string newComment = "";
+    private string userName = "user";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthState.GetAuthenticationStateAsync();
+        userName = auth.User.Identity?.Name ?? "user";
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        project = await db.Projects.FindAsync(Id);
+        commits = await Vcs.LogAsync(Id);
+        comments = await db.Comments.Where(c => c.ProjectId == Id)
+            .OrderByDescending(c => c.CreatedAt).AsNoTracking().ToListAsync();
+    }
+
+    private async Task Commit()
+    {
+        await Vcs.CommitAsync(Id, string.IsNullOrWhiteSpace(message) ? $"Snapshot {DateTime.Now:HH:mm}" : message, userName);
+        message = "";
+        await Load();
+    }
+
+    private async Task Restore(Guid commitId)
+    {
+        await Vcs.RestoreAsync(commitId);
+        await Load();
+    }
+
+    private async Task AddComment()
+    {
+        if (string.IsNullOrWhiteSpace(newComment)) return;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.Comments.Add(new DesignComment { ProjectId = Id, Author = userName, Text = newComment.Trim() });
+        await db.SaveChangesAsync();
+        newComment = "";
+        await Load();
+    }
+
+    private async Task Resolve(DesignComment c)
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        await db.Comments.Where(x => x.Id == c.Id).ExecuteUpdateAsync(s => s.SetProperty(x => x.Resolved, true));
+        await Load();
+    }
+}

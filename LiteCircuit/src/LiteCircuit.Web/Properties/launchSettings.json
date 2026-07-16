@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "LiteCircuit.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51247;http://localhost:51248"
+    }
+  }
+}

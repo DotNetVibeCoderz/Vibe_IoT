@@ -1,0 +1,58 @@
+@page "/account/login"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject NavigationManager Nav
+
+<PageTitle>Log in — LiteCircuit</PageTitle>
+
+<div class="auth-card">
+    <div class="auth-head">
+        <h1>Welcome back</h1>
+        <p>Sign in to open your boards. New here? <a href="/account/register">Create an account</a>.</p>
+    </div>
+
+    @if (error is not null)
+    {
+        <div class="alert alert-error">@error</div>
+    }
+    <div class="alert alert-info">Demo login: <code>admin@litecircuit.dev</code> / <code>Admin123$</code></div>
+
+    <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+        <DataAnnotationsValidator />
+        <label>Email
+            <InputText @bind-Value="Input.Email" autocomplete="username" placeholder="you@example.com" />
+        </label>
+        <label>Password
+            <InputText type="password" @bind-Value="Input.Password" autocomplete="current-password" placeholder="••••••••" />
+        </label>
+        <label class="check">
+            <InputCheckbox @bind-Value="Input.RememberMe" /> Remember me
+        </label>
+        <button type="submit" class="btn-copper btn-block">Log in</button>
+        <p class="auth-foot"><a href="/account/forgot-password">Forgot your password?</a></p>
+    </EditForm>
+</div>
+
+@code {
+    private string? error;
+
+    [SupplyParameterFromForm] private InputModel Input { get; set; } = new();
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+
+    private async Task LoginUser()
+    {
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        if (result.Succeeded)
+            Nav.NavigateTo(string.IsNullOrEmpty(ReturnUrl) ? "/" : "/" + ReturnUrl.TrimStart('/'), forceLoad: true);
+        else
+            error = "Email or password is incorrect.";
+    }
+
+    private sealed class InputModel
+    {
+        [Required, EmailAddress] public string Email { get; set; } = "";
+        [Required] public string Password { get; set; } = "";
+        public bool RememberMe { get; set; }
+    }
+}

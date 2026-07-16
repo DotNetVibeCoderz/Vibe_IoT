@@ -1,0 +1,95 @@
+@page "/scripting"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject ScriptingService ScriptRunner
+
+<PageTitle>Scripting — LiteCircuit</PageTitle>
+
+<div class="page-head">
+    <h1 class="page-title">Scripting console</h1>
+    <p class="muted">Automate designs with C# scripts. Globals: <code class="mono">Board</code>, <code class="mono">Schematic</code>, <code class="mono">Print(...)</code>.
+        Python automation is available through the <a href="/swagger" target="_blank">REST API</a> — see <code class="mono">scripts/examples</code>.</p>
+</div>
+
+<div class="script-grid">
+    <section class="panel">
+        <div class="filter-bar">
+            <select @bind="projectId">
+                <option value="@Guid.Empty">— run against a blank board —</option>
+                @foreach (var p in projects)
+                {
+                    <option value="@p.Id">@p.Name</option>
+                }
+            </select>
+            <select @bind="exampleIdx" @bind:after="LoadExample">
+                <option value="-1">Examples…</option>
+                @for (var i = 0; i < ScriptingService.Examples.Length; i++)
+                {
+                    var idx = i;
+                    <option value="@idx">@ScriptingService.Examples[idx].Name</option>
+                }
+            </select>
+            <label class="check"><input type="checkbox" @bind="saveBack" /> Save changes back to project</label>
+        </div>
+        <textarea class="code-editor mono" rows="16" spellcheck="false" @bind="code"></textarea>
+        <button class="btn-copper" @onclick="Run" disabled="@busy">@(busy ? "Running…" : "▶ Run script")</button>
+    </section>
+
+    <section class="panel">
+        <h2>Output</h2>
+        <pre class="code-block mono">@(output ?? "(no output yet)")</pre>
+    </section>
+</div>
+
+@code {
+    private List<PcbProject> projects = new();
+    private Guid projectId = Guid.Empty;
+    private int exampleIdx = -1;
+    private string code = ScriptingService.Examples[0].Code;
+    private string? output;
+    private bool busy, saveBack;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        projects = await db.Projects.AsNoTracking().OrderByDescending(p => p.UpdatedAt).ToListAsync();
+        if (projects.Count > 0) projectId = projects[0].Id;
+    }
+
+    private void LoadExample()
+    {
+        if (exampleIdx >= 0) code = ScriptingService.Examples[exampleIdx].Code;
+    }
+
+    private async Task Run()
+    {
+        busy = true;
+        StateHasChanged();
+        Board board;
+        Schematic sch;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var project = projectId == Guid.Empty ? null : await db.Projects.FindAsync(projectId);
+        if (project is not null)
+        {
+            board = PcbJson.ParseBoard(project.BoardJson);
+            sch = PcbJson.ParseSchematic(project.SchematicJson);
+        }
+        else
+        {
+            board = Board.CreateBlank("Scratch", 80, 60);
+            sch = new Schematic();
+        }
+
+        var (ok, text, newBoard) = await ScriptRunner.RunAsync(code, board, sch);
+        output = text;
+        if (ok && saveBack && project is not null)
+        {
+            project.BoardJson = PcbJson.Serialize(newBoard);
+            project.UpdatedAt = DateTime.UtcNow;
+            await db.SaveChangesAsync();
+            output += "\n\n✔ Changes saved to project.";
+        }
+        busy = false;
+    }
+}

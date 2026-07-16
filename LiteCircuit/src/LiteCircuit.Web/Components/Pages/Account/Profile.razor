@@ -1,0 +1,75 @@
+@page "/account/profile"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@inject AuthenticationStateProvider AuthState
+
+<PageTitle>Profile — LiteCircuit</PageTitle>
+
+<div class="page-narrow">
+    <h1 class="page-title">Your profile</h1>
+
+    @if (user is null)
+    {
+        <p class="muted">Loading…</p>
+    }
+    else
+    {
+        @if (message is not null)
+        {
+            <div class="alert alert-info">@message</div>
+        }
+
+        <section class="panel">
+            <h2>Identity</h2>
+            <label>Display name
+                <input @bind="user.DisplayName" />
+            </label>
+            <label>Bio
+                <textarea @bind="user.Bio" rows="3" placeholder="What do you build?"></textarea>
+            </label>
+            <p class="muted">Signed in as <code>@user.Email</code></p>
+            <button class="btn-copper" @onclick="SaveProfile">Save profile</button>
+        </section>
+
+        <section class="panel">
+            <h2>Change password</h2>
+            <label>Current password
+                <input type="password" @bind="currentPassword" autocomplete="current-password" />
+            </label>
+            <label>New password
+                <input type="password" @bind="newPassword" autocomplete="new-password" />
+            </label>
+            <button class="btn-ghost" @onclick="ChangePassword">Change password</button>
+        </section>
+    }
+</div>
+
+@code {
+    private AppUser? user;
+    private string? message;
+    private string currentPassword = "";
+    private string newPassword = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthState.GetAuthenticationStateAsync();
+        user = await UserManager.GetUserAsync(auth.User);
+    }
+
+    private async Task SaveProfile()
+    {
+        if (user is null) return;
+        var result = await UserManager.UpdateAsync(user);
+        message = result.Succeeded ? "Profile saved." : string.Join(" ", result.Errors.Select(e => e.Description));
+    }
+
+    private async Task ChangePassword()
+    {
+        if (user is null) return;
+        var result = await UserManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        message = result.Succeeded ? "Password changed." : string.Join(" ", result.Errors.Select(e => e.Description));
+        currentPassword = newPassword = "";
+    }
+}

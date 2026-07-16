@@ -1,0 +1,239 @@
+@page "/chat"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@using System.Security.Claims
+@using System.Text.Json
+@inject ElectraChatService Electra
+@inject MarkdownService Markdown
+@inject IFileStorage Storage
+@inject AuthenticationStateProvider AuthState
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+@inject Microsoft.Extensions.Options.IOptionsMonitor<AiOptions> AiOpts
+
+<PageTitle>Electra — LiteCircuit</PageTitle>
+
+<div class="chat-shell">
+    <aside class="chat-sessions">
+        <button class="btn-copper btn-block" @onclick="NewSession">＋ New chat</button>
+        <ul>
+            @foreach (var s in sessions)
+            {
+                <li class="@(s.Id == current?.Id ? "active" : "")">
+                    <button class="session-title" @onclick="() => Open(s)">@s.Title</button>
+                    <button class="session-x" title="Delete chat" @onclick="() => Delete(s)">✕</button>
+                </li>
+            }
+        </ul>
+        <div class="chat-provider mono">
+            @AiOpts.CurrentValue.Provider · @AiOpts.CurrentValue.Resolve().Model
+        </div>
+    </aside>
+
+    <section class="chat-main">
+        @if (current is null)
+        {
+            <div class="chat-welcome">
+                <div class="electra-avatar big">⚡</div>
+                <h1>Electra</h1>
+                <p>Your PCB copilot. Ask about circuits, components, layout — or attach a schematic photo.</p>
+                <div class="chat-suggestions">
+                    <button class="chip-btn" @onclick='() => SendSuggestion("Design a 3.3V power supply from a LiPo battery")'>Design a 3.3V LiPo supply</button>
+                    <button class="chip-btn" @onclick='() => SendSuggestion("Find the cheapest MCU in the library with WiFi and check its stock")'>Cheapest WiFi MCU in stock</button>
+                    <button class="chip-btn" @onclick='() => SendSuggestion("Run DRC on my latest project and explain the violations")'>Run DRC on my project</button>
+                    <button class="chip-btn" @onclick='() => SendSuggestion("What resistor do I need for a red LED at 3.3V, 10mA? Show the math.")'>LED resistor math</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <header class="chat-head">
+                <span class="electra-avatar">⚡</span>
+                <div>
+                    <strong>@current.Title</strong>
+                    <div class="muted small">Electra · streaming · functions enabled</div>
+                </div>
+                <button class="btn-ghost btn-sm" title="Clear all messages in this chat" @onclick="ResetSession">Reset</button>
+            </header>
+
+            <div class="chat-thread" id="chat-thread">
+                @foreach (var m in messages)
+                {
+                    <div class="msg @(m.Role == "user" ? "msg-user" : "msg-bot")">
+                        @if (m.Role != "user")
+                        {
+                            <span class="electra-avatar">⚡</span>
+                        }
+                        <div class="msg-body">
+                            @((MarkupString)Markdown.ToHtml(m.Content))
+                            @foreach (var att in Attachments(m))
+                            {
+                                @if (att.IsImage)
+                                {
+                                    <img class="msg-image" src="@att.Url" alt="@att.Name" />
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                @if (streaming.Length > 0)
+                {
+                    <div class="msg msg-bot">
+                        <span class="electra-avatar">⚡</span>
+                        <div class="msg-body">@((MarkupString)Markdown.ToHtml(streaming.ToString()))<span class="caret">▋</span></div>
+                    </div>
+                }
+                else if (busy)
+                {
+                    <div class="msg msg-bot"><span class="electra-avatar">⚡</span><div class="msg-body typing"><i></i><i></i><i></i></div></div>
+                }
+            </div>
+
+            <footer class="chat-input">
+                @if (pending.Count > 0)
+                {
+                    <div class="pending-files">
+                        @foreach (var a in pending)
+                        {
+                            <span class="chip">@(a.IsImage ? "🖼" : "📄") @a.Name
+                                <button @onclick="() => pending.Remove(a)">✕</button>
+                            </span>
+                        }
+                    </div>
+                }
+                <div class="chat-input-row">
+                    <label class="attach-btn" title="Attach image or document">
+                        <span aria-hidden="true">📎</span>
+                        <InputFile OnChange="Upload" multiple />
+                    </label>
+                    <textarea placeholder="Ask Electra… (Enter to send, Shift+Enter for newline)"
+                              @bind="draft" @bind:event="oninput"
+                              @onkeydown="OnKey" @onkeydown:preventDefault="@enterPressed"
+                              disabled="@busy"></textarea>
+                    <button class="btn-copper" @onclick="Send" disabled="@(busy || string.IsNullOrWhiteSpace(draft))">Send ↑</button>
+                </div>
+            </footer>
+        }
+    </section>
+</div>
+
+@code {
+    private List<ChatSession> sessions = new();
+    private ChatSession? current;
+    private List<ChatMessage> messages = new();
+    private readonly List<ChatAttachment> pending = new();
+    private readonly System.Text.StringBuilder streaming = new();
+    private string draft = "";
+    private bool busy;
+    private bool enterPressed;
+    private string userId = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthState.GetAuthenticationStateAsync();
+        userId = auth.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        sessions = await Electra.GetSessionsAsync(userId);
+    }
+
+    private List<ChatAttachment> Attachments(ChatMessage m)
+    {
+        try { return JsonSerializer.Deserialize<List<ChatAttachment>>(m.AttachmentsJson) ?? new(); }
+        catch { return new(); }
+    }
+
+    private async Task NewSession()
+    {
+        current = await Electra.CreateSessionAsync(userId);
+        sessions.Insert(0, current);
+        messages = new();
+    }
+
+    private async Task Open(ChatSession s)
+    {
+        current = s;
+        messages = await Electra.GetMessagesAsync(s.Id);
+        await Scroll();
+    }
+
+    private async Task Delete(ChatSession s)
+    {
+        await Electra.DeleteSessionAsync(s.Id);
+        sessions.Remove(s);
+        if (current?.Id == s.Id) { current = null; messages = new(); }
+    }
+
+    private async Task ResetSession()
+    {
+        if (current is null) return;
+        await Electra.ResetSessionAsync(current.Id);
+        messages = new();
+    }
+
+    private async Task Upload(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles(5))
+        {
+            await using var stream = file.OpenReadStream(20 * 1024 * 1024);
+            var url = await Storage.SaveAsync(stream, file.Name, file.ContentType);
+            pending.Add(new ChatAttachment(url, file.Name, file.ContentType));
+        }
+    }
+
+    private async Task OnKey(KeyboardEventArgs e)
+    {
+        enterPressed = e.Key == "Enter" && !e.ShiftKey;
+        if (enterPressed && !busy && !string.IsNullOrWhiteSpace(draft))
+            await Send();
+    }
+
+    private async Task SendSuggestion(string text)
+    {
+        if (current is null) await NewSession();
+        draft = text;
+        await Send();
+    }
+
+    private async Task Send()
+    {
+        if (current is null || busy || string.IsNullOrWhiteSpace(draft)) return;
+        var text = draft.Trim();
+        var atts = pending.ToList();
+        draft = "";
+        pending.Clear();
+        busy = true;
+
+        messages.Add(new ChatMessage
+        {
+            Role = "user", Content = text,
+            AttachmentsJson = JsonSerializer.Serialize(atts),
+        });
+        StateHasChanged();
+        await Scroll();
+
+        var baseUrl = Nav.BaseUri;
+        try
+        {
+            await foreach (var chunk in Electra.StreamReplyAsync(current.Id, text, atts, baseUrl))
+            {
+                streaming.Append(chunk);
+                StateHasChanged();
+                await Scroll();
+            }
+        }
+        finally
+        {
+            messages = await Electra.GetMessagesAsync(current.Id);
+            streaming.Clear();
+            busy = false;
+            sessions = await Electra.GetSessionsAsync(userId);
+            current = sessions.FirstOrDefault(s => s.Id == current!.Id) ?? current;
+            StateHasChanged();
+            await Scroll();
+        }
+    }
+
+    private async Task Scroll()
+    {
+        try { await JS.InvokeVoidAsync("lc.scrollToBottom", "chat-thread"); } catch { }
+    }
+}

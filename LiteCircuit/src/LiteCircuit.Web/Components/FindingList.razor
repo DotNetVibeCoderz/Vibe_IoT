@@ -1,0 +1,20 @@
+@if (Items.Count == 0)
+{
+    <p class="muted">No findings.</p>
+}
+else
+{
+    <ul class="finding-list">
+        @foreach (var f in Items)
+        {
+            <li class="@f.Severity">
+                <strong>@f.Title</strong>
+                <span class="muted">@f.Detail</span>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    [Parameter] public List<LiteCircuit.Core.Pcb.CheckFinding> Items { get; set; } = new();
+}

@@ -1,0 +1,378 @@
+@page "/project/{Id:guid}/schematic"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@using System.Text.Json
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IJSRuntime JS
+@inject DesignAiService DesignAi
+@inject VersionControlService Vcs
+@inject AuthenticationStateProvider AuthState
+
+<PageTitle>Schematic — LiteCircuit</PageTitle>
+
+<div class="editor-shell">
+    <header class="editor-bar">
+        <ProjectTabs Id="Id" Active="schematic" Name="@(project?.Name ?? "")" />
+        <div class="editor-tools">
+            <select @bind="pendingType" title="Component to place">
+                <option value="resistor">Resistor</option>
+                <option value="capacitor">Capacitor</option>
+                <option value="inductor">Inductor</option>
+                <option value="led">LED</option>
+                <option value="diode">Diode</option>
+                <option value="transistor">Transistor</option>
+                <option value="ic">IC</option>
+                <option value="module">Module (ESP32…)</option>
+                <option value="regulator">Regulator</option>
+                <option value="sensor">Sensor</option>
+                <option value="display">Display</option>
+                <option value="connector">Connector</option>
+                <option value="button">Button</option>
+                <option value="crystal">Crystal</option>
+                <option value="audio">Buzzer/Audio</option>
+                <option value="battery">Battery/Source</option>
+            </select>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("place")' title="Place component (P)">＋ Place</button>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("wire")' title="Draw wire (W)">〰 Wire</button>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("select")' title="Select & move (S)">▲ Select</button>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("delete")' title="Delete on click (X)">✕ Delete</button>
+            <span class="sep"></span>
+            <button class="btn-ghost btn-sm" @onclick="ToggleAi">✨ AI generate</button>
+            <button class="btn-ghost btn-sm" @onclick="TogglePropsPanel" title="Show/hide properties (E)">
+                ☰ Properties @(showProps ? "◂" : "▸")
+            </button>
+            <button class="btn-ghost btn-sm" @onclick="Commit">⎘ Commit</button>
+            <button class="btn-copper btn-sm" @onclick="Save">@(saved ? "Saved ✓" : "Save")</button>
+        </div>
+    </header>
+
+    @if (aiOpen)
+    {
+        <div class="ai-bar">
+            <input placeholder="Describe the circuit… e.g. 'ESP32 board with BME280 sensor and two status LEDs'"
+                   @bind="aiPrompt" @onkeydown='e => { if (e.Key == "Enter") _ = Generate(); }' />
+            <button class="btn-copper btn-sm" @onclick="Generate" disabled="@aiBusy">
+                @(aiBusy ? "Electra is thinking…" : "Generate")
+            </button>
+            <button class="btn-ghost btn-sm" @onclick="ToggleAi">✕</button>
+        </div>
+        @if (aiMessage is not null)
+        {
+            <div class="ai-note">@aiMessage</div>
+        }
+    }
+
+    <div class="editor-split">
+        <div class="editor-canvas" id="sch-host"></div>
+
+        @if (showProps)
+        {
+            <aside class="editor-panel props-panel">
+                <div class="panel-head">
+                    <h2>Properties</h2>
+                    <button class="btn-ghost btn-sm" title="Hide (E)" @onclick="TogglePropsPanel">✕</button>
+                </div>
+
+                @if (selected.Count == 0)
+                {
+                    <p class="muted small">Select a component on the canvas to edit its parameters.
+                        Drag on empty space to block-select.</p>
+                }
+                else if (selected.Count == 1)
+                {
+                    var s = selected[0];
+                    <div class="prop-form">
+                        <div class="prop-type mono">@s.Type · @s.Pins pin(s)</div>
+
+                        <label>Reference
+                            <input @bind="editRef" @bind:after="Apply" placeholder="@s.Ref" />
+                        </label>
+
+                        <label>@ValueLabel(s.Type)
+                            <input @bind="editValue" @bind:after="Apply" list="value-suggestions"
+                                   placeholder="e.g. @(Suggestions(s.Type).FirstOrDefault() ?? "value")" />
+                            <datalist id="value-suggestions">
+                                @foreach (var v in Suggestions(s.Type))
+                                {
+                                    <option value="@v" />
+                                }
+                            </datalist>
+                        </label>
+
+                        @if (libOptions.Count > 0)
+                        {
+                            <label>Pick from library (@LibCategory(s.Type))
+                                <select @bind="libPick" @bind:after="ApplyLibPick">
+                                    <option value="">— choose a part —</option>
+                                    @foreach (var o in libOptions)
+                                    {
+                                        <option value="@o.Name">@o.Name (@o.Value) — $@o.PriceUsd</option>
+                                    }
+                                </select>
+                            </label>
+                        }
+
+                        <label>Rotation
+                            <select @bind="editRot" @bind:after="Apply">
+                                <option value="0">0°</option>
+                                <option value="90">90°</option>
+                                <option value="180">180°</option>
+                                <option value="270">270°</option>
+                            </select>
+                        </label>
+
+                        <button class="btn-ghost btn-sm danger btn-block" @onclick="DeleteSelected">✕ Delete component</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="prop-form">
+                        <p><strong>@selected.Count components</strong> selected:</p>
+                        <p class="mono small muted">@string.Join(", ", selected.Select(x => x.Ref))</p>
+                        <button class="btn-ghost btn-sm danger btn-block" @onclick="DeleteSelected">✕ Delete all selected</button>
+                        <p class="muted small">Use <kbd>R</kbd> to rotate and arrow keys to move the whole group.</p>
+                    </div>
+                }
+            </aside>
+        }
+    </div>
+
+    <footer class="editor-status mono" id="sch-status">@status</footer>
+    <div class="kbd-bar">
+        <span><kbd>S</kbd> select</span>
+        <span><kbd>P</kbd> place</span>
+        <span><kbd>W</kbd> wire</span>
+        <span><kbd>X</kbd> delete tool</span>
+        <span><kbd>E</kbd> properties</span>
+        <span class="kbd-sep"></span>
+        <span>drag on empty = <em>block select</em></span>
+        <span><kbd>Shift</kbd>+click add to selection</span>
+        <span><kbd>Ctrl</kbd>+<kbd>A</kbd> select all</span>
+        <span class="kbd-sep"></span>
+        <span><kbd>←→↑↓</kbd> move (<kbd>Shift</kbd> = fast)</span>
+        <span><kbd>R</kbd> rotate</span>
+        <span><kbd>Del</kbd> delete</span>
+        <span><kbd>Enter</kbd> finish wire</span>
+        <span><kbd>Esc</kbd> cancel</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PcbProject? project;
+    private IJSObjectReference? module;
+    private DotNetObjectReference<SchematicEditor>? selfRef;
+    private string pendingType = "resistor";
+    private string status = "select · click a component, or drag a box to select several";
+    private bool saved, aiOpen, aiBusy;
+    private string aiPrompt = "";
+    private string? aiMessage;
+
+    // property panel state
+    private bool showProps = true;
+    private List<SelInfo> selected = new();
+    private string editRef = "";
+    private string editValue = "";
+    private string editRot = "0";
+    private string libPick = "";
+    private List<LibOption> libOptions = new();
+    private string libLoadedFor = "";
+
+    private record SelInfo(string Id, string Ref, string Type, string Value, double Rot, int Pins);
+    private record LibOption(string Name, string Value, decimal PriceUsd);
+
+    private static readonly Dictionary<string, string[]> ValueSuggestions = new()
+    {
+        ["resistor"] = new[] { "10", "22", "47", "100", "220", "330", "470", "1k", "2.2k", "4.7k", "10k", "22k", "47k", "100k", "1M" },
+        ["capacitor"] = new[] { "10pF", "22pF", "100pF", "1nF", "10nF", "100nF", "1uF", "10uF", "100uF", "470uF" },
+        ["inductor"] = new[] { "1uH", "4.7uH", "10uH", "22uH", "100uH" },
+        ["led"] = new[] { "red", "green", "blue", "yellow", "white" },
+        ["diode"] = new[] { "1N4148", "1N4007", "SS34", "Zener 5.1V" },
+        ["transistor"] = new[] { "2N7002", "S8050", "S8550", "AO3401", "BC547" },
+        ["battery"] = new[] { "3.3", "5", "9", "12" },
+        ["crystal"] = new[] { "8MHz", "12MHz", "16MHz", "32.768kHz" },
+        ["regulator"] = new[] { "3.3V", "5V", "1.8V" },
+        ["button"] = new[] { "momentary", "toggle" },
+    };
+
+    private static readonly Dictionary<string, string> TypeToCategory = new()
+    {
+        ["ic"] = "IC", ["sensor"] = "Sensor", ["module"] = "Module", ["display"] = "Display",
+        ["regulator"] = "Regulator", ["connector"] = "Connector", ["crystal"] = "Crystal",
+        ["audio"] = "Audio", ["button"] = "Switch", ["led"] = "LED", ["diode"] = "Diode",
+        ["transistor"] = "Transistor",
+    };
+
+    private static string[] Suggestions(string type) =>
+        ValueSuggestions.TryGetValue(type, out var s) ? s : Array.Empty<string>();
+
+    private static string LibCategory(string type) =>
+        TypeToCategory.TryGetValue(type, out var c) ? c : "";
+
+    private static string ValueLabel(string type) => type switch
+    {
+        "resistor" => "Resistance (Ω)",
+        "capacitor" => "Capacitance",
+        "inductor" => "Inductance",
+        "battery" => "Voltage (V)",
+        "crystal" => "Frequency",
+        "led" => "Color",
+        "ic" or "sensor" or "module" or "display" => "Part / type",
+        _ => "Value",
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        project = await db.Projects.FindAsync(Id);
+        if (project is null) return;
+        selfRef = DotNetObjectReference.Create(this);
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/schematic.js");
+        await module.InvokeVoidAsync("init", selfRef, "sch-host", project.SchematicJson);
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void SetStatus(string text)
+    {
+        status = text;
+        saved = false;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public async Task OnSelectionChanged(string json)
+    {
+        try { selected = JsonSerializer.Deserialize<List<SelInfo>>(json, PcbJson.Options) ?? new(); }
+        catch { selected = new(); }
+
+        if (selected.Count == 1)
+        {
+            var s = selected[0];
+            editRef = s.Ref;
+            editValue = s.Value;
+            editRot = ((int)s.Rot).ToString();
+            libPick = "";
+            await LoadLibOptions(s.Type);
+        }
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void TogglePropsPanel()
+    {
+        showProps = !showProps;
+        StateHasChanged();
+    }
+
+    private async Task LoadLibOptions(string type)
+    {
+        var cat = LibCategory(type);
+        if (cat == libLoadedFor) return;
+        libLoadedFor = cat;
+        if (cat == "") { libOptions = new(); return; }
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var cats = type == "module" ? new[] { "Module", "MCU" } : new[] { cat };
+        libOptions = await db.Components.AsNoTracking()
+            .Where(c => cats.Contains(c.Category))
+            .OrderBy(c => c.Name)
+            .Select(c => new LibOption(c.Name, c.Value, c.PriceUsd))
+            .ToListAsync();
+    }
+
+    private async Task Apply()
+    {
+        if (module is null || selected.Count != 1) return;
+        var props = JsonSerializer.Serialize(new { @ref = editRef, value = editValue, rot = int.Parse(editRot) });
+        await module.InvokeVoidAsync("updateComponent", selected[0].Id, props);
+    }
+
+    private async Task ApplyLibPick()
+    {
+        if (string.IsNullOrEmpty(libPick) || selected.Count != 1) return;
+        var opt = libOptions.FirstOrDefault(o => o.Name == libPick);
+        if (opt is null) return;
+        // ICs/sensors/modules/displays are identified by part name; passives by their value
+        editValue = selected[0].Type is "ic" or "sensor" or "module" or "display" or "connector"
+            ? opt.Name
+            : (string.IsNullOrEmpty(opt.Value) ? opt.Name : opt.Value);
+        await Apply();
+    }
+
+    private async Task DeleteSelected()
+    {
+        if (module is null) return;
+        await module.InvokeVoidAsync("deleteSelection");
+    }
+
+    private async Task Tool(string tool)
+    {
+        if (module is null) return;
+        await module.InvokeVoidAsync("setTool", tool, pendingType);
+    }
+
+    private async Task Save()
+    {
+        if (module is null || project is null) return;
+        var json = await module.InvokeAsync<string>("getJson");
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var p = await db.Projects.FindAsync(Id);
+        if (p is null) return;
+        p.SchematicJson = json;
+        p.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        saved = true;
+    }
+
+    private void ToggleAi() { aiOpen = !aiOpen; aiMessage = null; }
+
+    private async Task Generate()
+    {
+        if (string.IsNullOrWhiteSpace(aiPrompt) || module is null) return;
+        aiBusy = true;
+        aiMessage = null;
+        StateHasChanged();
+        var (sch, board, message) = await DesignAi.GenerateFromTextAsync(aiPrompt);
+        aiMessage = message;
+        if (sch is not null && board is not null)
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            var p = await db.Projects.FindAsync(Id);
+            if (p is not null)
+            {
+                board.Name = p.Name;
+                p.SchematicJson = PcbJson.Serialize(sch);
+                p.BoardJson = PcbJson.Serialize(board);
+                p.UpdatedAt = DateTime.UtcNow;
+                await db.SaveChangesAsync();
+                await module.InvokeVoidAsync("setJson", p.SchematicJson);
+            }
+        }
+        aiBusy = false;
+    }
+
+    private async Task Commit()
+    {
+        await Save();
+        var auth = await AuthState.GetAuthenticationStateAsync();
+        await Vcs.CommitAsync(Id, $"Schematic snapshot {DateTime.Now:HH:mm}", auth.User.Identity?.Name ?? "user");
+        status = "committed snapshot ✓";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (module is not null)
+            {
+                await module.InvokeVoidAsync("destroy");
+                await module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException) { }
+        selfRef?.Dispose();
+    }
+}

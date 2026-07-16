@@ -1,0 +1,245 @@
+@page "/project/{Id:guid}/pcb"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject IJSRuntime JS
+@inject DrcService Drc
+@inject AutoRouterService Router
+@inject DesignAiService DesignAi
+@inject VersionControlService Vcs
+@inject AuthenticationStateProvider AuthState
+
+<PageTitle>PCB layout — LiteCircuit</PageTitle>
+
+<div class="editor-shell">
+    <header class="editor-bar">
+        <ProjectTabs Id="Id" Active="pcb" Name="@(project?.Name ?? "")" />
+        <div class="editor-tools">
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("select")'>▲ Move</button>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("track")'>⌐ Track</button>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("via")'>◉ Via</button>
+            <button class="btn-ghost btn-sm" @onclick='() => Tool("delete")'>✕ Delete</button>
+            <span class="sep"></span>
+            <select @bind="layer" @bind:after="SetLayer" title="Active copper layer">
+                @foreach (var l in copperLayers)
+                {
+                    <option value="@l">@l @(l == "F.Cu" ? "(top)" : l == "B.Cu" ? "(bottom)" : "(inner)")</option>
+                }
+            </select>
+            <select @bind="trackWidth" @bind:after="SetTrackWidth" title="Track width">
+                <option value="0.15">0.15mm</option>
+                <option value="0.25">0.25mm</option>
+                <option value="0.4">0.4mm</option>
+                <option value="0.6">0.6mm</option>
+                <option value="1.0">1.0mm</option>
+            </select>
+            <select @bind="grid" @bind:after="SetGrid" title="Grid snap">
+                <option value="0.25">Grid 0.25</option>
+                <option value="0.5">Grid 0.5</option>
+                <option value="1">Grid 1.0</option>
+                <option value="1.27">Grid 1.27</option>
+            </select>
+            <span class="sep"></span>
+            <button class="btn-ghost btn-sm" @onclick="RunDrc">☑ DRC</button>
+            <button class="btn-ghost btn-sm" @onclick="AutoRoute" disabled="@routing">@(routing ? "Routing…" : "⚡ Auto-route")</button>
+            <button class="btn-ghost btn-sm" @onclick="Predict" disabled="@predicting">@(predicting ? "…" : "🔮 AI review")</button>
+            <button class="btn-ghost btn-sm" @onclick="Stackup">≣ Stackup</button>
+            <button class="btn-copper btn-sm" @onclick="Save">@(saved ? "Saved ✓" : "Save")</button>
+        </div>
+    </header>
+
+    <div class="editor-split">
+        <div class="editor-canvas" id="pcb-host"></div>
+        @if (panel is not null)
+        {
+            <aside class="editor-panel">
+                <div class="panel-head">
+                    <h2>@panelTitle</h2>
+                    <button class="btn-ghost btn-sm" @onclick="() => panel = null">✕</button>
+                </div>
+                <div class="panel-body">@panel</div>
+            </aside>
+        }
+    </div>
+    <footer class="editor-status mono">@status</footer>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PcbProject? project;
+    private IJSObjectReference? module;
+    private DotNetObjectReference<PcbEditor>? selfRef;
+    private string layer = "F.Cu";
+    private List<string> copperLayers = new() { "F.Cu", "B.Cu" };
+    private string trackWidth = "0.25";
+    private string grid = "0.5";
+    private string status = "move · drag components, wheel to zoom, right-drag to pan";
+    private bool saved, routing, predicting;
+    private RenderFragment? panel;
+    private string panelTitle = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await using var db = await DbFactory.CreateDbContextAsync();
+        project = await db.Projects.FindAsync(Id);
+        if (project is null) return;
+        selfRef = DotNetObjectReference.Create(this);
+        module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/pcb.js");
+        await module.InvokeVoidAsync("init", selfRef, "pcb-host", project.BoardJson);
+        copperLayers = PcbJson.ParseBoard(project.BoardJson).CopperLayers.Select(l => l.Name).ToList();
+        if (copperLayers.Count == 0) copperLayers = new() { "F.Cu", "B.Cu" };
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void SetStatus(string text)
+    {
+        status = text;
+        saved = false;
+        StateHasChanged();
+    }
+
+    private async Task Tool(string tool) { if (module is not null) await module.InvokeVoidAsync("setTool", tool); }
+    private async Task SetLayer() { if (module is not null) await module.InvokeVoidAsync("setLayer", layer); }
+    private async Task SetTrackWidth() { if (module is not null) await module.InvokeVoidAsync("setTrackWidth", double.Parse(trackWidth, System.Globalization.CultureInfo.InvariantCulture)); }
+    private async Task SetGrid() { if (module is not null) await module.InvokeVoidAsync("setGrid", double.Parse(grid, System.Globalization.CultureInfo.InvariantCulture)); }
+
+    private async Task<Board?> CurrentBoard()
+    {
+        if (module is null) return null;
+        var json = await module.InvokeAsync<string>("getJson");
+        return PcbJson.ParseBoard(json);
+    }
+
+    private async Task Save()
+    {
+        if (module is null) return;
+        var json = await module.InvokeAsync<string>("getJson");
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var p = await db.Projects.FindAsync(Id);
+        if (p is null) return;
+        p.BoardJson = json;
+        p.UpdatedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
+        saved = true;
+    }
+
+    private async Task RunDrc()
+    {
+        var board = await CurrentBoard();
+        if (board is null || module is null) return;
+        var violations = Drc.Run(board);
+        await module.InvokeVoidAsync("showDrc", PcbJson.Serialize(violations.Select(v => new { v.X, v.Y, v.Message, v.Severity })));
+        panelTitle = $"DRC — {violations.Count} finding(s)";
+        panel = __builder =>
+        {
+            if (violations.Count == 0)
+            {
+                <p class="ok">✔ No violations. Board passes all design rules.</p>
+            }
+            else
+            {
+                <ul class="drc-list">
+                    @foreach (var v in violations.Take(80))
+                    {
+                        <li class="@v.Severity"><strong>@v.Rule</strong> @v.Message</li>
+                    }
+                </ul>
+            }
+        };
+        status = $"DRC: {violations.Count} finding(s)";
+    }
+
+    private async Task AutoRoute()
+    {
+        var board = await CurrentBoard();
+        if (board is null || module is null) return;
+        routing = true;
+        StateHasChanged();
+        var (routed, report) = await Task.Run(() => Router.Route(board));
+        await module.InvokeVoidAsync("setJson", PcbJson.Serialize(routed));
+        status = report;
+        routing = false;
+    }
+
+    private async Task Predict()
+    {
+        var board = await CurrentBoard();
+        if (board is null) return;
+        predicting = true;
+        StateHasChanged();
+        var advice = await DesignAi.PredictErrorsAsync(board);
+        panelTitle = "Electra's design review";
+        panel = __builder =>
+        {
+            <div class="md-note">@((MarkupString)new MarkdownService().ToHtml(advice))</div>
+        };
+        predicting = false;
+    }
+
+    private async Task Stackup()
+    {
+        var board = await CurrentBoard();
+        if (board is null) return;
+        panelTitle = "Layer stackup";
+        panel = __builder =>
+        {
+            <table class="data-table small">
+                <thead><tr><th>Layer</th><th>Type</th><th>Material</th><th class="num">mm</th></tr></thead>
+                <tbody>
+                    @foreach (var l in board.Layers)
+                    {
+                        <tr class="@(l.Type == "copper" ? "copper-row" : "")">
+                            <td class="mono">@l.Name</td><td>@l.Type</td><td>@l.Material</td><td class="num mono">@l.ThicknessMm</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <p class="muted small">Total: @board.Layers.Sum(l => l.ThicknessMm).ToString("0.##")mm ·
+                @board.CopperLayers.Count() copper layer(s).</p>
+            <p class="strong small">Set copper layer count:</p>
+            <div class="row-actions">
+                @foreach (var n in new[] { 2, 4, 6, 8 })
+                {
+                    var count = n;
+                    <button class="btn-ghost btn-sm @(board.CopperLayers.Count() == count ? "danger" : "")"
+                            @onclick="() => RebuildStackup(count)">@count</button>
+                }
+            </div>
+            <p class="muted small">Tracks on removed inner layers move to B.Cu. The auto-router uses F.Cu/B.Cu;
+                inner layers are for manual routing (planes, power).</p>
+        };
+    }
+
+    private async Task RebuildStackup(int copperCount)
+    {
+        var board = await CurrentBoard();
+        if (board is null || module is null) return;
+        board.Layers = Board.DefaultStackup(copperCount);
+        var valid = board.CopperLayers.Select(l => l.Name).ToHashSet();
+        foreach (var t in board.Tracks.Where(t => !valid.Contains(t.Layer)))
+            t.Layer = "B.Cu";
+        await module.InvokeVoidAsync("setJson", PcbJson.Serialize(board));
+        copperLayers = board.CopperLayers.Select(l => l.Name).ToList();
+        if (!valid.Contains(layer)) { layer = "F.Cu"; await SetLayer(); }
+        status = $"stackup set to {copperCount} copper layers — press Save to keep it";
+        await Stackup(); // refresh panel content
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (module is not null)
+            {
+                await module.InvokeVoidAsync("destroy");
+                await module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException) { }
+        selfRef?.Dispose();
+    }
+}

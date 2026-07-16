@@ -1,0 +1,81 @@
+@page "/project/{Id:guid}/simulation"
+@attribute [Authorize]
+@rendermode InteractiveServer
+@inject IDbContextFactory<AppDbContext> DbFactory
+@inject SpiceService Spice
+
+<PageTitle>SPICE — LiteCircuit</PageTitle>
+
+<div class="editor-shell">
+    <header class="editor-bar">
+        <ProjectTabs Id="Id" Active="sim" Name="@(project?.Name ?? "")" />
+        <div class="editor-tools">
+            <button class="btn-copper btn-sm" @onclick="Run">▶ Run DC analysis</button>
+            <a class="btn-ghost btn-sm" href="/api/projects/@Id/netlist" target="_blank">⬇ Netlist (.cir)</a>
+        </div>
+    </header>
+
+    <div class="sim-grid">
+        <section class="panel">
+            <h2>SPICE netlist</h2>
+            <pre class="code-block mono">@(result?.Netlist ?? netlistPreview)</pre>
+            <p class="muted small">Runs in the built-in MNA solver (R, V, I sources; diodes approximated).
+                Export the netlist to run transient/AC analysis in ngspice or LTspice.</p>
+        </section>
+
+        <section class="panel">
+            <h2>DC operating point</h2>
+            @if (result is null)
+            {
+                <p class="empty">Press <em>Run DC analysis</em> to solve node voltages.</p>
+            }
+            else if (!result.Success)
+            {
+                <p class="warn">Analysis did not complete.</p>
+            }
+            else
+            {
+                <table class="data-table">
+                    <thead><tr><th>Node (net)</th><th class="num">Voltage</th></tr></thead>
+                    <tbody>
+                        @foreach (var (node, v) in result.NodeVoltages)
+                        {
+                            <tr><td class="mono">@node</td><td class="num mono">@v.ToString("0.####") V</td></tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (result?.Notes.Count > 0)
+            {
+                <ul class="mini-list muted small">
+                    @foreach (var n in result.Notes)
+                    {
+                        <li>ℹ @n</li>
+                    }
+                </ul>
+            }
+        </section>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private PcbProject? project;
+    private SpiceResult? result;
+    private string netlistPreview = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        project = await db.Projects.FindAsync(Id);
+        if (project is not null)
+            netlistPreview = Spice.BuildNetlist(PcbJson.ParseSchematic(project.SchematicJson));
+    }
+
+    private void Run()
+    {
+        if (project is null) return;
+        result = Spice.RunDcAnalysis(PcbJson.ParseSchematic(project.SchematicJson));
+    }
+}

@@ -1,0 +1,58 @@
+@inherits LayoutComponentBase
+
+<div class="app-shell">
+    <header class="topbar">
+        <a class="logo" href="/">
+            <svg class="logo-trace" viewBox="0 0 44 28" aria-hidden="true">
+                <path d="M2 22 H12 L20 14 H30" fill="none" />
+                <path d="M2 8 H8 L14 14" fill="none" />
+                <circle cx="30" cy="14" r="3" class="via" />
+                <circle cx="2" cy="22" r="2.2" class="via" />
+                <circle cx="2" cy="8" r="2.2" class="via" />
+            </svg>
+            <span class="logo-word">Lite<em>Circuit</em></span>
+        </a>
+
+        <nav class="topnav">
+            <a href="/projects">Projects</a>
+            <a href="/templates">Templates</a>
+            <a href="/library">Library</a>
+            <a href="/chat" class="electra-link">⚡ Electra</a>
+        </nav>
+
+        <div class="topbar-right">
+            <button class="icon-btn" title="Toggle dark/light theme" onclick="lc.toggleTheme()">◐</button>
+            <a class="icon-btn" href="/swagger" target="_blank" title="REST API (Swagger)">⟐</a>
+            <AuthorizeView>
+                <Authorized>
+                    <a class="user-chip" href="/account/profile" title="Profile">
+                        <span class="avatar">@Initial(context.User.Identity?.Name)</span>
+                    </a>
+                    <form method="post" action="/account/logout" class="inline-form">
+                        <button type="submit" class="btn-ghost btn-sm">Log out</button>
+                    </form>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="btn-copper btn-sm" href="/account/login">Log in</a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+    </header>
+
+    <main class="content">
+        @Body
+    </main>
+
+    <footer class="app-footer">
+        <svg class="logo-trace" viewBox="0 0 44 28" aria-hidden="true">
+            <path d="M2 14 H14 L20 8 H34" fill="none" />
+            <circle cx="34" cy="8" r="3" class="via" />
+        </svg>
+        <span>LiteCircuit — dibuat oleh <strong>Gravicode Studios</strong>, di-lead oleh <strong>Kang Fadhil</strong></span>
+    </footer>
+</div>
+
+@code {
+    private static string Initial(string? name) =>
+        string.IsNullOrEmpty(name) ? "?" : char.ToUpperInvariant(name[0]).ToString();
+}
