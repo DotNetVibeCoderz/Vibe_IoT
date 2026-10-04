@@ -16,7 +16,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Docs EN/ID | ✅ 25 + 25 pages, parity and links verified | `python build/check_docs_parity.py` |
 | Notebooks | ✅ 6 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 15 packages packed; templates and CLI verified end-to-end from the local feed · ⏳ not yet published | `dotnet pack IoTCom.Net.slnx -c Release -o artifacts/packages` |
+| NuGet packages | ✅ 14 packages (+12 symbol packages) published to nuget.org as `0.1.0-preview.1`; Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v0.1.0-preview.1` |
 
 ## Components
 
@@ -64,6 +64,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | Published 0.1.0-preview.1 to nuget.org (all CI jobs green on Windows, Linux, macOS, Alpine; natives for 9 RIDs). |
 | 2026-10-05 | First CI run: fixed a start/stop race in DMX, NMEA and Modbus server loops (token read lazily from a field; caught on Alpine) and musl `cdylib` output (`-crt-static`). |
 | 2026-10-05 | Moved into the `Vibe_IoT` monorepo (`IoTComNet/`); workflows scoped to this folder. NativeAOT: trim/AOT analysis of a published sample is warning-free (local native link needs the VS developer environment; CI covers it on Linux). |
 | 2026-10-05 | Phase 0 delivered as `0.1.0-preview.1`: core libraries, Modbus (C# + Rust), NMEA, Art-Net/sACN, MQTT, SenML, hosting, CLI, Gallery, gateway sample, console samples, templates, notebooks, EN/ID docs, CI definitions, NuGet icon. |
