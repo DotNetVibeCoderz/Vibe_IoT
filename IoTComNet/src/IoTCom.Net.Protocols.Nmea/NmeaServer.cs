@@ -59,9 +59,10 @@ public sealed class NmeaServer : EndpointBase, IServerEndpoint, IPublisher<strin
         _cts = new CancellationTokenSource();
         if (_options.ListenerFactory is not null)
         {
-            _listener = _options.ListenerFactory();
-            await _listener.StartAsync(ct).ConfigureAwait(false);
-            _ = Task.Run(() => AcceptLoopAsync(_listener, _cts.Token), CancellationToken.None);
+            var listener = _listener = _options.ListenerFactory();
+            await listener.StartAsync(ct).ConfigureAwait(false);
+            var token = _cts.Token;
+            _ = Task.Run(() => AcceptLoopAsync(listener, token), CancellationToken.None);
         }
         else
         {

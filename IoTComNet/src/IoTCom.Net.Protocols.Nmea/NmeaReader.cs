@@ -90,7 +90,8 @@ public sealed class NmeaReader : EndpointBase, IClientEndpoint, ISubscriber<Nmea
         }
         _transport = transport;
         _cts = new CancellationTokenSource();
-        _loop = Task.Run(() => ReadLoopAsync(transport, _cts.Token), CancellationToken.None);
+        var token = _cts.Token; // capture now: DisconnectAsync may clear _cts before the loop task starts
+        _loop = Task.Run(() => ReadLoopAsync(transport, token), CancellationToken.None);
         SetState(EndpointState.Connected);
     }
 

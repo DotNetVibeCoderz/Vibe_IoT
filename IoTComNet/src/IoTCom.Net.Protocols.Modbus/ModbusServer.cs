@@ -143,10 +143,11 @@ public sealed class ModbusServer : EndpointBase, IServerEndpoint
         {
             if (_options.ListenerFactory is not null)
             {
-                _listener = _options.ListenerFactory();
-                await _listener.StartAsync(ct).ConfigureAwait(false);
-                _acceptLoop = Task.Run(() => AcceptLoopAsync(_listener, _cts.Token), CancellationToken.None);
-                Logger.LogInformation("Modbus server listening on {Address}", _listener.LocalAddress);
+                var listener = _listener = _options.ListenerFactory();
+                await listener.StartAsync(ct).ConfigureAwait(false);
+                var token = _cts.Token; // capture now: StopAsync may clear the fields before the loop starts
+                _acceptLoop = Task.Run(() => AcceptLoopAsync(listener, token), CancellationToken.None);
+                Logger.LogInformation("Modbus server listening on {Address}", listener.LocalAddress);
             }
             else
             {

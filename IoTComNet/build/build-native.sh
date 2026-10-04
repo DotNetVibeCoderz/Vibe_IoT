@@ -40,6 +40,8 @@ for t in "${targets[@]}"; do
   rid="$(rid_for "$t")"
   echo "==> $t ($rid)"
   rustup target add "$t" >/dev/null 2>&1 || true
+  # musl defaults to +crt-static, which disables cdylib output.
+  if [[ "$t" == *musl* ]]; then export RUSTFLAGS="-C target-feature=-crt-static"; else unset RUSTFLAGS; fi
   if [[ "$t" == *linux-gnu* ]] && command -v cargo-zigbuild >/dev/null; then
     cargo zigbuild --release -p iotcom-modbus-native --target "$t.2.17"
   elif [[ "$t" == *linux* ]] && command -v cross >/dev/null && [[ "$t" != "$(rustc -vV | sed -n 's/host: //p')" ]]; then

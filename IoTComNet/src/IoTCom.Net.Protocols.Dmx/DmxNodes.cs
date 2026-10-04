@@ -92,7 +92,8 @@ public abstract class DmxNodeBase : EndpointBase, IServerEndpoint, IPublisher<Re
         Socket = s;
         OnStarted(s);
         _cts = new CancellationTokenSource();
-        _loop = Task.Run(() => ReceiveLoopAsync(s, _cts.Token), CancellationToken.None);
+        var token = _cts.Token; // capture now: StopAsync may clear _cts before the loop task starts
+        _loop = Task.Run(() => ReceiveLoopAsync(s, token), CancellationToken.None);
         SetState(EndpointState.Listening);
         return ValueTask.CompletedTask;
     }

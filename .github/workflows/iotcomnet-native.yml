@@ -48,6 +48,9 @@ jobs:
         run: cargo zigbuild --release -p iotcom-modbus-native --target ${{ matrix.target }}.2.17
       - name: Build (musl)
         if: matrix.tool == 'zigbuild' && contains(matrix.target, 'musl')
+        # musl defaults to +crt-static, which disables cdylib output; link the C runtime dynamically instead.
+        env:
+          RUSTFLAGS: -C target-feature=-crt-static
         run: cargo zigbuild --release -p iotcom-modbus-native --target ${{ matrix.target }}
       - name: Build
         if: matrix.tool == 'cargo'

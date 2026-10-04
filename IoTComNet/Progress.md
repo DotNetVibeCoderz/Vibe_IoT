@@ -64,6 +64,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | First CI run: fixed a start/stop race in DMX, NMEA and Modbus server loops (token read lazily from a field; caught on Alpine) and musl `cdylib` output (`-crt-static`). |
 | 2026-10-05 | Moved into the `Vibe_IoT` monorepo (`IoTComNet/`); workflows scoped to this folder. NativeAOT: trim/AOT analysis of a published sample is warning-free (local native link needs the VS developer environment; CI covers it on Linux). |
 | 2026-10-05 | Phase 0 delivered as `0.1.0-preview.1`: core libraries, Modbus (C# + Rust), NMEA, Art-Net/sACN, MQTT, SenML, hosting, CLI, Gallery, gateway sample, console samples, templates, notebooks, EN/ID docs, CI definitions, NuGet icon. |
 | 2026-10-04 | Solution design approved (solution-design.md). |
