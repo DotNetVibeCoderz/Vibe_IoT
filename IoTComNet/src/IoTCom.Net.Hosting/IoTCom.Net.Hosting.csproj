@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Hosting</RootNamespace>
+    <Description>Microsoft.Extensions.Hosting integration for IoTCom.Net: AddIoTCom() registration of named endpoints, a hosted service that starts servers and connects clients, a named endpoint registry, a shared traffic tap and health checks. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);hosting;dependency-injection;healthchecks;worker</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,101 @@
+[
+  {
+    "name": "read holding 0..10 rtu",
+    "mode": "rtu",
+    "direction": "request",
+    "transactionId": 0,
+    "unitId": 1,
+    "pdu": "030000000A",
+    "adu": "01030000000AC5CD"
+  },
+  {
+    "name": "spec read holding rtu",
+    "mode": "rtu",
+    "direction": "request",
+    "transactionId": 0,
+    "unitId": 17,
+    "pdu": "03006B0003",
+    "adu": "1103006B00037687"
+  },
+  {
+    "name": "spec read holding ascii",
+    "mode": "ascii",
+    "direction": "request",
+    "transactionId": 0,
+    "unitId": 17,
+    "pdu": "03006B0003",
+    "adu": "3A31313033303036423030303337450D0A"
+  },
+  {
+    "name": "spec read holding response rtu",
+    "mode": "rtu",
+    "direction": "response",
+    "transactionId": 0,
+    "unitId": 17,
+    "pdu": "0306022B00000064",
+    "adu": "110306022B00000064C8BA"
+  },
+  {
+    "name": "read holding tcp",
+    "mode": "tcp",
+    "direction": "request",
+    "transactionId": 1,
+    "unitId": 1,
+    "pdu": "030000000A",
+    "adu": "00010000000601030000000A"
+  },
+  {
+    "name": "write single coil tcp",
+    "mode": "tcp",
+    "direction": "request",
+    "transactionId": 4660,
+    "unitId": 255,
+    "pdu": "0500ACFF00",
+    "adu": "123400000006FF0500ACFF00"
+  },
+  {
+    "name": "write single register rtu",
+    "mode": "rtu",
+    "direction": "request",
+    "transactionId": 0,
+    "unitId": 1,
+    "pdu": "0600010003",
+    "adu": "010600010003980B"
+  },
+  {
+    "name": "write multiple registers rtu",
+    "mode": "rtu",
+    "direction": "request",
+    "transactionId": 0,
+    "unitId": 1,
+    "pdu": "100001000204000A0102",
+    "adu": "01100001000204000A01029230"
+  },
+  {
+    "name": "write multiple coils rtu",
+    "mode": "rtu",
+    "direction": "request",
+    "transactionId": 0,
+    "unitId": 1,
+    "pdu": "0F0013000A02CD01",
+    "adu": "010F0013000A02CD0172CB"
+  },
+  {
+    "name": "exception response rtu",
+    "mode": "rtu",
+    "direction": "response",
+    "transactionId": 0,
+    "unitId": 1,
+    "pdu": "8302",
+    "adu": "018302C0F1"
+  },
+  {
+    "name": "read coils response rtu",
+    "mode": "rtu",
+    "direction": "response",
+    "transactionId": 0,
+    "unitId": 1,
+    "pdu": "0103CD6B05",
+    "adu": "010103CD6B054282"
+  }
+]

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>IoTCom.Net.Gallery</RootNamespace>
+    <AssemblyName>IoTCom.Net.Gallery</AssemblyName>
+    <ApplicationIcon>..\..\assets\icon\icon.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <NoWarn>$(NoWarn);CA1812;CA2007;AVLN3001</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="..\..\assets\icon\icon-256.png" Link="Assets\icon.png" />
+    <!-- Demo sources are embedded so the Code tab shows exactly the file that was compiled. -->
+    <EmbeddedResource Include="Demos\*Demo.cs" LogicalName="Source.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <!-- Ship the Rust engine next to the app when it has been built locally (cargo build, release profile). -->
+  <ItemGroup Condition="Exists('$(RepoRoot)rust/target/release/iotcom_modbus.dll')">
+    <None Include="$(RepoRoot)rust/target/release/iotcom_modbus.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <ProjectReference Include="..\..\src\IoTCom.Net\IoTCom.Net.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Native.Modbus\IoTCom.Net.Native.Modbus.csproj" />
+  </ItemGroup>
+</Project>

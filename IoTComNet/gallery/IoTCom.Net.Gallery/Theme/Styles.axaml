@@ -1,0 +1,171 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="{StaticResource BodyFont}" />
+    <Setter Property="Background" Value="{DynamicResource Panel}" />
+    <Setter Property="Foreground" Value="{DynamicResource Ink}" />
+  </Style>
+
+  <!-- Typography -->
+  <Style Selector="TextBlock.eyebrow">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="LetterSpacing" Value="1.8" />
+    <Setter Property="Foreground" Value="{DynamicResource Ink2}" />
+  </Style>
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="36" />
+  </Style>
+  <Style Selector="TextBlock.readout">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="56" />
+    <Setter Property="LineHeight" Value="58" />
+  </Style>
+  <Style Selector="TextBlock.value">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="24" />
+  </Style>
+  <Style Selector=":is(TextBlock).muted">
+    <Setter Property="Foreground" Value="{DynamicResource Ink2}" />
+  </Style>
+  <Style Selector=":is(TextBlock).mono">
+    <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+    <Setter Property="FontSize" Value="12.5" />
+  </Style>
+  <Style Selector="TextBox.mono">
+    <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+  </Style>
+
+  <!-- Cards -->
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{DynamicResource Card}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Rule}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Padding" Value="18,16" />
+  </Style>
+
+  <!-- Chips -->
+  <Style Selector="Border.chip">
+    <Setter Property="BorderBrush" Value="{DynamicResource Rule}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Padding" Value="9,2" />
+    <Setter Property="Margin" Value="0,0,6,0" />
+  </Style>
+  <Style Selector="Border.chip > TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="LetterSpacing" Value="1" />
+  </Style>
+
+  <!-- Signal lamps -->
+  <Style Selector="Ellipse.lamp">
+    <Setter Property="Width" Value="12" />
+    <Setter Property="Height" Value="12" />
+    <Setter Property="Fill" Value="#7C848C" />
+  </Style>
+  <Style Selector="Ellipse.lamp.on">
+    <Setter Property="Fill" Value="{StaticResource Green}" />
+  </Style>
+  <Style Selector="Ellipse.lamp.warn">
+    <Setter Property="Fill" Value="{StaticResource Amber}" />
+  </Style>
+  <Style Selector="Ellipse.lamp.fault">
+    <Setter Property="Fill" Value="{StaticResource Red}" />
+  </Style>
+
+  <!-- Buttons -->
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{DynamicResource Ink}" />
+    <Setter Property="Foreground" Value="{DynamicResource Panel}" />
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Padding" Value="18,8" />
+    <Setter Property="CornerRadius" Value="8" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource Amber}" />
+    <Setter Property="Foreground" Value="#1D1D1D" />
+  </Style>
+  <Style Selector="Button.ghost">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Rule}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="Button.rail">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{StaticResource RailInk}" />
+    <Setter Property="BorderBrush" Value="#4A5058" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="999" />
+    <Setter Property="Padding" Value="12,4" />
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="Button.rail:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#3A4047" />
+    <Setter Property="Foreground" Value="{StaticResource RailInk}" />
+  </Style>
+
+  <!-- Navigation rail list -->
+  <Style Selector="ListBox.nav">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem">
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="Margin" Value="8,1" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Foreground" Value="{StaticResource RailInk}" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#33393F" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource RailSelected}" />
+  </Style>
+  <Style Selector="ListBox.nav ListBoxItem:selected">
+    <Setter Property="BorderBrush" Value="{StaticResource Amber}" />
+    <Setter Property="BorderThickness" Value="3,0,0,0" />
+  </Style>
+
+  <!-- Tabs: terminal-block labels -->
+  <Style Selector="TabControl.demo TabItem">
+    <Setter Property="FontFamily" Value="{StaticResource DisplayFont}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="17" />
+    <Setter Property="MinHeight" Value="38" />
+    <Setter Property="Padding" Value="2,0,22,0" />
+  </Style>
+  <Style Selector="TabControl.demo TabItem:selected /template/ Border#PART_SelectedPipe">
+    <Setter Property="Background" Value="{StaticResource Amber}" />
+  </Style>
+
+  <!-- Frame lane tiles -->
+  <Style Selector="Border.byte">
+    <Setter Property="Padding" Value="4,3" />
+    <Setter Property="MinWidth" Value="26" />
+    <Setter Property="Margin" Value="0,0,1,1" />
+  </Style>
+  <Style Selector="Border.byte > TextBlock">
+    <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+    <Setter Property="FontSize" Value="11.5" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Slider">
+    <Setter Property="Foreground" Value="{StaticResource Amber}" />
+  </Style>
+</Styles>

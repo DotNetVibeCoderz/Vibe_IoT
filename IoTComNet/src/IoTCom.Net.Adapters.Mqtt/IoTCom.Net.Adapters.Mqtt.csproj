@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Mqtt</RootNamespace>
+    <Description>MQTT 3.1.1/5.0 for IoTCom.Net as an adapter over MQTTnet (not a rewrite): IPublisher/ISubscriber with IAsyncEnumerable subscriptions, automatic reconnect + resubscribe, JSON helpers, traffic tap, plus an embeddable broker for tests, gateways and demos. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);mqtt;mqttnet;broker;pubsub</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <PackageReference Include="MQTTnet" />
+    <PackageReference Include="MQTTnet.Server" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,12 @@
+[package]
+name = "iotcom-core"
+description = "IoTCom.Net core: the sans-I/O Machine trait, time and error types shared by every protocol crate."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,29 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+artifacts/
+BenchmarkDotNet.Artifacts/
+*.nupkg
+*.snupkg
+
+# Rust
+rust/target/
+**/*.rs.bk
+
+# Node / VS Code extension
+node_modules/
+out/
+*.vsix
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+
+# Never commit credentials
+PackageCredentials.txt
+*.pfx

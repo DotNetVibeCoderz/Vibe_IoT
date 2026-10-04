@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net</RootNamespace>
+    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, MQTT, SenML, serial transport and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);nmea;artnet;sacn;senml;serial</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Abstractions\IoTCom.Net.Abstractions.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Framing\IoTCom.Net.Framing.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Transport.Serial\IoTCom.Net.Transport.Serial.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Nmea\IoTCom.Net.Protocols.Nmea.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Dmx\IoTCom.Net.Protocols.Dmx.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Adapters.Mqtt\IoTCom.Net.Adapters.Mqtt.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Serialization.SenML\IoTCom.Net.Serialization.SenML.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />
+  </ItemGroup>
+</Project>

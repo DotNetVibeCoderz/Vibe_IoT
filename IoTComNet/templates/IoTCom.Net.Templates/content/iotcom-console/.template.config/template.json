@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Gravicode Studios (led by Kang Fadhil)",
+  "classifications": [ "IoT", "Console", "Modbus", "MQTT", "NMEA" ],
+  "identity": "IoTCom.Net.Templates.Console",
+  "name": "IoTCom.Net console app",
+  "description": "A console app that talks to a device with IoTCom.Net. Runs against a built-in simulator until you point it at real hardware.",
+  "shortName": "iotcom-console",
+  "sourceName": "IoTComConsole",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" },
+  "symbols": {
+    "protocol": {
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "modbus",
+      "description": "Protocol to start with.",
+      "choices": [
+        { "choice": "modbus", "description": "Modbus TCP master + virtual PLC simulator" },
+        { "choice": "nmea", "description": "NMEA 0183 GPS reader + simulated receiver" },
+        { "choice": "mqtt", "description": "MQTT publish/subscribe + embedded broker" }
+      ]
+    },
+    "lang": {
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "en",
+      "description": "Language of comments and README.",
+      "choices": [
+        { "choice": "en", "description": "English" },
+        { "choice": "id", "description": "Bahasa Indonesia" }
+      ]
+    },
+    "iotcomVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "0.1.0-preview.1",
+      "replaces": "IOTCOM_VERSION",
+      "description": "IoTCom.Net package version."
+    },
+    "isModbus": { "type": "computed", "value": "(protocol == \"modbus\")" },
+    "isNmea": { "type": "computed", "value": "(protocol == \"nmea\")" },
+    "isMqtt": { "type": "computed", "value": "(protocol == \"mqtt\")" },
+    "isId": { "type": "computed", "value": "(lang == \"id\")" }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        { "condition": "(isId)", "exclude": [ "README.md" ], "rename": { "README.id.md": "README.md" } },
+        { "condition": "(!isId)", "exclude": [ "README.id.md" ] }
+      ]
+    }
+  ],
+  "postActions": [
+    { "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025", "description": "Restore NuGet packages.", "manualInstructions": [ { "text": "Run 'dotnet restore'" } ], "continueOnError": true }
+  ]
+}

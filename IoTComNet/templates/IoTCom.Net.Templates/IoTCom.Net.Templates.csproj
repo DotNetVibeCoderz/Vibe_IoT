@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageId>IoTCom.Net.Templates</PackageId>
+    <Title>IoTCom.Net project templates</Title>
+    <Description>dotnet new templates for IoTCom.Net: iotcom-console (Modbus, NMEA or MQTT starter that runs against a built-in simulator) and iotcom-worker (edge gateway worker service with health checks and Docker support). Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>dotnet-new;templates;iot;modbus;mqtt;nmea;gravicode;iotcom</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPackable>true</IsPackable>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);NU5128;NU5110;NU5111</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="content\**\*" Exclude="content\**\bin\**;content\**\obj\**" />
+    <None Include="$(RepoRoot)assets/icon/icon.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(RepoRoot)assets/nuget/README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+</Project>

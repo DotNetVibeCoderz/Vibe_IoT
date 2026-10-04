@@ -1,0 +1,12 @@
+IoTCom.Net
+Copyright 2026 Gravicode Studios (led by Kang Fadhil)
+
+This product includes software developed at Gravicode Studios.
+
+Third-party components:
+- MQTTnet (MIT) — https://github.com/dotnet/MQTTnet
+- Avalonia (MIT) — https://github.com/AvaloniaUI/Avalonia
+- CommunityToolkit.Mvvm (MIT) — https://github.com/CommunityToolkit/dotnet
+- Spectre.Console (MIT) — https://github.com/spectreconsole/spectre.console
+- Barlow, Barlow Condensed (SIL Open Font License 1.1) — https://github.com/jpt/barlow
+- JetBrains Mono (SIL Open Font License 1.1) — https://github.com/JetBrains/JetBrainsMono

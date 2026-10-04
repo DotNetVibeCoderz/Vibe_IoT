@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Transport.Serial</RootNamespace>
+    <Description>Serial-port transport (RS-232/422/485, USB CDC) for IoTCom.Net built on System.IO.Ports, with UseSerial() builder extensions for every protocol. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);serial;rs485;rs232;uart</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <PackageReference Include="System.IO.Ports" />
+  </ItemGroup>
+</Project>

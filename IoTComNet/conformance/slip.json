@@ -1,0 +1,17 @@
+[
+  {
+    "name": "plain",
+    "decoded": "010203",
+    "encoded": "C0010203C0"
+  },
+  {
+    "name": "end and esc",
+    "decoded": "C0DB01",
+    "encoded": "C0DBDCDBDD01C0"
+  },
+  {
+    "name": "empty",
+    "decoded": "",
+    "encoded": "C0C0"
+  }
+]

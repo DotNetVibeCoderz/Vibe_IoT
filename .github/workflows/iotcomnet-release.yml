@@ -1,0 +1,47 @@
+name: IoTCom.Net release
+
+# Tag iotcomnet-vX.Y.Z[-suffix] (prefixed: this repository hosts several projects) → build natives for every RID, pack all NuGet packages (with SourceLink, symbols)
+# and push them to nuget.org using the NUGET_API_KEY repository secret.
+on:
+  push:
+    tags: ["iotcomnet-v*"]
+
+jobs:
+  native:
+    uses: ./.github/workflows/iotcomnet-native.yml
+
+  pack:
+    needs: native
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: native-*
+          path: IoTComNet/artifacts/native-download
+      - name: Arrange runtimes
+        run: |
+          for d in artifacts/native-download/native-*; do
+            rid="${d##*/native-}"
+            mkdir -p "artifacts/native/$rid" && cp "$d"/* "artifacts/native/$rid/"
+          done
+          ls -R artifacts/native
+      - name: Version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#iotcomnet-v}" >> "$GITHUB_ENV"
+      - run: dotnet test tests/IoTCom.Net.Tests -c Release
+      - run: dotnet pack IoTCom.Net.slnx -c Release -p:IoTComVersion=$VERSION -p:CI=true -o artifacts/packages
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: IoTComNet/artifacts/packages
+      - name: Push to nuget.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push "artifacts/packages/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

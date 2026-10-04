@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Native.Modbus</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Rust-powered Modbus master for IoTCom.Net: the sans-I/O iotcom-modbus state machine (memory-safe, fuzzed) driven from .NET through a C ABI with LibraryImport and SafeHandle. Drop-in IModbusClient implementation. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);modbus;rust;native;ffi;sans-io</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
+  </ItemGroup>
+
+  <!--
+    Native binaries. CI places one folder per RID under artifacts/native/{rid}/ (see build/build-native.*).
+    A local `cargo build -release` result is picked up for win-x64 / linux-x64 / osx-arm64 developer builds.
+  -->
+  <ItemGroup>
+    <NativeArtifact Include="$(RepoRoot)artifacts/native/**/*iotcom_modbus*" />
+    <None Include="@(NativeArtifact)" Pack="true" PackagePath="runtimes/%(RecursiveDir)native/%(Filename)%(Extension)" Visible="false" />
+  </ItemGroup>
+</Project>

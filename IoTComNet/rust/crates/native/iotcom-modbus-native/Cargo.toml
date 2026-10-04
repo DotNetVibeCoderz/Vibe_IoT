@@ -1,0 +1,22 @@
+[package]
+name = "iotcom-modbus-native"
+description = "C ABI for iotcom-modbus, consumed by the IoTCom.Net.Native.Modbus NuGet package."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+name = "iotcom_modbus"
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[dependencies]
+iotcom-core.workspace = true
+iotcom-ffi-support.workspace = true
+modbus = { package = "iotcom-modbus", path = "../../iotcom-modbus" }
+
+[lints]
+workspace = true

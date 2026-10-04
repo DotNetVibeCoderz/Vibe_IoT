@@ -1,0 +1,109 @@
+<p align="center"><img src="assets/icon/icon-256.png" width="112" alt="IoTCom.Net"></p>
+
+<h1 align="center">IoTCom.Net</h1>
+
+<p align="center"><b>A complete IoT communication protocol library for .NET 10 — with a Rust core where it matters.</b><br>
+Built by <b>Gravicode Studios</b>, led by <b>Kang Fadhil</b> · <a href="README.id.md">Bahasa Indonesia</a></p>
+
+<p align="center">
+<img alt=".NET 10" src="https://img.shields.io/badge/.NET-10-512BD4">
+<img alt="Rust" src="https://img.shields.io/badge/Rust-stable-B7410E">
+<img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-2E9E5B">
+<img alt="Status" src="https://img.shields.io/badge/status-preview-F2A900">
+</p>
+
+![IoTCom.Net Gallery — smart factory PLC](docs/images/gallery-modbus.png)
+
+One consistent model — **client, server, publisher, subscriber** — for industrial, navigation, lighting and messaging
+protocols. Every protocol ships a **simulator**, so everything (tests, samples, notebooks, the Gallery) runs without
+hardware. What .NET already does well is not rebuilt; mature libraries are wrapped; only real gaps are implemented —
+in C#, or in memory-safe Rust behind a narrow C ABI.
+
+```csharp
+await using var plc = ModbusClient.Create(o => o.UseTcp("192.168.1.10", 502).WithUnitId(1));
+ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
+```
+
+## What's inside
+
+| | |
+|---|---|
+| **Modbus TCP / RTU / ASCII** | master + slave + virtual PLC simulator, TCP pipelining, read-only safety mode, device identification — and an optional **Rust engine** (`NativeModbusClient`) |
+| **NMEA 0183** | checksum-validated parser and builder, typed GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GNSS fix aggregator, NMEA server, GPS simulator |
+| **Art-Net 4 · sACN (E1.31)** | DMX512 over IP: send, receive, ArtPoll discovery, multicast, priorities, universe model with fades |
+| **MQTT 3.1.1 / 5.0** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
+| **SenML (RFC 8428)** | JSON + CBOR, reflection-free, base-field resolution |
+| **Framing** | CRC catalogue (23 presets, 8–64 bit), LRC, SLIP, COBS, HDLC, streaming decoders on `System.IO.Pipelines` |
+| **Core** | TCP / serial / in-memory transports, traffic tap (*frame lane*), OpenTelemetry metrics & traces, reconnect policy, hosting + health checks |
+
+Plus: the **IoTCom.Net Gallery** desktop app, the **`iotcom` CLI**, an **edge gateway** web sample with a live HMI
+dashboard, console samples, `dotnet new` **templates**, Polyglot **notebooks** and **documentation in English and
+Bahasa Indonesia**.
+
+## See it
+
+<table>
+<tr><td><img src="docs/images/gateway-dashboard.png" alt="Gateway dashboard"><br><sub>Edge gateway: Modbus → MQTT with a live HMI dashboard and the decoded wire</sub></td>
+<td><img src="docs/images/gallery-traffic.png" alt="Gallery traffic"><br><sub>Gallery: every frame decoded field by field</sub></td></tr>
+<tr><td><img src="docs/images/gallery-nmea.png" alt="NMEA"><br><sub>GNSS tracker over NMEA 0183</sub></td>
+<td><img src="docs/images/gallery-lighting.png" alt="Art-Net"><br><sub>Stage lighting over Art-Net</sub></td></tr>
+<tr><td><img src="docs/images/gallery-workbench.png" alt="Workbench"><br><sub>Frame & checksum workbench</sub></td>
+<td><img src="docs/images/cli.png" alt="CLI"><br><sub><code>iotcom</code> — decode, read, CRC from the terminal</sub></td></tr>
+</table>
+
+## Get started
+
+```bash
+dotnet add package IoTCom.Net --prerelease            # libraries (meta-package)
+dotnet tool install -g IoTCom.Net.Cli --prerelease    # iotcom CLI
+dotnet new install IoTCom.Net.Templates               # dotnet new iotcom-console / iotcom-worker
+
+iotcom modbus serve --port 1502 --simulate            # a virtual PLC…
+iotcom modbus read --port 1502 --table input --count 8 --watch 1000   # …and a live view
+```
+
+Read the [quickstart](docs/en/getting-started/quickstart.md), then browse the [documentation](docs/en/index.md).
+
+## Run the apps from source
+
+```bash
+dotnet run --project gallery/IoTCom.Net.Gallery                          # desktop Gallery
+dotnet run --project samples/web/IoTCom.Gateway --urls http://localhost:5080
+dotnet run --project samples/console/ModbusMaster -- --simulate
+```
+
+## Build and test
+
+```bash
+dotnet build IoTCom.Net.slnx
+dotnet test tests/IoTCom.Net.Tests                  # 190+ tests incl. cross-language conformance
+cd rust && cargo test --workspace && cargo build --release   # Rust core + iotcom_modbus native library
+python build/check_docs_parity.py                   # EN/ID parity + link check
+```
+
+## Repository layout
+
+```
+src/            C# packages (Abstractions, Core, Framing, Transport.Serial, Protocols.*, Adapters.Mqtt, Serialization.SenML, Hosting, Native.Modbus, meta)
+rust/           Rust workspace: iotcom-core (sans-I/O Machine), iotcom-ffi-support, iotcom-modbus, native cdylibs
+conformance/    shared test vectors run by both C# and Rust
+tests/          xUnit tests
+samples/        console samples and the IoTCom.Gateway web sample
+gallery/        IoTCom.Net Gallery (Avalonia) + headless screenshot renderer
+tools/          iotcom CLI
+templates/      dotnet new templates
+notebooks/      Polyglot notebooks (EN + ID)
+docs/           documentation (docs/en, docs/id) and images
+build/          native cross-build, docs/notebook gates, screenshot tooling
+```
+
+## Project
+
+- [PLAN.md](PLAN.md) — roadmap · [Progress.md](Progress.md) — development tracking
+- [solution-design.md](solution-design.md) — the original design document (Bahasa Indonesia)
+- [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CHANGELOG.md](CHANGELOG.md)
+- License: [Apache-2.0](LICENSE)
+
+---
+
+<p align="center"><sub>IoTCom.Net — built by Gravicode Studios, led by Kang Fadhil.</sub></p>

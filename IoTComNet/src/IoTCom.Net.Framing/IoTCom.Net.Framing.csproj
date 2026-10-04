@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Framing</RootNamespace>
+    <Description>Allocation-free framing and checksum toolkit for embedded links: CRC catalog (CRC-8/16/24/32/64, 20+ presets incl. Modbus, X.25, MCRF4XX/MAVLink, DNP, CRC-32C), LRC, SLIP, COBS and async-HDLC with streaming decoders for System.IO.Pipelines. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);crc;slip;cobs;hdlc;framing;checksum</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Abstractions\IoTCom.Net.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

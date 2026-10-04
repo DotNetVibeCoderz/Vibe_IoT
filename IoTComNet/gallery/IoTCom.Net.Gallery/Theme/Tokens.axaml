@@ -1,0 +1,63 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- IoTCom.Net visual language: RAL 7035 panel, RAL 7016 anthracite structure, IEC 60073 signal lamps. -->
+  <FontFamily x:Key="DisplayFont">avares://IoTCom.Net.Gallery/Assets/Fonts#Barlow Condensed</FontFamily>
+  <FontFamily x:Key="BodyFont">avares://IoTCom.Net.Gallery/Assets/Fonts#Barlow</FontFamily>
+  <FontFamily x:Key="MonoFont">avares://IoTCom.Net.Gallery/Assets/Fonts#JetBrains Mono</FontFamily>
+
+  <!-- Fluent accent = IEC "running" green, so toggles, sliders and checkboxes speak the lamp language. -->
+  <Color x:Key="SystemAccentColor">#2E9E5B</Color>
+  <Color x:Key="SystemAccentColorDark1">#278A4F</Color>
+  <Color x:Key="SystemAccentColorDark2">#207543</Color>
+  <Color x:Key="SystemAccentColorDark3">#185F36</Color>
+  <Color x:Key="SystemAccentColorLight1">#43B270</Color>
+  <Color x:Key="SystemAccentColorLight2">#63C287</Color>
+  <Color x:Key="SystemAccentColorLight3">#86D2A2</Color>
+
+  <Color x:Key="AmberColor">#F2A900</Color>
+  <Color x:Key="GreenColor">#2E9E5B</Color>
+  <Color x:Key="RedColor">#D23B2F</Color>
+  <Color x:Key="VioletColor">#7A5BB5</Color>
+  <SolidColorBrush x:Key="Amber" Color="{StaticResource AmberColor}" />
+  <SolidColorBrush x:Key="Green" Color="{StaticResource GreenColor}" />
+  <SolidColorBrush x:Key="Red" Color="{StaticResource RedColor}" />
+  <SolidColorBrush x:Key="Violet" Color="{StaticResource VioletColor}" />
+  <SolidColorBrush x:Key="Rail" Color="#2B3036" />
+  <SolidColorBrush x:Key="RailInk" Color="#E4E5E0" />
+  <SolidColorBrush x:Key="RailMuted" Color="#9AA1A8" />
+  <SolidColorBrush x:Key="RailSelected" Color="#3A4047" />
+  <SolidColorBrush x:Key="Header" Color="#8A9098" />
+
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="Panel" Color="#E4E5E0" />
+      <SolidColorBrush x:Key="Panel2" Color="#EEEFEA" />
+      <SolidColorBrush x:Key="Card" Color="#F7F7F4" />
+      <SolidColorBrush x:Key="Ink" Color="#2B3036" />
+      <SolidColorBrush x:Key="Ink2" Color="#5D646C" />
+      <SolidColorBrush x:Key="Rule" Color="#C9CBC4" />
+      <SolidColorBrush x:Key="Blue" Color="#1F5FBF" />
+      <SolidColorBrush x:Key="TileData" Color="#D5D7D0" />
+      <SolidColorBrush x:Key="TileInk" Color="#2B3036" />
+      <SolidColorBrush x:Key="CodeKeyword" Color="#1F5FBF" />
+      <SolidColorBrush x:Key="CodeString" Color="#A15C00" />
+      <SolidColorBrush x:Key="CodeComment" Color="#5E8F6E" />
+      <SolidColorBrush x:Key="CodeType" Color="#7A5BB5" />
+    </ResourceDictionary>
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="Panel" Color="#1E2226" />
+      <SolidColorBrush x:Key="Panel2" Color="#23282D" />
+      <SolidColorBrush x:Key="Card" Color="#2B3036" />
+      <SolidColorBrush x:Key="Ink" Color="#E4E5E0" />
+      <SolidColorBrush x:Key="Ink2" Color="#9AA1A8" />
+      <SolidColorBrush x:Key="Rule" Color="#3A4047" />
+      <SolidColorBrush x:Key="Blue" Color="#4F8CE6" />
+      <SolidColorBrush x:Key="TileData" Color="#4A5058" />
+      <SolidColorBrush x:Key="TileInk" Color="#E4E5E0" />
+      <SolidColorBrush x:Key="CodeKeyword" Color="#6FA3F0" />
+      <SolidColorBrush x:Key="CodeString" Color="#F2C35E" />
+      <SolidColorBrush x:Key="CodeComment" Color="#7FA88B" />
+      <SolidColorBrush x:Key="CodeType" Color="#B79BE6" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

@@ -1,0 +1,146 @@
+name: IoTCom.Net CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["IoTComNet/**", ".github/workflows/iotcomnet-*.yml"]
+  pull_request:
+    paths: ["IoTComNet/**", ".github/workflows/iotcomnet-*.yml"]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  rust:
+    name: Rust (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        working-directory: IoTComNet/rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: IoTComNet/rust
+      - run: cargo test --workspace
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo build --release -p iotcom-modbus-native
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-host-${{ matrix.os }}
+          path: |
+            IoTComNet/rust/target/release/iotcom_modbus.dll
+            IoTComNet/rust/target/release/libiotcom_modbus.so
+            IoTComNet/rust/target/release/libiotcom_modbus.dylib
+          if-no-files-found: ignore
+
+  supply-chain:
+    name: Supply chain
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: IoTComNet/rust/Cargo.toml
+          command: check
+          arguments: --all-features
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore IoTCom.Net.slnx
+      - name: Vulnerable NuGet packages
+        run: |
+          dotnet list IoTCom.Net.slnx package --vulnerable --include-transitive | tee vuln.txt
+          ! grep -q "has the following vulnerable packages" vuln.txt
+
+  dotnet:
+    name: .NET (${{ matrix.os }})
+    needs: rust
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-host-${{ matrix.os }}
+          path: IoTComNet/native
+      - name: Expose the native library to tests
+        shell: bash
+        run: echo "IOTCOM_NATIVE_PATH=$GITHUB_WORKSPACE/IoTComNet/native" >> "$GITHUB_ENV"
+      - run: dotnet build IoTCom.Net.slnx -c Release
+      - run: dotnet test tests/IoTCom.Net.Tests -c Release --no-build --logger trx --results-directory TestResults
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: IoTComNet/TestResults
+
+  alpine:
+    name: .NET (Alpine / musl)
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/sdk:10.0-alpine
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - run: dotnet test tests/IoTCom.Net.Tests -c Release
+
+  aot:
+    name: NativeAOT smoke test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish a sample with NativeAOT (trim/AOT analyzers must stay clean)
+        run: dotnet publish samples/console/ModbusMaster -c Release -r linux-x64 -p:PublishAot=true -p:TreatWarningsAsErrors=true
+      - run: timeout 5 samples/console/ModbusMaster/bin/Release/net10.0/linux-x64/publish/ModbusMaster --simulate || [ $? -eq 124 ]
+
+  docs:
+    name: Docs & notebooks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: EN/ID parity and links
+        run: python build/check_docs_parity.py
+      - name: Generated files are up to date
+        run: |
+          python conformance/generate.py
+          python build/generate_notebooks.py
+          git diff --exit-code -- conformance notebooks
+      - name: Run every notebook
+        run: python build/check_notebooks.py

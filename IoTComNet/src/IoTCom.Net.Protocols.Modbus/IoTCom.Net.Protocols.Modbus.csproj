@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Modbus</RootNamespace>
+    <Description>Modbus TCP / RTU / ASCII for .NET 10: master (client) and slave (server) in one unified API, pipelined TCP transactions, RTU-over-TCP, read-only safety mode, device identification, a thread-safe data store and a built-in device simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);modbus;modbus-tcp;modbus-rtu;plc;scada;industrial;simulator</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Framing\IoTCom.Net.Framing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="IoTCom.Net.Tests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Serialization.SenML</RootNamespace>
+    <Description>SenML (RFC 8428) for IoTCom.Net: JSON and CBOR codecs (reflection-free, AOT safe), base-field resolution, and a fluent pack builder for sensor measurements. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);senml;rfc8428;cbor;json;sensor;lwm2m</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Abstractions\IoTCom.Net.Abstractions.csproj" />
+    <PackageReference Include="System.Formats.Cbor" />
+  </ItemGroup>
+</Project>

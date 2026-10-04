@@ -1,5 +1,18 @@
 # Ringkasan Proyek
 
+## IoTComNet
+
+**IoTCom.Net** — library protokol komunikasi IoT yang lengkap untuk .NET 10 dengan inti Rust: Modbus TCP/RTU/ASCII
+(C# + mesin Rust), NMEA 0183, Art-Net/sACN, MQTT, SenML, CRC/SLIP/COBS/HDLC, hosting, CLI `iotcom`, Galeri Avalonia,
+sampel gateway web, template, notebook, dan dokumentasi English + Bahasa Indonesia. Dibuat oleh Gravicode Studios
+dipimpin oleh Kang Fadhil.
+
+- Mulai: [IoTComNet/README.id.md](IoTComNet/README.id.md) · [English](IoTComNet/README.md)
+- Build: `cd IoTComNet && dotnet build IoTCom.Net.slnx && dotnet test tests/IoTCom.Net.Tests`
+- Rilis NuGet: push tag `iotcomnet-vX.Y.Z` (workflow `.github/workflows/iotcomnet-release.yml`)
+
+---
+
 ## OBDReader
 
 **OBDReader** adalah aplikasi desktop modern berbasis C# dan Avalonia UI untuk membaca data mobil melalui konektor OBD-II (ELM327) via USB/Serial.

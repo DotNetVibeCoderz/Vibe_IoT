@@ -1,0 +1,163 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:IoTCom.Net.Gallery.ViewModels"
+        xmlns:i="using:IoTCom.Net.Gallery.Infrastructure"
+        xmlns:c="using:IoTCom.Net.Gallery.Controls"
+        x:Class="IoTCom.Net.Gallery.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="IoTCom.Net Gallery"
+        Icon="/Assets/icon.png"
+        Width="1400" Height="880" MinWidth="1040" MinHeight="640"
+        WindowStartupLocation="CenterScreen">
+
+  <Grid ColumnDefinitions="284,*">
+
+    <!-- Navigation rail: the cabinet door -->
+    <Border Background="{StaticResource Rail}">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="22,24,22,12" Spacing="14">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Image Source="/Assets/icon.png" Width="44" Height="44" />
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock Text="IoTCom.Net" FontFamily="{StaticResource DisplayFont}" FontWeight="Bold" FontSize="26" Foreground="{StaticResource RailInk}" />
+              <TextBlock Text="{Binding L[gallery]}" Classes="eyebrow" Foreground="{StaticResource Amber}" Margin="0,-2,0,0" />
+            </StackPanel>
+          </StackPanel>
+          <TextBlock Text="{Binding L[tagline]}" Foreground="{StaticResource RailMuted}" TextWrapping="Wrap" FontSize="13" />
+          <TextBox Text="{Binding Search}" Watermark="{Binding L[search]}" Background="#23282D" Foreground="{StaticResource RailInk}" BorderBrush="#4A5058" CornerRadius="8" />
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Margin="22,10,22,20" Spacing="10">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="rail" Content="{Binding LanguageLabel}" Command="{Binding ToggleLanguageCommand}" />
+            <Button Classes="rail" Content="{Binding ThemeLabel}" Command="{Binding ToggleThemeCommand}" />
+          </StackPanel>
+          <TextBlock Text="{Binding Credit}" Foreground="{StaticResource RailMuted}" FontSize="11.5" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding Version}" Foreground="#6E767E" FontFamily="{StaticResource MonoFont}" FontSize="11" />
+        </StackPanel>
+
+        <ListBox Classes="nav" ItemsSource="{Binding Nav}" SelectedItem="{Binding SelectedNav}">
+          <ListBox.DataTemplates>
+            <DataTemplate DataType="vm:CategoryHeader">
+              <TextBlock Text="{Binding Label}" Classes="eyebrow" Foreground="{StaticResource Amber}" FontSize="12" Margin="0,10,0,0" />
+            </DataTemplate>
+            <DataTemplate DataType="vm:DemoItem">
+              <StackPanel Spacing="1">
+                <TextBlock Text="{Binding Title}" FontSize="15.5" FontWeight="SemiBold" Foreground="{StaticResource RailInk}" />
+                <TextBlock Text="{Binding Tags}" FontSize="11.5" Foreground="{StaticResource RailMuted}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.DataTemplates>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <DockPanel Grid.Column="1">
+
+      <!-- Status bar: run lamp, status, and the latest frame on the wire -->
+      <Border DockPanel.Dock="Bottom" Background="{DynamicResource Card}" BorderBrush="{DynamicResource Rule}" BorderThickness="0,1,0,0" Padding="24,10">
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+          <Ellipse Width="12" Height="12" VerticalAlignment="Center" Fill="{Binding IsRunning, Converter={x:Static i:Converters.RunLamp}}" />
+          <TextBlock Grid.Column="1" Text="{Binding StatusText}" Margin="10,0,20,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Classes="muted" />
+          <c:FrameLaneView Grid.Column="2" Fields="{Binding LastFrame.Fields}" MaxWidth="560" MaxHeight="24" ClipToBounds="True" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="3" Margin="14,0,0,0" VerticalAlignment="Center" FontFamily="{StaticResource MonoFont}" FontSize="12" Classes="muted">
+            <Run Text="{Binding FrameCount}" /> <Run Text="{Binding L[frames]}" />
+          </TextBlock>
+        </Grid>
+      </Border>
+
+      <Grid Margin="32,26,32,0" RowDefinitions="Auto,*">
+        <StackPanel Spacing="8">
+          <TextBlock Text="{Binding CategoryLabel}" Classes="eyebrow" Foreground="{StaticResource Amber}" />
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding Title}" Classes="title" TextWrapping="Wrap" />
+            <Button Grid.Column="1" Classes="primary" VerticalAlignment="Center" Content="{Binding RunLabel}" Command="{Binding ToggleRunCommand}" IsVisible="{Binding CanToggle}" />
+          </Grid>
+          <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" MaxWidth="900" HorizontalAlignment="Left" FontSize="15" Classes="muted" />
+          <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+            <ItemsControl ItemsSource="{Binding Protocols}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <Border Classes="chip" BorderBrush="{DynamicResource Blue}"><TextBlock Text="{Binding}" Foreground="{DynamicResource Blue}" /></Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Border Classes="chip"><TextBlock Text="{Binding DifficultyLabel}" /></Border>
+            <Border Classes="chip" BorderBrush="{StaticResource Green}"><TextBlock Text="{Binding L[noHardware]}" Foreground="{StaticResource Green}" /></Border>
+          </StackPanel>
+        </StackPanel>
+
+        <TabControl x:Name="Tabs" Grid.Row="1" Classes="demo" Margin="0,14,0,0">
+          <TabItem x:Name="RunTab">
+            <ContentControl Content="{Binding SelectedDemo.View}" Margin="0,16,0,16" />
+          </TabItem>
+          <TabItem x:Name="CodeTab">
+            <DockPanel Margin="0,16,0,16">
+              <TextBlock DockPanel.Dock="Top" Text="{Binding L[sourceNote]}" Classes="muted" Margin="0,0,0,10" />
+              <Border Classes="card" Padding="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" Padding="18,14">
+                  <SelectableTextBlock x:Name="CodeView" Classes="mono" FontSize="13" Foreground="{DynamicResource Ink}" />
+                </ScrollViewer>
+              </Border>
+            </DockPanel>
+          </TabItem>
+          <TabItem x:Name="DocsTab">
+            <ScrollViewer Margin="0,16,0,16">
+              <StackPanel Spacing="16" MaxWidth="820" HorizontalAlignment="Left">
+                <TextBlock Text="{Binding DocsText}" TextWrapping="Wrap" FontSize="16" LineHeight="26" />
+                <Border Classes="card">
+                  <StackPanel Spacing="4">
+                    <TextBlock Text="docs" Classes="eyebrow" />
+                    <SelectableTextBlock Text="{Binding DocsLink}" Classes="mono" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+          <TabItem x:Name="TrafficTab">
+            <Grid RowDefinitions="Auto,*,Auto" Margin="0,16,0,16">
+              <StackPanel Orientation="Horizontal" Spacing="16" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#2F6FD6" /><TextBlock Text="address" Classes="muted" /></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#F2A900" /><TextBlock Text="function" Classes="muted" /></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#7A5BB5" /><TextBlock Text="length" Classes="muted" /></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#C9CBC4" /><TextBlock Text="data" Classes="muted" /></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#2E9E5B" /><TextBlock Text="checksum" Classes="muted" /></StackPanel>
+                <Button Classes="ghost" Content="{Binding L[clear]}" Command="{Binding ClearFramesCommand}" Padding="10,2" />
+              </StackPanel>
+              <Border Grid.Row="1" Classes="card" Padding="6">
+                <Panel>
+                  <TextBlock Text="{Binding L[noFrames]}" IsVisible="{Binding !HasFrames}" TextWrapping="Wrap" Margin="14" Classes="muted" MaxWidth="560" HorizontalAlignment="Left" />
+                  <ListBox ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" Background="Transparent">
+                    <ListBox.ItemTemplate>
+                      <DataTemplate DataType="i:FrameRow">
+                        <StackPanel Spacing="5" Margin="0,2">
+                          <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="{Binding Time}" FontFamily="{StaticResource MonoFont}" FontSize="11.5" Classes="muted" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Direction}" FontFamily="{StaticResource DisplayFont}" FontWeight="Bold" Foreground="{Binding DirectionBrush}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding Summary}" VerticalAlignment="Center" />
+                          </StackPanel>
+                          <c:FrameLaneView Fields="{Binding Fields}" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                </Panel>
+              </Border>
+              <Border Grid.Row="2" Classes="card" Margin="0,10,0,0" MaxHeight="170">
+                <ScrollViewer>
+                  <Panel>
+                    <TextBlock Text="{Binding L[selectFrame]}" IsVisible="{Binding SelectedFrame, Converter={x:Static ObjectConverters.IsNull}}" Classes="muted" />
+                    <SelectableTextBlock Text="{Binding SelectedFrame.HexDump}" Classes="mono" />
+                  </Panel>
+                </ScrollViewer>
+              </Border>
+            </Grid>
+          </TabItem>
+        </TabControl>
+      </Grid>
+    </DockPanel>
+  </Grid>
+</Window>

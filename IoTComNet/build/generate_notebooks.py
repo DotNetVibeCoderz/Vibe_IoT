@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+"""Generates the EN/ID Polyglot (.NET Interactive) notebooks from one spec.
+
+Code cells are shared verbatim between languages; only the narrative differs — the docs parity rule
+(every EN page has an ID twin) applies to notebooks too.
+
+Run: python build/generate_notebooks.py
+"""
+import json
+import os
+
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
+VERSION = "0.1.0-preview.1"
+SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
+LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
+         "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
+         "> Bekerja dari hasil clone? Jalankan `dotnet pack -c Release -o artifacts/packages` di root repo lalu tambahkan\n"
+         "> `#i \"nuget: <repo>/artifacts/packages\"` sebelum baris `#r`.")
+CREDIT = ("*IoTCom.Net — built by Gravicode Studios, led by Kang Fadhil.*", "*IoTCom.Net — dibuat oleh Gravicode Studios dipimpin oleh Kang Fadhil.*")
+
+
+def md(en, id_):
+    return ("md", en, id_)
+
+
+def code(src):
+    return ("code", src)
+
+
+NOTEBOOKS = {
+    "00-start-here": [
+        md("# Start here — IoTCom.Net in 10 minutes\n\nIoTCom.Net speaks industrial, navigation, lighting and messaging protocols with one consistent API: "
+           "**clients** connect, **servers** serve, **publishers** publish, **subscribers** subscribe. Every protocol ships a simulator, "
+           "so every cell here runs without hardware.",
+           "# Mulai di sini — IoTCom.Net dalam 10 menit\n\nIoTCom.Net berbicara protokol industri, navigasi, pencahayaan, dan pesan dengan satu API yang konsisten: "
+           "**client** terhubung, **server** melayani, **publisher** menerbitkan, **subscriber** berlangganan. Setiap protokol punya simulator, "
+           "jadi setiap sel di sini berjalan tanpa perangkat keras."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## The shape of every endpoint\n\nAll endpoints expose `State` and `StateChanged`, are `IAsyncDisposable`, and are configured with a fluent builder. "
+           "Transports are swappable: `UseTcp`, `UseSerial`, `UseInMemory`.",
+           "## Bentuk setiap endpoint\n\nSemua endpoint memiliki `State` dan `StateChanged`, merupakan `IAsyncDisposable`, dan dikonfigurasi dengan builder fluent. "
+           "Transport bisa ditukar: `UseTcp`, `UseSerial`, `UseInMemory`."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Modbus;\nusing IoTCom.Net.Transports;\n\n"
+             "var link = new InMemoryTransportListener();\nvar server = ModbusServer.Create(o => o.ListenInMemory(link));\n"
+             "server.StateChanged += (_, e) => Console.WriteLine($\"server: {e.Previous} -> {e.Current}\");\nawait server.StartAsync();\n\n"
+             "var client = ModbusClient.Create(o => o.UseInMemory(link));\nserver.Store.HoldingRegisters[0] = 42;\n"
+             "Console.WriteLine($\"HR0 = {(await client.ReadHoldingRegistersAsync(0, 1))[0]}\");"),
+        md("## See the bytes\n\nAttach a `RecordingTap` to any endpoint to capture every frame — the same data the Gallery and CLI show as a *frame lane*.",
+           "## Lihat byte-nya\n\nPasang `RecordingTap` ke endpoint mana pun untuk menangkap setiap frame — data yang sama ditampilkan Galeri dan CLI sebagai *frame lane*."),
+        code("var tap = new RecordingTap();\nclient.AddTap(tap);\nawait client.ReadHoldingRegistersAsync(0, 2);\n"
+             "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
+        md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
+           "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
+           "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+    ],
+    "industrial/01-modbus": [
+        md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
+           "A *master* (client) asks; a *slave* (server) answers from four tables: coils, discrete inputs, input registers, holding registers.",
+           "# Modbus — master, slave, dan simulator\n\n**Apa itu.** Modbus adalah bahasa request/response yang umum di PLC, meter, drive, dan sensor. "
+           "*Master* (client) bertanya; *slave* (server) menjawab dari empat tabel: coil, discrete input, input register, holding register."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Server: a virtual PLC\n`ModbusSimulator.CreateVirtualPlc` animates temperature, motor speed, power and a production counter.",
+           "## Server: PLC virtual\n`ModbusSimulator.CreateVirtualPlc` menganimasikan suhu, kecepatan motor, daya, dan penghitung produksi."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Modbus;\nusing IoTCom.Net.Transports;\n\nvar link = new InMemoryTransportListener();\n"
+             "var store = new ModbusDataStore();\nvar plcServer = ModbusServer.Create(o => o.ListenInMemory(link).WithStore(store));\n"
+             "var simulator = ModbusSimulator.CreateVirtualPlc(store);\nawait plcServer.StartAsync();\nfor (var i = 0; i < 20; i++) simulator.Tick(0.25); // deterministic time\n"
+             "Console.WriteLine($\"temperature register = {store.InputRegisters[0]}\");"),
+        md("## Client: read and convert\nRegisters are 16-bit; 32-bit floats span two registers. `ModbusConvert` handles the four word orders found in the wild.",
+           "## Client: baca dan konversi\nRegister berukuran 16-bit; float 32-bit memakai dua register. `ModbusConvert` menangani empat urutan word yang ditemui di lapangan."),
+        code("var plc = ModbusClient.Create(o => o.UseInMemory(link).WithUnitId(1));\nvar ir = await plc.ReadInputRegistersAsync(0, 8);\n"
+             "Console.WriteLine($\"temperature {ir[0] / 10.0} °C, rpm {ir[3]}, power {ModbusConvert.ToSingle(ir.AsSpan(4, 2)):0.00} kW\");"),
+        md("## Write — and the read-only safety mode\nWrites change real equipment. `.AsReadOnly()` blocks them before anything reaches the wire.",
+           "## Tulis — dan mode aman read-only\nPenulisan mengubah peralatan sungguhan. `.AsReadOnly()` memblokirnya sebelum apa pun sampai ke jalur."),
+        code("await plc.WriteSingleCoilAsync(0, false); // stop the motor\nfor (var i = 0; i < 20; i++) simulator.Tick(0.25);\n"
+             "Console.WriteLine($\"rpm after stop: {(await plc.ReadInputRegistersAsync(3, 1))[0]}\");\n\n"
+             "var monitor = ModbusClient.Create(o => o.UseInMemory(link).AsReadOnly());\n"
+             "try { await monitor.WriteSingleRegisterAsync(0, 300); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }"),
+        md("## The Rust engine\n`NativeModbusClient` runs the same protocol through the sans-I/O Rust state machine. Same API, identical wire bytes.",
+           "## Mesin Rust\n`NativeModbusClient` menjalankan protokol yang sama lewat state machine Rust sans-I/O. API sama, byte di jalur identik."),
+        code("using IoTCom.Net.Native.Modbus;\nif (NativeModbusMaster.IsSupported)\n{\n"
+             "    await using var rust = NativeModbusClient.Create(o => o.UseInMemory(link));\n"
+             "    Console.WriteLine($\"via Rust: {string.Join(\", \", await rust.ReadHoldingRegistersAsync(0, 3))}\");\n}\n"
+             "else Console.WriteLine(\"Native library not available for this platform — the managed client covers everything.\");"),
+        md("## Troubleshooting\n- **Timeout**: wrong unit id, wrong port, or RTU parity/baud mismatch (Modbus RTU default is 8E1).\n"
+           "- **IllegalDataAddress**: address + count beyond the device map — check 0-based vs 1-based (40001 = HR0).\n"
+           "- **Garbage on RTU**: two masters on one bus, or missing termination resistors.\n\n"
+           "## Exercise\nAdd `simulator.AddSignal(ModbusTable.HoldingRegisters, 50, t => Math.Sin(t) * 100 + 100)` and plot HR50 over time.\n\n" + CREDIT[0],
+           "## Pemecahan masalah\n- **Timeout**: unit id salah, port salah, atau parity/baud RTU tidak cocok (default Modbus RTU adalah 8E1).\n"
+           "- **IllegalDataAddress**: alamat + jumlah melewati peta perangkat — periksa basis 0 vs basis 1 (40001 = HR0).\n"
+           "- **Data kacau pada RTU**: dua master di satu bus, atau resistor terminasi tidak terpasang.\n\n"
+           "## Latihan\nTambahkan `simulator.AddSignal(ModbusTable.HoldingRegisters, 50, t => Math.Sin(t) * 100 + 100)` lalu plot HR50 terhadap waktu.\n\n" + CREDIT[1]),
+    ],
+    "transport/02-framing-crc": [
+        md("# Framing and checksums\n\nSerial links need two things: a way to find frame boundaries (SLIP, COBS, HDLC) and a way to detect corruption (CRC). "
+           "IoTCom.Net.Framing has both, allocation-free and streaming.",
+           "# Framing dan checksum\n\nLink serial butuh dua hal: cara menemukan batas frame (SLIP, COBS, HDLC) dan cara mendeteksi kerusakan (CRC). "
+           "IoTCom.Net.Framing menyediakan keduanya, tanpa alokasi dan streaming."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## The CRC catalogue\nEvery preset is verified against its catalogue check value for ASCII `123456789`.",
+           "## Katalog CRC\nSetiap preset diverifikasi dengan nilai check katalog untuk ASCII `123456789`."),
+        code("using IoTCom.Net.Framing;\nforeach (var crc in CrcCatalog.All)\n"
+             "    Console.WriteLine($\"{crc.Parameters.Name,-18} 0x{crc.Compute(\"123456789\"u8):X}  ok={crc.SelfTest()}\");"),
+        md("## Same bytes, three framings", "## Byte yang sama, tiga framing"),
+        code("using System.Buffers;\nbyte[] payload = [0x7E, 0xC0, 0x00, 0x11, 0xDB];\nforeach (IFrameEncoder codec in new IFrameEncoder[] { new Slip(), new Cobs(), new Hdlc() })\n{\n"
+             "    var w = new ArrayBufferWriter<byte>();\n    codec.Encode(payload, w);\n"
+             "    Console.WriteLine($\"{codec.GetType().Name,-5} {IoTCom.Net.HexDump.ToHex(w.WrittenSpan)}\");\n}"),
+        md("## Streaming decode\nDecoders work on `ReadOnlySequence<byte>` straight from a `PipeReader`, so frames split across reads are handled.\n\n" + CREDIT[0],
+           "## Decode streaming\nDecoder bekerja pada `ReadOnlySequence<byte>` langsung dari `PipeReader`, sehingga frame yang terpotong di beberapa read tetap tertangani.\n\n" + CREDIT[1]),
+        code("using System.IO.Pipelines;\nvar pipe = new Pipe();\nvar cobs = new Cobs();\nawait pipe.Writer.WriteFrameAsync(cobs, new byte[] { 1, 0, 2 });\n"
+             "await pipe.Writer.WriteFrameAsync(cobs, new byte[] { 3, 4 });\nawait pipe.Writer.CompleteAsync();\n"
+             "await foreach (var frame in pipe.Reader.ReadFramesAsync(cobs)) Console.WriteLine(IoTCom.Net.HexDump.ToHex(frame));"),
+    ],
+    "navigation/03-nmea": [
+        md("# NMEA 0183 — GPS and GNSS\n\nGPS receivers, AIS transponders and marine instruments talk NMEA 0183: ASCII lines like `$GPGGA,...*47` with an XOR checksum.",
+           "# NMEA 0183 — GPS dan GNSS\n\nPenerima GPS, transponder AIS, dan instrumen kapal berbicara NMEA 0183: baris ASCII seperti `$GPGGA,...*47` dengan checksum XOR."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Parse a sentence", "## Urai sebuah kalimat"),
+        code("using IoTCom.Net.Protocols.Nmea;\nvar gga = (GgaMessage)NmeaParser.Parse(\"$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47\")!;\n"
+             "Console.WriteLine($\"{gga.Latitude:0.0000}, {gga.Longitude:0.0000} · {gga.Satellites} satellites · {gga.AltitudeMeters} m\");"),
+        md("## A simulated receiver and a reader\n`GnssState` merges GGA, RMC, GSA and GSV into one fix.",
+           "## Penerima simulasi dan pembaca\n`GnssState` menggabungkan GGA, RMC, GSA, dan GSV menjadi satu fix."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Transports;\nvar link = new InMemoryTransportListener();\n"
+             "var receiver = NmeaServer.Create(o => o.ListenInMemory(link));\nawait receiver.StartAsync();\n"
+             "var reader = NmeaReader.Create(o => o.UseInMemory(link));\nawait reader.ConnectAsync();\nawait Task.Delay(100);\n\n"
+             "var sim = new NmeaSimulator();\nforeach (var s in sim.GenerateEpoch(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30))) await receiver.BroadcastAsync(s);\n"
+             "await Task.Delay(200);\nvar fix = reader.Gnss.Current;\nConsole.WriteLine($\"{fix.Latitude:0.00000}, {fix.Longitude:0.00000} · {fix.SpeedKmh} km/h · {fix.SatellitesInView.Count} in view\");"),
+        md("## Troubleshooting\n- No data on serial: most receivers default to 9600 or 4800 baud, 8N1.\n- Fix but no position: check RMC status `A` (active) vs `V` (void).\n\n" + CREDIT[0],
+           "## Pemecahan masalah\n- Tidak ada data di serial: kebanyakan penerima default 9600 atau 4800 baud, 8N1.\n- Ada fix tetapi tanpa posisi: periksa status RMC `A` (aktif) vs `V` (void).\n\n" + CREDIT[1]),
+    ],
+    "messaging/04-mqtt-senml": [
+        md("# MQTT with SenML payloads\n\nMQTT moves messages by topic; SenML (RFC 8428) gives sensor payloads a standard shape. IoTCom.Net adapts MQTTnet rather than re-implementing MQTT.",
+           "# MQTT dengan payload SenML\n\nMQTT memindahkan pesan berdasarkan topik; SenML (RFC 8428) memberi bentuk standar untuk payload sensor. IoTCom.Net mengadaptasi MQTTnet alih-alih menulis ulang MQTT."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Adapters.Mqtt;\nusing IoTCom.Net.Serialization.SenML;\n\n"
+             "var broker = MqttBroker.Create(18830);\nawait broker.StartAsync();\nvar sensor = MqttEndpoint.Create(o => o.UseBroker(\"127.0.0.1\", 18830));\n"
+             "var dashboard = MqttEndpoint.Create(o => o.UseBroker(\"127.0.0.1\", 18830));\nawait sensor.ConnectAsync();\nawait dashboard.ConnectAsync();"),
+        md("## Subscribe with wildcards, publish SenML", "## Subscribe dengan wildcard, publish SenML"),
+        code("using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));\nvar received = Task.Run(async () =>\n{\n"
+             "    await foreach (var m in dashboard.SubscribeAsync(\"plant/+/sensor\", cts.Token))\n"
+             "        return SenMLCodec.Resolve(SenMLCodec.ParseJson(m.Payload.Span));\n    return null;\n});\nawait Task.Delay(300);\n\n"
+             "var pack = new SenMLPackBuilder(\"urn:dev:demo:\").At(DateTimeOffset.UtcNow).Add(\"temperature\", 23.4, \"Cel\").Build();\n"
+             "await sensor.PublishAsync(\"plant/line1/sensor\", SenMLCodec.ToJson(pack));\n"
+             "foreach (var r in (await received)!) Console.WriteLine($\"{r.Name} = {r.Value} {r.Unit} @ {r.Time:T}\");"),
+        md("## JSON vs CBOR size\n", "## Ukuran JSON vs CBOR\n"),
+        code("Console.WriteLine($\"JSON {SenMLCodec.ToJson(pack).Length} bytes · CBOR {SenMLCodec.ToCbor(pack).Length} bytes\");"),
+        md(CREDIT[0], CREDIT[1]),
+    ],
+    "99-protocol-chooser": [
+        md("# Which protocol for which job?\n\n"
+           "| You need to… | Use | IoTCom.Net package |\n|---|---|---|\n"
+           "| Read/write a PLC, meter, VFD or I/O module | Modbus TCP/RTU | `Protocols.Modbus` |\n"
+           "| Ship telemetry to the cloud or many consumers | MQTT (+ SenML payloads) | `Adapters.Mqtt`, `Serialization.SenML` |\n"
+           "| Read position/time from a GPS or marine instruments | NMEA 0183 | `Protocols.Nmea` |\n"
+           "| Drive stage or architectural lighting | Art-Net or sACN | `Protocols.Dmx` |\n"
+           "| Talk to a microcontroller over UART/USB with your own messages | COBS or SLIP + CRC | `Framing` |\n"
+           "| Debug a link byte by byte | Traffic tap, `iotcom modbus decode`, Gallery workbench | `Core`, CLI |\n\n"
+           "**Rules of thumb.** Polling one device on a LAN → Modbus TCP. Fan-out to many consumers or over the internet → MQTT with TLS. "
+           "Sensor payloads crossing vendor boundaries → SenML. Never expose Modbus to the internet: put a gateway in front.\n\n" + CREDIT[0],
+           "# Protokol mana untuk tugas apa?\n\n"
+           "| Anda perlu… | Gunakan | Paket IoTCom.Net |\n|---|---|---|\n"
+           "| Membaca/menulis PLC, meter, VFD, atau modul I/O | Modbus TCP/RTU | `Protocols.Modbus` |\n"
+           "| Mengirim telemetri ke cloud atau banyak konsumen | MQTT (+ payload SenML) | `Adapters.Mqtt`, `Serialization.SenML` |\n"
+           "| Membaca posisi/waktu dari GPS atau instrumen kapal | NMEA 0183 | `Protocols.Nmea` |\n"
+           "| Mengendalikan lampu panggung atau arsitektural | Art-Net atau sACN | `Protocols.Dmx` |\n"
+           "| Berkomunikasi dengan mikrokontroler lewat UART/USB dengan pesan sendiri | COBS atau SLIP + CRC | `Framing` |\n"
+           "| Debug link byte per byte | Traffic tap, `iotcom modbus decode`, workbench Galeri | `Core`, CLI |\n\n"
+           "**Aturan praktis.** Membaca satu perangkat di LAN → Modbus TCP. Distribusi ke banyak konsumen atau lewat internet → MQTT dengan TLS. "
+           "Payload sensor lintas vendor → SenML. Jangan pernah membuka Modbus ke internet: pasang gateway di depannya.\n\n" + CREDIT[1]),
+    ],
+}
+
+
+def cell(kind, text):
+    lines = text.split("\n")
+    source = [l + "\n" for l in lines[:-1]] + [lines[-1]]
+    if kind == "md":
+        return {"cell_type": "markdown", "metadata": {}, "source": source}
+    return {
+        "cell_type": "code", "execution_count": None, "outputs": [], "source": source,
+        "metadata": {"dotnet_interactive": {"language": "csharp"}, "polyglot_notebook": {"kernelName": "csharp"}},
+    }
+
+
+def notebook(cells):
+    return {
+        "cells": cells,
+        "metadata": {
+            "kernelspec": {"display_name": ".NET (C#)", "language": "C#", "name": ".net-csharp"},
+            "language_info": {"name": "polyglot-notebook"},
+            "polyglot_notebook": {"kernelInfo": {"defaultKernelName": "csharp", "items": [{"aliases": [], "name": "csharp"}]}},
+        },
+        "nbformat": 4,
+        "nbformat_minor": 5,
+    }
+
+
+for name, spec in NOTEBOOKS.items():
+    for lang in ("en", "id"):
+        cells = [cell("md", s[1] if lang == "en" else s[2]) if s[0] == "md" else cell("code", s[1]) for s in spec]
+        path = os.path.join(ROOT, f"{name}.{lang}.ipynb")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(notebook(cells), f, indent=1, ensure_ascii=False)
+            f.write("\n")
+        print("wrote", os.path.relpath(path, ROOT))

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- IoTCom.Net mark: a logic-analyzer decode. The serial waveform (top) decodes into one frame
+       (bottom): address · function · data · CRC, coloured with IEC 60073 signal-lamp colours on
+       RAL 7016 anthracite. Gravicode Studios. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#363C44"/>
+      <stop offset="1" stop-color="#202429"/>
+    </linearGradient>
+    <clipPath id="lane"><rect x="72" y="292" width="368" height="104" rx="22"/></clipPath>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="108" fill="url(#bg)"/>
+  <rect x="18" y="18" width="476" height="476" rx="106" fill="none" stroke="#4C535B" stroke-width="4"/>
+
+  <!-- serial waveform -->
+  <path d="M72 212 H118 V132 H170 V212 H206 V132 H286 V212 H322 V132 H350 V212 H392 V132 H440"
+        fill="none" stroke="#E4E5E0" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- decode ticks linking signal to frame -->
+  <g fill="#7C848C">
+    <rect x="113" y="244" width="10" height="28" rx="5"/>
+    <rect x="201" y="244" width="10" height="28" rx="5"/>
+    <rect x="345" y="244" width="10" height="28" rx="5"/>
+  </g>
+
+  <!-- decoded frame lane -->
+  <g clip-path="url(#lane)">
+    <rect x="72"  y="292" width="46"  height="104" fill="#2F7BEA"/>
+    <rect x="118" y="292" width="88"  height="104" fill="#F2A900"/>
+    <rect x="206" y="292" width="144" height="104" fill="#E4E5E0"/>
+    <rect x="350" y="292" width="90"  height="104" fill="#2E9E5B"/>
+  </g>
+  <!-- byte separators inside the data field -->
+  <g fill="#2B3036" opacity="0.28">
+    <rect x="252" y="314" width="6" height="60" rx="3"/>
+    <rect x="300" y="314" width="6" height="60" rx="3"/>
+  </g>
+</svg>

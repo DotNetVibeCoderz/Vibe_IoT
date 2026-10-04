@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Description>IoTCom.Net core runtime: TCP and in-memory transports over System.IO.Pipelines, endpoint base classes, traffic tap, OpenTelemetry-ready diagnostics, reconnect policy and the native (Rust) library loader. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Abstractions\IoTCom.Net.Abstractions.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="IoTCom.Net.Tests" />
+  </ItemGroup>
+</Project>

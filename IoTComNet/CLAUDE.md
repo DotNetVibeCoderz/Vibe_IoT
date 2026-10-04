@@ -1,0 +1,68 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Where this lives
+
+IoTCom.Net is the `IoTComNet/` folder of the `Vibe_IoT` monorepo (other folders are unrelated projects). All commands
+below run from `IoTComNet/`. GitHub workflows live at the **repo root** (`.github/workflows/iotcomnet-*.yml`) and are
+scoped to this folder; NuGet releases run on tags `iotcomnet-vX.Y.Z` using the `NUGET_API_KEY` repository secret.
+`solution-design.md` (Bahasa Indonesia) is the source of truth for scope and priorities; `PLAN.md` is the roadmap and
+`Progress.md` must be updated whenever a component changes status.
+
+## Commands
+
+```bash
+dotnet build IoTCom.Net.slnx                                           # everything (libraries build with warnings as errors)
+dotnet test tests/IoTCom.Net.Tests                                     # all .NET tests
+dotnet test tests/IoTCom.Net.Tests --filter "FullyQualifiedName~ModbusClientServerTests.Pipelined"   # single test
+cd rust && cargo test --workspace                                      # Rust tests
+cd rust && cargo clippy --workspace --all-targets -- -D warnings
+cd rust && cargo build --release -p iotcom-modbus-native               # iotcom_modbus.dll (native tests skip without it)
+dotnet pack IoTCom.Net.slnx -c Release -o artifacts/packages           # natives are picked up from artifacts/native/{rid}/
+python conformance/generate.py        # regenerate shared C#/Rust test vectors
+python build/generate_notebooks.py    # regenerate EN/ID notebooks from one spec (never edit .ipynb by hand)
+python build/check_docs_parity.py     # EN/ID docs parity + broken links (CI gate)
+python build/check_notebooks.py       # compile and run every notebook's code (CI gate)
+dotnet run --project gallery/IoTCom.Net.Gallery.Screenshots -- docs/images   # re-render Gallery screenshots headlessly
+node build/screenshot.mjs <url> <out.png> [w] [h] [waitMs] [dark]            # web screenshots (works with SSE pages)
+dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
+```
+
+## Architecture
+
+- **Curation tiers** (design §4): BCL/official features are never rebuilt; mature libraries are wrapped as adapters
+  (MQTT → MQTTnet); only real gaps are implemented, in C# or in Rust. Rust is for hardware access and complex binary
+  state machines; small stateless helpers (CRC, COBS, SLIP) stay in C# and are duplicated in Rust only when a crate
+  needs them — kept in sync by `/conformance/*.json`, which both test suites execute.
+- **Sans-I/O everywhere.** Codecs are pure (`ModbusPdu`, `ModbusFraming`, `ModbusAnatomy`, `NmeaParser`,
+  `ArtNetPacket`, `SacnPacket`, `SenMLCodec`); endpoints only drive I/O. Rust protocols implement
+  `iotcom_core::Machine`; the .NET driver (`NativeModbusClient`) feeds bytes, drains frames/events, and ticks timers.
+- **Endpoint model** (`src/IoTCom.Net.Abstractions`): `IClientEndpoint`/`IServerEndpoint`/`IPublisher<T>`/`ISubscriber<T>`;
+  concrete endpoints derive from `EndpointBase` (state machine, `Tap(...)` for the traffic tap, metrics). Transports are
+  `ITransport` (an `IDuplexPipe`); builders implement `ITransportBuilder<T>` / `IListenerBuilder<T>` so the shared
+  extensions `UseTcp`, `UseSerial` (Transport.Serial), `UseInMemory`/`ListenInMemory` work for every protocol.
+  `InMemoryTransportListener` is how tests, notebooks and the Gallery run without hardware.
+- **Modbus has two interchangeable engines** behind `IModbusClient`: managed `ModbusClient` and Rust `NativeModbusClient`
+  (`src/IoTCom.Net.Native.Modbus` + `rust/crates`). The C ABI contract (ffi_guard, status codes, `iotcom_last_error`,
+  `iotcom_abi_version` = `NativeMethods.ExpectedAbiVersion`) is in `rust/crates/iotcom-ffi-support`; bump both sides together.
+- **Frame lane** (the visual signature): `FrameField`/`FrameFieldKind` describe frame fields; the CLI (`Ui.FrameLane`),
+  the gateway dashboard and the Gallery (`FrameRow`, `FrameLaneView`) all render them with the same colours.
+- **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).
+
+## Conventions specific to this repo
+
+- Library settings come from `src/Directory.Build.props` (trimmable, AOT-compatible, XML docs, warnings as errors,
+  curated `NoWarn`). Package versions are central in `Directory.Packages.props` (Avalonia pinned to 11.3.x).
+- Every user-facing text is bilingual: docs (`docs/en` ↔ `docs/id`, front-matter `translation-status`), README pairs,
+  Gallery strings (`Loc` / `Loc.L(en, id)` / `Text(en, id)`), dashboard `text.en/id` in `wwwroot/app.js`, template `--lang`.
+- Credit line "Built by Gravicode Studios, led by Kang Fadhil" / "Dibuat oleh Gravicode Studios dipimpin oleh Kang
+  Fadhil" is `IoTComInfo.CreditEn/CreditId`; keep it in apps and docs.
+- Visual language (CLI, dashboard, Gallery, icon): RAL 7035 panel `#E4E5E0`, RAL 7016 anthracite `#2B3036`, IEC lamp
+  colours amber `#F2A900` / blue / green `#2E9E5B` / red `#D23B2F`; Barlow Condensed + Barlow + JetBrains Mono.
+  UI work should use the `frontend-design` skill.
+- Gallery demos: logic in `Demos/XxxDemo.cs` (embedded and shown in the Code tab), view in `Demos/XxxDemo.View.cs`;
+  update UI state only on the UI thread (`Ui(...)`).
+- Device writes must respect read-only modes; the CLI requires `--allow-write` + confirmation.
+- Avalonia gotchas seen here: `LetterSpacing` only on TextBlock; theme-dictionary brushes from code need
+  `GetResourceObservable`; tab headers are set in code-behind on language change.

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Nmea</RootNamespace>
+    <Description>NMEA 0183 for IoTCom.Net: checksum-validated parser and builder, typed GGA/RMC/GSA/GSV/VTG/GLL/ZDA sentences, a GNSS state aggregator, a reader over serial/TCP, a multi-client NMEA server and a GPS track simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);nmea;nmea0183;gps;gnss;marine</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Framing\IoTCom.Net.Framing.csproj" />
+  </ItemGroup>
+</Project>

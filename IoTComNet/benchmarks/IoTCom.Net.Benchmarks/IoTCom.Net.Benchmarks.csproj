@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <Optimize>true</Optimize>
+    <NoWarn>$(NoWarn);CA1822;CA2007;CA1001</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <ProjectReference Include="..\..\src\IoTCom.Net\IoTCom.Net.csproj" />
+  </ItemGroup>
+</Project>

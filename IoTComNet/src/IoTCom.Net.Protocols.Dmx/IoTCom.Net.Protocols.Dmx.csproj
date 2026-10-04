@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Dmx</RootNamespace>
+    <Description>DMX512 over IP for IoTCom.Net: Art-Net 4 (ArtDmx, ArtPoll/ArtPollReply discovery, ArtSync) and sACN / ANSI E1.31 (multicast, priority, sequence) — send and receive, allocation-free codecs, plus a DMX universe model with fades. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);dmx;dmx512;artnet;art-net;sacn;e131;lighting;stage</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

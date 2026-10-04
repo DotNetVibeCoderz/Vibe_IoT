@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IoTCom Gateway</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="nameplate">
+  <div class="brand">
+    <img src="icon.svg" alt="" width="36" height="36">
+    <div>
+      <div class="brand-title">IoTCom Gateway</div>
+      <div class="brand-sub"><span id="line">Line 1</span> · <span data-i18n="subtitle">Modbus → MQTT bridge</span></div>
+    </div>
+  </div>
+  <ul class="lamps" id="lamps" aria-label="Endpoints"></ul>
+  <div class="tools">
+    <button class="chip" id="lang" type="button" aria-label="Switch language">ID</button>
+    <button class="chip" id="theme" type="button" aria-label="Toggle dark mode">◐</button>
+  </div>
+</header>
+
+<main class="board">
+  <section class="mimic" aria-labelledby="plant-h">
+    <h2 class="eyebrow" id="plant-h"><span data-i18n="plant">Virtual PLC</span> <span class="addr" id="plc-addr"></span></h2>
+
+    <div class="row">
+      <article class="card temp">
+        <div class="label" data-i18n="temperature">Temperature</div>
+        <div class="readout"><span id="temp">--.-</span><small>°C</small></div>
+        <div class="scale" aria-hidden="true">
+          <div class="band" id="alarm-band"></div>
+          <div class="needle" id="temp-needle"></div>
+          <div class="sp" id="sp-marker"></div>
+          <div class="ticks"><span>15</span><span>20</span><span>25</span><span>30</span><span>35</span></div>
+        </div>
+        <div class="setpoint">
+          <span class="label" data-i18n="setpoint">Setpoint</span>
+          <button class="step" type="button" id="sp-down" aria-label="Lower setpoint by 0.5 °C">−</button>
+          <output id="sp">--.-</output><span class="unit">°C</span>
+          <button class="step" type="button" id="sp-up" aria-label="Raise setpoint by 0.5 °C">+</button>
+        </div>
+      </article>
+
+      <article class="card motor">
+        <div class="label" data-i18n="motor">Main motor</div>
+        <div class="readout"><span id="rpm">----</span><small>rpm</small></div>
+        <div class="motor-ctl">
+          <span class="lamp-dot" id="motor-lamp"></span>
+          <span id="motor-state" data-i18n="stopped">Stopped</span>
+          <button class="switch" type="button" id="motor-btn" role="switch" aria-checked="false">
+            <span class="knob"></span><span class="switch-label" data-i18n="run">Run</span>
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <dl class="cells">
+      <div><dt data-i18n="humidity">Humidity</dt><dd><span id="hum">--</span> %</dd></div>
+      <div><dt data-i18n="pressure">Pressure</dt><dd><span id="press">----</span> hPa</dd></div>
+      <div><dt data-i18n="power">Power</dt><dd><span id="power">-.--</span> kW</dd></div>
+      <div><dt data-i18n="energy">Energy</dt><dd><span id="energy">-.---</span> kWh</dd></div>
+      <div><dt data-i18n="counter">Produced</dt><dd><span id="counter">0</span> pcs</dd></div>
+    </dl>
+
+    <ul class="interlocks" aria-label="Interlocks">
+      <li><span class="lamp-dot" id="il-door"></span><span data-i18n="door">Door closed</span></li>
+      <li><span class="lamp-dot" id="il-estop"></span><span data-i18n="estop">E-stop healthy</span></li>
+      <li><span class="lamp-dot" id="il-pump"></span><span data-i18n="pump">Cooling pump</span></li>
+      <li><span class="lamp-dot" id="il-hot"></span><span data-i18n="hot">High temperature</span></li>
+    </ul>
+
+    <figure class="trend">
+      <figcaption class="eyebrow"><span data-i18n="trend">Last 5 minutes</span>
+        <span class="legend"><i class="k-temp"></i><span data-i18n="temperature">Temperature</span> <i class="k-sp"></i><span data-i18n="setpoint">Setpoint</span> <i class="k-pow"></i><span data-i18n="power">Power</span></span>
+      </figcaption>
+      <svg id="chart" viewBox="0 0 600 160" preserveAspectRatio="none" role="img" aria-label="Temperature and power trend"></svg>
+    </figure>
+    <p class="status" id="status" role="status"></p>
+  </section>
+
+  <aside class="lane-panel" aria-labelledby="lane-h">
+    <div class="lane-head">
+      <h2 class="eyebrow" id="lane-h" data-i18n="frames">Frames on the wire</h2>
+      <button class="chip" id="pause" type="button" data-i18n="pause">Pause</button>
+    </div>
+    <ul class="kinds" aria-label="Field colours">
+      <li><i class="t-address"></i><span data-i18n="k-address">address</span></li>
+      <li><i class="t-function"></i><span data-i18n="k-function">function</span></li>
+      <li><i class="t-length"></i><span data-i18n="k-length">length</span></li>
+      <li><i class="t-data"></i><span data-i18n="k-data">data</span></li>
+      <li><i class="t-checksum"></i><span data-i18n="k-checksum">checksum</span></li>
+    </ul>
+    <ol class="lane" id="lane" aria-live="off"></ol>
+  </aside>
+</main>
+
+<footer class="credits">
+  <span id="credit">Built by Gravicode Studios, led by Kang Fadhil</span>
+  <span class="ver" id="ver"></span>
+</footer>
+
+<template id="frame-tpl">
+  <li class="frame">
+    <div class="meta"><time></time><span class="dir"></span><span class="sum"></span></div>
+    <div class="bytes"></div>
+  </li>
+</template>
+<script src="app.js"></script>
+</body>
+</html>

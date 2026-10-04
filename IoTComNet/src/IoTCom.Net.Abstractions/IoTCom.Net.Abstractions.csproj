@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net</RootNamespace>
+    <Description>IoTCom.Net shared contracts: endpoints (client/server), publisher/subscriber, transports, traffic tap and the exception model. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+  </PropertyGroup>
+</Project>

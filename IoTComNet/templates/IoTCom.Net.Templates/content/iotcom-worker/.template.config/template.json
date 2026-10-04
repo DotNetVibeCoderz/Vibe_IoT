@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Gravicode Studios (led by Kang Fadhil)",
+  "classifications": [ "IoT", "Worker", "Gateway", "Modbus", "MQTT" ],
+  "identity": "IoTCom.Net.Templates.Worker",
+  "name": "IoTCom.Net edge gateway worker",
+  "description": "A Worker Service that bridges a Modbus device to MQTT (SenML) with IoTCom.Net hosting, health checks and Docker support. Ready for systemd, Windows Service or containers.",
+  "shortName": "iotcom-worker",
+  "sourceName": "IoTComWorker",
+  "preferNameDirectory": true,
+  "tags": { "language": "C#", "type": "project" },
+  "symbols": {
+    "docker": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Add a Dockerfile."
+    },
+    "iotcomVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "0.1.0-preview.1",
+      "replaces": "IOTCOM_VERSION",
+      "description": "IoTCom.Net package version."
+    }
+  },
+  "sources": [
+    { "modifiers": [ { "condition": "(!docker)", "exclude": [ "Dockerfile" ] } ] }
+  ]
+}

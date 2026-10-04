@@ -1,0 +1,15 @@
+[package]
+name = "iotcom-modbus"
+description = "Sans-I/O Modbus TCP/RTU/ASCII codec and master state machine for IoTCom.Net."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+iotcom-core.workspace = true
+
+[lints]
+workspace = true

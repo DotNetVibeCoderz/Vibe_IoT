@@ -1,0 +1,15 @@
+[package]
+name = "iotcom-ffi-support"
+description = "IoTCom.Net FFI contract: ffi_guard (panic barrier), status codes, thread-local last error and ABI version."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+iotcom-core.workspace = true
