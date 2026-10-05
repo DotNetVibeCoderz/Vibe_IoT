@@ -14,6 +14,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "iotcom-isotp"
+version = "0.1.0"
+dependencies = [
+ "iotcom-core",
+]
+
+[[package]]
+name = "iotcom-isotp-native"
+version = "0.1.0"
+dependencies = [
+ "iotcom-core",
+ "iotcom-ffi-support",
+ "iotcom-isotp",
+]
+
+[[package]]
 name = "iotcom-modbus"
 version = "0.1.0"
 dependencies = [

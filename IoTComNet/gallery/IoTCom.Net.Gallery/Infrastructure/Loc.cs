@@ -44,6 +44,7 @@ public sealed class Loc : INotifyPropertyChanged
         ["intermediate"] = new("Intermediate", "Menengah"),
         ["advanced"] = new("Advanced", "Lanjutan"),
         ["Industrial"] = new("INDUSTRIAL", "INDUSTRI"),
+        ["Automotive"] = new("AUTOMOTIVE", "OTOMOTIF"),
         ["Medical"] = new("MEDICAL & HEALTHCARE", "MEDIS & KESEHATAN"),
         ["Navigation"] = new("NAVIGATION & MARINE", "NAVIGASI & MARITIM"),
         ["Building"] = new("SMART BUILDING & STAGE", "GEDUNG PINTAR & PANGGUNG"),

@@ -25,6 +25,8 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "modbus-rtu" or "modbus-rtu-native" => ModbusAnatomy.Describe(data, ModbusFramingMode.Rtu, outbound),
             "artnet" => ArtNetFields(data),
             "nmea0183" => NmeaFields(data),
+            "can" or "can-slcan" => CanFields(data),
+            "uds" or "uds-ecu" or "obd2" => Protocols.Uds.UdsAnatomy.Describe(data),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],
         };
         return new FrameRow(
@@ -32,6 +34,21 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             outbound ? "TX" : "RX", outbound, f.Protocol, f.Summary ?? f.Protocol,
             Tiles(data, fields, ascii: f.Protocol == "nmea0183"),
             IoTCom.Net.HexDump.Format(data));
+    }
+
+    /// <summary>SocketCAN layout used by the CAN traffic tap: identifier, length, flags, reserved, data.</summary>
+    private static List<FrameField> CanFields(ReadOnlySpan<byte> d)
+    {
+        if (d.Length < 8) return [new FrameField("Payload", 0, d.Length, FrameFieldKind.Data)];
+        var raw = System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(d);
+        var id = (raw & 0x8000_0000) != 0 ? $"{raw & 0x1FFF_FFFF:X8}" : $"{raw & 0x7FF:X3}";
+        return
+        [
+            new FrameField("ID", 0, 4, FrameFieldKind.Address, id),
+            new FrameField("Len", 4, 1, FrameFieldKind.Length, d[4].ToString(CultureInfo.InvariantCulture)),
+            new FrameField("Flags", 5, 3, FrameFieldKind.Header, (d[5] & 4) != 0 ? "CAN FD" : "classic"),
+            new FrameField("Data", 8, d.Length - 8, FrameFieldKind.Data),
+        ];
     }
 
     private static List<FieldTiles> Tiles(ReadOnlySpan<byte> data, IReadOnlyList<FrameField> fields, bool ascii)

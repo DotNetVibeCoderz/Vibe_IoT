@@ -26,6 +26,11 @@ iotcom --help
 | `iotcom modbus decode <frame>` | field-by-field frame lane for TCP, RTU or ASCII frames |
 | `iotcom nmea listen` | live GNSS fix panel (`--raw` prints sentences) |
 | `iotcom nmea simulate` | a GPS over NMEA-over-TCP |
+| `iotcom can list` | SocketCAN interfaces and serial ports (slcan adapters) |
+| `iotcom can dump` / `send` | candump/cansend for any backend (`--can socketcan:can0`, `slcan:COM5`, `sim`) |
+| `iotcom can simulate` | engine ECU simulator behind an emulated slcan adapter on TCP |
+| `iotcom uds read` / `dtc` / `raw` | UDS identification, DTCs (`--clear --allow-write`), raw requests with the frame lane |
+| `iotcom obd live` / `vin` / `dtc` | OBD-II live data (`--watch`), VIN, stored and pending DTCs |
 | `iotcom hl7 listen` | MLLP receiver with auto-ACK and decoded observations (`--raw` prints segments) |
 | `iotcom hl7 send` | send an ER7 file (or a sample ORU^R01) and print the ACK |
 | `iotcom hl7 simulate` | a synthetic bedside monitor (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

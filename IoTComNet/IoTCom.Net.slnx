@@ -14,6 +14,7 @@
     <Project Path="samples/console/ModbusSlaveSimulator/ModbusSlaveSimulator.csproj" />
     <Project Path="samples/console/MqttSenMLBridge/MqttSenMLBridge.csproj" />
     <Project Path="samples/console/NmeaGpsReader/NmeaGpsReader.csproj" />
+    <Project Path="samples/console/UdsTester/UdsTester.csproj" />
   </Folder>
   <Folder Name="/samples/shared/">
     <Project Path="samples/shared/IoTCom.Samples.Medical/IoTCom.Samples.Medical.csproj" />
@@ -31,9 +32,12 @@
     <Project Path="src/IoTCom.Net.Native.Modbus/IoTCom.Net.Native.Modbus.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Dmx/IoTCom.Net.Protocols.Dmx.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Hl7/IoTCom.Net.Protocols.Hl7.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.IsoTp/IoTCom.Net.Protocols.IsoTp.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Modbus/IoTCom.Net.Protocols.Modbus.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Nmea/IoTCom.Net.Protocols.Nmea.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Uds/IoTCom.Net.Protocols.Uds.csproj" />
     <Project Path="src/IoTCom.Net.Serialization.SenML/IoTCom.Net.Serialization.SenML.csproj" />
+    <Project Path="src/IoTCom.Net.Transport.Can/IoTCom.Net.Transport.Can.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Serial/IoTCom.Net.Transport.Serial.csproj" />
     <Project Path="src/IoTCom.Net/IoTCom.Net.csproj" />
   </Folder>

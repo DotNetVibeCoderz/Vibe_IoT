@@ -3,6 +3,35 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.3.0-preview.1 — 2026-10-05
+
+Automotive: CAN, ISO-TP, UDS and OBD-II, plus fuzzing in CI.
+
+- **New package `IoTCom.Net.Transport.Can`** (also in the meta-package):
+  - `ICanBus` with filtered readers, the traffic tap and metrics.
+  - Backends: Linux SocketCAN (libc P/Invoke, CAN FD), slcan/Lawicel USB adapters over serial or TCP (CAN FD
+    extension), and an in-process virtual bus.
+  - candump notation, an slcan adapter emulator, and `AddCanBus` hosting.
+- **New package `IoTCom.Net.Protocols.IsoTp`:**
+  - ISO 15765-2 as the sans-I/O Rust crate `iotcom-isotp` (native `iotcom_isotp`, ABI 1).
+  - Classic CAN and CAN FD, block size / STmin / WAIT / overflow, N_Bs / N_Cr, extended addressing, 32-bit FF_DL.
+- **New package `IoTCom.Net.Protocols.Uds`:**
+  - UDS tester: sessions, security access, DIDs, DTCs, routines, response-pending / busy handling, read-only mode.
+  - OBD-II scan tool: mode 01 PIDs, 03 / 07 / 04, VIN.
+  - ECU simulator with a vehicle model and fault injection.
+- **Fuzzing:** `cargo-fuzz` targets for the Modbus decoder, the Modbus master, the PDU parsers and ISO-TP. The
+  `iotcomnet-fuzz.yml` workflow runs them on every Rust change and nightly.
+- **Gallery:** *Vehicle diagnostics* demo (tachometer and tell-tales, live OBD-II, DTCs with MIL, security access,
+  guarded write). The Traffic tab decodes CAN, UDS and OBD frames.
+- **CLI:** `iotcom can list|dump|send|simulate`, `iotcom uds read|dtc|raw`, `iotcom obd live|vin|dtc`. `--can sim`
+  starts a built-in ECU.
+- **Samples, notebook, docs:** `UdsTester` console sample; notebook pair `automotive/06-can-uds`; CAN and UDS pages
+  (EN/ID).
+
+*Otomotif: paket baru CAN/CAN FD (SocketCAN, slcan, bus virtual), ISO-TP sebagai state machine Rust, tester UDS, scan
+tool OBD-II, dan simulator ECU; target cargo-fuzz di CI; demo Galeri diagnostik kendaraan; perintah CLI `can` / `uds` /
+`obd`; sampel, notebook, dan dokumentasi dua bahasa.*
+
 ## 0.2.0-preview.1 — 2026-10-05
 
 Healthcare: HL7 v2 and DICOM, plus medical demos with AI.

@@ -18,7 +18,7 @@ dotnet test tests/IoTCom.Net.Tests                                     # all .NE
 dotnet test tests/IoTCom.Net.Tests --filter "FullyQualifiedName~ModbusClientServerTests.Pipelined"   # single test
 cd rust && cargo test --workspace                                      # Rust tests
 cd rust && cargo clippy --workspace --all-targets -- -D warnings
-cd rust && cargo build --release -p iotcom-modbus-native               # iotcom_modbus.dll (native tests skip without it)
+cd rust && cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native   # native libs (native tests skip without them)
 dotnet pack IoTCom.Net.slnx -c Release -o artifacts/packages           # natives are picked up from artifacts/native/{rid}/
 python conformance/generate.py        # regenerate shared C#/Rust test vectors
 python build/generate_notebooks.py    # regenerate EN/ID notebooks from one spec (never edit .ipynb by hand)
@@ -48,6 +48,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `iotcom_abi_version` = `NativeMethods.ExpectedAbiVersion`) is in `rust/crates/iotcom-ffi-support`; bump both sides together.
 - **Frame lane** (the visual signature): `FrameField`/`FrameFieldKind` describe frame fields; the CLI (`Ui.FrameLane`),
   the gateway dashboard and the Gallery (`FrameRow`, `FrameLaneView`) all render them with the same colours.
+- **Automotive**: `Transport.Can` (`ICanBus`, `CanBus.Create("socketcan:can0" | "slcan:COM5" | "slcan-tcp:h:p" | "virtual:x")`),
+  `Protocols.IsoTp` (Rust `iotcom-isotp` → native `iotcom_isotp`, driven by `IsoTpChannel`) and `Protocols.Uds` (`UdsClient`,
+  `ObdClient`, `EcuSimulator`). Tests and CLI use `VirtualCanNetwork`; `--can sim` starts an in-process ECU. Fuzz targets live
+  in `rust/fuzz` (nightly; `cargo +nightly fuzz run isotp`; on Windows put the MSVC `clang_rt.asan_dynamic` DLL on PATH).
 - **Healthcare**: `Protocols.Hl7` (ER7 codec, MLLP endpoints, `PatientMonitorSimulator`) and `Adapters.Dicom` (fo-dicom
   wrapper, `DicomRenderer`, `SyntheticImaging`; not trimmable, not in the meta-package). Clinical analysis and the AI client
   live in `samples/shared/IoTCom.Samples.Medical` (sample code, never packed). AI config: `IOTCOM_AI_*` env vars or

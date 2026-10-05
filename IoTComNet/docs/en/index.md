@@ -6,7 +6,7 @@ translation-status: synced
 # IoTCom.Net documentation
 
 **IoTCom.Net** is a communication library for IoT and embedded systems on .NET 10, with a Rust core for the low-level
-parts. One consistent model — *client, server, publisher, subscriber* — covers industrial, navigation, lighting and
+parts. One consistent model — *client, server, publisher, subscriber* — covers industrial, automotive, navigation, lighting and
 messaging and healthcare protocols, and every protocol ships a simulator so you can build and test without hardware.
 
 > Built by Gravicode Studios, led by Kang Fadhil. · [Bahasa Indonesia](../id/index.md)
@@ -36,6 +36,8 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
 | [NMEA 0183](protocols/nmea.md) | reader · server · simulator | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
+| [CAN / CAN FD](protocols/can.md) | send · receive · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
+| [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 over MLLP](protocols/hl7.md) | send · receive · ACK · bedside simulator | `IoTCom.Net.Protocols.Hl7` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · synthetic studies | `IoTCom.Net.Adapters.Dicom` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |

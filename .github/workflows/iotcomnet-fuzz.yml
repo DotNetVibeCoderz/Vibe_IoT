@@ -1,0 +1,44 @@
+name: IoTCom.Net fuzz
+
+# Short smoke run on every Rust change, long run every night. Crashes are uploaded as artifacts.
+on:
+  push:
+    branches: [main]
+    paths: ["IoTComNet/rust/**", ".github/workflows/iotcomnet-fuzz.yml"]
+  pull_request:
+    paths: ["IoTComNet/rust/**", ".github/workflows/iotcomnet-fuzz.yml"]
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+    inputs:
+      seconds:
+        description: Seconds per target
+        default: "600"
+
+jobs:
+  fuzz:
+    name: cargo-fuzz (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [modbus_decode, modbus_master, modbus_pdu, isotp]
+    defaults:
+      run:
+        working-directory: IoTComNet/rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: IoTComNet/rust/fuzz
+      - run: cargo install cargo-fuzz --locked
+      - name: Fuzz
+        env:
+          SECONDS_PER_TARGET: ${{ github.event.inputs.seconds || (github.event_name == 'schedule' && '600') || '60' }}
+        run: cargo fuzz run ${{ matrix.target }} -- -max_total_time=$SECONDS_PER_TARGET -rss_limit_mb=2048
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: fuzz-crash-${{ matrix.target }}
+          path: IoTComNet/rust/fuzz/artifacts/

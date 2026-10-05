@@ -12,6 +12,9 @@ using IoTCom.Net.Gallery.ViewModels;
 using IoTCom.Net.Gallery.Views;
 
 var outDir = Path.GetFullPath(args.Length > 0 ? args[0] : "docs/images");
+// Optional: further arguments name the screenshots to render (e.g. gallery-can-uds.png); default renders all.
+var only = args.Skip(1).ToHashSet(StringComparer.OrdinalIgnoreCase);
+bool Want(params string[] names) => only.Count == 0 || names.Any(only.Contains);
 Directory.CreateDirectory(outDir);
 
 AppBuilder.Configure<App>()
@@ -61,53 +64,93 @@ void Show(string id, int tab = 0, double seconds = 3, bool start = true)
     Pump(TimeSpan.FromSeconds(seconds));
 }
 
-Show("modbus-factory", seconds: 6);
-Shot("gallery-modbus.png");
-Tabs().SelectedIndex = 3;
-Pump(TimeSpan.FromSeconds(1));
-Shot("gallery-traffic.png");
-Tabs().SelectedIndex = 1;
-Shot("gallery-code.png");
+if (Want("gallery-modbus.png", "gallery-traffic.png", "gallery-code.png"))
+{
+    Show("modbus-factory", seconds: 6);
+    Shot("gallery-modbus.png");
+    Tabs().SelectedIndex = 3;
+    Pump(TimeSpan.FromSeconds(1));
+    Shot("gallery-traffic.png");
+    Tabs().SelectedIndex = 1;
+    Shot("gallery-code.png");
+}
 
-Show("nmea-tracker", seconds: 22);
-Shot("gallery-nmea.png");
+if (Want("gallery-can-uds.png", "gallery-can-traffic.png"))
+{
+    // Vehicle diagnostics: unlock, inject a cooling fault, let the coolant climb past 105 °C.
+    Show("can-uds", seconds: 3);
+    var vehicle = (VehicleDiagnosticsDemo)vm.SelectedDemo!;
+    Await(vehicle.UnlockAsync());
+    vehicle.InjectOverheating(true);
+    Pump(TimeSpan.FromSeconds(15));
+    Await(vehicle.ReadDtcsAsync());
+    Shot("gallery-can-uds.png");
+    Tabs().SelectedIndex = 3;
+    Pump(TimeSpan.FromSeconds(1));
+    Shot("gallery-can-traffic.png");
+    Tabs().SelectedIndex = 0;
+}
 
-Show("artnet-stage", seconds: 2);
-Shot("gallery-lighting.png");
+if (Want("gallery-nmea.png"))
+{
+    Show("nmea-tracker", seconds: 22);
+    Shot("gallery-nmea.png");
+}
 
-Show("mqtt-pubsub", seconds: 3.5);
-Await(((MqttDemo)vm.SelectedDemo!).PublishAsync());
-Pump(TimeSpan.FromSeconds(1));
-Shot("gallery-mqtt.png");
+if (Want("gallery-lighting.png"))
+{
+    Show("artnet-stage", seconds: 2);
+    Shot("gallery-lighting.png");
+}
 
-Show("workbench", seconds: 0.5);
-Shot("gallery-workbench.png");
+if (Want("gallery-mqtt.png"))
+{
+    Show("mqtt-pubsub", seconds: 3.5);
+    Await(((MqttDemo)vm.SelectedDemo!).PublishAsync());
+    Pump(TimeSpan.FromSeconds(1));
+    Shot("gallery-mqtt.png");
+}
+
+if (Want("gallery-workbench.png"))
+{
+    Show("workbench", seconds: 0.5);
+    Shot("gallery-workbench.png");
+}
 
 // Medical demos (use the AI configured through IOTCOM_AI_* when present).
-Show("hl7-icu", seconds: 40);
-var icu = (BedsideMonitorDemo)vm.SelectedDemo!;
-Await(icu.SummarizeAsync());
-Pump(TimeSpan.FromSeconds(1));
-Shot("gallery-hl7-icu.png");
+if (Want("gallery-hl7-icu.png"))
+{
+    Show("hl7-icu", seconds: 40);
+    var icu = (BedsideMonitorDemo)vm.SelectedDemo!;
+    Await(icu.SummarizeAsync());
+    Pump(TimeSpan.FromSeconds(1));
+    Shot("gallery-hl7-icu.png");
+}
 
-Show("dicom-ai", seconds: 1);
-var imaging = (ImagingDemo)vm.SelectedDemo!;
-Await(imaging.AcquireAsync(IoTCom.Net.Adapters.Dicom.SyntheticModality.ChestXray, IoTCom.Net.Adapters.Dicom.SyntheticFinding.LungNodule));
-Pump(TimeSpan.FromSeconds(1.5));
-Await(imaging.AnalyzeAsync());
-imaging.ShowTruth = true;
-Pump(TimeSpan.FromSeconds(1));
-Shot("gallery-dicom-ai.png");
-Await(imaging.AcquireAsync(IoTCom.Net.Adapters.Dicom.SyntheticModality.BrainMr, IoTCom.Net.Adapters.Dicom.SyntheticFinding.Infarct));
-Pump(TimeSpan.FromSeconds(1.5));
-Await(imaging.AnalyzeAsync());
-Pump(TimeSpan.FromSeconds(1));
-Shot("gallery-dicom-ai-mri.png");
+if (Want("gallery-dicom-ai.png", "gallery-dicom-ai-mri.png"))
+{
+    Show("dicom-ai", seconds: 1);
+    var imaging = (ImagingDemo)vm.SelectedDemo!;
+    Await(imaging.AcquireAsync(IoTCom.Net.Adapters.Dicom.SyntheticModality.ChestXray, IoTCom.Net.Adapters.Dicom.SyntheticFinding.LungNodule));
+    Pump(TimeSpan.FromSeconds(1.5));
+    Await(imaging.AnalyzeAsync());
+    imaging.ShowTruth = true;
+    Pump(TimeSpan.FromSeconds(1));
+    Shot("gallery-dicom-ai.png");
+    Await(imaging.AcquireAsync(IoTCom.Net.Adapters.Dicom.SyntheticModality.BrainMr, IoTCom.Net.Adapters.Dicom.SyntheticFinding.Infarct));
+    Pump(TimeSpan.FromSeconds(1.5));
+    Await(imaging.AnalyzeAsync());
+    Pump(TimeSpan.FromSeconds(1));
+    Shot("gallery-dicom-ai-mri.png");
+}
 
-vm.ToggleThemeCommand.Execute(null);
-Loc.Instance.Language = "id";
-Show("modbus-factory", seconds: 1.5, start: false);
-Shot("gallery-dark-id.png");
+if (Want("gallery-dark-id.png"))
+{
+    vm.ToggleThemeCommand.Execute(null);
+    Loc.Instance.Language = "id";
+    Show("modbus-factory", seconds: 1.5, start: false);
+    Shot("gallery-dark-id.png");
+}
 
 Await(vm.DisposeAsync().AsTask());
 Console.WriteLine("done");

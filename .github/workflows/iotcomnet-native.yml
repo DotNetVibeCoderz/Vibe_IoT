@@ -1,7 +1,7 @@
 name: IoTCom.Net native libraries
 
-# Builds iotcom_modbus for every supported RID. The release workflow packs these into
-# IoTCom.Net.Native.Modbus under runtimes/{rid}/native/.
+# Builds iotcom_modbus and iotcom_isotp for every supported RID. The release workflow packs them into
+# IoTCom.Net.Native.Modbus and IoTCom.Net.Protocols.IsoTp under runtimes/{rid}/native/.
 on:
   workflow_dispatch:
   workflow_call:
@@ -45,21 +45,21 @@ jobs:
           cargo install cargo-zigbuild --locked
       - name: Build (glibc 2.17 baseline)
         if: matrix.tool == 'zigbuild' && !contains(matrix.target, 'musl')
-        run: cargo zigbuild --release -p iotcom-modbus-native --target ${{ matrix.target }}.2.17
+        run: cargo zigbuild --release -p iotcom-modbus-native -p iotcom-isotp-native --target ${{ matrix.target }}.2.17
       - name: Build (musl)
         if: matrix.tool == 'zigbuild' && contains(matrix.target, 'musl')
         # musl defaults to +crt-static, which disables cdylib output; link the C runtime dynamically instead.
         env:
           RUSTFLAGS: -C target-feature=-crt-static
-        run: cargo zigbuild --release -p iotcom-modbus-native --target ${{ matrix.target }}
+        run: cargo zigbuild --release -p iotcom-modbus-native -p iotcom-isotp-native --target ${{ matrix.target }}
       - name: Build
         if: matrix.tool == 'cargo'
-        run: cargo build --release -p iotcom-modbus-native --target ${{ matrix.target }}
+        run: cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native --target ${{ matrix.target }}
       - name: Collect
         shell: bash
         run: |
           mkdir -p ../artifacts/native/${{ matrix.rid }}
-          cp target/${{ matrix.target }}/release/*iotcom_modbus.{dll,so,dylib} ../artifacts/native/${{ matrix.rid }}/ 2>/dev/null || true
+          cp target/${{ matrix.target }}/release/*iotcom_{modbus,isotp}.{dll,so,dylib} ../artifacts/native/${{ matrix.rid }}/ 2>/dev/null || true
           ls -la ../artifacts/native/${{ matrix.rid }}
       - uses: actions/upload-artifact@v4
         with:

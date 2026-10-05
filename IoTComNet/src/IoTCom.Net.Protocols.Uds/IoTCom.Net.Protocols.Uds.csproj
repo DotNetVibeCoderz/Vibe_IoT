@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Uds</RootNamespace>
+    <Description>Vehicle diagnostics for IoTCom.Net: UDS (ISO 14229) tester with sessions, security access, DIDs, DTCs, routines and read-only mode; OBD-II scan tool (SAE J1979 over ISO 15765-4: live PIDs, DTCs, VIN); and an ECU simulator with a vehicle model, all over ISO-TP on any CAN bus. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);uds;iso14229;obd;obd2;j1979;dtc;can;automotive;diagnostics;ecu</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Protocols.IsoTp\IoTCom.Net.Protocols.IsoTp.csproj" />
+  </ItemGroup>
+</Project>

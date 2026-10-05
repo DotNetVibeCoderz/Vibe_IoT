@@ -31,8 +31,8 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 
 | Item | Priority | Notes |
 |---|---|---|
-| CAN / CAN FD transport (`ICanBus`): SocketCAN + one USB adapter (gs_usb / candleLight or PCAN) | P0 | Rust, pattern B (Rust owns I/O) |
-| ISO-TP, UDS, OBD-II (tester + ECU simulator) | P1 | Rust machines |
+| CAN / CAN FD transport (`ICanBus`): SocketCAN + one USB adapter (gs_usb / candleLight or PCAN) | P0 | ✅ `0.3.0-preview.1`: SocketCAN + slcan adapters + virtual bus (C#; see Progress decisions) · PCAN/Kvaser/gs_usb ⏳ |
+| ISO-TP, UDS, OBD-II (tester + ECU simulator) | P1 | ✅ `0.3.0-preview.1`: ISO-TP in Rust; UDS/OBD-II/ECU simulator in C# · flashing helpers, DoIP ⏳ |
 | CoAP (Observe, Block-wise) | P1 | Rust codec + C# I/O; DTLS in Phase 2 |
 | MAVLink v1/v2 + dialect source generator | P1 | Rust codec, C# source generator |
 | LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | |
@@ -44,9 +44,9 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies | P1 | ✅ `0.2.0-preview.1` (added on request: medical use cases) |
 | Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | |
 | Protobuf / MessagePack adapters, TLV helpers | P1 | |
-| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | 7 demos (incl. ICU monitors and imaging AI pre-read) |
+| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | 8 demos (incl. vehicle diagnostics, ICU monitors, imaging AI pre-read) |
 | VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | not started |
-| `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | randomised decoder tests exist today |
+| `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | ✅ 4 targets (Modbus decode/master/PDU, ISO-TP); smoke run per change + nightly 10 min |
 | Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen header | P1 | bindings are hand-written today |
 | `iotcom sniff` (Modbus TCP proxy sniffer) and pcapng export from the traffic tap | P1 | |
 

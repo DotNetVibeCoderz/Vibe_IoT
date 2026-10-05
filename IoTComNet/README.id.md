@@ -14,8 +14,8 @@ Dibuat oleh <b>Gravicode Studios</b> dipimpin oleh <b>Kang Fadhil</b> · <a href
 
 ![Galeri IoTCom.Net — PLC pabrik pintar](docs/images/gallery-dark-id.png)
 
-Satu model yang konsisten — **client, server, publisher, subscriber** — untuk protokol industri, navigasi,
-pencahayaan, dan pesan. Setiap protokol dilengkapi **simulator**, sehingga semuanya (pengujian, sampel, notebook,
+Satu model yang konsisten — **client, server, publisher, subscriber** — untuk protokol industri, otomotif, navigasi,
+pencahayaan, pesan, dan kesehatan. Setiap protokol dilengkapi **simulator**, sehingga semuanya (pengujian, sampel, notebook,
 Galeri) berjalan tanpa perangkat keras. Yang sudah dikerjakan .NET dengan baik tidak dibuat ulang; library yang matang
 dibungkus; hanya celah nyata yang diimplementasikan — dengan C#, atau dengan Rust yang aman memori di balik C ABI yang
 sempit.
@@ -33,6 +33,8 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **NMEA 0183** | parser dan builder dengan validasi checksum, GGA/RMC/GSA/GSV/VTG/GLL/ZDA bertipe, agregator fix GNSS, server NMEA, simulator GPS |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 lewat IP: kirim, terima, discovery ArtPoll, multicast, prioritas, model universe dengan fade |
 | **MQTT 3.1.1 / 5.0** | adapter di atas MQTTnet: subscription `IAsyncEnumerable`, reconnect + resubscribe, helper JSON/SenML, broker tertanam |
+| **CAN / CAN FD** | satu `ICanBus` untuk Linux SocketCAN, adapter USB slcan (CANable, CANtact), dan bus virtual; notasi candump, reader terfilter |
+| **ISO-TP · UDS · OBD-II** | ISO 15765-2 sebagai state machine **Rust** yang di-fuzz; tester UDS (session, security access, DID, DTC, routine, mode read-only), scan tool OBD-II, dan simulator ECU |
 | **HL7 v2 · MLLP** | parser/builder ER7 dengan escaping, pengirim/penerima MLLP dengan pencocokan ACK, tanda vital LOINC, simulator monitor pasien (sepsis, hipoksia, …) |
 | **DICOM** | adapter di atas fo-dicom: Storage SCP/SCU (C-STORE, C-ECHO), renderer dengan window ke PNG, studi CT/MR/X-ray sintetis dengan temuan yang ditanam |
 | **SenML (RFC 8428)** | JSON + CBOR, tanpa reflection, resolusi base field |
@@ -48,6 +50,7 @@ Bahasa Indonesia**.
 <table>
 <tr><td><img src="docs/images/gateway-dashboard.png" alt="Dashboard gateway"><br><sub>Edge gateway: Modbus → MQTT dengan dashboard HMI langsung dan isi jalur yang terurai</sub></td>
 <td><img src="docs/images/gallery-traffic.png" alt="Lalu lintas Galeri"><br><sub>Galeri: setiap frame diurai per field</sub></td></tr>
+<tr><td colspan="2"><img src="docs/images/gallery-can-uds.png" alt="Diagnostik kendaraan"><br><sub>Diagnostik kendaraan: OBD-II dan UDS lewat CAN, ISO-TP di Rust, terhadap ECU mesin simulasi</sub></td></tr>
 <tr><td><img src="docs/images/gallery-hl7-icu.png" alt="ICU"><br><sub>Monitor pasien ICU lewat HL7/MLLP: NEWS2, tren, dan catatan SBAR dari LLM</sub></td>
 <td><img src="docs/images/gallery-dicom-ai.png" alt="DICOM AI"><br><sub>DICOM C-STORE → viewer dengan window → pra-baca model vision</sub></td></tr>
 <tr><td><img src="docs/images/gallery-nmea.png" alt="NMEA"><br><sub>Pelacak GNSS lewat NMEA 0183</sub></td>
@@ -81,7 +84,7 @@ dotnet run --project samples/console/ModbusMaster -- --simulate
 
 ```bash
 dotnet build IoTCom.Net.slnx
-dotnet test tests/IoTCom.Net.Tests                  # 210+ uji termasuk conformance lintas bahasa
+dotnet test tests/IoTCom.Net.Tests                  # 240+ uji termasuk conformance lintas bahasa
 cd rust && cargo test --workspace && cargo build --release   # inti Rust + library native iotcom_modbus
 python build/check_docs_parity.py                   # paritas EN/ID + cek tautan
 ```
@@ -89,7 +92,7 @@ python build/check_docs_parity.py                   # paritas EN/ID + cek tautan
 ## Struktur repositori
 
 ```
-src/            paket C# (Abstractions, Core, Framing, Transport.Serial, Protocols.*, Protocols.Hl7, Adapters.Mqtt, Adapters.Dicom, Serialization.SenML, Hosting, Native.Modbus, meta)
+src/            paket C# (Abstractions, Core, Framing, Transport.Serial, Transport.Can, Protocols.*, Protocols.Hl7, Adapters.Mqtt, Adapters.Dicom, Serialization.SenML, Hosting, Native.Modbus, meta)
 rust/           workspace Rust: iotcom-core (Machine sans-I/O), iotcom-ffi-support, iotcom-modbus, cdylib native
 conformance/    test vector bersama yang dijalankan C# dan Rust
 tests/          uji xUnit

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Transport.Can</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>CAN and CAN FD for IoTCom.Net: one ICanBus abstraction with filtered readers and the traffic tap, backends for Linux SocketCAN, slcan/Lawicel USB adapters (CANable, CANtact, USBtin) over serial or TCP, and an in-process virtual bus for tests and simulators. candump notation parser. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);can;canfd;socketcan;slcan;lawicel;canable;automotive</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Transport.Serial\IoTCom.Net.Transport.Serial.csproj" />
+  </ItemGroup>
+</Project>

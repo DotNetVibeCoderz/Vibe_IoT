@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)src/IoTCom.Net.Protocols.Uds/IoTCom.Net.Protocols.Uds.csproj" />
+  </ItemGroup>
+</Project>

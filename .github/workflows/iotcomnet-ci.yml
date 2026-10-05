@@ -32,7 +32,7 @@ jobs:
           workspaces: IoTComNet/rust
       - run: cargo test --workspace
       - run: cargo clippy --workspace --all-targets -- -D warnings
-      - run: cargo build --release -p iotcom-modbus-native
+      - run: cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native
       - uses: actions/upload-artifact@v4
         with:
           name: native-host-${{ matrix.os }}
@@ -40,6 +40,9 @@ jobs:
             IoTComNet/rust/target/release/iotcom_modbus.dll
             IoTComNet/rust/target/release/libiotcom_modbus.so
             IoTComNet/rust/target/release/libiotcom_modbus.dylib
+            IoTComNet/rust/target/release/iotcom_isotp.dll
+            IoTComNet/rust/target/release/libiotcom_isotp.so
+            IoTComNet/rust/target/release/libiotcom_isotp.dylib
           if-no-files-found: ignore
 
   supply-chain:
@@ -87,6 +90,12 @@ jobs:
       - name: Expose the native library to tests
         shell: bash
         run: echo "IOTCOM_NATIVE_PATH=$GITHUB_WORKSPACE/IoTComNet/native" >> "$GITHUB_ENV"
+      - name: Virtual CAN interface (SocketCAN tests)
+        if: runner.os == 'Linux'
+        continue-on-error: true
+        run: |
+          sudo apt-get install -y "linux-modules-extra-$(uname -r)" || true
+          sudo modprobe vcan && sudo ip link add vcan0 type vcan && sudo ip link set vcan0 up && ip link show vcan0
       - run: dotnet build IoTCom.Net.slnx -c Release
       - run: dotnet test tests/IoTCom.Net.Tests -c Release --no-build --logger trx --results-directory TestResults
       - uses: actions/upload-artifact@v4
@@ -135,6 +144,9 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Native libraries for the notebooks (ISO-TP)
+        run: cd rust && cargo build --release -p iotcom-isotp-native -p iotcom-modbus-native
       - name: EN/ID parity and links
         run: python build/check_docs_parity.py
       - name: Generated files are up to date

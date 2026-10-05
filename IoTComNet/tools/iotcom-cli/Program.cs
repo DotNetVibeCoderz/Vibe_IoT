@@ -53,6 +53,31 @@ app.Configure(c =>
         a.AddCommand<ArtNetPollCommand>("poll");
         a.AddCommand<ArtNetMonitorCommand>("monitor");
     });
+    c.AddBranch("can", b =>
+    {
+        b.SetDescription("CAN / CAN FD: list interfaces, dump, send, and an ECU simulator behind an slcan-over-TCP adapter.");
+        b.AddCommand<CanListCommand>("list");
+        b.AddCommand<CanDumpCommand>("dump").WithExample("can", "dump", "--can", "socketcan:can0", "--filter", "7E8:7F8")
+            .WithExample("can", "dump", "--can", "sim");
+        b.AddCommand<CanSendCommand>("send").WithExample("can", "send", "--can", "slcan:COM5", "7DF#02010C");
+        b.AddCommand<CanSimulateCommand>("simulate").WithExample("can", "simulate", "--port", "20100");
+    });
+    c.AddBranch("uds", u =>
+    {
+        u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");
+        u.AddCommand<UdsReadCommand>("read").WithExample("uds", "read", "--can", "sim")
+            .WithExample("uds", "read", "--can", "socketcan:can0", "--did", "F190", "--did", "F18C");
+        u.AddCommand<UdsDtcCommand>("dtc").WithExample("uds", "dtc", "--can", "sim")
+            .WithExample("uds", "dtc", "--can", "slcan:COM5", "--clear", "--allow-write");
+        u.AddCommand<UdsRawCommand>("raw").WithExample("uds", "raw", "--can", "sim", "1003");
+    });
+    c.AddBranch("obd", o =>
+    {
+        o.SetDescription("OBD-II scan tool (SAE J1979 over CAN): live data, VIN, DTCs.");
+        o.AddCommand<ObdLiveCommand>("live").WithExample("obd", "live", "--can", "sim", "--watch", "500");
+        o.AddCommand<ObdVinCommand>("vin").WithExample("obd", "vin", "--can", "slcan:COM5");
+        o.AddCommand<ObdDtcCommand>("dtc").WithExample("obd", "dtc", "--can", "sim");
+    });
     c.AddBranch("hl7", h =>
     {
         h.SetDescription("HL7 v2 over MLLP: receive (auto-ACK), send, and simulate a bedside monitor.");

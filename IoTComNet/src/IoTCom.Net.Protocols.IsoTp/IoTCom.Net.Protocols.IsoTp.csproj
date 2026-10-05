@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.IsoTp</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>ISO-TP (ISO 15765-2) for IoTCom.Net: segmentation, flow control (block size, STmin, WAIT, overflow) and reassembly for classic CAN and CAN FD, implemented as a memory-safe, fuzzed Rust state machine driven over any ICanBus. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);isotp;iso15765;can;canfd;automotive;diagnostics;rust;native</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Transport.Can\IoTCom.Net.Transport.Can.csproj" />
+  </ItemGroup>
+
+  <!-- Native binaries: CI places one folder per RID under artifacts/native/{rid}/; a local cargo build is used in development. -->
+  <ItemGroup>
+    <NativeArtifact Include="$(RepoRoot)artifacts/native/**/*iotcom_isotp*" />
+    <None Include="@(NativeArtifact)" Pack="true" PackagePath="runtimes/%(RecursiveDir)native/%(Filename)%(Extension)" Visible="false" />
+  </ItemGroup>
+</Project>

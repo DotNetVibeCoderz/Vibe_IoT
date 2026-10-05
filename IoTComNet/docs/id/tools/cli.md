@@ -26,6 +26,11 @@ iotcom --help
 | `iotcom modbus decode <frame>` | frame lane per field untuk frame TCP, RTU, atau ASCII |
 | `iotcom nmea listen` | panel fix GNSS langsung (`--raw` mencetak kalimat) |
 | `iotcom nmea simulate` | GPS lewat NMEA-over-TCP |
+| `iotcom can list` | antarmuka SocketCAN dan port serial (adapter slcan) |
+| `iotcom can dump` / `send` | candump/cansend untuk backend apa pun (`--can socketcan:can0`, `slcan:COM5`, `sim`) |
+| `iotcom can simulate` | simulator ECU mesin di balik adapter slcan tiruan lewat TCP |
+| `iotcom uds read` / `dtc` / `raw` | identifikasi UDS, DTC (`--clear --allow-write`), request mentah dengan frame lane |
+| `iotcom obd live` / `vin` / `dtc` | data langsung OBD-II (`--watch`), VIN, DTC tersimpan dan tertunda |
 | `iotcom hl7 listen` | penerima MLLP dengan ACK otomatis dan observasi terurai (`--raw` mencetak segmen) |
 | `iotcom hl7 send` | kirim berkas ER7 (atau contoh ORU^R01) dan tampilkan ACK |
 | `iotcom hl7 simulate` | monitor pasien sintetis (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

@@ -1,0 +1,47 @@
+# cargo-fuzz targets (nightly, libFuzzer). Kept out of the workspace so stable builds are unaffected.
+#   cargo +nightly fuzz run modbus_decode -- -max_total_time=60
+[package]
+name = "iotcom-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+iotcom-core = { path = "../crates/iotcom-core" }
+iotcom-modbus = { path = "../crates/iotcom-modbus" }
+iotcom-isotp = { path = "../crates/iotcom-isotp" }
+
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "modbus_decode"
+path = "fuzz_targets/modbus_decode.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "modbus_master"
+path = "fuzz_targets/modbus_master.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "modbus_pdu"
+path = "fuzz_targets/modbus_pdu.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "isotp"
+path = "fuzz_targets/isotp.rs"
+test = false
+doc = false
+bench = false

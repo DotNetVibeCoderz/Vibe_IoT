@@ -3,18 +3,18 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.2.0-preview.1` (in repository; nuget.org has `0.1.0-preview.1`) · **Last update:** 2026-10-05
+**Current version:** `0.3.0-preview.1` · **Last update:** 2026-10-05
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 212 passing | `dotnet test tests/IoTCom.Net.Tests` |
-| Rust workspace | ✅ 16 tests passing, clippy `-D warnings` clean | `cargo test --workspace`, `cargo clippy` |
+| .NET tests | ✅ 242 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| Rust workspace | ✅ 25 tests passing, clippy `-D warnings` clean; 4 cargo-fuzz targets (≈ 7 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 28 + 28 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 7 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Docs EN/ID | ✅ 30 + 30 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 8 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
 | NuGet packages | ✅ 14 packages (+12 symbol packages) published to nuget.org as `0.1.0-preview.1`; Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v0.1.0-preview.1` |
 
@@ -32,6 +32,9 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Protocols.Dmx | ✅ | Art-Net ArtDmx/ArtPoll/ArtPollReply/ArtSync, sACN data + sequence rules, DmxUniverse · RDM ⏳ |
 | IoTCom.Net.Adapters.Mqtt | ✅ | MQTTnet 5 adapter, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
 | IoTCom.Net.Serialization.SenML | ✅ | JSON + CBOR, resolution (RFC 8428 §4.6), builder |
+| IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus · PCAN/Kvaser/gs_usb ⏳ |
+| IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
+| IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
 | IoTCom.Net.Protocols.Hl7 | ✅ | ER7 codec + escaping, MLLP server/client with ACK matching, LOINC vitals, PatientMonitorSimulator · ASTM E1394 ⏳ |
 | IoTCom.Net.Adapters.Dicom | ✅ | fo-dicom 5.2.6 Storage SCP/SCU, C-ECHO, windowed renderer → PNG, synthetic CT/MR/X-ray with planted findings (not trimmable/AOT) |
 | IoTCom.Samples.Medical (sample, not packed) | ✅ | NEWS2 (RCP 2017), trends, anomalies, OpenAI-compatible AI client, SBAR + imaging pre-read with ground-truth scoring |
@@ -39,9 +42,9 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Gallery (Avalonia) | ✅ | 7 demos (Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 8 demos (Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 | VS Code extension | ⏳ not started | Phase 1 |
@@ -56,6 +59,16 @@ Built by Gravicode Studios, led by Kang Fadhil.
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
 
+## Decisions taken in 0.3
+
+- **SocketCAN in C#, not Rust.** The design proposed the `socketcan` crate (pattern B). Opening a `CAN_RAW` socket is
+  six libc calls, so a `LibraryImport` binding avoids shipping a second native library for one OS. It stays
+  AOT-friendly and still runs a dedicated receive thread. Rust remains the home of the complex state machines.
+- **ISO-TP in Rust, UDS in C#.** ISO-TP is the binary state machine worth fuzzing. UDS is request/response semantics
+  where C# async timeouts (P2/P2*) are the natural fit.
+- **slcan first** as the USB adapter (open question 1): it is driver-free on every OS, cheap (CANable), and fully
+  testable via the adapter emulator. PCAN/Kvaser/gs_usb follow.
+
 ## AI evaluation (medical demos, real models)
 
 | Task | Model | Result |
@@ -69,14 +82,15 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 - Native binaries for Linux, macOS and Windows ARM64 are not built on this machine (the MSVC ARM64 tools and cross
   toolchains are not installed). The workflow `iotcomnet-native.yml` builds them.
-- No `cargo-fuzz` targets yet (a randomised decoder test runs in `cargo test`).
 - Serial and Art-Net broadcast paths are verified on loopback/in-memory only; no hardware-in-the-loop rig yet.
 
 ## Log
 
 | Date | Change |
 |---|---|
-| 2026-10-05 | Healthcare (`0.2.0-preview.1`, not yet published): HL7 v2/MLLP package, DICOM adapter, Gallery medical demos with real LLM/vision tests, CLI `hl7`/`dicom`, Hl7MllpListener sample, notebook pair, 3 new EN/ID docs pages. |
+| 2026-10-05 | Automotive (`0.3.0-preview.1`): CAN transport, ISO-TP (Rust), UDS/OBD-II + ECU simulator, cargo-fuzz in CI, Gallery vehicle diagnostics, CLI `can`/`uds`/`obd`, UdsTester sample, notebook pair, CAN/UDS docs. |
+| 2026-10-05 | Published 0.2.0-preview.1 (healthcare) via tag `iotcomnet-v0.2.0-preview.1`. |
+| 2026-10-05 | Healthcare (`0.2.0-preview.1`): HL7 v2/MLLP package, DICOM adapter, Gallery medical demos with real LLM/vision tests, CLI `hl7`/`dicom`, Hl7MllpListener sample, notebook pair, 3 new EN/ID docs pages. |
 | 2026-10-05 | Published 0.1.0-preview.1 to nuget.org (all CI jobs green on Windows, Linux, macOS, Alpine; natives for 9 RIDs). |
 | 2026-10-05 | First CI run: fixed a start/stop race in DMX, NMEA and Modbus server loops (token read lazily from a field; caught on Alpine) and musl `cdylib` output (`-crt-static`). |
 | 2026-10-05 | Moved into the `Vibe_IoT` monorepo (`IoTComNet/`); workflows scoped to this folder. NativeAOT: trim/AOT analysis of a published sample is warning-free (local native link needs the VS developer environment; CI covers it on Linux). |

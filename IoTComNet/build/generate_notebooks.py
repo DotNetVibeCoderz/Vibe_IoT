@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.2.0-preview.1"
+VERSION = "0.3.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -152,6 +152,44 @@ NOTEBOOKS = {
         md("## JSON vs CBOR size\n", "## Ukuran JSON vs CBOR\n"),
         code("Console.WriteLine($\"JSON {SenMLCodec.ToJson(pack).Length} bytes · CBOR {SenMLCodec.ToCbor(pack).Length} bytes\");"),
         md(CREDIT[0], CREDIT[1]),
+    ],
+    "automotive/06-can-uds": [
+        md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "
+           "`socketcan:can0` or `slcan:COM5` to talk to real hardware — only on vehicles you are authorised to service.",
+           "# Otomotif: CAN, ISO-TP, UDS, dan OBD-II\n\nScan tool dan ECU mesin simulasi berbagi bus CAN virtual. Ganti URI menjadi "
+           "`socketcan:can0` atau `slcan:COM5` untuk perangkat sungguhan — hanya pada kendaraan yang Anda berwenang servis."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Protocols.Uds, {VERSION}"'),
+        md("## CAN frames in candump notation\nFrames are validated (11/29-bit identifiers, classic or CAN FD lengths).",
+           "## Frame CAN dalam notasi candump\nFrame divalidasi (identifier 11/29-bit, panjang klasik atau CAN FD)."),
+        code("using IoTCom.Net.Transport.Can;\n\nvar request = CanFrame.Parse(\"7DF#02010C\");   // OBD-II: engine rpm\n"
+             "Console.WriteLine($\"{request} → id 0x{request.Id:X3}, {request.Data.Length} bytes, DLC {request.Dlc}\");\n"
+             "var fd = new CanFrame(0x18DAF110, CanDlc.Pad(new byte[20]), CanFrameFlags.Extended | CanFrameFlags.Fd);\n"
+             "Console.WriteLine($\"CAN FD: {fd.Data.Length} bytes (padded), DLC {fd.Dlc}\");"),
+        md("## An ECU simulator and a scan tool on a virtual bus", "## Simulator ECU dan scan tool di bus virtual"),
+        code("using IoTCom.Net.Protocols.Uds;\n\nvar net = new VirtualCanNetwork();\n"
+             "await using var ecu = EcuSimulator.Create(net.CreateNode());\nawait ecu.StartAsync();\n"
+             "var bus = net.CreateNode();\nawait bus.ConnectAsync();\nusing var sniffer = bus.OpenReader();\n\n"
+             "await using var obd = ObdClient.Create(bus);\nawait obd.ConnectAsync();\n"
+             "foreach (var pid in new[] { ObdPids.EngineRpm, ObdPids.CoolantTemperature, ObdPids.ModuleVoltage })\n"
+             "    Console.WriteLine(await obd.ReadPidAsync(pid));\n"
+             "Console.WriteLine($\"VIN {await obd.ReadVinAsync()}\");"),
+        md("## ISO-TP on the wire\nThe 17-character VIN needs a first frame, a flow control and consecutive frames — segmented by the Rust state machine.",
+           "## ISO-TP di jalur\nVIN 17 karakter butuh first frame, flow control, dan consecutive frame — dipecah oleh state machine Rust."),
+        code("while (sniffer.TryRead(out var f)) if (f.Data.Length > 0 && f.Data.Span[0] >> 4 is 1 or 2 or 3) Console.WriteLine(f);"),
+        md("## UDS: identification, trouble codes and security access", "## UDS: identifikasi, kode kerusakan, dan security access"),
+        code("await using var uds = UdsClient.Create(bus);\nawait uds.ConnectAsync();\n"
+             "Console.WriteLine(await uds.ReadStringAsync(UdsDid.SoftwareVersion));\n"
+             "foreach (var dtc in await uds.ReadDtcsAsync()) Console.WriteLine($\"{dtc}  {dtc.Status}\");\n\n"
+             "try { await uds.WriteDataByIdentifierAsync(UdsDid.RepairShopCode, \"WS-01\"u8.ToArray()); }\n"
+             "catch (UdsNegativeResponseException ex) { Console.WriteLine(ex.Message); }\n\n"
+             "await uds.StartSessionAsync(UdsSession.Extended);\nawait uds.SecurityAccessAsync(0x01, EcuSimulator.ComputeKey);\n"
+             "await uds.WriteDataByIdentifierAsync(UdsDid.RepairShopCode, \"WS-01\"u8.ToArray());\n"
+             "Console.WriteLine(await uds.ReadStringAsync(UdsDid.RepairShopCode));"),
+        md("## Going further\nThe Gallery demo *Vehicle diagnostics* shows the same stack with a live dashboard; the CLI has "
+           "`iotcom obd live --can sim`. See `docs/en/protocols/uds.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nDemo Galeri *Diagnostik kendaraan* menampilkan tumpukan yang sama dengan dasbor langsung; CLI punya "
+           "`iotcom obd live --can sim`. Lihat `docs/id/protocols/uds.md`.\n\n" + CREDIT[1]),
     ],
     "medical/05-hl7-dicom": [
         md("# Healthcare: HL7 v2 and DICOM\n\nBedside monitors, analyzers and modalities talk **HL7 v2** (events and results over MLLP) and "

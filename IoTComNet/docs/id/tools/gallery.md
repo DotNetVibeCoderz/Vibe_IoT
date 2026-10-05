@@ -32,6 +32,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Kategori | Demo | Protokol |
 |---|---|---|
 | Industri | PLC pabrik pintar — baca PLC virtual, nyalakan motor, geser setpoint; beralih antara mesin C# dan **Rust** | Modbus TCP |
+| Otomotif | Diagnostik kendaraan — scan tool dan simulator ECU mesin di bus CAN virtual: takometer dan lampu indikator, data langsung OBD-II, VIN, DTC, security access, dan penulisan yang dijaga | CAN, ISO-TP (Rust), UDS, OBD-II |
 | Medis & kesehatan | Monitor pasien ICU — 4 bed sintetis mengirim ORU^R01 lewat MLLP; papan bangsal, kurva langsung, NEWS2, tren, dan catatan SBAR dari LLM | HL7 v2, MLLP |
 | Medis & kesehatan | Pra-baca gambar dengan AI — modalitas CT/MR/X-ray simulasi menyimpan ke PACS; viewer dengan window dan pra-baca model vision yang dinilai terhadap temuan yang ditanam | DICOM C-STORE |
 | Navigasi & maritim | Pelacak kendaraan GNSS — lintasan langsung, kecepatan, kekuatan sinyal satelit | NMEA 0183 |
@@ -39,6 +40,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
 
+![Diagnostik kendaraan](../../images/gallery-can-uds.png)
 ![Monitor pasien ICU](../../images/gallery-hl7-icu.png)
 ![Pra-baca gambar dengan AI](../../images/gallery-dicom-ai.png)
 

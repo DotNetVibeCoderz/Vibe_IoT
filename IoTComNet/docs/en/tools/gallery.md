@@ -32,6 +32,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Category | Demo | Protocols |
 |---|---|---|
 | Industrial | Smart factory PLC — read a virtual PLC, start the motor, move the setpoint; switch between the C# and **Rust** engines | Modbus TCP |
+| Automotive | Vehicle diagnostics — scan tool and engine ECU simulator on a virtual CAN bus: tachometer and tell-tales, OBD-II live data, VIN, DTCs, security access and a guarded write | CAN, ISO-TP (Rust), UDS, OBD-II |
 | Medical & healthcare | ICU bedside monitors — 4 synthetic beds send ORU^R01 over MLLP; ward board, live traces, NEWS2, trends and an LLM SBAR note | HL7 v2, MLLP |
 | Medical & healthcare | Imaging AI pre-read — a simulated CT/MR/X-ray modality stores to a PACS; windowed viewer and a vision-model pre-read scored against the planted finding | DICOM C-STORE |
 | Navigation & marine | GNSS vehicle tracker — live track, speed, satellites' signal strength | NMEA 0183 |
@@ -39,6 +40,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
 | Protocol workbench | Frame & checksum workbench — decode Modbus frames field by field, 23 CRCs, SLIP/COBS/HDLC live | Modbus, CRC, framing |
 
+![Vehicle diagnostics](../../images/gallery-can-uds.png)
 ![ICU bedside monitors](../../images/gallery-hl7-icu.png)
 ![Imaging AI pre-read](../../images/gallery-dicom-ai.png)
 

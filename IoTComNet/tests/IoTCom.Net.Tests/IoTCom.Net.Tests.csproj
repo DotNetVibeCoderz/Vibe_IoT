@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Native.Modbus\IoTCom.Net.Native.Modbus.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net\IoTCom.Net.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Uds\IoTCom.Net.Protocols.Uds.csproj" />
     <ProjectReference Include="..\..\samples\shared\IoTCom.Samples.Medical\IoTCom.Samples.Medical.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>

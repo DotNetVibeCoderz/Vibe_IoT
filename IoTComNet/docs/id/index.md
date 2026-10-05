@@ -6,7 +6,7 @@ translation-status: synced
 # Dokumentasi IoTCom.Net
 
 **IoTCom.Net** adalah library komunikasi untuk sistem IoT dan embedded di .NET 10, dengan inti Rust untuk bagian
-low-level. Satu model yang konsisten — *client, server, publisher, subscriber* — mencakup protokol industri, navigasi,
+low-level. Satu model yang konsisten — *client, server, publisher, subscriber* — mencakup protokol industri, otomotif, navigasi,
 pencahayaan, pesan, dan kesehatan, dan setiap protokol dilengkapi simulator sehingga Anda bisa membangun dan menguji tanpa
 perangkat keras.
 
@@ -37,6 +37,8 @@ perangkat keras.
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
 | [NMEA 0183](protocols/nmea.md) | pembaca · server · simulator | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
+| [CAN / CAN FD](protocols/can.md) | kirim · terima · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
+| [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 lewat MLLP](protocols/hl7.md) | kirim · terima · ACK · simulator monitor pasien | `IoTCom.Net.Protocols.Hl7` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · studi sintetis | `IoTCom.Net.Adapters.Dicom` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |

@@ -3,6 +3,7 @@ using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
+using IoTCom.Net.Transport.Can;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -74,6 +75,15 @@ public static class IoTComBuilderExtensions
         {
             o.Logger = Logger(sp, "IoTCom.Hl7");
             configure(o);
+        }));
+
+    /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>
+    public static IoTComBuilder AddCanBus(this IoTComBuilder builder, string name, string uri, Action<CanBusOptions>? configure = null)
+        => builder.AddEndpoint(name, sp => CanBus.Create(uri, o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Can");
+            configure?.Invoke(o);
         }));
 
     /// <summary>Registers an Art-Net node.</summary>
