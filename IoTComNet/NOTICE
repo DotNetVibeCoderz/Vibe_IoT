@@ -10,3 +10,5 @@ Third-party components:
 - Spectre.Console (MIT) — https://github.com/spectreconsole/spectre.console
 - Barlow, Barlow Condensed (SIL Open Font License 1.1) — https://github.com/jpt/barlow
 - JetBrains Mono (SIL Open Font License 1.1) — https://github.com/JetBrains/JetBrainsMono
+- fo-dicom (MS-PL) — https://github.com/fo-dicom/fo-dicom
+- MAVLink message definitions (MIT) — https://github.com/mavlink/mavlink (message_definitions/v1.0)

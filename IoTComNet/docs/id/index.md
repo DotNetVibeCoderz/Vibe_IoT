@@ -35,6 +35,7 @@ perangkat keras.
 | Protokol | Peran | Paket |
 |---|---|---|
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
+| [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · simulator kendaraan · generator dialek | `IoTCom.Net.Protocols.Mavlink` |
 | [NMEA 0183](protocols/nmea.md) | pembaca · server · simulator | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | kirim · terima · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |

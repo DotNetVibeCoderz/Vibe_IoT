@@ -16,6 +16,7 @@ Jupyter dengan kernel .NET. Setiap notebook berjalan dengan simulator di dalam p
 | `transport/02-framing-crc` | katalog CRC, SLIP/COBS/HDLC, decode streaming |
 | `navigation/03-nmea` | penguraian, penerima simulasi, fix GNSS |
 | `messaging/04-mqtt-senml` | broker, subscription wildcard, SenML JSON vs CBOR |
+| `navigation/08-mavlink` | pesan hasil generator, frame dan signing, menerbangkan simulator dari ground station |
 | `messaging/07-coap` | codec CoAP, penemuan, Observe, dan jaringan yang kehilangan paket |
 | `automotive/06-can-uds` | frame CAN, ISO-TP, UDS, dan OBD-II terhadap simulator ECU |
 | `medical/05-hl7-dicom` | bangun/urai ORU^R01, MLLP dengan ACK, DICOM C-STORE studi sintetis |

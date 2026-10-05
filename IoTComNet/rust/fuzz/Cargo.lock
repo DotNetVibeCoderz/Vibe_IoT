@@ -58,6 +58,7 @@ dependencies = [
  "iotcom-coap",
  "iotcom-core",
  "iotcom-isotp",
+ "iotcom-mavlink",
  "iotcom-modbus",
  "libfuzzer-sys",
 ]
@@ -68,6 +69,10 @@ version = "0.1.0"
 dependencies = [
  "iotcom-core",
 ]
+
+[[package]]
+name = "iotcom-mavlink"
+version = "0.1.0"
 
 [[package]]
 name = "iotcom-modbus"

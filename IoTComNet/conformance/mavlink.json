@@ -1,0 +1,122 @@
+[
+  {
+    "name": "heartbeat v1",
+    "version": 1,
+    "sequence": 0,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 0,
+    "message": "HEARTBEAT",
+    "payload": "000000000203510403",
+    "frame": "FE09000101000000000002035104037DDD",
+    "signed": false
+  },
+  {
+    "name": "heartbeat v2",
+    "version": 2,
+    "sequence": 7,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 0,
+    "message": "HEARTBEAT",
+    "payload": "000000000203510403",
+    "frame": "FD090000070101000000000000000203510403A4AC",
+    "signed": false
+  },
+  {
+    "name": "attitude v2",
+    "version": 2,
+    "sequence": 8,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 30,
+    "message": "ATTITUDE",
+    "payload": "40E20100CDCCCC3DCDCC4CBD0000C03F00000000000000000000803E",
+    "frame": "FD1C00000801011E000040E20100CDCCCC3DCDCC4CBD0000C03F00000000000000000000803E7531",
+    "signed": false
+  },
+  {
+    "name": "global position v2",
+    "version": 2,
+    "sequence": 9,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 33,
+    "message": "GLOBAL_POSITION_INT",
+    "payload": "8813000088E6E0FBD0F3234040DD0A00983A00007800D8FF00002823",
+    "frame": "FD1C00000901012100008813000088E6E0FBD0F3234040DD0A00983A00007800D8FF000028235B29",
+    "signed": false
+  },
+  {
+    "name": "command long arm v2",
+    "version": 2,
+    "sequence": 0,
+    "systemId": 255,
+    "componentId": 190,
+    "messageId": 76,
+    "message": "COMMAND_LONG",
+    "payload": "0000803F0000000000000000000000000000000000000000000000009001010100",
+    "frame": "FD20000000FFBE4C00000000803F000000000000000000000000000000000000000000000000900101019E4E",
+    "signed": false
+  },
+  {
+    "name": "command long arm v1",
+    "version": 1,
+    "sequence": 1,
+    "systemId": 255,
+    "componentId": 190,
+    "messageId": 76,
+    "message": "COMMAND_LONG",
+    "payload": "0000803F0000000000000000000000000000000000000000000000009001010100",
+    "frame": "FE2101FFBE4C0000803F0000000000000000000000000000000000000000000000009001010100F1A0",
+    "signed": false
+  },
+  {
+    "name": "statustext with extensions v2",
+    "version": 2,
+    "sequence": 3,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 253,
+    "message": "STATUSTEXT",
+    "payload": "0641726D6564000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "frame": "FD060000030101FD00000641726D656432DB",
+    "signed": false
+  },
+  {
+    "name": "param value v2",
+    "version": 2,
+    "sequence": 4,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 22,
+    "message": "PARAM_VALUE",
+    "payload": "0000FA430C00030057504E41565F5350454544000000000009",
+    "frame": "FD1900000401011600000000FA430C00030057504E41565F5350454544000000000009315E",
+    "signed": false
+  },
+  {
+    "name": "all-zero payload keeps one byte",
+    "version": 2,
+    "sequence": 5,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 77,
+    "message": "COMMAND_ACK",
+    "payload": "00000000000000000000",
+    "frame": "FD0100000501014D0000008C68",
+    "signed": false
+  },
+  {
+    "name": "signed heartbeat",
+    "version": 2,
+    "sequence": 9,
+    "systemId": 1,
+    "componentId": 1,
+    "messageId": 0,
+    "message": "HEARTBEAT",
+    "payload": "000000000203510403",
+    "frame": "FD090100090101000000000000000203510403D43801896745230100C78D00539C1A",
+    "signed": true
+  }
+]

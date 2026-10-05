@@ -24,6 +24,8 @@ iotcom --help
 | `iotcom modbus write` | write coils or registers — requires `--allow-write` and a confirmation |
 | `iotcom modbus serve` | a Modbus slave; `--simulate` runs the virtual PLC; logs every request |
 | `iotcom modbus decode <frame>` | field-by-field frame lane for TCP, RTU or ASCII frames |
+| `iotcom mavlink listen` / `simulate` | MAVLink log or live rate/telemetry table (`--stats`); a simulated quadcopter over UDP |
+| `iotcom mavlink cmd` / `params` / `decode` | arm, takeoff, land, rtl and parameter writes (`--allow-write`); frame lane of a frame |
 | `iotcom nmea listen` | live GNSS fix panel (`--raw` prints sentences) |
 | `iotcom nmea simulate` | a GPS over NMEA-over-TCP |
 | `iotcom can list` | SocketCAN interfaces and serial ports (slcan adapters) |

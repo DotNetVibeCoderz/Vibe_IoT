@@ -51,6 +51,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Datagrams & CoAP**: `IDatagramTransport` (Core: `UdpDatagramTransport`, `InMemoryDatagramNetwork` with `LossRate`/`DuplicateRate`)
   serves datagram protocols. `Protocols.Coap` is managed C# (`CoapStack` = message layer shared by `CoapClient`/`CoapServer`);
   Rust `iotcom-coap` is a fuzzed codec twin kept in sync by `/conformance/coap.json`.
+- **MAVLink**: `Protocols.Mavlink` messages are generated at build time by `src/IoTCom.Net.Protocols.Mavlink.Generator` (Roslyn,
+  netstandard2.0) from `Dialects/*.xml` (official, MIT). Never edit generated code; update the XML and run `python conformance/generate.py`
+  (the Python reference checks CRC_EXTRA against published constants). The generator ships in the nupkg under `analyzers/dotnet/cs`.
 - **Automotive**: `Transport.Can` (`ICanBus`, `CanBus.Create("socketcan:can0" | "slcan:COM5" | "slcan-tcp:h:p" | "virtual:x")`),
   `Protocols.IsoTp` (Rust `iotcom-isotp` → native `iotcom_isotp`, driven by `IsoTpChannel`) and `Protocols.Uds` (`UdsClient`,
   `ObdClient`, `EcuSimulator`). Tests and CLI use `VirtualCanNetwork`; `--can sim` starts an in-process ECU. Fuzz targets live

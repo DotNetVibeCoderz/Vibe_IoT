@@ -35,6 +35,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Otomotif | Diagnostik kendaraan — scan tool dan simulator ECU mesin di bus CAN virtual: takometer dan lampu indikator, data langsung OBD-II, VIN, DTC, security access, dan penulisan yang dijaga | CAN, ISO-TP (Rust), UDS, OBD-II |
 | Medis & kesehatan | Monitor pasien ICU — 4 bed sintetis mengirim ORU^R01 lewat MLLP; papan bangsal, kurva langsung, NEWS2, tren, dan catatan SBAR dari LLM | HL7 v2, MLLP |
 | Medis & kesehatan | Pra-baca gambar dengan AI — modalitas CT/MR/X-ray simulasi menyimpan ke PACS; viewer dengan window dan pra-baca model vision yang dinilai terhadap temuan yang ditanam | DICOM C-STORE |
+| Navigasi & maritim | Telemetri drone lewat MAVLink — artificial horizon, jejak terbang, baterai, pesan status; arm, lepas landas, RTL, dan mendarat dengan COMMAND_ACK (dijaga) | MAVLink 2 |
 | Navigasi & maritim | Pelacak kendaraan GNSS — lintasan langsung, kecepatan, kekuatan sinyal satelit | NMEA 0183 |
 | Gedung pintar & panggung | Rumah kaca pintar lewat CoAP — sensor yang diamati, aktuator, log Block2, separate response; slider kehilangan paket dan diagram urutan pesan langsung menampilkan pengiriman ulang | CoAP, Observe, Block-wise, SenML |
 | Gedung pintar & panggung | Lampu panggung lewat Art-Net — fader, master, chase; fixture menampilkan apa yang diurai penerima | Art-Net 4, DMX512 |
@@ -47,6 +48,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 
 Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis](../guides/medical-ai.md)); bila belum, teks berbasis aturan dipakai.
 
+![Drone MAVLink](../../images/gallery-mavlink.png)
 ![NMEA](../../images/gallery-nmea.png)
 ![Rumah kaca CoAP](../../images/gallery-coap.png)
 ![Pencahayaan](../../images/gallery-lighting.png)

@@ -30,7 +30,7 @@ public sealed partial class MainViewModel : ObservableObject, IAsyncDisposable
 
     public MainViewModel()
     {
-        _demos = [new ModbusDemo(), new VehicleDiagnosticsDemo(), new BedsideMonitorDemo(), new ImagingDemo(), new NmeaDemo(), new GreenhouseDemo(), new LightingDemo(), new MqttDemo(), new WorkbenchDemo()];
+        _demos = [new ModbusDemo(), new VehicleDiagnosticsDemo(), new BedsideMonitorDemo(), new ImagingDemo(), new NmeaDemo(), new DroneDemo(), new GreenhouseDemo(), new LightingDemo(), new MqttDemo(), new WorkbenchDemo()];
         foreach (var d in _demos.OfType<INotifyPropertyChanged>()) d.PropertyChanged += OnDemoPropertyChanged;
         Loc.Instance.LanguageChanged += OnLanguageChanged;
         _flush = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Background, (_, _) => FlushFrames());

@@ -16,6 +16,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | `IoTCom.Net` | meta-package with everything below + hosting extensions |
 | `IoTCom.Net.Protocols.Modbus` | Modbus TCP/RTU/ASCII master, slave, simulator |
 | `IoTCom.Net.Native.Modbus` | Rust protocol engine for Modbus |
+| `IoTCom.Net.Protocols.Mavlink` | MAVLink v1/v2: common dialect, source generator, GCS helper, simulator |
 | `IoTCom.Net.Protocols.Nmea` | NMEA 0183 reader, server, GPS simulator |
 | `IoTCom.Net.Protocols.Dmx` | Art-Net 4 and sACN (E1.31) |
 | `IoTCom.Net.Transport.Can` | CAN / CAN FD: SocketCAN, slcan adapters, virtual bus |

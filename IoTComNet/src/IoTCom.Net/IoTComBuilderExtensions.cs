@@ -2,6 +2,7 @@ using IoTCom.Net.Adapters.Mqtt;
 using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
+using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
 using IoTCom.Net.Transport.Can;
@@ -100,6 +101,15 @@ public static class IoTComBuilderExtensions
             resources?.Invoke(server);
             return server;
         });
+
+    /// <summary>Registers a MAVLink connection (e.g. <c>o =&gt; o.UseUdp(14550)</c> for a ground station).</summary>
+    public static IoTComBuilder AddMavlink(this IoTComBuilder builder, string name, Action<MavlinkConnectionOptions> configure)
+        => builder.AddEndpoint(name, sp => MavlinkConnection.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Mavlink");
+            configure(o);
+        }));
 
     /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>
     public static IoTComBuilder AddCanBus(this IoTComBuilder builder, string name, string uri, Action<CanBusOptions>? configure = null)

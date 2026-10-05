@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Dicom\IoTCom.Net.Adapters.Dicom.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Uds\IoTCom.Net.Protocols.Uds.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Coap\IoTCom.Net.Protocols.Coap.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Mavlink\IoTCom.Net.Protocols.Mavlink.csproj" />
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="Spectre.Console.Cli" />
   </ItemGroup>

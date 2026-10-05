@@ -46,6 +46,18 @@ app.Configure(c =>
         n.AddCommand<NmeaListenCommand>("listen").WithExample("nmea", "listen", "--host", "127.0.0.1", "--port", "10110");
         n.AddCommand<NmeaSimulateCommand>("simulate").WithExample("nmea", "simulate", "--port", "10110");
     });
+    c.AddBranch("mavlink", m =>
+    {
+        m.SetDescription("MAVLink v1/v2: listen, simulate a quadcopter, send commands, read/write parameters, decode frames.");
+        m.AddCommand<MavlinkListenCommand>("listen").WithExample("mavlink", "listen", "--stats")
+            .WithExample("mavlink", "listen", "--serial", "COM7", "--baud", "57600", "--filter", "STATUSTEXT,HEARTBEAT");
+        m.AddCommand<MavlinkSimulateCommand>("simulate").WithExample("mavlink", "simulate", "--to", "127.0.0.1:14550");
+        m.AddCommand<MavlinkCommandCommand>("cmd").WithDescription("arm, disarm, takeoff, land, rtl (requires --allow-write).")
+            .WithExample("mavlink", "cmd", "takeoff", "15", "--allow-write");
+        m.AddCommand<MavlinkParamsCommand>("params").WithExample("mavlink", "params")
+            .WithExample("mavlink", "params", "RTL_ALT", "2000", "--allow-write");
+        m.AddCommand<MavlinkDecodeCommand>("decode").WithExample("mavlink", "decode", "FE09000101000000000002035104037DDD");
+    });
     c.AddBranch("artnet", a =>
     {
         a.SetDescription("Art-Net 4 lighting control.");

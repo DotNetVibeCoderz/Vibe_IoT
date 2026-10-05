@@ -11,6 +11,7 @@
     <Project Path="samples/console/ArtNetPlayer/ArtNetPlayer.csproj" />
     <Project Path="samples/console/CoapObserve/CoapObserve.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
+    <Project Path="samples/console/MavlinkTelemetry/MavlinkTelemetry.csproj" />
     <Project Path="samples/console/ModbusMaster/ModbusMaster.csproj" />
     <Project Path="samples/console/ModbusSlaveSimulator/ModbusSlaveSimulator.csproj" />
     <Project Path="samples/console/MqttSenMLBridge/MqttSenMLBridge.csproj" />
@@ -35,6 +36,8 @@
     <Project Path="src/IoTCom.Net.Protocols.Dmx/IoTCom.Net.Protocols.Dmx.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Hl7/IoTCom.Net.Protocols.Hl7.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.IsoTp/IoTCom.Net.Protocols.IsoTp.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Mavlink/IoTCom.Net.Protocols.Mavlink.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Modbus/IoTCom.Net.Protocols.Modbus.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Nmea/IoTCom.Net.Protocols.Nmea.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Uds/IoTCom.Net.Protocols.Uds.csproj" />

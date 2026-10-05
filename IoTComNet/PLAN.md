@@ -34,7 +34,7 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | CAN / CAN FD transport (`ICanBus`): SocketCAN + one USB adapter (gs_usb / candleLight or PCAN) | P0 | ✅ `0.3.0-preview.1`: SocketCAN + slcan adapters + virtual bus (C#; see Progress decisions) · PCAN/Kvaser/gs_usb ⏳ |
 | ISO-TP, UDS, OBD-II (tester + ECU simulator) | P1 | ✅ `0.3.0-preview.1`: ISO-TP in Rust; UDS/OBD-II/ECU simulator in C# · flashing helpers, DoIP ⏳ |
 | CoAP (Observe, Block-wise) | P1 | ✅ `0.4.0-preview.1`: C# client/server + Rust codec twin (conformance + fuzz) · DTLS, OSCORE, CoAP-over-TCP ⏳ |
-| MAVLink v1/v2 + dialect source generator | P1 | Rust codec, C# source generator |
+| MAVLink v1/v2 + dialect source generator | P1 | ✅ `0.5.0-preview.1`: C# runtime + Roslyn generator (common dialect, custom dialects) + Rust frame codec twin · mission protocol, FTP, routing ⏳ |
 | LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | |
 | DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | |
 | NMEA: AIS decoding | P1 | |
@@ -44,9 +44,9 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies | P1 | ✅ `0.2.0-preview.1` (added on request: medical use cases) |
 | Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | |
 | Protobuf / MessagePack adapters, TLV helpers | P1 | |
-| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | 9 demos (incl. CoAP greenhouse, vehicle diagnostics, ICU monitors, imaging AI pre-read) |
+| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | ✅ 10 demos (incl. MAVLink drone, CoAP greenhouse, vehicle diagnostics, ICU monitors, imaging AI pre-read) |
 | VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | not started |
-| `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | ✅ 5 targets (Modbus decode/master/PDU, ISO-TP, CoAP); smoke run per change + nightly 10 min |
+| `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | ✅ 6 targets (Modbus decode/master/PDU, ISO-TP, CoAP, MAVLink); smoke run per change + nightly 10 min |
 | Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen header | P1 | bindings are hand-written today |
 | `iotcom sniff` (Modbus TCP proxy sniffer) and pcapng export from the traffic tap | P1 | |
 

@@ -1,0 +1,21 @@
+<Project>
+  <!--
+    IoTCom.Net MAVLink source generator. Add your dialect XML (and the files it <include>s) as AdditionalFiles:
+
+      <ItemGroup>
+        <AdditionalFiles Include="mavlink/mydialect.xml" />
+        <AdditionalFiles Include="$(MavlinkDialectsPath)minimal.xml" />   <!- - official files shipped in this package - ->
+      </ItemGroup>
+
+    Optional: <MavlinkNamespace>My.App.Mavlink</MavlinkNamespace> and <MavlinkDialectName>MyDialect</MavlinkDialectName>
+    (generates MyDialectDialect). The built-in common dialect is IoTCom.Net.Protocols.Mavlink.Common.CommonDialect.
+  -->
+  <PropertyGroup>
+    <MavlinkDialectsPath>$(MSBuildThisFileDirectory)../content/mavlink/</MavlinkDialectsPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="MavlinkNamespace" />
+    <CompilerVisibleProperty Include="MavlinkDialectName" />
+    <CompilerVisibleProperty Include="RootNamespace" />
+  </ItemGroup>
+</Project>

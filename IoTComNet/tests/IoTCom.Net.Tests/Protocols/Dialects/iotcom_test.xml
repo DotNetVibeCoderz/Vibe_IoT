@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<mavlink>
+  <include>minimal.xml</include>
+  <dialect>42</dialect>
+  <enums>
+    <enum name="IOTCOM_SENSOR_STATE">
+      <description>State of a custom sensor.</description>
+      <entry value="0" name="IOTCOM_SENSOR_STATE_OK"><description>Healthy.</description></entry>
+      <entry value="1" name="IOTCOM_SENSOR_STATE_DEGRADED"><description>Degraded.</description></entry>
+    </enum>
+  </enums>
+  <messages>
+    <message id="42000" name="IOTCOM_SENSOR">
+      <description>A custom sensor reading (test dialect).</description>
+      <field type="uint8_t" name="state" enum="IOTCOM_SENSOR_STATE">State.</field>
+      <field type="float" name="temperature" units="degC">Temperature.</field>
+      <field type="char[8]" name="label">Label.</field>
+      <field type="uint64_t" name="time_usec" units="us">Timestamp.</field>
+      <field type="uint16_t" name="humidity" units="c%">Humidity in centi-percent.</field>
+      <extensions/>
+      <field type="uint8_t" name="battery" units="%">Battery.</field>
+    </message>
+  </messages>
+</mavlink>

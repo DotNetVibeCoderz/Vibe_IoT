@@ -16,6 +16,7 @@ Jupyter with the .NET kernel. Every notebook runs against in-process simulators.
 | `transport/02-framing-crc` | the CRC catalogue, SLIP/COBS/HDLC, streaming decode |
 | `navigation/03-nmea` | parsing, a simulated receiver, the GNSS fix |
 | `messaging/04-mqtt-senml` | broker, wildcard subscriptions, SenML JSON vs CBOR |
+| `navigation/08-mavlink` | generated messages, frames and signing, flying the simulator from a ground station |
 | `messaging/07-coap` | CoAP codec, discovery, Observe and a lossy link |
 | `automotive/06-can-uds` | CAN frames, ISO-TP, UDS and OBD-II against the ECU simulator |
 | `medical/05-hl7-dicom` | ORU^R01 build/parse, MLLP with ACK, DICOM C-STORE of a synthetic study |

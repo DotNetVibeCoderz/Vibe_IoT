@@ -3,18 +3,18 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.4.0-preview.1` · **Last update:** 2026-10-05
+**Current version:** `0.5.0-preview.1` · **Last update:** 2026-10-05
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 275 passing | `dotnet test tests/IoTCom.Net.Tests` |
-| Rust workspace | ✅ 28 tests passing, clippy `-D warnings` clean; 5 cargo-fuzz targets (≈ 8.5 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
-| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23) shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 31 + 31 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 9 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| .NET tests | ✅ 295 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| Rust workspace | ✅ 30 tests passing, clippy `-D warnings` clean; 6 cargo-fuzz targets (≈ 10 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
+| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
+| Docs EN/ID | ✅ 32 + 32 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 10 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
 | NuGet packages | ✅ 14 packages (+12 symbol packages) published to nuget.org as `0.1.0-preview.1`; Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v0.1.0-preview.1` |
 
@@ -35,6 +35,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus · PCAN/Kvaser/gs_usb ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
 | IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
+| IoTCom.Net.Protocols.Mavlink + generator + Rust `iotcom-mavlink` | ✅ | common dialect (235 msgs) via Roslyn generator, custom dialects, v1/v2 + signing, UDP/TCP/serial links, GCS helper, quadcopter simulator · mission protocol, FTP, routing ⏳ |
 | IoTCom.Net.Protocols.Coap + Rust `iotcom-coap` | ✅ | client/server, CON/NON reliability, dedup, separate responses, Observe, Block1/Block2, link-format, SenML, greenhouse simulator · DTLS/OSCORE/TCP ⏳ |
 | IoTCom.Net.Protocols.Hl7 | ✅ | ER7 codec + escaping, MLLP server/client with ACK matching, LOINC vitals, PatientMonitorSimulator · ASTM E1394 ⏳ |
 | IoTCom.Net.Adapters.Dicom | ✅ | fo-dicom 5.2.6 Storage SCP/SCU, C-ECHO, windowed renderer → PNG, synthetic CT/MR/X-ray with planted findings (not trimmable/AOT) |
@@ -43,9 +44,9 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Gallery (Avalonia) | ✅ | 9 demos (Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 10 demos (Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 | VS Code extension | ⏳ not started | Phase 1 |
@@ -59,6 +60,15 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.5
+
+- **The dialect is generated, not hand-written.** A Roslyn source generator turns the official MAVLink XML into
+  classes at compile time. The library ships the common dialect, and the same generator, inside the package, compiles
+  application dialects. This is the design's "C# source generator" item, and it keeps CRC_EXTRA exact for all 235
+  messages, which is checked against an independent reference.
+- **The runtime is managed and the Rust crate is a fuzzed twin** (same reasoning as CoAP): a per-frame FFI call would
+  cost more than the framing. `iotcom-mavlink` gives the Rust side a verified frame codec for embedded companions.
 
 ## Decisions taken in 0.4
 
@@ -98,6 +108,8 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-05 | MAVLink (`0.5.0-preview.1`): package with the generated common dialect, Roslyn generator for custom dialects, signing, GCS helper, quadcopter simulator, Rust frame twin + fuzz target, Gallery drone demo, CLI `mavlink`, MavlinkTelemetry sample, notebook pair, docs. Fixed during the Gallery review: concurrent senders could reorder sequence numbers (false loss) — send is now atomic, covered by a test. |
+| 2026-10-05 | Published 0.4.0-preview.1 (CoAP). |
 | 2026-10-05 | CoAP (`0.4.0-preview.1`): CoAP package + Rust codec twin, datagram transports, Gallery greenhouse demo, CLI `coap`, CoapObserve sample, notebook pair, docs. Fixed during smoke test: null option setters added an empty value (now covered by a test). |
 | 2026-10-05 | Published 0.3.0-preview.1 (automotive); CI, fuzz, native and release workflows green. |
 | 2026-10-05 | Automotive (`0.3.0-preview.1`): CAN transport, ISO-TP (Rust), UDS/OBD-II + ECU simulator, cargo-fuzz in CI, Gallery vehicle diagnostics, CLI `can`/`uds`/`obd`, UdsTester sample, notebook pair, CAN/UDS docs. |

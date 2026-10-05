@@ -30,6 +30,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | | |
 |---|---|
 | **Modbus TCP / RTU / ASCII** | master + slave + simulator PLC virtual, pipelining TCP, mode aman read-only, identifikasi perangkat — dan **mesin Rust** opsional (`NativeModbusClient`) |
+| **MAVLink v1 / v2** | dialek common lengkap dari XML resmi (source generator Roslyn — bawa dialek Anda sendiri), signing, link UDP/TCP/serial, helper ground station, simulator quadcopter; codec frame dicerminkan di Rust |
 | **NMEA 0183** | parser dan builder dengan validasi checksum, GGA/RMC/GSA/GSV/VTG/GLL/ZDA bertipe, agregator fix GNSS, server NMEA, simulator GPS |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 lewat IP: kirim, terima, discovery ArtPoll, multicast, prioritas, model universe dengan fade |
 | **CoAP (RFC 7252)** | client + server lewat UDP: pengiriman ulang dan deduplikasi, Observe, Block-wise, penemuan link-format, SenML, simulator rumah kaca; codec dicerminkan oleh crate Rust yang di-fuzz |
@@ -54,6 +55,7 @@ Bahasa Indonesia**.
 <tr><td colspan="2"><img src="docs/images/gallery-can-uds.png" alt="Diagnostik kendaraan"><br><sub>Diagnostik kendaraan: OBD-II dan UDS lewat CAN, ISO-TP di Rust, terhadap ECU mesin simulasi</sub></td></tr>
 <tr><td><img src="docs/images/gallery-hl7-icu.png" alt="ICU"><br><sub>Monitor pasien ICU lewat HL7/MLLP: NEWS2, tren, dan catatan SBAR dari LLM</sub></td>
 <td><img src="docs/images/gallery-dicom-ai.png" alt="DICOM AI"><br><sub>DICOM C-STORE → viewer dengan window → pra-baca model vision</sub></td></tr>
+<tr><td colspan="2"><img src="docs/images/gallery-mavlink.png" alt="Drone MAVLink"><br><sub>Telemetri drone lewat MAVLink: artificial horizon, jejak terbang, dan perintah ber-ACK</sub></td></tr>
 <tr><td colspan="2"><img src="docs/images/gallery-coap.png" alt="Rumah kaca CoAP"><br><sub>Rumah kaca CoAP: Observe, Block-wise, dan diagram urutan pesan langsung di jaringan yang kehilangan paket</sub></td></tr>
 <tr><td><img src="docs/images/gallery-nmea.png" alt="NMEA"><br><sub>Pelacak GNSS lewat NMEA 0183</sub></td>
 <td><img src="docs/images/gallery-lighting.png" alt="Art-Net"><br><sub>Lampu panggung lewat Art-Net</sub></td></tr>
@@ -86,7 +88,7 @@ dotnet run --project samples/console/ModbusMaster -- --simulate
 
 ```bash
 dotnet build IoTCom.Net.slnx
-dotnet test tests/IoTCom.Net.Tests                  # 275+ uji termasuk conformance lintas bahasa
+dotnet test tests/IoTCom.Net.Tests                  # 300+ uji termasuk conformance lintas bahasa
 cd rust && cargo test --workspace && cargo build --release   # inti Rust + library native iotcom_modbus
 python build/check_docs_parity.py                   # paritas EN/ID + cek tautan
 ```

@@ -34,6 +34,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | Protocol | Roles | Package |
 |---|---|---|
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
+| [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · vehicle simulator · dialect generator | `IoTCom.Net.Protocols.Mavlink` |
 | [NMEA 0183](protocols/nmea.md) | reader · server · simulator | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | send · receive · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |

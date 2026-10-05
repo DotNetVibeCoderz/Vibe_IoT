@@ -91,6 +91,18 @@ if (Want("gallery-can-uds.png", "gallery-can-traffic.png"))
     Tabs().SelectedIndex = 0;
 }
 
+if (Want("gallery-mavlink.png"))
+{
+    // MAVLink drone: arm, take off, let it fly part of the survey circuit.
+    Show("mavlink-drone", seconds: 2);
+    var drone = (DroneDemo)vm.SelectedDemo!;
+    drone.AllowCommands = true;
+    Await(drone.ArmAsync(true));
+    Await(drone.TakeoffAsync());
+    Pump(TimeSpan.FromSeconds(24));
+    Shot("gallery-mavlink.png");
+}
+
 if (Want("gallery-coap.png"))
 {
     // CoAP greenhouse: 20 % loss so the chart shows dropped datagrams and retransmissions.

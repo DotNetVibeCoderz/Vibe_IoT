@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Mavlink</RootNamespace>
+    <Description>MAVLink v1/v2 for IoTCom.Net: the complete common dialect (generated from the official XML), frame codec with MAVLink 2 truncation and signing, connections over UDP, TCP or serial, a ground-station helper (commands with acknowledgement, parameters, read-only mode), a quadcopter simulator and a Roslyn source generator for your own dialects. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);mavlink;drone;uav;px4;ardupilot;telemetry;gcs;source-generator</PackageTags>
+    <!-- Generated code for the built-in dialect -->
+    <MavlinkNamespace>IoTCom.Net.Protocols.Mavlink.Common</MavlinkNamespace>
+    <MavlinkDialectName>Common</MavlinkDialectName>
+  </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="MavlinkNamespace" />
+    <CompilerVisibleProperty Include="MavlinkDialectName" />
+    <CompilerVisibleProperty Include="RootNamespace" />
+    <AdditionalFiles Include="Dialects\*.xml" />
+    <None Include="Dialects\*.xml" Pack="true" PackagePath="content/mavlink/" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Mavlink.Generator\IoTCom.Net.Protocols.Mavlink.Generator.csproj"
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
+  </ItemGroup>
+  <!-- Ship the generator so applications can compile their own dialect XML (AdditionalFiles). -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\IoTCom.Net.Protocols.Mavlink.Generator\bin\$(Configuration)\netstandard2.0\IoTCom.Net.Protocols.Mavlink.Generator.dll"
+          Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="build\IoTCom.Net.Protocols.Mavlink.props" Pack="true" PackagePath="build;buildTransitive" />
+  </ItemGroup>
+</Project>

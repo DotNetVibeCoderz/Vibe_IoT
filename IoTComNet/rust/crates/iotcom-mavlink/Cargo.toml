@@ -1,0 +1,12 @@
+[package]
+name = "iotcom-mavlink"
+description = "Sans-I/O MAVLink v1/v2 framing for IoTCom.Net, kept in sync with the C# codec by shared conformance vectors."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

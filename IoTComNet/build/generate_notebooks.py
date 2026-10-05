@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.4.0-preview.1"
+VERSION = "0.5.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -152,6 +152,45 @@ NOTEBOOKS = {
         md("## JSON vs CBOR size\n", "## Ukuran JSON vs CBOR\n"),
         code("Console.WriteLine($\"JSON {SenMLCodec.ToJson(pack).Length} bytes · CBOR {SenMLCodec.ToCbor(pack).Length} bytes\");"),
         md(CREDIT[0], CREDIT[1]),
+    ],
+    "navigation/08-mavlink": [
+        md("# MAVLink: talking to drones\n\nThe complete common dialect is generated from the official XML; a simulated quadcopter "
+           "flies on an in-memory UDP link. Commands move real vehicles — keep to the simulator here.",
+           "# MAVLink: berbicara dengan drone\n\nDialek common lengkap dihasilkan dari XML resmi; quadcopter simulasi terbang di "
+           "link UDP memori. Perintah menggerakkan kendaraan sungguhan — tetap di simulator di sini."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Generated messages and a frame\nEvery message is a C# class with its id, CRC_EXTRA and wire layout.",
+           "## Pesan hasil generator dan sebuah frame\nSetiap pesan adalah kelas C# dengan id, CRC_EXTRA, dan tata letak wire-nya."),
+        code("using IoTCom.Net.Protocols.Mavlink;\nusing IoTCom.Net.Protocols.Mavlink.Common;\n\n"
+             "Console.WriteLine($\"{CommonDialect.Instance.Messages.Count} messages; HEARTBEAT crc_extra {Heartbeat.MavlinkCrcExtra}\");\n"
+             "var hb = new Heartbeat { Type = MavType.Quadrotor, Autopilot = MavAutopilot.Px4, SystemStatus = MavState.Active };\n"
+             "var frame = MavlinkCodec.Encode(hb, sequence: 0, systemId: 1, componentId: 1);\n"
+             "Console.WriteLine(Convert.ToHexString(frame));\n"
+             "foreach (var f in MavlinkAnatomy.Describe(frame, CommonDialect.Instance)) Console.WriteLine($\"{f.Name,-10} {f.Value}\");"),
+        md("## Signing\nA signed frame carries link id, timestamp and a 6-byte SHA-256 signature; a forged one is rejected.",
+           "## Signing\nFrame bertanda tangan membawa link id, timestamp, dan tanda tangan SHA-256 6 byte; frame palsu ditolak."),
+        code("var key = MavlinkSigning.FromPassphrase(\"demo\");\nvar signed = MavlinkCodec.Encode(hb, 1, 1, 1, signing: key);\n"
+             "var parser = new MavlinkParser(CommonDialect.Instance, MavlinkSigning.FromPassphrase(\"demo\"));\n"
+             "parser.Feed(signed);\nConsole.WriteLine(parser.TryRead(out var ok) ? $\"accepted, signed={ok.Signed}\" : \"rejected\");\n"
+             "signed[^1] ^= 1;\nparser.Feed(signed);\nConsole.WriteLine(parser.TryRead(out _) ? \"accepted\" : $\"forged frame rejected ({parser.SignatureErrors})\");"),
+        md("## Fly the simulator from a ground station", "## Terbangkan simulator dari ground station"),
+        code("using System.Net;\nusing IoTCom.Net.Transports;\n\nvar net = new InMemoryDatagramNetwork();\n"
+             "var gcsAddress = new IPEndPoint(IPAddress.Loopback, 14550);\n"
+             "await using var vehicle = MavlinkConnection.Create(o => { o.UseInMemory(net).SendTo(gcsAddress); (o.SystemId, o.ComponentId) = (1, 1); });\n"
+             "await using var sim = new MavlinkVehicleSimulator(vehicle);\n"
+             "await using var link = MavlinkConnection.Create(o => o.UseInMemory(net, gcsAddress));\n"
+             "using var gcs = new MavlinkGroundStation(link);\n"
+             "await vehicle.ConnectAsync(); await link.ConnectAsync(); sim.Start();\n"
+             "await gcs.WaitForHeartbeatAsync(TimeSpan.FromSeconds(5));\n"
+             "Console.WriteLine($\"ARM → {await gcs.ArmAsync()}, TAKEOFF → {await gcs.TakeoffAsync(10)}\");\n"
+             "await Task.Delay(4000);\n"
+             "Console.WriteLine($\"altitude {gcs.State.RelativeAltitude:0.0} m, battery {gcs.State.BatteryVoltage:0.00} V, packets {link.Statistics.PacketsReceived}\");\n"
+             "var p = await gcs.ReadParametersAsync();\nConsole.WriteLine(string.Join(\", \", p.Take(4).Select(kv => $\"{kv.Key}={kv.Value}\")));"),
+        md("## Going further\nThe Gallery demo *Drone telemetry over MAVLink* adds an artificial horizon and a track map; "
+           "`iotcom mavlink simulate` lets QGroundControl connect. See `docs/en/protocols/mavlink.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nDemo Galeri *Telemetri drone lewat MAVLink* menambahkan artificial horizon dan peta jejak; "
+           "`iotcom mavlink simulate` memungkinkan QGroundControl terhubung. Lihat `docs/id/protocols/mavlink.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/07-coap": [
         md("# CoAP: REST for constrained devices\n\nGET, PUT, Observe and Block-wise over UDP — against a simulated greenhouse node on an "

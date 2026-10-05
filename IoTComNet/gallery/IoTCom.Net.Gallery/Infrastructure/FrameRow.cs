@@ -27,6 +27,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "nmea0183" => NmeaFields(data),
             "can" or "can-slcan" => CanFields(data),
             "coap" => Protocols.Coap.CoapAnatomy.Describe(data),
+            "mavlink" => Protocols.Mavlink.MavlinkAnatomy.Describe(data, Protocols.Mavlink.Common.CommonDialect.Instance),
             "uds" or "uds-ecu" or "obd2" => Protocols.Uds.UdsAnatomy.Describe(data),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],
         };

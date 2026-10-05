@@ -236,6 +236,142 @@ def coap_vectors():
     return out
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# MAVLink: an independent reference (CRC_EXTRA from the XML, v1/v2 framing, truncation, signing).
+import hashlib
+import struct
+import xml.etree.ElementTree as ET
+
+MAV_DIR = os.path.join(HERE, "..", "src", "IoTCom.Net.Protocols.Mavlink", "Dialects")
+MAV_SIZES = {"char": 1, "uint8_t": 1, "int8_t": 1, "uint16_t": 2, "int16_t": 2, "uint32_t": 4, "int32_t": 4,
+             "float": 4, "uint64_t": 8, "int64_t": 8, "double": 8, "uint8_t_mavlink_version": 1}
+MAV_STRUCT = {"char": "s", "uint8_t": "B", "int8_t": "b", "uint16_t": "H", "int16_t": "h", "uint32_t": "I",
+              "int32_t": "i", "float": "f", "uint64_t": "Q", "int64_t": "q", "double": "d", "uint8_t_mavlink_version": "B"}
+
+
+def x25(data, crc=0xFFFF):
+    for b in data:
+        t = b ^ (crc & 0xFF)
+        t = (t ^ (t << 4)) & 0xFF
+        crc = ((crc >> 8) ^ (t << 8) ^ (t << 3) ^ (t >> 4)) & 0xFFFF
+    return crc
+
+
+def mav_messages():
+    """All messages of common.xml and its includes: name -> (id, base fields in wire order, extension fields)."""
+    out = {}
+
+    def load(name):
+        root = ET.parse(os.path.join(MAV_DIR, name)).getroot()
+        for inc in root.findall("include"):
+            load(inc.text.strip())
+        for m in root.iter("message"):
+            fields, ext, in_ext = [], [], False
+            for c in m:
+                if c.tag == "extensions":
+                    in_ext = True
+                elif c.tag == "field":
+                    t = c.get("type")
+                    base, n = (t.split("[")[0], int(t.split("[")[1][:-1])) if "[" in t else (t, 0)
+                    (ext if in_ext else fields).append((c.get("name"), base, n))
+            fields.sort(key=lambda f: -MAV_SIZES[f[1]])  # stable: equal sizes keep XML order
+            out[m.get("name")] = (int(m.get("id")), fields, ext)
+
+    load("common.xml")
+    return out
+
+
+def crc_extra(name, fields):
+    crc = x25((name + " ").encode())
+    for fname, base, n in fields:
+        crc = x25(((base if base != "uint8_t_mavlink_version" else "uint8_t") + " ").encode(), crc)
+        crc = x25((fname + " ").encode(), crc)
+        if n:
+            crc = x25(bytes([n]), crc)
+    return (crc & 0xFF) ^ (crc >> 8)
+
+
+def mav_length(fields):
+    return sum(MAV_SIZES[b] * (n or 1) for _, b, n in fields)
+
+
+def mavlink_message_table():
+    msgs = mav_messages()
+    known = {"HEARTBEAT": 50, "SYS_STATUS": 124, "SYSTEM_TIME": 137, "PARAM_REQUEST_READ": 214, "PARAM_REQUEST_LIST": 159,
+             "PARAM_VALUE": 220, "PARAM_SET": 168, "GPS_RAW_INT": 24, "ATTITUDE": 39, "GLOBAL_POSITION_INT": 104,
+             "VFR_HUD": 20, "COMMAND_LONG": 152, "COMMAND_ACK": 143, "STATUSTEXT": 83, "BATTERY_STATUS": 154}
+    table = []
+    for name, (mid, fields, ext) in sorted(msgs.items(), key=lambda kv: kv[1][0]):
+        ce = crc_extra(name, fields)
+        if name in known:
+            assert ce == known[name], f"{name}: CRC_EXTRA {ce} != published {known[name]}"
+        table.append({"name": name, "id": mid, "crcExtra": ce, "minLength": mav_length(fields), "maxLength": mav_length(fields + ext)})
+    assert len(table) > 200
+    return table
+
+
+def mav_payload(name, values):
+    mid, fields, ext = mav_messages()[name]
+    buf = b""
+    for fname, base, n in fields + ext:
+        v = values.get(fname, 0 if base != "char" else b"")
+        if base == "char":
+            buf += struct.pack(f"<{n or 1}s", v.encode() if isinstance(v, str) else v)
+        elif n:
+            buf += struct.pack(f"<{n}{MAV_STRUCT[base]}", *(list(v) + [0] * (n - len(v))))
+        else:
+            buf += struct.pack("<" + MAV_STRUCT[base], v)
+    return mid, buf
+
+
+def mav_frame(version, seq, sys_id, comp, name, values, signing=None):
+    mid, payload = mav_payload(name, values)
+    _, fields, _ = mav_messages()[name]
+    extra = crc_extra(name, fields)
+    if version == 1:
+        header = bytes([0xFE, len(payload), seq, sys_id, comp, mid])
+        crc = x25(bytes([extra]), x25(header[1:] + payload))
+        return header + payload + struct.pack("<H", crc)
+    trimmed = payload.rstrip(b"\x00") or payload[:1]  # MAVLink 2 truncates trailing zeros, keeping at least one byte
+    incompat = 0x01 if signing else 0
+    header = bytes([0xFD, len(trimmed), incompat, 0, seq, sys_id, comp]) + mid.to_bytes(3, "little")
+    crc = x25(bytes([extra]), x25(header[1:] + trimmed))
+    frame = header + trimmed + struct.pack("<H", crc)
+    if signing:
+        key, link_id, timestamp = signing
+        sig_input = key + frame + bytes([link_id]) + timestamp.to_bytes(6, "little")
+        frame += bytes([link_id]) + timestamp.to_bytes(6, "little") + hashlib.sha256(sig_input).digest()[:6]
+    return frame
+
+
+def mavlink_frames():
+    out = []
+
+    def add(name, version, seq, sys_id, comp, message, values, signing=None):
+        mid, payload = mav_payload(message, values)
+        frame = mav_frame(version, seq, sys_id, comp, message, values, signing)
+        out.append({"name": name, "version": version, "sequence": seq, "systemId": sys_id, "componentId": comp,
+                    "messageId": mid, "message": message, "payload": payload.hex().upper(), "frame": frame.hex().upper(),
+                    "signed": bool(signing)})
+
+    hb = {"type": 2, "autopilot": 3, "base_mode": 0x51, "custom_mode": 0, "system_status": 4, "mavlink_version": 3}
+    add("heartbeat v1", 1, 0, 1, 1, "HEARTBEAT", hb)
+    add("heartbeat v2", 2, 7, 1, 1, "HEARTBEAT", hb)
+    add("attitude v2", 2, 8, 1, 1, "ATTITUDE", {"time_boot_ms": 123456, "roll": 0.1, "pitch": -0.05, "yaw": 1.5,
+                                                "rollspeed": 0.0, "pitchspeed": 0.0, "yawspeed": 0.25})
+    add("global position v2", 2, 9, 1, 1, "GLOBAL_POSITION_INT", {"time_boot_ms": 5000, "lat": -69147000, "lon": 1076098000,
+                                                                  "alt": 712000, "relative_alt": 15000, "vx": 120, "vy": -40, "vz": 0, "hdg": 9000})
+    add("command long arm v2", 2, 0, 255, 190, "COMMAND_LONG", {"target_system": 1, "target_component": 1, "command": 400,
+                                                                "confirmation": 0, "param1": 1.0})
+    add("command long arm v1", 1, 1, 255, 190, "COMMAND_LONG", {"target_system": 1, "target_component": 1, "command": 400, "param1": 1.0})
+    add("statustext with extensions v2", 2, 3, 1, 1, "STATUSTEXT", {"severity": 6, "text": "Armed", "id": 0, "chunk_seq": 0})
+    add("param value v2", 2, 4, 1, 1, "PARAM_VALUE", {"param_id": "WPNAV_SPEED", "param_value": 500.0, "param_type": 9,
+                                                       "param_count": 12, "param_index": 3})
+    add("all-zero payload keeps one byte", 2, 5, 1, 1, "COMMAND_ACK", {"command": 0, "result": 0})
+    add("signed heartbeat", 2, 9, 1, 1, "HEARTBEAT", hb, (bytes(range(32)), 1, 0x0123456789))
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -243,6 +379,8 @@ def main():
         "slip.json": slip_vectors(),
         "modbus.json": modbus_vectors(),
         "coap.json": coap_vectors(),
+        "mavlink_messages.json": mavlink_message_table(),
+        "mavlink.json": mavlink_frames(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

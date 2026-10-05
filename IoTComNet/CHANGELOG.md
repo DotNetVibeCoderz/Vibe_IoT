@@ -3,6 +3,35 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.5.0-preview.1 — 2026-10-05
+
+MAVLink, with a source generator for dialects.
+
+- **New package `IoTCom.Net.Protocols.Mavlink`** (also in the meta-package):
+  - The complete common dialect (235 messages and all enums) generated from the official MAVLink XML (MIT).
+  - Frame codec: v1/v2, MAVLink 2 truncation, signing (SHA-256, 48-bit timestamps), and a streaming parser that
+    resynchronises after garbage.
+  - `MavlinkConnection` over UDP (ground-station or vehicle style), TCP, serial or in-memory, with peers, loss from
+    sequence gaps and heartbeats.
+  - `MavlinkGroundStation`: COMMAND_LONG → COMMAND_ACK with retries, arm/takeoff/land/RTL, a complete parameter
+    download on lossy links, `PARAM_SET` confirmation and read-only mode.
+  - `MavlinkVehicleSimulator`: an ArduCopter-like quadcopter with pre-arm checks.
+- **Roslyn source generator** `IoTCom.Net.Protocols.Mavlink.Generator`, shipped in the package (`analyzers/dotnet/cs`):
+  - Compile your own dialect XML (`AdditionalFiles`, `MavlinkNamespace`, `MavlinkDialectName`); the official XML is
+    available through `$(MavlinkDialectsPath)`.
+  - `CompositeDialect` combines dialects. Diagnostics MAV001/MAV002 report invalid XML and missing includes.
+- **Rust crate `iotcom-mavlink`:** a frame-codec twin, fuzzed. `/conformance/mavlink*.json` come from an independent
+  Python reference that reproduces the published CRC_EXTRA constants.
+- **Gallery:** *Drone telemetry over MAVLink* — artificial horizon, track map, battery, status texts and guarded
+  commands.
+- **CLI:** `iotcom mavlink listen|simulate|cmd|params|decode`.
+- **Samples, notebook, docs:** `MavlinkTelemetry` sample; notebook pair `navigation/08-mavlink`; MAVLink page (EN/ID);
+  NOTICE now credits fo-dicom and the MAVLink definitions.
+
+*MAVLink: paket baru dengan dialek common lengkap dari XML resmi lewat source generator Roslyn (bisa untuk dialek Anda
+sendiri), signing, koneksi UDP/TCP/serial, helper ground station, simulator quadcopter, codec frame Rust yang di-fuzz,
+demo Galeri dengan artificial horizon, perintah CLI `mavlink`, sampel, notebook, dan dokumentasi dua bahasa.*
+
 ## 0.4.0-preview.1 — 2026-10-05
 
 CoAP, and a shared datagram transport.

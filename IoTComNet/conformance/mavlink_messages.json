@@ -1,0 +1,1647 @@
+[
+  {
+    "name": "HEARTBEAT",
+    "id": 0,
+    "crcExtra": 50,
+    "minLength": 9,
+    "maxLength": 9
+  },
+  {
+    "name": "SYS_STATUS",
+    "id": 1,
+    "crcExtra": 124,
+    "minLength": 31,
+    "maxLength": 43
+  },
+  {
+    "name": "SYSTEM_TIME",
+    "id": 2,
+    "crcExtra": 137,
+    "minLength": 12,
+    "maxLength": 12
+  },
+  {
+    "name": "PING",
+    "id": 4,
+    "crcExtra": 237,
+    "minLength": 14,
+    "maxLength": 14
+  },
+  {
+    "name": "CHANGE_OPERATOR_CONTROL",
+    "id": 5,
+    "crcExtra": 217,
+    "minLength": 28,
+    "maxLength": 28
+  },
+  {
+    "name": "CHANGE_OPERATOR_CONTROL_ACK",
+    "id": 6,
+    "crcExtra": 104,
+    "minLength": 3,
+    "maxLength": 3
+  },
+  {
+    "name": "AUTH_KEY",
+    "id": 7,
+    "crcExtra": 119,
+    "minLength": 32,
+    "maxLength": 32
+  },
+  {
+    "name": "LINK_NODE_STATUS",
+    "id": 8,
+    "crcExtra": 117,
+    "minLength": 36,
+    "maxLength": 36
+  },
+  {
+    "name": "SET_MODE",
+    "id": 11,
+    "crcExtra": 89,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "PARAM_REQUEST_READ",
+    "id": 20,
+    "crcExtra": 214,
+    "minLength": 20,
+    "maxLength": 20
+  },
+  {
+    "name": "PARAM_REQUEST_LIST",
+    "id": 21,
+    "crcExtra": 159,
+    "minLength": 2,
+    "maxLength": 2
+  },
+  {
+    "name": "PARAM_VALUE",
+    "id": 22,
+    "crcExtra": 220,
+    "minLength": 25,
+    "maxLength": 25
+  },
+  {
+    "name": "PARAM_SET",
+    "id": 23,
+    "crcExtra": 168,
+    "minLength": 23,
+    "maxLength": 23
+  },
+  {
+    "name": "GPS_RAW_INT",
+    "id": 24,
+    "crcExtra": 24,
+    "minLength": 30,
+    "maxLength": 52
+  },
+  {
+    "name": "GPS_STATUS",
+    "id": 25,
+    "crcExtra": 23,
+    "minLength": 101,
+    "maxLength": 101
+  },
+  {
+    "name": "SCALED_IMU",
+    "id": 26,
+    "crcExtra": 170,
+    "minLength": 22,
+    "maxLength": 24
+  },
+  {
+    "name": "RAW_IMU",
+    "id": 27,
+    "crcExtra": 144,
+    "minLength": 26,
+    "maxLength": 29
+  },
+  {
+    "name": "RAW_PRESSURE",
+    "id": 28,
+    "crcExtra": 67,
+    "minLength": 16,
+    "maxLength": 16
+  },
+  {
+    "name": "SCALED_PRESSURE",
+    "id": 29,
+    "crcExtra": 115,
+    "minLength": 14,
+    "maxLength": 16
+  },
+  {
+    "name": "ATTITUDE",
+    "id": 30,
+    "crcExtra": 39,
+    "minLength": 28,
+    "maxLength": 28
+  },
+  {
+    "name": "ATTITUDE_QUATERNION",
+    "id": 31,
+    "crcExtra": 246,
+    "minLength": 32,
+    "maxLength": 48
+  },
+  {
+    "name": "LOCAL_POSITION_NED",
+    "id": 32,
+    "crcExtra": 185,
+    "minLength": 28,
+    "maxLength": 28
+  },
+  {
+    "name": "GLOBAL_POSITION_INT",
+    "id": 33,
+    "crcExtra": 104,
+    "minLength": 28,
+    "maxLength": 28
+  },
+  {
+    "name": "RC_CHANNELS_SCALED",
+    "id": 34,
+    "crcExtra": 237,
+    "minLength": 22,
+    "maxLength": 22
+  },
+  {
+    "name": "RC_CHANNELS_RAW",
+    "id": 35,
+    "crcExtra": 244,
+    "minLength": 22,
+    "maxLength": 22
+  },
+  {
+    "name": "SERVO_OUTPUT_RAW",
+    "id": 36,
+    "crcExtra": 222,
+    "minLength": 21,
+    "maxLength": 37
+  },
+  {
+    "name": "MISSION_REQUEST_PARTIAL_LIST",
+    "id": 37,
+    "crcExtra": 212,
+    "minLength": 6,
+    "maxLength": 7
+  },
+  {
+    "name": "MISSION_WRITE_PARTIAL_LIST",
+    "id": 38,
+    "crcExtra": 9,
+    "minLength": 6,
+    "maxLength": 7
+  },
+  {
+    "name": "MISSION_ITEM",
+    "id": 39,
+    "crcExtra": 254,
+    "minLength": 37,
+    "maxLength": 38
+  },
+  {
+    "name": "MISSION_REQUEST",
+    "id": 40,
+    "crcExtra": 230,
+    "minLength": 4,
+    "maxLength": 5
+  },
+  {
+    "name": "MISSION_SET_CURRENT",
+    "id": 41,
+    "crcExtra": 28,
+    "minLength": 4,
+    "maxLength": 4
+  },
+  {
+    "name": "MISSION_CURRENT",
+    "id": 42,
+    "crcExtra": 28,
+    "minLength": 2,
+    "maxLength": 18
+  },
+  {
+    "name": "MISSION_REQUEST_LIST",
+    "id": 43,
+    "crcExtra": 132,
+    "minLength": 2,
+    "maxLength": 3
+  },
+  {
+    "name": "MISSION_COUNT",
+    "id": 44,
+    "crcExtra": 221,
+    "minLength": 4,
+    "maxLength": 9
+  },
+  {
+    "name": "MISSION_CLEAR_ALL",
+    "id": 45,
+    "crcExtra": 232,
+    "minLength": 2,
+    "maxLength": 3
+  },
+  {
+    "name": "MISSION_ITEM_REACHED",
+    "id": 46,
+    "crcExtra": 11,
+    "minLength": 2,
+    "maxLength": 2
+  },
+  {
+    "name": "MISSION_ACK",
+    "id": 47,
+    "crcExtra": 153,
+    "minLength": 3,
+    "maxLength": 8
+  },
+  {
+    "name": "SET_GPS_GLOBAL_ORIGIN",
+    "id": 48,
+    "crcExtra": 41,
+    "minLength": 13,
+    "maxLength": 21
+  },
+  {
+    "name": "GPS_GLOBAL_ORIGIN",
+    "id": 49,
+    "crcExtra": 39,
+    "minLength": 12,
+    "maxLength": 20
+  },
+  {
+    "name": "PARAM_MAP_RC",
+    "id": 50,
+    "crcExtra": 78,
+    "minLength": 37,
+    "maxLength": 37
+  },
+  {
+    "name": "MISSION_REQUEST_INT",
+    "id": 51,
+    "crcExtra": 196,
+    "minLength": 4,
+    "maxLength": 5
+  },
+  {
+    "name": "SAFETY_SET_ALLOWED_AREA",
+    "id": 54,
+    "crcExtra": 15,
+    "minLength": 27,
+    "maxLength": 27
+  },
+  {
+    "name": "SAFETY_ALLOWED_AREA",
+    "id": 55,
+    "crcExtra": 3,
+    "minLength": 25,
+    "maxLength": 25
+  },
+  {
+    "name": "ATTITUDE_QUATERNION_COV",
+    "id": 61,
+    "crcExtra": 167,
+    "minLength": 72,
+    "maxLength": 72
+  },
+  {
+    "name": "NAV_CONTROLLER_OUTPUT",
+    "id": 62,
+    "crcExtra": 183,
+    "minLength": 26,
+    "maxLength": 26
+  },
+  {
+    "name": "GLOBAL_POSITION_INT_COV",
+    "id": 63,
+    "crcExtra": 119,
+    "minLength": 181,
+    "maxLength": 181
+  },
+  {
+    "name": "LOCAL_POSITION_NED_COV",
+    "id": 64,
+    "crcExtra": 191,
+    "minLength": 225,
+    "maxLength": 225
+  },
+  {
+    "name": "RC_CHANNELS",
+    "id": 65,
+    "crcExtra": 118,
+    "minLength": 42,
+    "maxLength": 42
+  },
+  {
+    "name": "REQUEST_DATA_STREAM",
+    "id": 66,
+    "crcExtra": 148,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "DATA_STREAM",
+    "id": 67,
+    "crcExtra": 21,
+    "minLength": 4,
+    "maxLength": 4
+  },
+  {
+    "name": "MANUAL_CONTROL",
+    "id": 69,
+    "crcExtra": 243,
+    "minLength": 11,
+    "maxLength": 30
+  },
+  {
+    "name": "RC_CHANNELS_OVERRIDE",
+    "id": 70,
+    "crcExtra": 124,
+    "minLength": 18,
+    "maxLength": 38
+  },
+  {
+    "name": "MISSION_ITEM_INT",
+    "id": 73,
+    "crcExtra": 38,
+    "minLength": 37,
+    "maxLength": 38
+  },
+  {
+    "name": "VFR_HUD",
+    "id": 74,
+    "crcExtra": 20,
+    "minLength": 20,
+    "maxLength": 20
+  },
+  {
+    "name": "COMMAND_INT",
+    "id": 75,
+    "crcExtra": 158,
+    "minLength": 35,
+    "maxLength": 35
+  },
+  {
+    "name": "COMMAND_LONG",
+    "id": 76,
+    "crcExtra": 152,
+    "minLength": 33,
+    "maxLength": 33
+  },
+  {
+    "name": "COMMAND_ACK",
+    "id": 77,
+    "crcExtra": 143,
+    "minLength": 3,
+    "maxLength": 10
+  },
+  {
+    "name": "COMMAND_CANCEL",
+    "id": 80,
+    "crcExtra": 14,
+    "minLength": 4,
+    "maxLength": 4
+  },
+  {
+    "name": "MANUAL_SETPOINT",
+    "id": 81,
+    "crcExtra": 106,
+    "minLength": 22,
+    "maxLength": 22
+  },
+  {
+    "name": "SET_ATTITUDE_TARGET",
+    "id": 82,
+    "crcExtra": 49,
+    "minLength": 39,
+    "maxLength": 51
+  },
+  {
+    "name": "ATTITUDE_TARGET",
+    "id": 83,
+    "crcExtra": 22,
+    "minLength": 37,
+    "maxLength": 37
+  },
+  {
+    "name": "SET_POSITION_TARGET_LOCAL_NED",
+    "id": 84,
+    "crcExtra": 143,
+    "minLength": 53,
+    "maxLength": 53
+  },
+  {
+    "name": "POSITION_TARGET_LOCAL_NED",
+    "id": 85,
+    "crcExtra": 140,
+    "minLength": 51,
+    "maxLength": 51
+  },
+  {
+    "name": "SET_POSITION_TARGET_GLOBAL_INT",
+    "id": 86,
+    "crcExtra": 5,
+    "minLength": 53,
+    "maxLength": 53
+  },
+  {
+    "name": "POSITION_TARGET_GLOBAL_INT",
+    "id": 87,
+    "crcExtra": 150,
+    "minLength": 51,
+    "maxLength": 51
+  },
+  {
+    "name": "LOCAL_POSITION_NED_SYSTEM_GLOBAL_OFFSET",
+    "id": 89,
+    "crcExtra": 231,
+    "minLength": 28,
+    "maxLength": 28
+  },
+  {
+    "name": "HIL_STATE",
+    "id": 90,
+    "crcExtra": 183,
+    "minLength": 56,
+    "maxLength": 56
+  },
+  {
+    "name": "HIL_CONTROLS",
+    "id": 91,
+    "crcExtra": 63,
+    "minLength": 42,
+    "maxLength": 42
+  },
+  {
+    "name": "HIL_RC_INPUTS_RAW",
+    "id": 92,
+    "crcExtra": 54,
+    "minLength": 33,
+    "maxLength": 33
+  },
+  {
+    "name": "HIL_ACTUATOR_CONTROLS",
+    "id": 93,
+    "crcExtra": 47,
+    "minLength": 81,
+    "maxLength": 81
+  },
+  {
+    "name": "OPTICAL_FLOW",
+    "id": 100,
+    "crcExtra": 175,
+    "minLength": 26,
+    "maxLength": 34
+  },
+  {
+    "name": "GLOBAL_VISION_POSITION_ESTIMATE",
+    "id": 101,
+    "crcExtra": 102,
+    "minLength": 32,
+    "maxLength": 117
+  },
+  {
+    "name": "VISION_POSITION_ESTIMATE",
+    "id": 102,
+    "crcExtra": 158,
+    "minLength": 32,
+    "maxLength": 117
+  },
+  {
+    "name": "VISION_SPEED_ESTIMATE",
+    "id": 103,
+    "crcExtra": 208,
+    "minLength": 20,
+    "maxLength": 57
+  },
+  {
+    "name": "VICON_POSITION_ESTIMATE",
+    "id": 104,
+    "crcExtra": 56,
+    "minLength": 32,
+    "maxLength": 116
+  },
+  {
+    "name": "HIGHRES_IMU",
+    "id": 105,
+    "crcExtra": 93,
+    "minLength": 62,
+    "maxLength": 63
+  },
+  {
+    "name": "OPTICAL_FLOW_RAD",
+    "id": 106,
+    "crcExtra": 138,
+    "minLength": 44,
+    "maxLength": 44
+  },
+  {
+    "name": "HIL_SENSOR",
+    "id": 107,
+    "crcExtra": 108,
+    "minLength": 64,
+    "maxLength": 65
+  },
+  {
+    "name": "SIM_STATE",
+    "id": 108,
+    "crcExtra": 32,
+    "minLength": 84,
+    "maxLength": 92
+  },
+  {
+    "name": "RADIO_STATUS",
+    "id": 109,
+    "crcExtra": 185,
+    "minLength": 9,
+    "maxLength": 9
+  },
+  {
+    "name": "FILE_TRANSFER_PROTOCOL",
+    "id": 110,
+    "crcExtra": 84,
+    "minLength": 254,
+    "maxLength": 254
+  },
+  {
+    "name": "TIMESYNC",
+    "id": 111,
+    "crcExtra": 34,
+    "minLength": 16,
+    "maxLength": 18
+  },
+  {
+    "name": "CAMERA_TRIGGER",
+    "id": 112,
+    "crcExtra": 174,
+    "minLength": 12,
+    "maxLength": 12
+  },
+  {
+    "name": "HIL_GPS",
+    "id": 113,
+    "crcExtra": 124,
+    "minLength": 36,
+    "maxLength": 39
+  },
+  {
+    "name": "HIL_OPTICAL_FLOW",
+    "id": 114,
+    "crcExtra": 237,
+    "minLength": 44,
+    "maxLength": 44
+  },
+  {
+    "name": "HIL_STATE_QUATERNION",
+    "id": 115,
+    "crcExtra": 4,
+    "minLength": 64,
+    "maxLength": 64
+  },
+  {
+    "name": "SCALED_IMU2",
+    "id": 116,
+    "crcExtra": 76,
+    "minLength": 22,
+    "maxLength": 24
+  },
+  {
+    "name": "LOG_REQUEST_LIST",
+    "id": 117,
+    "crcExtra": 128,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "LOG_ENTRY",
+    "id": 118,
+    "crcExtra": 56,
+    "minLength": 14,
+    "maxLength": 14
+  },
+  {
+    "name": "LOG_REQUEST_DATA",
+    "id": 119,
+    "crcExtra": 116,
+    "minLength": 12,
+    "maxLength": 12
+  },
+  {
+    "name": "LOG_DATA",
+    "id": 120,
+    "crcExtra": 134,
+    "minLength": 97,
+    "maxLength": 97
+  },
+  {
+    "name": "LOG_ERASE",
+    "id": 121,
+    "crcExtra": 237,
+    "minLength": 2,
+    "maxLength": 2
+  },
+  {
+    "name": "LOG_REQUEST_END",
+    "id": 122,
+    "crcExtra": 203,
+    "minLength": 2,
+    "maxLength": 2
+  },
+  {
+    "name": "GPS_INJECT_DATA",
+    "id": 123,
+    "crcExtra": 250,
+    "minLength": 113,
+    "maxLength": 113
+  },
+  {
+    "name": "GPS2_RAW",
+    "id": 124,
+    "crcExtra": 87,
+    "minLength": 35,
+    "maxLength": 57
+  },
+  {
+    "name": "POWER_STATUS",
+    "id": 125,
+    "crcExtra": 203,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "SERIAL_CONTROL",
+    "id": 126,
+    "crcExtra": 220,
+    "minLength": 79,
+    "maxLength": 81
+  },
+  {
+    "name": "GPS_RTK",
+    "id": 127,
+    "crcExtra": 25,
+    "minLength": 35,
+    "maxLength": 35
+  },
+  {
+    "name": "GPS2_RTK",
+    "id": 128,
+    "crcExtra": 226,
+    "minLength": 35,
+    "maxLength": 35
+  },
+  {
+    "name": "SCALED_IMU3",
+    "id": 129,
+    "crcExtra": 46,
+    "minLength": 22,
+    "maxLength": 24
+  },
+  {
+    "name": "DATA_TRANSMISSION_HANDSHAKE",
+    "id": 130,
+    "crcExtra": 29,
+    "minLength": 13,
+    "maxLength": 13
+  },
+  {
+    "name": "ENCAPSULATED_DATA",
+    "id": 131,
+    "crcExtra": 223,
+    "minLength": 255,
+    "maxLength": 255
+  },
+  {
+    "name": "DISTANCE_SENSOR",
+    "id": 132,
+    "crcExtra": 85,
+    "minLength": 14,
+    "maxLength": 39
+  },
+  {
+    "name": "TERRAIN_REQUEST",
+    "id": 133,
+    "crcExtra": 6,
+    "minLength": 18,
+    "maxLength": 18
+  },
+  {
+    "name": "TERRAIN_DATA",
+    "id": 134,
+    "crcExtra": 229,
+    "minLength": 43,
+    "maxLength": 43
+  },
+  {
+    "name": "TERRAIN_CHECK",
+    "id": 135,
+    "crcExtra": 203,
+    "minLength": 8,
+    "maxLength": 8
+  },
+  {
+    "name": "TERRAIN_REPORT",
+    "id": 136,
+    "crcExtra": 1,
+    "minLength": 22,
+    "maxLength": 22
+  },
+  {
+    "name": "SCALED_PRESSURE2",
+    "id": 137,
+    "crcExtra": 195,
+    "minLength": 14,
+    "maxLength": 16
+  },
+  {
+    "name": "ATT_POS_MOCAP",
+    "id": 138,
+    "crcExtra": 109,
+    "minLength": 36,
+    "maxLength": 120
+  },
+  {
+    "name": "SET_ACTUATOR_CONTROL_TARGET",
+    "id": 139,
+    "crcExtra": 168,
+    "minLength": 43,
+    "maxLength": 43
+  },
+  {
+    "name": "ACTUATOR_CONTROL_TARGET",
+    "id": 140,
+    "crcExtra": 181,
+    "minLength": 41,
+    "maxLength": 41
+  },
+  {
+    "name": "ALTITUDE",
+    "id": 141,
+    "crcExtra": 47,
+    "minLength": 32,
+    "maxLength": 32
+  },
+  {
+    "name": "RESOURCE_REQUEST",
+    "id": 142,
+    "crcExtra": 72,
+    "minLength": 243,
+    "maxLength": 243
+  },
+  {
+    "name": "SCALED_PRESSURE3",
+    "id": 143,
+    "crcExtra": 131,
+    "minLength": 14,
+    "maxLength": 16
+  },
+  {
+    "name": "FOLLOW_TARGET",
+    "id": 144,
+    "crcExtra": 127,
+    "minLength": 93,
+    "maxLength": 93
+  },
+  {
+    "name": "CONTROL_SYSTEM_STATE",
+    "id": 146,
+    "crcExtra": 103,
+    "minLength": 100,
+    "maxLength": 100
+  },
+  {
+    "name": "BATTERY_STATUS",
+    "id": 147,
+    "crcExtra": 154,
+    "minLength": 36,
+    "maxLength": 54
+  },
+  {
+    "name": "AUTOPILOT_VERSION",
+    "id": 148,
+    "crcExtra": 178,
+    "minLength": 60,
+    "maxLength": 78
+  },
+  {
+    "name": "LANDING_TARGET",
+    "id": 149,
+    "crcExtra": 200,
+    "minLength": 30,
+    "maxLength": 60
+  },
+  {
+    "name": "FENCE_STATUS",
+    "id": 162,
+    "crcExtra": 189,
+    "minLength": 8,
+    "maxLength": 9
+  },
+  {
+    "name": "MAG_CAL_REPORT",
+    "id": 192,
+    "crcExtra": 36,
+    "minLength": 44,
+    "maxLength": 54
+  },
+  {
+    "name": "EFI_STATUS",
+    "id": 225,
+    "crcExtra": 208,
+    "minLength": 65,
+    "maxLength": 73
+  },
+  {
+    "name": "ESTIMATOR_STATUS",
+    "id": 230,
+    "crcExtra": 163,
+    "minLength": 42,
+    "maxLength": 42
+  },
+  {
+    "name": "WIND_COV",
+    "id": 231,
+    "crcExtra": 105,
+    "minLength": 40,
+    "maxLength": 40
+  },
+  {
+    "name": "GPS_INPUT",
+    "id": 232,
+    "crcExtra": 151,
+    "minLength": 63,
+    "maxLength": 65
+  },
+  {
+    "name": "GPS_RTCM_DATA",
+    "id": 233,
+    "crcExtra": 35,
+    "minLength": 182,
+    "maxLength": 182
+  },
+  {
+    "name": "HIGH_LATENCY",
+    "id": 234,
+    "crcExtra": 150,
+    "minLength": 40,
+    "maxLength": 40
+  },
+  {
+    "name": "HIGH_LATENCY2",
+    "id": 235,
+    "crcExtra": 179,
+    "minLength": 42,
+    "maxLength": 42
+  },
+  {
+    "name": "VIBRATION",
+    "id": 241,
+    "crcExtra": 90,
+    "minLength": 32,
+    "maxLength": 32
+  },
+  {
+    "name": "HOME_POSITION",
+    "id": 242,
+    "crcExtra": 104,
+    "minLength": 52,
+    "maxLength": 60
+  },
+  {
+    "name": "SET_HOME_POSITION",
+    "id": 243,
+    "crcExtra": 85,
+    "minLength": 53,
+    "maxLength": 61
+  },
+  {
+    "name": "MESSAGE_INTERVAL",
+    "id": 244,
+    "crcExtra": 95,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "EXTENDED_SYS_STATE",
+    "id": 245,
+    "crcExtra": 130,
+    "minLength": 2,
+    "maxLength": 2
+  },
+  {
+    "name": "ADSB_VEHICLE",
+    "id": 246,
+    "crcExtra": 184,
+    "minLength": 38,
+    "maxLength": 38
+  },
+  {
+    "name": "COLLISION",
+    "id": 247,
+    "crcExtra": 81,
+    "minLength": 19,
+    "maxLength": 19
+  },
+  {
+    "name": "V2_EXTENSION",
+    "id": 248,
+    "crcExtra": 8,
+    "minLength": 254,
+    "maxLength": 254
+  },
+  {
+    "name": "MEMORY_VECT",
+    "id": 249,
+    "crcExtra": 204,
+    "minLength": 36,
+    "maxLength": 36
+  },
+  {
+    "name": "DEBUG_VECT",
+    "id": 250,
+    "crcExtra": 49,
+    "minLength": 30,
+    "maxLength": 30
+  },
+  {
+    "name": "NAMED_VALUE_FLOAT",
+    "id": 251,
+    "crcExtra": 170,
+    "minLength": 18,
+    "maxLength": 18
+  },
+  {
+    "name": "NAMED_VALUE_INT",
+    "id": 252,
+    "crcExtra": 44,
+    "minLength": 18,
+    "maxLength": 18
+  },
+  {
+    "name": "STATUSTEXT",
+    "id": 253,
+    "crcExtra": 83,
+    "minLength": 51,
+    "maxLength": 54
+  },
+  {
+    "name": "DEBUG",
+    "id": 254,
+    "crcExtra": 46,
+    "minLength": 9,
+    "maxLength": 9
+  },
+  {
+    "name": "SETUP_SIGNING",
+    "id": 256,
+    "crcExtra": 71,
+    "minLength": 42,
+    "maxLength": 42
+  },
+  {
+    "name": "BUTTON_CHANGE",
+    "id": 257,
+    "crcExtra": 131,
+    "minLength": 9,
+    "maxLength": 9
+  },
+  {
+    "name": "PLAY_TUNE",
+    "id": 258,
+    "crcExtra": 187,
+    "minLength": 32,
+    "maxLength": 232
+  },
+  {
+    "name": "CAMERA_INFORMATION",
+    "id": 259,
+    "crcExtra": 92,
+    "minLength": 235,
+    "maxLength": 237
+  },
+  {
+    "name": "CAMERA_SETTINGS",
+    "id": 260,
+    "crcExtra": 146,
+    "minLength": 5,
+    "maxLength": 14
+  },
+  {
+    "name": "STORAGE_INFORMATION",
+    "id": 261,
+    "crcExtra": 179,
+    "minLength": 27,
+    "maxLength": 61
+  },
+  {
+    "name": "CAMERA_CAPTURE_STATUS",
+    "id": 262,
+    "crcExtra": 12,
+    "minLength": 18,
+    "maxLength": 23
+  },
+  {
+    "name": "CAMERA_IMAGE_CAPTURED",
+    "id": 263,
+    "crcExtra": 133,
+    "minLength": 255,
+    "maxLength": 255
+  },
+  {
+    "name": "FLIGHT_INFORMATION",
+    "id": 264,
+    "crcExtra": 49,
+    "minLength": 28,
+    "maxLength": 32
+  },
+  {
+    "name": "MOUNT_ORIENTATION",
+    "id": 265,
+    "crcExtra": 26,
+    "minLength": 16,
+    "maxLength": 20
+  },
+  {
+    "name": "LOGGING_DATA",
+    "id": 266,
+    "crcExtra": 193,
+    "minLength": 255,
+    "maxLength": 255
+  },
+  {
+    "name": "LOGGING_DATA_ACKED",
+    "id": 267,
+    "crcExtra": 35,
+    "minLength": 255,
+    "maxLength": 255
+  },
+  {
+    "name": "LOGGING_ACK",
+    "id": 268,
+    "crcExtra": 14,
+    "minLength": 4,
+    "maxLength": 4
+  },
+  {
+    "name": "VIDEO_STREAM_INFORMATION",
+    "id": 269,
+    "crcExtra": 109,
+    "minLength": 213,
+    "maxLength": 215
+  },
+  {
+    "name": "VIDEO_STREAM_STATUS",
+    "id": 270,
+    "crcExtra": 59,
+    "minLength": 19,
+    "maxLength": 20
+  },
+  {
+    "name": "CAMERA_FOV_STATUS",
+    "id": 271,
+    "crcExtra": 22,
+    "minLength": 52,
+    "maxLength": 53
+  },
+  {
+    "name": "CAMERA_TRACKING_IMAGE_STATUS",
+    "id": 275,
+    "crcExtra": 126,
+    "minLength": 31,
+    "maxLength": 32
+  },
+  {
+    "name": "CAMERA_TRACKING_GEO_STATUS",
+    "id": 276,
+    "crcExtra": 18,
+    "minLength": 49,
+    "maxLength": 50
+  },
+  {
+    "name": "CAMERA_THERMAL_RANGE",
+    "id": 277,
+    "crcExtra": 62,
+    "minLength": 30,
+    "maxLength": 30
+  },
+  {
+    "name": "GIMBAL_MANAGER_INFORMATION",
+    "id": 280,
+    "crcExtra": 70,
+    "minLength": 33,
+    "maxLength": 33
+  },
+  {
+    "name": "GIMBAL_MANAGER_STATUS",
+    "id": 281,
+    "crcExtra": 48,
+    "minLength": 13,
+    "maxLength": 13
+  },
+  {
+    "name": "GIMBAL_MANAGER_SET_ATTITUDE",
+    "id": 282,
+    "crcExtra": 123,
+    "minLength": 35,
+    "maxLength": 35
+  },
+  {
+    "name": "GIMBAL_DEVICE_INFORMATION",
+    "id": 283,
+    "crcExtra": 74,
+    "minLength": 144,
+    "maxLength": 149
+  },
+  {
+    "name": "GIMBAL_DEVICE_SET_ATTITUDE",
+    "id": 284,
+    "crcExtra": 99,
+    "minLength": 32,
+    "maxLength": 32
+  },
+  {
+    "name": "GIMBAL_DEVICE_ATTITUDE_STATUS",
+    "id": 285,
+    "crcExtra": 137,
+    "minLength": 40,
+    "maxLength": 49
+  },
+  {
+    "name": "AUTOPILOT_STATE_FOR_GIMBAL_DEVICE",
+    "id": 286,
+    "crcExtra": 210,
+    "minLength": 53,
+    "maxLength": 57
+  },
+  {
+    "name": "GIMBAL_MANAGER_SET_PITCHYAW",
+    "id": 287,
+    "crcExtra": 1,
+    "minLength": 23,
+    "maxLength": 23
+  },
+  {
+    "name": "GIMBAL_MANAGER_SET_MANUAL_CONTROL",
+    "id": 288,
+    "crcExtra": 20,
+    "minLength": 23,
+    "maxLength": 23
+  },
+  {
+    "name": "ESC_INFO",
+    "id": 290,
+    "crcExtra": 251,
+    "minLength": 46,
+    "maxLength": 46
+  },
+  {
+    "name": "ESC_STATUS",
+    "id": 291,
+    "crcExtra": 10,
+    "minLength": 57,
+    "maxLength": 57
+  },
+  {
+    "name": "AIRSPEED",
+    "id": 295,
+    "crcExtra": 234,
+    "minLength": 12,
+    "maxLength": 12
+  },
+  {
+    "name": "GLOBAL_POSITION_SENSOR",
+    "id": 296,
+    "crcExtra": 158,
+    "minLength": 41,
+    "maxLength": 41
+  },
+  {
+    "name": "WIFI_CONFIG_AP",
+    "id": 299,
+    "crcExtra": 19,
+    "minLength": 96,
+    "maxLength": 98
+  },
+  {
+    "name": "PROTOCOL_VERSION",
+    "id": 300,
+    "crcExtra": 217,
+    "minLength": 22,
+    "maxLength": 22
+  },
+  {
+    "name": "AIS_VESSEL",
+    "id": 301,
+    "crcExtra": 243,
+    "minLength": 58,
+    "maxLength": 58
+  },
+  {
+    "name": "UAVCAN_NODE_STATUS",
+    "id": 310,
+    "crcExtra": 28,
+    "minLength": 17,
+    "maxLength": 17
+  },
+  {
+    "name": "UAVCAN_NODE_INFO",
+    "id": 311,
+    "crcExtra": 95,
+    "minLength": 116,
+    "maxLength": 116
+  },
+  {
+    "name": "PARAM_EXT_REQUEST_READ",
+    "id": 320,
+    "crcExtra": 243,
+    "minLength": 20,
+    "maxLength": 20
+  },
+  {
+    "name": "PARAM_EXT_REQUEST_LIST",
+    "id": 321,
+    "crcExtra": 88,
+    "minLength": 2,
+    "maxLength": 2
+  },
+  {
+    "name": "PARAM_EXT_VALUE",
+    "id": 322,
+    "crcExtra": 243,
+    "minLength": 149,
+    "maxLength": 149
+  },
+  {
+    "name": "PARAM_EXT_SET",
+    "id": 323,
+    "crcExtra": 78,
+    "minLength": 147,
+    "maxLength": 147
+  },
+  {
+    "name": "PARAM_EXT_ACK",
+    "id": 324,
+    "crcExtra": 132,
+    "minLength": 146,
+    "maxLength": 146
+  },
+  {
+    "name": "OBSTACLE_DISTANCE",
+    "id": 330,
+    "crcExtra": 23,
+    "minLength": 158,
+    "maxLength": 167
+  },
+  {
+    "name": "ODOMETRY",
+    "id": 331,
+    "crcExtra": 91,
+    "minLength": 230,
+    "maxLength": 233
+  },
+  {
+    "name": "TRAJECTORY_REPRESENTATION_WAYPOINTS",
+    "id": 332,
+    "crcExtra": 236,
+    "minLength": 239,
+    "maxLength": 239
+  },
+  {
+    "name": "TRAJECTORY_REPRESENTATION_BEZIER",
+    "id": 333,
+    "crcExtra": 231,
+    "minLength": 109,
+    "maxLength": 109
+  },
+  {
+    "name": "CELLULAR_STATUS",
+    "id": 334,
+    "crcExtra": 72,
+    "minLength": 10,
+    "maxLength": 53
+  },
+  {
+    "name": "ISBD_LINK_STATUS",
+    "id": 335,
+    "crcExtra": 225,
+    "minLength": 24,
+    "maxLength": 24
+  },
+  {
+    "name": "CELLULAR_CONFIG",
+    "id": 336,
+    "crcExtra": 245,
+    "minLength": 84,
+    "maxLength": 84
+  },
+  {
+    "name": "RAW_RPM",
+    "id": 339,
+    "crcExtra": 199,
+    "minLength": 5,
+    "maxLength": 5
+  },
+  {
+    "name": "UTM_GLOBAL_POSITION",
+    "id": 340,
+    "crcExtra": 99,
+    "minLength": 70,
+    "maxLength": 70
+  },
+  {
+    "name": "PARAM_ERROR",
+    "id": 345,
+    "crcExtra": 209,
+    "minLength": 21,
+    "maxLength": 21
+  },
+  {
+    "name": "DEBUG_FLOAT_ARRAY",
+    "id": 350,
+    "crcExtra": 232,
+    "minLength": 20,
+    "maxLength": 252
+  },
+  {
+    "name": "ORBIT_EXECUTION_STATUS",
+    "id": 360,
+    "crcExtra": 11,
+    "minLength": 25,
+    "maxLength": 25
+  },
+  {
+    "name": "FIGURE_EIGHT_EXECUTION_STATUS",
+    "id": 361,
+    "crcExtra": 93,
+    "minLength": 33,
+    "maxLength": 33
+  },
+  {
+    "name": "SMART_BATTERY_INFO",
+    "id": 370,
+    "crcExtra": 75,
+    "minLength": 87,
+    "maxLength": 109
+  },
+  {
+    "name": "FUEL_STATUS",
+    "id": 371,
+    "crcExtra": 10,
+    "minLength": 26,
+    "maxLength": 26
+  },
+  {
+    "name": "BATTERY_INFO",
+    "id": 372,
+    "crcExtra": 26,
+    "minLength": 140,
+    "maxLength": 140
+  },
+  {
+    "name": "GENERATOR_STATUS",
+    "id": 373,
+    "crcExtra": 117,
+    "minLength": 42,
+    "maxLength": 42
+  },
+  {
+    "name": "ACTUATOR_OUTPUT_STATUS",
+    "id": 375,
+    "crcExtra": 251,
+    "minLength": 140,
+    "maxLength": 140
+  },
+  {
+    "name": "RELAY_STATUS",
+    "id": 376,
+    "crcExtra": 199,
+    "minLength": 8,
+    "maxLength": 8
+  },
+  {
+    "name": "TIME_ESTIMATE_TO_TARGET",
+    "id": 380,
+    "crcExtra": 232,
+    "minLength": 20,
+    "maxLength": 20
+  },
+  {
+    "name": "TUNNEL",
+    "id": 385,
+    "crcExtra": 147,
+    "minLength": 133,
+    "maxLength": 133
+  },
+  {
+    "name": "CAN_FRAME",
+    "id": 386,
+    "crcExtra": 132,
+    "minLength": 16,
+    "maxLength": 16
+  },
+  {
+    "name": "CANFD_FRAME",
+    "id": 387,
+    "crcExtra": 4,
+    "minLength": 72,
+    "maxLength": 72
+  },
+  {
+    "name": "CAN_FILTER_MODIFY",
+    "id": 388,
+    "crcExtra": 8,
+    "minLength": 37,
+    "maxLength": 37
+  },
+  {
+    "name": "ONBOARD_COMPUTER_STATUS",
+    "id": 390,
+    "crcExtra": 156,
+    "minLength": 238,
+    "maxLength": 240
+  },
+  {
+    "name": "COMPONENT_INFORMATION",
+    "id": 395,
+    "crcExtra": 0,
+    "minLength": 212,
+    "maxLength": 212
+  },
+  {
+    "name": "COMPONENT_INFORMATION_BASIC",
+    "id": 396,
+    "crcExtra": 50,
+    "minLength": 160,
+    "maxLength": 160
+  },
+  {
+    "name": "COMPONENT_METADATA",
+    "id": 397,
+    "crcExtra": 182,
+    "minLength": 108,
+    "maxLength": 108
+  },
+  {
+    "name": "PLAY_TUNE_V2",
+    "id": 400,
+    "crcExtra": 110,
+    "minLength": 254,
+    "maxLength": 254
+  },
+  {
+    "name": "SUPPORTED_TUNES",
+    "id": 401,
+    "crcExtra": 183,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "EVENT",
+    "id": 410,
+    "crcExtra": 160,
+    "minLength": 53,
+    "maxLength": 53
+  },
+  {
+    "name": "CURRENT_EVENT_SEQUENCE",
+    "id": 411,
+    "crcExtra": 106,
+    "minLength": 3,
+    "maxLength": 3
+  },
+  {
+    "name": "REQUEST_EVENT",
+    "id": 412,
+    "crcExtra": 33,
+    "minLength": 6,
+    "maxLength": 6
+  },
+  {
+    "name": "RESPONSE_EVENT_ERROR",
+    "id": 413,
+    "crcExtra": 77,
+    "minLength": 7,
+    "maxLength": 7
+  },
+  {
+    "name": "RADIO_RC_CHANNELS",
+    "id": 420,
+    "crcExtra": 20,
+    "minLength": 9,
+    "maxLength": 73
+  },
+  {
+    "name": "AVAILABLE_MODES",
+    "id": 435,
+    "crcExtra": 134,
+    "minLength": 46,
+    "maxLength": 47
+  },
+  {
+    "name": "CURRENT_MODE",
+    "id": 436,
+    "crcExtra": 193,
+    "minLength": 9,
+    "maxLength": 9
+  },
+  {
+    "name": "AVAILABLE_MODES_MONITOR",
+    "id": 437,
+    "crcExtra": 30,
+    "minLength": 1,
+    "maxLength": 1
+  },
+  {
+    "name": "ILLUMINATOR_STATUS",
+    "id": 440,
+    "crcExtra": 66,
+    "minLength": 35,
+    "maxLength": 35
+  },
+  {
+    "name": "WHEEL_DISTANCE",
+    "id": 9000,
+    "crcExtra": 113,
+    "minLength": 137,
+    "maxLength": 137
+  },
+  {
+    "name": "WINCH_STATUS",
+    "id": 9005,
+    "crcExtra": 117,
+    "minLength": 34,
+    "maxLength": 34
+  },
+  {
+    "name": "OPEN_DRONE_ID_BASIC_ID",
+    "id": 12900,
+    "crcExtra": 114,
+    "minLength": 44,
+    "maxLength": 44
+  },
+  {
+    "name": "OPEN_DRONE_ID_LOCATION",
+    "id": 12901,
+    "crcExtra": 254,
+    "minLength": 59,
+    "maxLength": 59
+  },
+  {
+    "name": "OPEN_DRONE_ID_AUTHENTICATION",
+    "id": 12902,
+    "crcExtra": 140,
+    "minLength": 53,
+    "maxLength": 53
+  },
+  {
+    "name": "OPEN_DRONE_ID_SELF_ID",
+    "id": 12903,
+    "crcExtra": 249,
+    "minLength": 46,
+    "maxLength": 46
+  },
+  {
+    "name": "OPEN_DRONE_ID_SYSTEM",
+    "id": 12904,
+    "crcExtra": 77,
+    "minLength": 54,
+    "maxLength": 54
+  },
+  {
+    "name": "OPEN_DRONE_ID_OPERATOR_ID",
+    "id": 12905,
+    "crcExtra": 49,
+    "minLength": 43,
+    "maxLength": 43
+  },
+  {
+    "name": "OPEN_DRONE_ID_MESSAGE_PACK",
+    "id": 12915,
+    "crcExtra": 94,
+    "minLength": 249,
+    "maxLength": 249
+  },
+  {
+    "name": "OPEN_DRONE_ID_ARM_STATUS",
+    "id": 12918,
+    "crcExtra": 139,
+    "minLength": 51,
+    "maxLength": 51
+  },
+  {
+    "name": "OPEN_DRONE_ID_SYSTEM_UPDATE",
+    "id": 12919,
+    "crcExtra": 7,
+    "minLength": 18,
+    "maxLength": 18
+  },
+  {
+    "name": "HYGROMETER_SENSOR",
+    "id": 12920,
+    "crcExtra": 20,
+    "minLength": 5,
+    "maxLength": 5
+  }
+]
