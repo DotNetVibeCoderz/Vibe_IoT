@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Hl7</RootNamespace>
+    <Description>HL7 v2 over MLLP for IoTCom.Net: ER7 parser and builder with escape sequences, typed access to PID/OBR/OBX, ACK generation, MLLP client (waits for ACK) and server (auto-ACK, IAsyncEnumerable), and a bedside patient-monitor simulator producing ORU^R01 vitals. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);hl7;hl7v2;mllp;healthcare;medical;oru;adt;lis</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Framing\IoTCom.Net.Framing.csproj" />
+  </ItemGroup>
+</Project>

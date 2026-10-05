@@ -33,6 +33,8 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **NMEA 0183** | parser dan builder dengan validasi checksum, GGA/RMC/GSA/GSV/VTG/GLL/ZDA bertipe, agregator fix GNSS, server NMEA, simulator GPS |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 lewat IP: kirim, terima, discovery ArtPoll, multicast, prioritas, model universe dengan fade |
 | **MQTT 3.1.1 / 5.0** | adapter di atas MQTTnet: subscription `IAsyncEnumerable`, reconnect + resubscribe, helper JSON/SenML, broker tertanam |
+| **HL7 v2 · MLLP** | parser/builder ER7 dengan escaping, pengirim/penerima MLLP dengan pencocokan ACK, tanda vital LOINC, simulator monitor pasien (sepsis, hipoksia, …) |
+| **DICOM** | adapter di atas fo-dicom: Storage SCP/SCU (C-STORE, C-ECHO), renderer dengan window ke PNG, studi CT/MR/X-ray sintetis dengan temuan yang ditanam |
 | **SenML (RFC 8428)** | JSON + CBOR, tanpa reflection, resolusi base field |
 | **Framing** | katalog CRC (23 preset, 8–64 bit), LRC, SLIP, COBS, HDLC, decoder streaming di atas `System.IO.Pipelines` |
 | **Core** | transport TCP / serial / in-memory, traffic tap (*frame lane*), metrik & trace OpenTelemetry, kebijakan reconnect, hosting + health check |
@@ -46,6 +48,8 @@ Bahasa Indonesia**.
 <table>
 <tr><td><img src="docs/images/gateway-dashboard.png" alt="Dashboard gateway"><br><sub>Edge gateway: Modbus → MQTT dengan dashboard HMI langsung dan isi jalur yang terurai</sub></td>
 <td><img src="docs/images/gallery-traffic.png" alt="Lalu lintas Galeri"><br><sub>Galeri: setiap frame diurai per field</sub></td></tr>
+<tr><td><img src="docs/images/gallery-hl7-icu.png" alt="ICU"><br><sub>Monitor pasien ICU lewat HL7/MLLP: NEWS2, tren, dan catatan SBAR dari LLM</sub></td>
+<td><img src="docs/images/gallery-dicom-ai.png" alt="DICOM AI"><br><sub>DICOM C-STORE → viewer dengan window → pra-baca model vision</sub></td></tr>
 <tr><td><img src="docs/images/gallery-nmea.png" alt="NMEA"><br><sub>Pelacak GNSS lewat NMEA 0183</sub></td>
 <td><img src="docs/images/gallery-lighting.png" alt="Art-Net"><br><sub>Lampu panggung lewat Art-Net</sub></td></tr>
 <tr><td><img src="docs/images/gallery-workbench.png" alt="Meja kerja"><br><sub>Meja kerja frame & checksum</sub></td>
@@ -77,7 +81,7 @@ dotnet run --project samples/console/ModbusMaster -- --simulate
 
 ```bash
 dotnet build IoTCom.Net.slnx
-dotnet test tests/IoTCom.Net.Tests                  # 190+ uji termasuk conformance lintas bahasa
+dotnet test tests/IoTCom.Net.Tests                  # 210+ uji termasuk conformance lintas bahasa
 cd rust && cargo test --workspace && cargo build --release   # inti Rust + library native iotcom_modbus
 python build/check_docs_parity.py                   # paritas EN/ID + cek tautan
 ```
@@ -85,7 +89,7 @@ python build/check_docs_parity.py                   # paritas EN/ID + cek tautan
 ## Struktur repositori
 
 ```
-src/            paket C# (Abstractions, Core, Framing, Transport.Serial, Protocols.*, Adapters.Mqtt, Serialization.SenML, Hosting, Native.Modbus, meta)
+src/            paket C# (Abstractions, Core, Framing, Transport.Serial, Protocols.*, Protocols.Hl7, Adapters.Mqtt, Adapters.Dicom, Serialization.SenML, Hosting, Native.Modbus, meta)
 rust/           workspace Rust: iotcom-core (Machine sans-I/O), iotcom-ffi-support, iotcom-modbus, cdylib native
 conformance/    test vector bersama yang dijalankan C# dan Rust
 tests/          uji xUnit

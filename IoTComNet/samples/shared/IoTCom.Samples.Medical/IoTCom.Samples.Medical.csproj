@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Sample-level clinical analysis + AI client shared by the Gallery and samples. Not shipped as a NuGet package:
+       clinical logic is demo code (synthetic data, decision-support illustration only). -->
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Samples.Medical</RootNamespace>
+    <NoWarn>$(NoWarn);CA2007;CA1308</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\IoTCom.Net.Protocols.Hl7\IoTCom.Net.Protocols.Hl7.csproj" />
+    <ProjectReference Include="..\..\..\src\IoTCom.Net.Adapters.Dicom\IoTCom.Net.Adapters.Dicom.csproj" />
+  </ItemGroup>
+</Project>

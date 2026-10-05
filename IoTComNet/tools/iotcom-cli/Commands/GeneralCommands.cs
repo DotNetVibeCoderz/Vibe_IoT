@@ -21,6 +21,8 @@ internal sealed class InfoCommand : Command<InfoCommand.Settings>
         t.AddRow("Modbus TCP / RTU / ASCII", "master · slave · simulator", "IoTCom.Net.Protocols.Modbus", "C# + Rust (Native.Modbus)");
         t.AddRow("NMEA 0183", "reader · server · simulator", "IoTCom.Net.Protocols.Nmea", "C#");
         t.AddRow("Art-Net 4 · sACN E1.31", "send · receive · discovery", "IoTCom.Net.Protocols.Dmx", "C#");
+        t.AddRow("HL7 v2 / MLLP", "sender · receiver · monitor simulator", "IoTCom.Net.Protocols.Hl7", "C#");
+        t.AddRow("DICOM C-STORE / C-ECHO", "SCU · SCP · synthetic imaging", "IoTCom.Net.Adapters.Dicom", "fo-dicom adapter");
         t.AddRow("MQTT 3.1.1 / 5.0", "publish · subscribe · broker", "IoTCom.Net.Adapters.Mqtt", "MQTTnet adapter");
         t.AddRow("SenML (RFC 8428)", "JSON · CBOR codec", "IoTCom.Net.Serialization.SenML", "C#");
         t.AddRow("CRC · SLIP · COBS · HDLC", "codec", "IoTCom.Net.Framing", "C#");

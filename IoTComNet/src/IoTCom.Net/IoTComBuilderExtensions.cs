@@ -1,5 +1,6 @@
 using IoTCom.Net.Adapters.Mqtt;
 using IoTCom.Net.Protocols.Dmx;
+using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +56,23 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Nmea");
+            configure(o);
+        }));
+
+    /// <summary>Registers an HL7 MLLP receiver (auto-acknowledges every message).</summary>
+    public static IoTComBuilder AddHl7Server(this IoTComBuilder builder, string name, Action<Hl7MllpServerOptions> configure)
+        => builder.AddEndpoint(name, sp => Hl7MllpServer.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Hl7");
+            configure(o);
+        }));
+
+    /// <summary>Registers an HL7 MLLP sender.</summary>
+    public static IoTComBuilder AddHl7Client(this IoTComBuilder builder, string name, Action<Hl7MllpClientOptions> configure)
+        => builder.AddEndpoint(name, sp => Hl7MllpClient.Create(o =>
+        {
+            o.Logger = Logger(sp, "IoTCom.Hl7");
             configure(o);
         }));
 

@@ -7,7 +7,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>iotcom</ToolCommandName>
     <PackageId>IoTCom.Net.Cli</PackageId>
-    <Description>iotcom — the IoTCom.Net command-line tool: read/write/serve Modbus, decode frames byte by byte, compute 20+ CRCs, SLIP/COBS/HDLC, NMEA listen/simulate, Art-Net send/poll/monitor, MQTT pub/sub/broker, and serial port discovery. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <Description>iotcom — the IoTCom.Net command-line tool: read/write/serve Modbus, decode frames byte by byte, compute 20+ CRCs, SLIP/COBS/HDLC, NMEA listen/simulate, Art-Net send/poll/monitor, MQTT pub/sub/broker, HL7 listen/send/simulate, DICOM echo/send/listen, and serial port discovery. Built by Gravicode Studios, led by Kang Fadhil.</Description>
     <PackageTags>iot;cli;modbus;mqtt;nmea;artnet;crc;dotnet-tool;gravicode;iotcom</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\IoTCom.Net\IoTCom.Net.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Native.Modbus\IoTCom.Net.Native.Modbus.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Dicom\IoTCom.Net.Adapters.Dicom.csproj" />
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="Spectre.Console.Cli" />
   </ItemGroup>

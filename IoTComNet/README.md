@@ -32,6 +32,8 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **NMEA 0183** | checksum-validated parser and builder, typed GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GNSS fix aggregator, NMEA server, GPS simulator |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 over IP: send, receive, ArtPoll discovery, multicast, priorities, universe model with fades |
 | **MQTT 3.1.1 / 5.0** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
+| **HL7 v2 · MLLP** | ER7 parser/builder with escaping, MLLP sender/receiver with ACK matching, LOINC vital signs, bedside-monitor simulator (sepsis, hypoxia, …) |
+| **DICOM** | adapter over fo-dicom: Storage SCP/SCU (C-STORE, C-ECHO), windowed renderer to PNG, synthetic CT/MR/X-ray studies with planted findings |
 | **SenML (RFC 8428)** | JSON + CBOR, reflection-free, base-field resolution |
 | **Framing** | CRC catalogue (23 presets, 8–64 bit), LRC, SLIP, COBS, HDLC, streaming decoders on `System.IO.Pipelines` |
 | **Core** | TCP / serial / in-memory transports, traffic tap (*frame lane*), OpenTelemetry metrics & traces, reconnect policy, hosting + health checks |
@@ -45,6 +47,8 @@ Bahasa Indonesia**.
 <table>
 <tr><td><img src="docs/images/gateway-dashboard.png" alt="Gateway dashboard"><br><sub>Edge gateway: Modbus → MQTT with a live HMI dashboard and the decoded wire</sub></td>
 <td><img src="docs/images/gallery-traffic.png" alt="Gallery traffic"><br><sub>Gallery: every frame decoded field by field</sub></td></tr>
+<tr><td><img src="docs/images/gallery-hl7-icu.png" alt="ICU"><br><sub>ICU bedside monitors over HL7/MLLP: NEWS2, trends and an LLM SBAR note</sub></td>
+<td><img src="docs/images/gallery-dicom-ai.png" alt="DICOM AI"><br><sub>DICOM C-STORE → windowed viewer → vision-model pre-read</sub></td></tr>
 <tr><td><img src="docs/images/gallery-nmea.png" alt="NMEA"><br><sub>GNSS tracker over NMEA 0183</sub></td>
 <td><img src="docs/images/gallery-lighting.png" alt="Art-Net"><br><sub>Stage lighting over Art-Net</sub></td></tr>
 <tr><td><img src="docs/images/gallery-workbench.png" alt="Workbench"><br><sub>Frame & checksum workbench</sub></td>
@@ -76,7 +80,7 @@ dotnet run --project samples/console/ModbusMaster -- --simulate
 
 ```bash
 dotnet build IoTCom.Net.slnx
-dotnet test tests/IoTCom.Net.Tests                  # 190+ tests incl. cross-language conformance
+dotnet test tests/IoTCom.Net.Tests                  # 210+ tests incl. cross-language conformance
 cd rust && cargo test --workspace && cargo build --release   # Rust core + iotcom_modbus native library
 python build/check_docs_parity.py                   # EN/ID parity + link check
 ```
@@ -84,7 +88,7 @@ python build/check_docs_parity.py                   # EN/ID parity + link check
 ## Repository layout
 
 ```
-src/            C# packages (Abstractions, Core, Framing, Transport.Serial, Protocols.*, Adapters.Mqtt, Serialization.SenML, Hosting, Native.Modbus, meta)
+src/            C# packages (Abstractions, Core, Framing, Transport.Serial, Protocols.*, Protocols.Hl7, Adapters.Mqtt, Adapters.Dicom, Serialization.SenML, Hosting, Native.Modbus, meta)
 rust/           Rust workspace: iotcom-core (sans-I/O Machine), iotcom-ffi-support, iotcom-modbus, native cdylibs
 conformance/    shared test vectors run by both C# and Rust
 tests/          xUnit tests

@@ -53,6 +53,20 @@ app.Configure(c =>
         a.AddCommand<ArtNetPollCommand>("poll");
         a.AddCommand<ArtNetMonitorCommand>("monitor");
     });
+    c.AddBranch("hl7", h =>
+    {
+        h.SetDescription("HL7 v2 over MLLP: receive (auto-ACK), send, and simulate a bedside monitor.");
+        h.AddCommand<Hl7ListenCommand>("listen").WithExample("hl7", "listen", "--port", "2575");
+        h.AddCommand<Hl7SendCommand>("send").WithExample("hl7", "send", "message.hl7", "--host", "10.0.0.20");
+        h.AddCommand<Hl7SimulateCommand>("simulate").WithExample("hl7", "simulate", "--scenario", "sepsis", "--interval", "2");
+    });
+    c.AddBranch("dicom", d =>
+    {
+        d.SetDescription("DICOM networking (fo-dicom adapter): C-ECHO, C-STORE send, Storage SCP.");
+        d.AddCommand<DicomEchoCommand>("echo").WithExample("dicom", "echo", "--host", "pacs.local", "--port", "104", "--aec", "PACS");
+        d.AddCommand<DicomSendCommand>("send").WithExample("dicom", "send", "--synthetic", "ct", "--finding", "Pneumothorax");
+        d.AddCommand<DicomListenCommand>("listen").WithExample("dicom", "listen", "--port", "11112", "--output", "received");
+    });
     c.AddBranch("mqtt", q =>
     {
         q.SetDescription("MQTT publish, subscribe and embedded broker.");

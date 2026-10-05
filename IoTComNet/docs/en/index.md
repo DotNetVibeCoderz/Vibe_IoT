@@ -7,7 +7,7 @@ translation-status: synced
 
 **IoTCom.Net** is a communication library for IoT and embedded systems on .NET 10, with a Rust core for the low-level
 parts. One consistent model — *client, server, publisher, subscriber* — covers industrial, navigation, lighting and
-messaging protocols, and every protocol ships a simulator so you can build and test without hardware.
+messaging and healthcare protocols, and every protocol ships a simulator so you can build and test without hardware.
 
 > Built by Gravicode Studios, led by Kang Fadhil. · [Bahasa Indonesia](../id/index.md)
 
@@ -36,6 +36,8 @@ messaging protocols, and every protocol ships a simulator so you can build and t
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
 | [NMEA 0183](protocols/nmea.md) | reader · server · simulator | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
+| [HL7 v2 over MLLP](protocols/hl7.md) | send · receive · ACK · bedside simulator | `IoTCom.Net.Protocols.Hl7` |
+| [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · synthetic studies | `IoTCom.Net.Adapters.Dicom` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
@@ -49,6 +51,7 @@ The [roadmap](../../PLAN.md) lists the protocols coming next (CAN/UDS, MAVLink, 
 |---|---|
 | [Hosting & dependency injection](guides/hosting.md) | `AddIoTCom()`, named endpoints, health checks |
 | [Edge gateway sample](guides/gateway.md) | Modbus → MQTT bridge with a live HMI dashboard |
+| [Medical devices + AI](guides/medical-ai.md) | HL7 vitals → NEWS2 dashboard → LLM note; DICOM → vision pre-read |
 | [Simulators](guides/simulators.md) | Develop and test without hardware |
 | [Deployment](guides/deployment.md) | systemd, Windows Service, Docker, NativeAOT |
 | [Security & safety](guides/security.md) | Read-only mode, TLS, untrusted input |

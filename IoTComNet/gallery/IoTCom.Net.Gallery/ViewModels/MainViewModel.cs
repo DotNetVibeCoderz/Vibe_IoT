@@ -21,7 +21,7 @@ public sealed record DemoItem(IGalleryDemo Demo, string Title, string Tags) : Na
 
 public sealed partial class MainViewModel : ObservableObject, IAsyncDisposable
 {
-    private static readonly string[] CategoryOrder = ["Industrial", "Navigation", "Building", "Messaging", "Workbench"];
+    private static readonly string[] CategoryOrder = ["Industrial", "Medical", "Navigation", "Building", "Messaging", "Workbench"];
     private readonly List<IGalleryDemo> _demos;
     private readonly List<TrafficFrame> _incoming = [];
     private readonly Lock _gate = new();
@@ -30,7 +30,7 @@ public sealed partial class MainViewModel : ObservableObject, IAsyncDisposable
 
     public MainViewModel()
     {
-        _demos = [new ModbusDemo(), new NmeaDemo(), new LightingDemo(), new MqttDemo(), new WorkbenchDemo()];
+        _demos = [new ModbusDemo(), new BedsideMonitorDemo(), new ImagingDemo(), new NmeaDemo(), new LightingDemo(), new MqttDemo(), new WorkbenchDemo()];
         foreach (var d in _demos.OfType<INotifyPropertyChanged>()) d.PropertyChanged += OnDemoPropertyChanged;
         Loc.Instance.LanguageChanged += OnLanguageChanged;
         _flush = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Background, (_, _) => FlushFrames());

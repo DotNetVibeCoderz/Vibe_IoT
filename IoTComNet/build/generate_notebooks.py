@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.1.0-preview.1"
+VERSION = "0.2.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -152,6 +152,45 @@ NOTEBOOKS = {
         md("## JSON vs CBOR size\n", "## Ukuran JSON vs CBOR\n"),
         code("Console.WriteLine($\"JSON {SenMLCodec.ToJson(pack).Length} bytes · CBOR {SenMLCodec.ToCbor(pack).Length} bytes\");"),
         md(CREDIT[0], CREDIT[1]),
+    ],
+    "medical/05-hl7-dicom": [
+        md("# Healthcare: HL7 v2 and DICOM\n\nBedside monitors, analyzers and modalities talk **HL7 v2** (events and results over MLLP) and "
+           "**DICOM** (images over C-STORE). Everything here is synthetic — fictional patients and schematic phantoms, never for clinical use.",
+           "# Kesehatan: HL7 v2 dan DICOM\n\nMonitor pasien, analyzer, dan modalitas berbicara **HL7 v2** (kejadian dan hasil lewat MLLP) dan "
+           "**DICOM** (gambar lewat C-STORE). Semua di sini sintetis — pasien fiktif dan phantom skematis, tidak untuk penggunaan klinis."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Adapters.Dicom, {VERSION}"'),
+        md("## Build and parse an ORU^R01\nOne OBX segment per measurement, LOINC-coded.",
+           "## Bangun dan urai ORU^R01\nSatu segmen OBX per pengukuran, berkode LOINC."),
+        code("using IoTCom.Net.Protocols.Hl7;\n\nvar (patient, scenario, bed) = PatientMonitorSimulator.DemoWard[0];\n"
+             "var monitor = new PatientMonitorSimulator(patient, scenario, bed, onset: TimeSpan.Zero);\n"
+             "var oru = monitor.ToOru(monitor.Next(TimeSpan.FromMinutes(8), DateTimeOffset.Now));\n"
+             "Console.WriteLine(oru.Encode().Replace('\\r', '\\n'));\n"
+             "foreach (var o in Hl7Message.Parse(oru.Encode()).GetObservations())\n"
+             "    Console.WriteLine($\"{o.Code.Text,-36} {o.Value,6} {o.Units,-8} {o.AbnormalFlag}\");"),
+        md("## Send over MLLP and receive the ACK", "## Kirim lewat MLLP dan terima ACK"),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Transports;\n\nvar link = new InMemoryTransportListener();\n"
+             "await using var receiver = Hl7MllpServer.Create(o => o.ListenInMemory(link));\n"
+             "receiver.MessageReceived += (_, e) => Console.WriteLine($\"received {e.Message.MessageType} {e.Message.ControlId}\");\n"
+             "await receiver.StartAsync();\n"
+             "await using var sender = Hl7MllpClient.Create(o => o.UseInMemory(link));\n"
+             "var ack = await sender.SendAsync(oru);\n"
+             "Console.WriteLine($\"ACK {ack.AckCode()} for {ack[\"MSA.2\"]}\");"),
+        md("## DICOM: a synthetic study over C-STORE, rendered with a window\n"
+           "The planted finding is the ground truth (useful for testing AI pipelines).",
+           "## DICOM: studi sintetis lewat C-STORE, dirender dengan window\n"
+           "Temuan yang ditanam adalah ground truth (berguna untuk menguji alur AI)."),
+        code("using IoTCom.Net.Adapters.Dicom;\n\nawait using var pacs = DicomStoreServer.Create(o => o.Port = 11120);\nawait pacs.StartAsync();\n"
+             "DicomReceived? got = null;\npacs.ImageReceived += r => got = r;\n"
+             "await using var modality = DicomStoreClient.Create(o => o.Port = 11120);\nawait modality.EchoAsync();\n"
+             "var study = SyntheticImaging.Generate(SyntheticModality.ChestCt, SyntheticFinding.Pneumothorax);\n"
+             "await modality.StoreAsync(study.File);\n"
+             "var image = DicomRenderer.Render(got!.File.Dataset, DicomRenderer.Presets[\"CT lung\"]);\n"
+             "Console.WriteLine($\"{got.Modality} {image.Width}x{image.Height}, PNG {image.ToPng().Length / 1024} KB — planted: {study.FindingDescription}\");"),
+        md("## Going further\nThe Gallery demos *ICU bedside monitors* and *Imaging AI pre-read* add NEWS2 scoring, trend analysis and an LLM "
+           "(SBAR notes and vision pre-reads) on top of these building blocks — see `docs/en/guides/medical-ai.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nDemo Galeri *Monitor pasien ICU* dan *Pra-baca gambar dengan AI* menambahkan skor NEWS2, analisis tren, dan LLM "
+           "(catatan SBAR dan pra-baca vision) di atas blok-blok ini — lihat `docs/id/guides/medical-ai.md`.\n\n" + CREDIT[1]),
     ],
     "99-protocol-chooser": [
         md("# Which protocol for which job?\n\n"

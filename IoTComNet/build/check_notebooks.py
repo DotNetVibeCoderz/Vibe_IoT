@@ -49,7 +49,8 @@ for nb in sorted(glob.glob(os.path.join(ROOT, "notebooks", "**", "*.en.ipynb"), 
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable>
   <ImplicitUsings>enable</ImplicitUsings><ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally><NoWarn>CS1998;CS8602</NoWarn></PropertyGroup>
   <ItemGroup><ProjectReference Include="{root}/src/IoTCom.Net/IoTCom.Net.csproj" />
-  <ProjectReference Include="{root}/src/IoTCom.Net.Native.Modbus/IoTCom.Net.Native.Modbus.csproj" /></ItemGroup>
+  <ProjectReference Include="{root}/src/IoTCom.Net.Native.Modbus/IoTCom.Net.Native.Modbus.csproj" />
+  <ProjectReference Include="{root}/src/IoTCom.Net.Adapters.Dicom/IoTCom.Net.Adapters.Dicom.csproj" /></ItemGroup>
 </Project>""")
     run = subprocess.run(["dotnet", "run", "-v", "q"], cwd=d, capture_output=True, text=True, timeout=600)
     if run.returncode != 0:

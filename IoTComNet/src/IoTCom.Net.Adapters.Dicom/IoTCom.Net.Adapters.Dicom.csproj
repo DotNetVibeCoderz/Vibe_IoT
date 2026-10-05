@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Dicom</RootNamespace>
+    <Description>DICOM for IoTCom.Net as an adapter over fo-dicom (not a rewrite): C-STORE server (receive images from modalities) and client (send to PACS) as IoTCom endpoints with traffic tap and IAsyncEnumerable, a windowed grayscale PNG renderer, and a synthetic CT / MRI / X-ray generator with known findings for testing imaging pipelines. Synthetic images are for software testing only, never for diagnosis. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);dicom;fo-dicom;pacs;medical-imaging;ct;mri;x-ray;cstore</PackageTags>
+    <!-- fo-dicom uses reflection-based services; this adapter is not trimming/AOT safe. -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <PackageReference Include="fo-dicom" />
+  </ItemGroup>
+</Project>

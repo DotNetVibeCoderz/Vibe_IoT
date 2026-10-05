@@ -26,6 +26,12 @@ iotcom --help
 | `iotcom modbus decode <frame>` | field-by-field frame lane for TCP, RTU or ASCII frames |
 | `iotcom nmea listen` | live GNSS fix panel (`--raw` prints sentences) |
 | `iotcom nmea simulate` | a GPS over NMEA-over-TCP |
+| `iotcom hl7 listen` | MLLP receiver with auto-ACK and decoded observations (`--raw` prints segments) |
+| `iotcom hl7 send` | send an ER7 file (or a sample ORU^R01) and print the ACK |
+| `iotcom hl7 simulate` | a synthetic bedside monitor (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |
+| `iotcom dicom listen` | DICOM Storage SCP (`--output` saves .dcm + PNG preview) |
+| `iotcom dicom send` | C-STORE a file or a synthetic study (`--synthetic ct\|mr\|xray --finding …`) |
+| `iotcom dicom echo` | C-ECHO verification |
 | `iotcom artnet send|poll|monitor` | send DMX, discover nodes, watch universes |
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, run a broker |
 

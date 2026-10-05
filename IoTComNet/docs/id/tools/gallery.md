@@ -32,10 +32,17 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Kategori | Demo | Protokol |
 |---|---|---|
 | Industri | PLC pabrik pintar — baca PLC virtual, nyalakan motor, geser setpoint; beralih antara mesin C# dan **Rust** | Modbus TCP |
+| Medis & kesehatan | Monitor pasien ICU — 4 bed sintetis mengirim ORU^R01 lewat MLLP; papan bangsal, kurva langsung, NEWS2, tren, dan catatan SBAR dari LLM | HL7 v2, MLLP |
+| Medis & kesehatan | Pra-baca gambar dengan AI — modalitas CT/MR/X-ray simulasi menyimpan ke PACS; viewer dengan window dan pra-baca model vision yang dinilai terhadap temuan yang ditanam | DICOM C-STORE |
 | Navigasi & maritim | Pelacak kendaraan GNSS — lintasan langsung, kecepatan, kekuatan sinyal satelit | NMEA 0183 |
 | Gedung pintar & panggung | Lampu panggung lewat Art-Net — fader, master, chase; fixture menampilkan apa yang diurai penerima | Art-Net 4, DMX512 |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
+
+![Monitor pasien ICU](../../images/gallery-hl7-icu.png)
+![Pra-baca gambar dengan AI](../../images/gallery-dicom-ai.png)
+
+Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis](../guides/medical-ai.md)); bila belum, teks berbasis aturan dipakai.
 
 ![NMEA](../../images/gallery-nmea.png)
 ![Pencahayaan](../../images/gallery-lighting.png)

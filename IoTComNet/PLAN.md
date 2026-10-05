@@ -6,7 +6,7 @@ day-to-day status is tracked in [Progress.md](Progress.md).
 Priorities follow the design: **P0** foundation · **P1** first release · **P2** expansion · **P3** optional / community.
 Each protocol is "done" only when it meets the Definition of Done (bottom of this page).
 
-## Phase 0 — Foundation → `0.1.0-preview` (current)
+## Phase 0 — Foundation → `0.1.0-preview` (released)
 
 | Item | Status |
 |---|---|
@@ -40,10 +40,11 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | NMEA: AIS decoding | P1 | |
 | mDNS / DNS-SD (discovery for Gallery and CLI) | P1 | |
 | AT command engine (cellular modules, URC parser) | P1 | |
-| HL7 v2 MLLP + ASTM E1394 (lab analyzers) | P1 | |
+| HL7 v2 MLLP + ASTM E1394 (lab analyzers) | P1 | ✅ HL7 v2 + MLLP + simulator in `0.2.0-preview.1` · ASTM E1394 ⏳ |
+| DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies | P1 | ✅ `0.2.0-preview.1` (added on request: medical use cases) |
 | Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | |
 | Protobuf / MessagePack adapters, TLV helpers | P1 | |
-| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | |
+| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | 7 demos (incl. ICU monitors and imaging AI pre-read) |
 | VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | not started |
 | `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | randomised decoder tests exist today |
 | Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen header | P1 | bindings are hand-written today |

@@ -26,6 +26,12 @@ iotcom --help
 | `iotcom modbus decode <frame>` | frame lane per field untuk frame TCP, RTU, atau ASCII |
 | `iotcom nmea listen` | panel fix GNSS langsung (`--raw` mencetak kalimat) |
 | `iotcom nmea simulate` | GPS lewat NMEA-over-TCP |
+| `iotcom hl7 listen` | penerima MLLP dengan ACK otomatis dan observasi terurai (`--raw` mencetak segmen) |
+| `iotcom hl7 send` | kirim berkas ER7 (atau contoh ORU^R01) dan tampilkan ACK |
+| `iotcom hl7 simulate` | monitor pasien sintetis (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |
+| `iotcom dicom listen` | DICOM Storage SCP (`--output` menyimpan .dcm + pratinjau PNG) |
+| `iotcom dicom send` | C-STORE berkas atau studi sintetis (`--synthetic ct\|mr\|xray --finding …`) |
+| `iotcom dicom echo` | verifikasi C-ECHO |
 | `iotcom artnet send|poll|monitor` | kirim DMX, temukan node, pantau universe |
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, menjalankan broker |
 

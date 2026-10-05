@@ -7,7 +7,7 @@ translation-status: synced
 
 **IoTCom.Net** adalah library komunikasi untuk sistem IoT dan embedded di .NET 10, dengan inti Rust untuk bagian
 low-level. Satu model yang konsisten — *client, server, publisher, subscriber* — mencakup protokol industri, navigasi,
-pencahayaan, dan pesan, dan setiap protokol dilengkapi simulator sehingga Anda bisa membangun dan menguji tanpa
+pencahayaan, pesan, dan kesehatan, dan setiap protokol dilengkapi simulator sehingga Anda bisa membangun dan menguji tanpa
 perangkat keras.
 
 > Dibuat oleh Gravicode Studios dipimpin oleh Kang Fadhil. · [English](../en/index.md)
@@ -37,6 +37,8 @@ perangkat keras.
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
 | [NMEA 0183](protocols/nmea.md) | pembaca · server · simulator | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
+| [HL7 v2 lewat MLLP](protocols/hl7.md) | kirim · terima · ACK · simulator monitor pasien | `IoTCom.Net.Protocols.Hl7` |
+| [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · studi sintetis | `IoTCom.Net.Adapters.Dicom` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
@@ -50,6 +52,7 @@ perangkat keras.
 |---|---|
 | [Hosting & dependency injection](guides/hosting.md) | `AddIoTCom()`, endpoint bernama, health check |
 | [Sampel edge gateway](guides/gateway.md) | Jembatan Modbus → MQTT dengan dashboard HMI langsung |
+| [Perangkat medis + AI](guides/medical-ai.md) | Tanda vital HL7 → dasbor NEWS2 → catatan LLM; DICOM → pra-baca vision |
 | [Simulator](guides/simulators.md) | Mengembangkan dan menguji tanpa perangkat keras |
 | [Deployment](guides/deployment.md) | systemd, Windows Service, Docker, NativeAOT |
 | [Keamanan & keselamatan](guides/security.md) | Mode read-only, TLS, input tak tepercaya |

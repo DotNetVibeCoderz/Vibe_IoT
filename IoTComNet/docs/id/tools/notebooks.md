@@ -16,6 +16,7 @@ Jupyter dengan kernel .NET. Setiap notebook berjalan dengan simulator di dalam p
 | `transport/02-framing-crc` | katalog CRC, SLIP/COBS/HDLC, decode streaming |
 | `navigation/03-nmea` | penguraian, penerima simulasi, fix GNSS |
 | `messaging/04-mqtt-senml` | broker, subscription wildcard, SenML JSON vs CBOR |
+| `medical/05-hl7-dicom` | bangun/urai ORU^R01, MLLP dengan ACK, DICOM C-STORE studi sintetis |
 | `99-protocol-chooser` | protokol mana untuk tugas apa |
 
 Setiap notebook mengikuti struktur yang sama: apa itu protokolnya → persiapan → client → server → pub/sub (bila

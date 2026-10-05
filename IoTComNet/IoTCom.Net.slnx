@@ -9,22 +9,28 @@
   <Folder Name="/samples/" />
   <Folder Name="/samples/console/">
     <Project Path="samples/console/ArtNetPlayer/ArtNetPlayer.csproj" />
+    <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
     <Project Path="samples/console/ModbusMaster/ModbusMaster.csproj" />
     <Project Path="samples/console/ModbusSlaveSimulator/ModbusSlaveSimulator.csproj" />
     <Project Path="samples/console/MqttSenMLBridge/MqttSenMLBridge.csproj" />
     <Project Path="samples/console/NmeaGpsReader/NmeaGpsReader.csproj" />
+  </Folder>
+  <Folder Name="/samples/shared/">
+    <Project Path="samples/shared/IoTCom.Samples.Medical/IoTCom.Samples.Medical.csproj" />
   </Folder>
   <Folder Name="/samples/web/">
     <Project Path="samples/web/IoTCom.Gateway/IoTCom.Gateway.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/IoTCom.Net.Abstractions/IoTCom.Net.Abstractions.csproj" />
+    <Project Path="src/IoTCom.Net.Adapters.Dicom/IoTCom.Net.Adapters.Dicom.csproj" />
     <Project Path="src/IoTCom.Net.Adapters.Mqtt/IoTCom.Net.Adapters.Mqtt.csproj" />
     <Project Path="src/IoTCom.Net.Core/IoTCom.Net.Core.csproj" />
     <Project Path="src/IoTCom.Net.Framing/IoTCom.Net.Framing.csproj" />
     <Project Path="src/IoTCom.Net.Hosting/IoTCom.Net.Hosting.csproj" />
     <Project Path="src/IoTCom.Net.Native.Modbus/IoTCom.Net.Native.Modbus.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Dmx/IoTCom.Net.Protocols.Dmx.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Hl7/IoTCom.Net.Protocols.Hl7.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Modbus/IoTCom.Net.Protocols.Modbus.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Nmea/IoTCom.Net.Protocols.Nmea.csproj" />
     <Project Path="src/IoTCom.Net.Serialization.SenML/IoTCom.Net.Serialization.SenML.csproj" />

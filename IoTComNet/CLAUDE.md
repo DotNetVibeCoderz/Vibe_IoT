@@ -48,6 +48,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `iotcom_abi_version` = `NativeMethods.ExpectedAbiVersion`) is in `rust/crates/iotcom-ffi-support`; bump both sides together.
 - **Frame lane** (the visual signature): `FrameField`/`FrameFieldKind` describe frame fields; the CLI (`Ui.FrameLane`),
   the gateway dashboard and the Gallery (`FrameRow`, `FrameLaneView`) all render them with the same colours.
+- **Healthcare**: `Protocols.Hl7` (ER7 codec, MLLP endpoints, `PatientMonitorSimulator`) and `Adapters.Dicom` (fo-dicom
+  wrapper, `DicomRenderer`, `SyntheticImaging`; not trimmable, not in the meta-package). Clinical analysis and the AI client
+  live in `samples/shared/IoTCom.Samples.Medical` (sample code, never packed). AI config: `IOTCOM_AI_*` env vars or
+  `%APPDATA%/IoTCom.Net/ai.json`; never log or commit keys. Everything medical is synthetic and labelled "not a medical device".
 - **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).
 
 ## Conventions specific to this repo

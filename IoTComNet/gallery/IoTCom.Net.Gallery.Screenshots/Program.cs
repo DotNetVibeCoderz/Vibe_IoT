@@ -83,6 +83,27 @@ Shot("gallery-mqtt.png");
 Show("workbench", seconds: 0.5);
 Shot("gallery-workbench.png");
 
+// Medical demos (use the AI configured through IOTCOM_AI_* when present).
+Show("hl7-icu", seconds: 40);
+var icu = (BedsideMonitorDemo)vm.SelectedDemo!;
+Await(icu.SummarizeAsync());
+Pump(TimeSpan.FromSeconds(1));
+Shot("gallery-hl7-icu.png");
+
+Show("dicom-ai", seconds: 1);
+var imaging = (ImagingDemo)vm.SelectedDemo!;
+Await(imaging.AcquireAsync(IoTCom.Net.Adapters.Dicom.SyntheticModality.ChestXray, IoTCom.Net.Adapters.Dicom.SyntheticFinding.LungNodule));
+Pump(TimeSpan.FromSeconds(1.5));
+Await(imaging.AnalyzeAsync());
+imaging.ShowTruth = true;
+Pump(TimeSpan.FromSeconds(1));
+Shot("gallery-dicom-ai.png");
+Await(imaging.AcquireAsync(IoTCom.Net.Adapters.Dicom.SyntheticModality.BrainMr, IoTCom.Net.Adapters.Dicom.SyntheticFinding.Infarct));
+Pump(TimeSpan.FromSeconds(1.5));
+Await(imaging.AnalyzeAsync());
+Pump(TimeSpan.FromSeconds(1));
+Shot("gallery-dicom-ai-mri.png");
+
 vm.ToggleThemeCommand.Execute(null);
 Loc.Instance.Language = "id";
 Show("modbus-factory", seconds: 1.5, start: false);
