@@ -14,6 +14,7 @@ libfuzzer-sys = "0.4"
 iotcom-core = { path = "../crates/iotcom-core" }
 iotcom-modbus = { path = "../crates/iotcom-modbus" }
 iotcom-isotp = { path = "../crates/iotcom-isotp" }
+iotcom-coap = { path = "../crates/iotcom-coap" }
 
 [workspace]
 members = ["."]
@@ -42,6 +43,13 @@ bench = false
 [[bin]]
 name = "isotp"
 path = "fuzz_targets/isotp.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "coap"
+path = "fuzz_targets/coap.rs"
 test = false
 doc = false
 bench = false

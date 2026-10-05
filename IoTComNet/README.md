@@ -31,6 +31,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **Modbus TCP / RTU / ASCII** | master + slave + virtual PLC simulator, TCP pipelining, read-only safety mode, device identification — and an optional **Rust engine** (`NativeModbusClient`) |
 | **NMEA 0183** | checksum-validated parser and builder, typed GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GNSS fix aggregator, NMEA server, GPS simulator |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 over IP: send, receive, ArtPoll discovery, multicast, priorities, universe model with fades |
+| **CoAP (RFC 7252)** | client + server over UDP: retransmission and deduplication, Observe, Block-wise, link-format discovery, SenML, greenhouse simulator; codec mirrored by a fuzzed Rust crate |
 | **MQTT 3.1.1 / 5.0** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
 | **CAN / CAN FD** | one `ICanBus` for Linux SocketCAN, slcan USB adapters (CANable, CANtact) and a virtual bus; candump notation, filtered readers |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 as a fuzzed **Rust** state machine; UDS tester (sessions, security access, DIDs, DTCs, routines, read-only mode), OBD-II scan tool and an ECU simulator |
@@ -52,6 +53,7 @@ Bahasa Indonesia**.
 <tr><td colspan="2"><img src="docs/images/gallery-can-uds.png" alt="Vehicle diagnostics"><br><sub>Vehicle diagnostics: OBD-II and UDS over CAN, ISO-TP in Rust, against a simulated engine ECU</sub></td></tr>
 <tr><td><img src="docs/images/gallery-hl7-icu.png" alt="ICU"><br><sub>ICU bedside monitors over HL7/MLLP: NEWS2, trends and an LLM SBAR note</sub></td>
 <td><img src="docs/images/gallery-dicom-ai.png" alt="DICOM AI"><br><sub>DICOM C-STORE → windowed viewer → vision-model pre-read</sub></td></tr>
+<tr><td colspan="2"><img src="docs/images/gallery-coap.png" alt="CoAP greenhouse"><br><sub>CoAP greenhouse: Observe, Block-wise and a live message sequence chart on a lossy link</sub></td></tr>
 <tr><td><img src="docs/images/gallery-nmea.png" alt="NMEA"><br><sub>GNSS tracker over NMEA 0183</sub></td>
 <td><img src="docs/images/gallery-lighting.png" alt="Art-Net"><br><sub>Stage lighting over Art-Net</sub></td></tr>
 <tr><td><img src="docs/images/gallery-workbench.png" alt="Workbench"><br><sub>Frame & checksum workbench</sub></td>
@@ -83,7 +85,7 @@ dotnet run --project samples/console/ModbusMaster -- --simulate
 
 ```bash
 dotnet build IoTCom.Net.slnx
-dotnet test tests/IoTCom.Net.Tests                  # 240+ tests incl. cross-language conformance
+dotnet test tests/IoTCom.Net.Tests                  # 275+ tests incl. cross-language conformance
 cd rust && cargo test --workspace && cargo build --release   # Rust core + iotcom_modbus native library
 python build/check_docs_parity.py                   # EN/ID parity + link check
 ```

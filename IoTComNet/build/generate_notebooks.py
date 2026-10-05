@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.3.0-preview.1"
+VERSION = "0.4.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -152,6 +152,44 @@ NOTEBOOKS = {
         md("## JSON vs CBOR size\n", "## Ukuran JSON vs CBOR\n"),
         code("Console.WriteLine($\"JSON {SenMLCodec.ToJson(pack).Length} bytes · CBOR {SenMLCodec.ToCbor(pack).Length} bytes\");"),
         md(CREDIT[0], CREDIT[1]),
+    ],
+    "messaging/07-coap": [
+        md("# CoAP: REST for constrained devices\n\nGET, PUT, Observe and Block-wise over UDP — against a simulated greenhouse node on an "
+           "in-memory network whose packet loss you choose.",
+           "# CoAP: REST untuk perangkat terbatas\n\nGET, PUT, Observe, dan Block-wise lewat UDP — terhadap node rumah kaca simulasi di "
+           "jaringan memori yang kehilangan paketnya bisa Anda atur."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## A message on the wire\nThe RFC 7252 example: CON GET /temperature, 16 bytes.",
+           "## Satu pesan di jalur\nContoh RFC 7252: CON GET /temperature, 16 byte."),
+        code("using IoTCom.Net.Protocols.Coap;\n\nvar get = new CoapMessage { Code = CoapCode.Get, MessageId = 0x7D34 };\n"
+             "get.UriPath = \"/temperature\";\nvar wire = get.Encode();\nConsole.WriteLine(Convert.ToHexString(wire));\n"
+             "foreach (var f in CoapAnatomy.Describe(wire)) Console.WriteLine($\"{f.Name,-10} {f.Value}\");"),
+        md("## A device and a client", "## Perangkat dan client"),
+        code("using System.Net;\nusing IoTCom.Net.Transports;\n\nvar net = new InMemoryDatagramNetwork();\n"
+             "var node = new IPEndPoint(IPAddress.Parse(\"10.0.0.40\"), 5683);\n"
+             "await using var server = CoapServer.Create(o => o.UseInMemory(net, node));\n"
+             "await using var device = new CoapDeviceSimulator(server);\nawait server.StartAsync();\n\n"
+             "await using var coap = CoapClient.Create(o => o.UseInMemory(net).UseServer(node));\nawait coap.ConnectAsync();\n"
+             "foreach (var link in await coap.DiscoverAsync()) Console.WriteLine($\"{link.Path,-22} {link.ResourceType} {(link.Observable ? \"(observable)\" : \"\")}\");\n"
+             "Console.WriteLine((await coap.GetAsync(\"/sensors/temperature\")).PayloadText);\n"
+             "Console.WriteLine((await coap.GetAsync(\"/sensors/temperature\", CoapContentFormat.SenMLJson)).PayloadText);"),
+        md("## Observe\nThe device pushes a notification when the value changes.",
+           "## Observe\nPerangkat mendorong notifikasi saat nilainya berubah."),
+        code("using var cts = new CancellationTokenSource();\nvar count = 0;\n"
+             "var watch = Task.Run(async () => { await foreach (var n in coap.ObserveAsync(\"/sensors/soil\", ct: cts.Token)) { Console.WriteLine($\"soil {n.PayloadText} (obs {n.ObserveSequence})\"); if (++count == 3) break; } });\n"
+             "await coap.PutAsync(\"/actuators/valve\", \"80\");\n"
+             "while (!watch.IsCompleted) await device.StepAsync();"),
+        md("## A lossy link\n30 % of datagrams vanish; confirmable messages are retransmitted until acknowledged.",
+           "## Jaringan yang kehilangan paket\n30 % datagram hilang; pesan confirmable dikirim ulang sampai di-ACK."),
+        code("net.LossRate = 0.3;\ncoap.Options.Transmission.AckTimeout = TimeSpan.FromMilliseconds(50);\n"
+             "coap.Options.Transmission.MaxRetransmit = 8;\n"
+             "var log = await coap.GetAsync(\"/device/log\");   // Block2: several exchanges\n"
+             "Console.WriteLine($\"{log.Payload.Length} bytes; {coap.Statistics.RetransmissionCount} retransmissions; {net.Dropped} datagrams lost\");"),
+        md("## Going further\nThe Gallery demo *Smart greenhouse over CoAP* draws every datagram on a message sequence chart. "
+           "See `docs/en/protocols/coap.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nDemo Galeri *Rumah kaca pintar lewat CoAP* menggambar setiap datagram di diagram urutan pesan. "
+           "Lihat `docs/id/protocols/coap.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

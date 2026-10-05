@@ -48,6 +48,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `iotcom_abi_version` = `NativeMethods.ExpectedAbiVersion`) is in `rust/crates/iotcom-ffi-support`; bump both sides together.
 - **Frame lane** (the visual signature): `FrameField`/`FrameFieldKind` describe frame fields; the CLI (`Ui.FrameLane`),
   the gateway dashboard and the Gallery (`FrameRow`, `FrameLaneView`) all render them with the same colours.
+- **Datagrams & CoAP**: `IDatagramTransport` (Core: `UdpDatagramTransport`, `InMemoryDatagramNetwork` with `LossRate`/`DuplicateRate`)
+  serves datagram protocols. `Protocols.Coap` is managed C# (`CoapStack` = message layer shared by `CoapClient`/`CoapServer`);
+  Rust `iotcom-coap` is a fuzzed codec twin kept in sync by `/conformance/coap.json`.
 - **Automotive**: `Transport.Can` (`ICanBus`, `CanBus.Create("socketcan:can0" | "slcan:COM5" | "slcan-tcp:h:p" | "virtual:x")`),
   `Protocols.IsoTp` (Rust `iotcom-isotp` → native `iotcom_isotp`, driven by `IsoTpChannel`) and `Protocols.Uds` (`UdsClient`,
   `ObdClient`, `EcuSimulator`). Tests and CLI use `VirtualCanNetwork`; `--can sim` starts an in-process ECU. Fuzz targets live

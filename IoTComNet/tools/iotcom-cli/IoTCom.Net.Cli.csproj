@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Native.Modbus\IoTCom.Net.Native.Modbus.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Dicom\IoTCom.Net.Adapters.Dicom.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Uds\IoTCom.Net.Protocols.Uds.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Coap\IoTCom.Net.Protocols.Coap.csproj" />
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="Spectre.Console.Cli" />
   </ItemGroup>

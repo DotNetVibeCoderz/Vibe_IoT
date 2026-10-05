@@ -160,12 +160,89 @@ def modbus_vectors():
     return out
 
 
+def coap_encode(mtype, code, mid, token, options, payload):
+    """Reference CoAP encoder (RFC 7252 §3): independent from the C# and Rust codecs."""
+    out = bytearray([0x40 | (mtype << 4) | len(token), code, mid >> 8, mid & 0xFF])
+    out += token
+    last = 0
+
+    def ext(v):
+        if v < 13:
+            return v, b""
+        if v < 269:
+            return 13, bytes([v - 13])
+        return 14, (v - 269).to_bytes(2, "big")
+
+    for number, value in sorted(options, key=lambda o: o[0]):
+        dn, dx = ext(number - last)
+        ln, lx = ext(len(value))
+        out.append((dn << 4) | ln)
+        out += dx + lx + value
+        last = number
+    if payload:
+        out.append(0xFF)
+        out += payload
+    return bytes(out)
+
+
+def uint(v):
+    return v.to_bytes((v.bit_length() + 7) // 8, "big") if v else b""
+
+
+def coap_vectors():
+    out = []
+
+    def add(name, mtype, code, mid, token, options, payload, expected=None):
+        wire = coap_encode(mtype, code, mid, token, options, payload)
+        if expected is not None:
+            assert wire.hex().upper() == expected, (name, wire.hex())
+        out.append({
+            "name": name, "valid": True, "type": mtype, "code": code, "messageId": mid,
+            "token": token.hex().upper(),
+            "options": ";".join(f"{n}:{v.hex().upper()}" for n, v in sorted(options, key=lambda o: o[0])),
+            "payload": payload.hex().upper(), "wire": wire.hex().upper(),
+        })
+
+    # RFC 7252 Appendix A, figure 16: CON GET /temperature, MID 0x7d34, no token.
+    add("rfc7252 get temperature", 0, 0x01, 0x7D34, b"", [(11, b"temperature")], b"", "40017D34BB74656D7065726174757265")
+    # Its piggybacked response: ACK 2.05 "22.3 C".
+    add("rfc7252 ack content", 2, 0x45, 0x7D34, b"", [], b"22.3 C", "60457D34FF32322E332043")
+    add("empty ack", 2, 0, 0x1234, b"", [], b"", "60001234")
+    add("reset", 3, 0, 0x0001, b"", [], b"", "70000001")
+    add("token and query", 0, 0x01, 0x0101, bytes.fromhex("CAFEBABE"),
+        [(11, b"sensors"), (11, b"temp"), (15, b"unit=c"), (17, uint(50))], b"")
+    add("observe register", 0, 0x01, 0xBEEF, bytes.fromhex("A1"), [(6, b""), (11, b"temp")], b"")
+    add("notification", 1, 0x45, 0x0002, bytes.fromhex("A1"), [(6, uint(12)), (12, uint(0)), (14, uint(60))], b"21.5")
+    add("block2 response", 2, 0x45, 0x0003, bytes.fromhex("01"), [(12, uint(42)), (23, uint((3 << 4) | 0x08 | 6))], bytes(range(64)))
+    add("delta 13 extended", 0, 0x02, 0x0004, bytes([7]), [(1, bytes([1])), (35, b"coap://proxy/x")], b"p")
+    add("delta 269 extended", 1, 0x03, 0x0005, b"", [(300, bytes([0xAB])), (2048, b"")], b"")
+    add("length 13 and 269", 0, 0x03, 0x0006, b"", [(11, b"a" * 20), (15, b"q" * 300)], b"x" * 3)
+    add("8-byte token", 0, 0x04, 0xFFFF, bytes(range(1, 9)), [(60, uint(70000))], b"")
+    add("error response", 2, 0x84, 0x0007, bytes([0x10]), [(12, uint(0))], b"not found")
+
+    def bad(name, wire):
+        out.append({"name": name, "valid": False, "wire": wire.hex().upper()})
+
+    bad("too short", bytes.fromhex("400100"))
+    bad("version 2", bytes.fromhex("80017D34"))
+    bad("token length 9", bytes.fromhex("49017D34") + bytes(9))
+    bad("token truncated", bytes.fromhex("44017D34AABB"))
+    bad("reserved delta 15", bytes.fromhex("40017D34F1"))
+    bad("reserved length 15", bytes.fromhex("40017D341F"))
+    bad("option truncated", bytes.fromhex("40017D34B5616263"))
+    bad("payload marker without payload", bytes.fromhex("40017D34FF"))
+    bad("empty message with token", bytes.fromhex("6100123401"))
+    bad("empty message with payload", bytes.fromhex("60001234FF01"))
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
         "cobs.json": cobs_vectors(),
         "slip.json": slip_vectors(),
         "modbus.json": modbus_vectors(),
+        "coap.json": coap_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

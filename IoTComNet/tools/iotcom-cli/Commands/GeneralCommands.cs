@@ -19,6 +19,9 @@ internal sealed class InfoCommand : Command<InfoCommand.Settings>
         var t = new Table().Border(TableBorder.Rounded).BorderColor(Ui.Muted)
             .AddColumn("[bold]Protocol[/]").AddColumn("[bold]Roles[/]").AddColumn("[bold]Package[/]").AddColumn("[bold]Engine[/]");
         t.AddRow("Modbus TCP / RTU / ASCII", "master · slave · simulator", "IoTCom.Net.Protocols.Modbus", "C# + Rust (Native.Modbus)");
+        t.AddRow("CAN / CAN FD", "SocketCAN · slcan · virtual bus", "IoTCom.Net.Transport.Can", "C#");
+        t.AddRow("ISO-TP · UDS · OBD-II", "tester · scan tool · ECU simulator", "IoTCom.Net.Protocols.Uds", "C# + Rust (ISO-TP)");
+        t.AddRow("CoAP (RFC 7252)", "client · server · observe · block-wise", "IoTCom.Net.Protocols.Coap", "C# (codec mirrored in Rust)");
         t.AddRow("NMEA 0183", "reader · server · simulator", "IoTCom.Net.Protocols.Nmea", "C#");
         t.AddRow("Art-Net 4 · sACN E1.31", "send · receive · discovery", "IoTCom.Net.Protocols.Dmx", "C#");
         t.AddRow("HL7 v2 / MLLP", "sender · receiver · monitor simulator", "IoTCom.Net.Protocols.Hl7", "C#");

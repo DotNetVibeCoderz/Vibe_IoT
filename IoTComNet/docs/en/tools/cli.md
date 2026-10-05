@@ -31,6 +31,8 @@ iotcom --help
 | `iotcom can simulate` | engine ECU simulator behind an emulated slcan adapter on TCP |
 | `iotcom uds read` / `dtc` / `raw` | UDS identification, DTCs (`--clear --allow-write`), raw requests with the frame lane |
 | `iotcom obd live` / `vin` / `dtc` | OBD-II live data (`--watch`), VIN, stored and pending DTCs |
+| `iotcom coap get` / `put` / `observe` / `discover` / `ping` | CoAP client on `coap://host/path` URIs (`--accept senml`, `--frames`; writes need `--allow-write`) |
+| `iotcom coap serve` | simulated greenhouse node on UDP 5683 |
 | `iotcom hl7 listen` | MLLP receiver with auto-ACK and decoded observations (`--raw` prints segments) |
 | `iotcom hl7 send` | send an ER7 file (or a sample ORU^R01) and print the ACK |
 | `iotcom hl7 simulate` | a synthetic bedside monitor (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

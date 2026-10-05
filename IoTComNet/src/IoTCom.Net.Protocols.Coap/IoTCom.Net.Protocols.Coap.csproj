@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Coap</RootNamespace>
+    <Description>CoAP (RFC 7252) for IoTCom.Net: client and server over UDP with confirmable retransmission, deduplication, separate responses, Observe (RFC 7641), Block-wise transfers (RFC 7959), CoRE Link Format discovery (RFC 6690), SenML payloads and a greenhouse device simulator. The codec is mirrored by a fuzzed Rust crate through shared conformance vectors. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);coap;rfc7252;observe;blockwise;udp;constrained;senml;lwm2m</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Serialization.SenML\IoTCom.Net.Serialization.SenML.csproj" />
+  </ItemGroup>
+</Project>

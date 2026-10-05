@@ -41,6 +41,7 @@ perangkat keras.
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 lewat MLLP](protocols/hl7.md) | kirim · terima · ACK · simulator monitor pasien | `IoTCom.Net.Protocols.Hl7` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · studi sintetis | `IoTCom.Net.Adapters.Dicom` |
+| [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |

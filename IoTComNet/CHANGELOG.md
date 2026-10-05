@@ -3,6 +3,30 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.4.0-preview.1 — 2026-10-05
+
+CoAP, and a shared datagram transport.
+
+- **New package `IoTCom.Net.Protocols.Coap`** (also in the meta-package):
+  - Client and server over UDP: confirmable retransmission with exponential back-off, deduplication with a reply
+    cache, separate responses, and RST for unknown tokens.
+  - Observe (RFC 7641) with freshness checks and deregistration.
+  - Block-wise transfers (RFC 7959) in both directions, plus `/.well-known/core` discovery with filters (RFC 6690).
+  - SenML content formats, a read-only client mode, `AddCoapClient` / `AddCoapServer` hosting, and a greenhouse
+    device simulator.
+- **Rust crate `iotcom-coap`:** the same codec, fuzzed, and kept byte-for-byte in sync with C# by
+  `/conformance/coap.json` (including the RFC 7252 examples and malformed messages).
+- **Core:** `IDatagramTransport` with `UdpDatagramTransport` and `InMemoryDatagramNetwork` (configurable loss and
+  duplication), and the shared `UseUdp` / `UseInMemory` builder extensions.
+- **Gallery:** *Smart greenhouse over CoAP* — observed sensors, actuators, a Block2 log, a separate response, and a
+  packet-loss slider with a live message sequence chart.
+- **CLI:** `iotcom coap get|put|observe|discover|ping|serve`; `iotcom info` now lists CAN, UDS and CoAP.
+- **Samples, notebook, docs:** `CoapObserve` sample; notebook pair `messaging/07-coap`; CoAP page (EN/ID).
+
+*CoAP: paket client/server baru (Observe, Block-wise, penemuan, simulator rumah kaca), codec Rust yang di-fuzz dengan
+vektor bersama, transport datagram (UDP + jaringan memori dengan kehilangan paket), demo Galeri dengan diagram urutan
+pesan, perintah CLI `coap`, sampel, notebook, dan dokumentasi dua bahasa.*
+
 ## 0.3.0-preview.1 — 2026-10-05
 
 Automotive: CAN, ISO-TP, UDS and OBD-II, plus fuzzing in CI.

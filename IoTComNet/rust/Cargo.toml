@@ -6,6 +6,7 @@ members = [
     "crates/iotcom-ffi-support",
     "crates/iotcom-modbus",
     "crates/iotcom-isotp",
+    "crates/iotcom-coap",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
 ]

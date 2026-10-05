@@ -31,6 +31,8 @@ iotcom --help
 | `iotcom can simulate` | simulator ECU mesin di balik adapter slcan tiruan lewat TCP |
 | `iotcom uds read` / `dtc` / `raw` | identifikasi UDS, DTC (`--clear --allow-write`), request mentah dengan frame lane |
 | `iotcom obd live` / `vin` / `dtc` | data langsung OBD-II (`--watch`), VIN, DTC tersimpan dan tertunda |
+| `iotcom coap get` / `put` / `observe` / `discover` / `ping` | client CoAP dengan URI `coap://host/path` (`--accept senml`, `--frames`; penulisan butuh `--allow-write`) |
+| `iotcom coap serve` | node rumah kaca simulasi di UDP 5683 |
 | `iotcom hl7 listen` | penerima MLLP dengan ACK otomatis dan observasi terurai (`--raw` mencetak segmen) |
 | `iotcom hl7 send` | kirim berkas ER7 (atau contoh ORU^R01) dan tampilkan ACK |
 | `iotcom hl7 simulate` | monitor pasien sintetis (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

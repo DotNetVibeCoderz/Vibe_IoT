@@ -78,6 +78,18 @@ app.Configure(c =>
         o.AddCommand<ObdVinCommand>("vin").WithExample("obd", "vin", "--can", "slcan:COM5");
         o.AddCommand<ObdDtcCommand>("dtc").WithExample("obd", "dtc", "--can", "sim");
     });
+    c.AddBranch("coap", q =>
+    {
+        q.SetDescription("CoAP (RFC 7252) client and a simulated greenhouse device: get, put, observe, discover, ping, serve.");
+        q.AddCommand<CoapGetCommand>("get").WithExample("coap", "get", "coap://127.0.0.1/sensors/temperature", "--accept", "senml");
+        q.AddCommand<CoapWriteCommand>("put").WithDescription("PUT/POST/DELETE (requires --allow-write).")
+            .WithExample("coap", "put", "coap://127.0.0.1/actuators/fan", "on", "--allow-write")
+            .WithExample("coap", "put", "coap://127.0.0.1/firmware", "@image.bin", "--format", "octet", "--allow-write");
+        q.AddCommand<CoapObserveCommand>("observe").WithExample("coap", "observe", "coap://127.0.0.1/sensors/temperature");
+        q.AddCommand<CoapDiscoverCommand>("discover").WithExample("coap", "discover", "coap://127.0.0.1/", "--query", "rt=temperature*");
+        q.AddCommand<CoapPingCommand>("ping").WithExample("coap", "ping", "coap://127.0.0.1/");
+        q.AddCommand<CoapServeCommand>("serve").WithExample("coap", "serve", "--port", "5683", "--frames");
+    });
     c.AddBranch("hl7", h =>
     {
         h.SetDescription("HL7 v2 over MLLP: receive (auto-ACK), send, and simulate a bedside monitor.");

@@ -44,6 +44,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "iotcom-coap"
+version = "0.1.0"
+
+[[package]]
 name = "iotcom-core"
 version = "0.1.0"
 
@@ -51,6 +55,7 @@ version = "0.1.0"
 name = "iotcom-fuzz"
 version = "0.0.0"
 dependencies = [
+ "iotcom-coap",
  "iotcom-core",
  "iotcom-isotp",
  "iotcom-modbus",

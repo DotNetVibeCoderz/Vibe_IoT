@@ -1,4 +1,5 @@
 using IoTCom.Net.Adapters.Mqtt;
+using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Modbus;
@@ -76,6 +77,29 @@ public static class IoTComBuilderExtensions
             o.Logger = Logger(sp, "IoTCom.Hl7");
             configure(o);
         }));
+
+    /// <summary>Registers a CoAP client.</summary>
+    public static IoTComBuilder AddCoapClient(this IoTComBuilder builder, string name, Action<CoapClientOptions> configure)
+        => builder.AddEndpoint(name, sp => CoapClient.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Coap");
+            configure(o);
+        }));
+
+    /// <summary>Registers a CoAP server; map resources in <paramref name="resources"/>.</summary>
+    public static IoTComBuilder AddCoapServer(this IoTComBuilder builder, string name, Action<CoapServerOptions>? configure = null, Action<CoapServer>? resources = null)
+        => builder.AddEndpoint(name, sp =>
+        {
+            var server = CoapServer.Create(o =>
+            {
+                o.Name = name;
+                o.Logger = Logger(sp, "IoTCom.Coap");
+                configure?.Invoke(o);
+            });
+            resources?.Invoke(server);
+            return server;
+        });
 
     /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>
     public static IoTComBuilder AddCanBus(this IoTComBuilder builder, string name, string uri, Action<CanBusOptions>? configure = null)

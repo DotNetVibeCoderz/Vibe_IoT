@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [modbus_decode, modbus_master, modbus_pdu, isotp]
+        target: [modbus_decode, modbus_master, modbus_pdu, isotp, coap]
     defaults:
       run:
         working-directory: IoTComNet/rust

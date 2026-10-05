@@ -40,6 +40,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 over MLLP](protocols/hl7.md) | send · receive · ACK · bedside simulator | `IoTCom.Net.Protocols.Hl7` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · synthetic studies | `IoTCom.Net.Adapters.Dicom` |
+| [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |

@@ -9,6 +9,7 @@
   <Folder Name="/samples/" />
   <Folder Name="/samples/console/">
     <Project Path="samples/console/ArtNetPlayer/ArtNetPlayer.csproj" />
+    <Project Path="samples/console/CoapObserve/CoapObserve.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
     <Project Path="samples/console/ModbusMaster/ModbusMaster.csproj" />
     <Project Path="samples/console/ModbusSlaveSimulator/ModbusSlaveSimulator.csproj" />
@@ -30,6 +31,7 @@
     <Project Path="src/IoTCom.Net.Framing/IoTCom.Net.Framing.csproj" />
     <Project Path="src/IoTCom.Net.Hosting/IoTCom.Net.Hosting.csproj" />
     <Project Path="src/IoTCom.Net.Native.Modbus/IoTCom.Net.Native.Modbus.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Coap/IoTCom.Net.Protocols.Coap.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Dmx/IoTCom.Net.Protocols.Dmx.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Hl7/IoTCom.Net.Protocols.Hl7.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.IsoTp/IoTCom.Net.Protocols.IsoTp.csproj" />

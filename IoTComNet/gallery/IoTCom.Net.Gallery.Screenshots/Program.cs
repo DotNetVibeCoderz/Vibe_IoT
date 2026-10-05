@@ -91,6 +91,19 @@ if (Want("gallery-can-uds.png", "gallery-can-traffic.png"))
     Tabs().SelectedIndex = 0;
 }
 
+if (Want("gallery-coap.png"))
+{
+    // CoAP greenhouse: 20 % loss so the chart shows dropped datagrams and retransmissions.
+    Show("coap-greenhouse", seconds: 2);
+    var greenhouse = (GreenhouseDemo)vm.SelectedDemo!;
+    greenhouse.LossPercent = 20;
+    Await(greenhouse.SetFanAsync(true));
+    Await(greenhouse.SetValveAsync(60));
+    Await(greenhouse.FetchLogAsync());
+    Pump(TimeSpan.FromSeconds(6));
+    Shot("gallery-coap.png");
+}
+
 if (Want("gallery-nmea.png"))
 {
     Show("nmea-tracker", seconds: 22);

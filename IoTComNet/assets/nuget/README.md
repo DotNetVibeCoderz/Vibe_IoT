@@ -23,6 +23,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | `IoTCom.Net.Protocols.Uds` | UDS tester, OBD-II scan tool, ECU simulator (not in the meta-package) |
 | `IoTCom.Net.Protocols.Hl7` | HL7 v2 ER7 codec, MLLP sender/receiver, bedside-monitor simulator |
 | `IoTCom.Net.Adapters.Dicom` | DICOM Storage SCP/SCU over fo-dicom, renderer, synthetic studies (not in the meta-package) |
+| `IoTCom.Net.Protocols.Coap` | CoAP client/server: Observe, Block-wise, discovery, device simulator |
 | `IoTCom.Net.Adapters.Mqtt` | MQTT adapter over MQTTnet + embedded broker |
 | `IoTCom.Net.Serialization.SenML` | SenML JSON/CBOR |
 | `IoTCom.Net.Framing` | CRC catalogue, SLIP, COBS, HDLC |
