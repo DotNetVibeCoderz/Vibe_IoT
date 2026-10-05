@@ -290,7 +290,7 @@ public sealed class MavlinkGenerator : IIncrementalGenerator
             var stripped = en.StartsWith(e.Name + "_", StringComparison.Ordinal) ? en.Substring(e.Name.Length + 1) : en;
             var member = Pascal(stripped);
             if (member.Length == 0 || member == name || !used.Add(member)) member = Pascal(en);
-            if (!used.Contains(member)) used.Add(member);
+            used.Add(member);
             if (desc.Length > 0) sb.AppendLine($"    /// <summary>{desc}</summary>");
             sb.AppendLine($"    {member} = {value.ToString(CultureInfo.InvariantCulture)},");
         }
