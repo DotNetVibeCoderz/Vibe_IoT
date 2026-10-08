@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.11.0-preview.1"
+VERSION = "0.12.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -453,6 +453,51 @@ NOTEBOOKS = {
            "MdnsDiscovery and SparkplugEdgeNode samples. See `docs/en/protocols/mdns.md`, `sparkplug.md` and `payload-codecs.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom mdns browse`, `iotcom sparkplug watch --sim`, `iotcom payload protobuf <hex>`, demo *Jaringan pabrik* di Gallery, serta "
            "sampel MdnsDiscovery dan SparkplugEdgeNode. Lihat `docs/id/protocols/mdns.md`, `sparkplug.md`, dan `payload-codecs.md`.\n\n" + CREDIT[1]),
+    ],
+    "industrial/13-opcua": [
+        md("# OPC UA — browse, read, subscribe, write\n\nOPC UA is how modern PLCs, SCADA and MES systems expose their data: an address space of objects, "
+           "variables and methods, reached over a secure session. IoTCom.Net wraps the OPC Foundation stack; this notebook runs its plant simulator in-process.",
+           "# OPC UA — jelajah, baca, subscribe, tulis\n\nOPC UA adalah cara PLC, SCADA, dan MES modern membuka datanya: address space berisi objek, "
+           "variabel, dan method, dicapai lewat sesi yang aman. IoTCom.Net membungkus stack OPC Foundation; notebook ini menjalankan simulator pabriknya di dalam proses."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Adapters.OpcUa, {VERSION}"'),
+        md("## Start the plant simulator and connect\nThe client picks the most secure endpoint (Basic256Sha256, SignAndEncrypt); both sides create a "
+           "self-signed application certificate on first use. `ReadOnly = true` until we decide to write.",
+           "## Jalankan simulator pabrik dan sambungkan\nClient memilih endpoint paling aman (Basic256Sha256, SignAndEncrypt); kedua pihak membuat "
+           "sertifikat aplikasi self-signed saat pertama dipakai. `ReadOnly = true` sampai kita memutuskan untuk menulis."),
+        code("using IoTCom.Net.Adapters.OpcUa;\n\n"
+             "var probe = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);\nprobe.Start();\nvar uaPort = ((System.Net.IPEndPoint)probe.LocalEndpoint).Port;\nprobe.Stop();\n"
+             "var plc = OpcUaPlantServer.Create(o => { o.Port = uaPort; o.Interval = TimeSpan.FromMilliseconds(300); });\nawait plc.StartAsync();\n"
+             "var ua = OpcUaClient.Create(o => { o.UseEndpoint(plc.EndpointUrl); o.AcceptUntrustedCertificates = true; o.ReadOnly = true; });\n"
+             "await ua.ConnectAsync();\nConsole.WriteLine($\"{plc.EndpointUrl} · {ua.SecurityPolicy} / {ua.SecurityMode}\");"),
+        md("## Browse and read\nNode ids carry a namespace index: `ns=2;s=Plant/Line1/Filler/Speed`.",
+           "## Jelajah dan baca\nNode id membawa indeks namespace: `ns=2;s=Plant/Line1/Filler/Speed`."),
+        code("async Task Tree(string? nodeId, string indent)\n{\n"
+             "    foreach (var n in await ua.BrowseAsync(nodeId))\n    {\n"
+             "        if (n.NodeId.StartsWith(\"i=\")) continue;\n"
+             "        var value = n.NodeClass == \"Variable\" ? \" = \" + (await ua.ReadAsync(n.NodeId)).Text : \"\";\n"
+             "        Console.WriteLine($\"{indent}{n.DisplayName}{value}\");\n"
+             "        if (n.IsContainer) await Tree(n.NodeId, indent + \"  \");\n    }\n}\nawait Tree(null, \"\");"),
+        md("## Subscribe\nThe server samples the monitored items and publishes only changes.",
+           "## Subscribe\nServer mengambil sampel monitored item dan hanya menerbitkan perubahan."),
+        code("using var window = new CancellationTokenSource(TimeSpan.FromSeconds(2));\nvar changes = 0;\ntry\n{\n"
+             "    await foreach (var v in ua.SubscribeAsync([plc.NodeId(\"Line1/Tank7/Level\"), plc.NodeId(\"Line1/Filler/Speed\")], TimeSpan.FromMilliseconds(200), window.Token))\n"
+             "        if (changes++ < 8) Console.WriteLine($\"{v.SourceTimestamp?.ToLocalTime():HH:mm:ss.fff} {v.NodeId} = {v.Text}\");\n}\n"
+             "catch (OperationCanceledException) { }\nConsole.WriteLine($\"{changes} notifications in 2 s\");"),
+        md("## Writes are refused until you allow them",
+           "## Penulisan ditolak sampai Anda mengizinkannya"),
+        code("try { await ua.WriteAsync(plc.NodeId(\"Line1/Filler/Setpoint\"), 100); }\n"
+             "catch (IoTCom.Net.ReadOnlyModeException e) { Console.WriteLine(\"read-only: \" + e.Message); }\n\n"
+             "await using var operatorUa = OpcUaClient.Create(o => { o.UseEndpoint(plc.EndpointUrl); o.AcceptUntrustedCertificates = true; });\n"
+             "await operatorUa.ConnectAsync();\nawait operatorUa.WriteAsync(plc.NodeId(\"Line1/Filler/Setpoint\"), \"100\");   // converted to Double\n"
+             "Console.WriteLine($\"setpoint now {(await ua.ReadAsync(plc.NodeId(\"Line1/Filler/Setpoint\"))).Text}\");\n"
+             "var previous = await operatorUa.CallAsync(plc.NodeId(\"Line1\"), plc.NodeId(\"Line1/ResetCounter\"));\n"
+             "Console.WriteLine($\"ResetCounter() returned {previous[0]}\");\n"
+             "await ua.DisposeAsync();\nawait plc.DisposeAsync();"),
+        md("## Going further\n`iotcom opcua browse --sim`, `iotcom opcua watch`, the Gallery's *OPC UA tag browser* and the OpcUaBrowser sample. "
+           "See `docs/en/protocols/opcua.md` for certificates and trust.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom opcua browse --sim`, `iotcom opcua watch`, *Penjelajah tag OPC UA* di Gallery, dan sampel OpcUaBrowser. "
+           "Lihat `docs/id/protocols/opcua.md` untuk sertifikat dan trust.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

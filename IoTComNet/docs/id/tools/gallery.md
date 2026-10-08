@@ -32,6 +32,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Kategori | Demo | Protokol |
 |---|---|---|
 | Industri | PLC pabrik pintar — baca PLC virtual, nyalakan motor, geser setpoint; beralih antara mesin C# dan **Rust** | Modbus TCP |
+| Industri | Penjelajah tag OPC UA — address space simulator pabrik lewat sesi Basic256Sha256, semua tag dalam satu subscription, tren langsung, penulisan terjaga, dan pemanggilan method | OPC UA |
 | Otomotif | Diagnostik kendaraan — scan tool dan simulator ECU mesin di bus CAN virtual: takometer dan lampu indikator, data langsung OBD-II, VIN, DTC, security access, dan penulisan yang dijaga | CAN, ISO-TP (Rust), UDS, OBD-II |
 | Medis & kesehatan | Monitor pasien ICU — 4 bed sintetis mengirim ORU^R01 lewat MLLP; papan bangsal, kurva langsung, NEWS2, tren, dan catatan SBAR dari LLM | HL7 v2, MLLP |
 | Medis & kesehatan | Pra-baca gambar dengan AI — modalitas CT/MR/X-ray simulasi menyimpan ke PACS; viewer dengan window dan pra-baca model vision yang dinilai terhadap temuan yang ditanam | DICOM C-STORE |
@@ -59,6 +60,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Monitor jaringan LoRaWAN](../../images/gallery-lorawan.png)
 ![Pembacaan smart meter](../../images/gallery-metering.png)
 ![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
+![Penjelajah tag OPC UA](../../images/gallery-opcua.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
 ![Meja kerja](../../images/gallery-workbench.png)
 

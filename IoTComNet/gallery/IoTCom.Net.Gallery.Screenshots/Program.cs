@@ -141,6 +141,12 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-opcua.png"))
+{
+    Show("opcua-tags", seconds: 9);
+    Shot("gallery-opcua.png");
+}
+
 if (Want("gallery-sparkplug.png"))
 {
     Show("plant-network", seconds: 8);

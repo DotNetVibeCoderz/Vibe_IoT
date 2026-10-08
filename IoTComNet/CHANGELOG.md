@@ -3,6 +3,19 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.12.0-preview.1 — 2026-10-09
+
+OPC UA.
+
+- **New package `IoTCom.Net.Adapters.OpcUa`** over the OPC Foundation .NET Standard stack 1.5.378 (MIT):
+  `OpcUaClient` (most secure endpoint or None, anonymous or user name, browse, read, write with type conversion,
+  method calls, subscriptions as `IAsyncEnumerable`, read-only mode, traffic tap) and `OpcUaPlantServer`, a bottling
+  line simulator with None and Basic256Sha256 endpoints. Not in the meta-package (large, not trimming/AOT safe).
+- CLI `iotcom opcua browse|read|watch|write|call|simulate`; Gallery *OPC UA tag browser*; sample `OpcUaBrowser`;
+  notebook pair `industrial/13-opcua`; docs page *OPC UA* with the certificate trust workflow.
+
+*Adapter OPC UA (client dan simulator server pabrik), perintah CLI, demo Galeri, sampel, notebook, dan dokumentasi.*
+
 ## 0.11.0-preview.1 — 2026-10-09
 
 Plant networks: discovery, Sparkplug B and payload codecs.

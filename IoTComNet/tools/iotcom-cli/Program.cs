@@ -175,6 +175,16 @@ app.Configure(c =>
         d.AddCommand<DicomSendCommand>("send").WithExample("dicom", "send", "--synthetic", "ct", "--finding", "Pneumothorax");
         d.AddCommand<DicomListenCommand>("listen").WithExample("dicom", "listen", "--port", "11112", "--output", "received");
     });
+    c.AddBranch("opcua", u =>
+    {
+        u.SetDescription("OPC UA (adapter over the OPC Foundation stack): browse, read, watch, write, call; simulate a plant server.");
+        u.AddCommand<OpcUaBrowseCommand>("browse").WithExample("opcua", "browse", "--sim").WithExample("opcua", "browse", "-e", "opc.tcp://plc.local:4840", "--accept-untrusted");
+        u.AddCommand<OpcUaReadCommand>("read").WithExample("opcua", "read", "--sim", "Line1/Filler/Speed", "Line1/Tank7/Level");
+        u.AddCommand<OpcUaWatchCommand>("watch").WithExample("opcua", "watch", "--sim", "Line1/Tank7/Level", "-i", "250");
+        u.AddCommand<OpcUaWriteCommand>("write").WithDescription("Write a variable (requires --allow-write).").WithExample("opcua", "write", "--sim", "Line1/Filler/Setpoint", "100", "--allow-write");
+        u.AddCommand<OpcUaCallCommand>("call").WithDescription("Call a method (requires --allow-write).").WithExample("opcua", "call", "--sim", "Line1", "Line1/ResetCounter", "--allow-write");
+        u.AddCommand<OpcUaSimulateCommand>("simulate").WithExample("opcua", "simulate", "--port", "4840");
+    });
     c.AddBranch("sparkplug", p =>
     {
         p.SetDescription("Sparkplug B over MQTT: watch as a host application, simulate an edge node, write metrics.");

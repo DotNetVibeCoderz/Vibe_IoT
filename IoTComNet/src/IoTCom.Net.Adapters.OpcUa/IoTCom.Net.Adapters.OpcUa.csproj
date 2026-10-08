@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.OpcUa</RootNamespace>
+    <Description>OPC UA for IoTCom.Net as an adapter over the OPC Foundation .NET Standard stack (not a rewrite): a client endpoint (browse, read, write behind a read-only switch, method calls, subscriptions as IAsyncEnumerable, traffic tap) and a plant simulator server with a bottling line, alarms and methods for tests and demos. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);opc-ua;opcua;iec62541;scada;plc;industrial</PackageTags>
+    <!-- The OPC Foundation stack uses reflection-based encoders; this adapter is not trimming/AOT safe. -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Server" />
+  </ItemGroup>
+</Project>

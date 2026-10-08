@@ -42,7 +42,7 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | AT command engine (cellular modules, URC parser) | P1 | ✅ `0.10.0-preview.1`: parser, modem client, LTE-M simulator · PDU SMS, CMUX ⏳ |
 | HL7 v2 MLLP + ASTM E1394 (lab analyzers) | P1 | ✅ HL7 v2 + MLLP + simulator in `0.2.0-preview.1` · ASTM E1394/E1381 + HL7 bridge in `0.10.0-preview.1` |
 | DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies | P1 | ✅ `0.2.0-preview.1` (added on request: medical use cases) |
-| Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | ✅ Sparkplug B in `0.11.0-preview.1` (edge node, host, simulator) · OPC UA, BLE, USB ⏳ |
+| Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | ✅ Sparkplug B in `0.11.0-preview.1` (edge node, host, simulator) · ✅ OPC UA adapter in `0.12.0-preview.1` (client, plant simulator server) · BLE, USB ⏳ |
 | Protobuf / MessagePack adapters, TLV helpers | P1 | ✅ `0.11.0-preview.1`: `IPayloadCodec<T>`, Protobuf + MessagePack adapters with schema-less views, TLV + BER-TLV |
 | Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | ✅ 10 demos (incl. MAVLink drone, CoAP greenhouse, vehicle diagnostics, ICU monitors, imaging AI pre-read) |
 | VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | ✅ 0.7.0-preview.1 |

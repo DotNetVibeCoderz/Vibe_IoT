@@ -53,7 +53,8 @@ for nb in sorted(glob.glob(os.path.join(ROOT, "notebooks", "**", "*.en.ipynb"), 
   <ProjectReference Include="{root}/src/IoTCom.Net.Adapters.Dicom/IoTCom.Net.Adapters.Dicom.csproj" />
   <ProjectReference Include="{root}/src/IoTCom.Net.Protocols.Uds/IoTCom.Net.Protocols.Uds.csproj" />
   <ProjectReference Include="{root}/src/IoTCom.Net.Serialization.Protobuf/IoTCom.Net.Serialization.Protobuf.csproj" />
-  <ProjectReference Include="{root}/src/IoTCom.Net.Serialization.MessagePack/IoTCom.Net.Serialization.MessagePack.csproj" /></ItemGroup>
+  <ProjectReference Include="{root}/src/IoTCom.Net.Serialization.MessagePack/IoTCom.Net.Serialization.MessagePack.csproj" />
+  <ProjectReference Include="{root}/src/IoTCom.Net.Adapters.OpcUa/IoTCom.Net.Adapters.OpcUa.csproj" /></ItemGroup>
 </Project>""")
     env = dict(os.environ)
     native = os.path.join(ROOT, "rust", "target", "release")

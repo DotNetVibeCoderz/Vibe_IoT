@@ -35,6 +35,7 @@ perangkat keras.
 | Protokol | Peran | Paket |
 |---|---|---|
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
+| [OPC UA](protocols/opcua.md) | client · server simulator pabrik (adapter di atas stack OPC Foundation) | `IoTCom.Net.Adapters.OpcUa` |
 | [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · simulator kendaraan · generator dialek | `IoTCom.Net.Protocols.Mavlink` |
 | [NMEA 0183 · AIS](protocols/nmea.md) | pembaca · server · simulator · decoder AIS dan pelacak kapal | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
@@ -56,7 +57,7 @@ perangkat keras.
 | [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codec · inspeksi tanpa skema | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (adapter OPC UA, BLE, USB, adapter CAN USB, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (BLE, USB, adapter CAN USB, binding native hasil generate, …).
 
 ## Membangun aplikasi
 

@@ -34,6 +34,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | Protocol | Roles | Package |
 |---|---|---|
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
+| [OPC UA](protocols/opcua.md) | client · plant simulator server (adapter over the OPC Foundation stack) | `IoTCom.Net.Adapters.OpcUa` |
 | [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · vehicle simulator · dialect generator | `IoTCom.Net.Protocols.Mavlink` |
 | [NMEA 0183 · AIS](protocols/nmea.md) | reader · server · simulator · AIS decoder and vessel tracker | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
@@ -55,7 +56,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codecs · schema-less inspection | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-The [roadmap](../../PLAN.md) lists the protocols coming next (OPC UA adapter, BLE, USB, CAN USB adapters, …).
+The [roadmap](../../PLAN.md) lists the protocols coming next (BLE, USB, CAN USB adapters, generated native bindings, …).
 
 ## Build things
 

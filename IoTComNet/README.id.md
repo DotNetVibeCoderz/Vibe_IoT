@@ -30,6 +30,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | | |
 |---|---|
 | **Modbus TCP / RTU / ASCII** | master + slave + simulator PLC virtual, pipelining TCP, mode aman read-only, identifikasi perangkat — dan **mesin Rust** opsional (`NativeModbusClient`) |
+| **OPC UA** | adapter di atas stack OPC Foundation: jelajah, baca, tulis di balik saklar read-only, pemanggilan method, subscription sebagai `IAsyncEnumerable`, endpoint aman; server simulator pabrik |
 | **MAVLink v1 / v2** | dialek common lengkap dari XML resmi (source generator Roslyn — bawa dialek Anda sendiri), signing, link UDP/TCP/serial, helper ground station, simulator quadcopter; codec frame dicerminkan di Rust |
 | **NMEA 0183 · AIS** | parser dan builder dengan validasi checksum, penguraian AIS (tipe 1–5, 18, 19, 21, 24, 27) dengan pelacak kapal, GGA/RMC/GSA/GSV/VTG/GLL/ZDA bertipe, agregator fix GNSS, server NMEA, simulator GPS |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 lewat IP: kirim, terima, discovery ArtPoll, multicast, prioritas, model universe dengan fade |

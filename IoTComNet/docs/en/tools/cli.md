@@ -54,6 +54,8 @@ iotcom --help
 | `iotcom dicom echo` | C-ECHO verification |
 | `iotcom artnet send|poll|monitor` | send DMX, discover nodes, watch universes |
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, run a broker |
+| `iotcom opcua browse` / `read` / `watch` | OPC UA client (`-e opc.tcp://…`, most secure endpoint by default, `--no-security`, `--accept-untrusted`, `--user`) or `--sim` for the in-process plant simulator; read-only sessions |
+| `iotcom opcua write` / `call` / `simulate` | write a variable or call a method (need `--allow-write`; `write` asks for confirmation); run the plant simulator on TCP |
 | `iotcom sparkplug watch` / `simulate` / `write` | Sparkplug B host view of a namespace (`--sim` embeds a broker and a bottling line), an edge node simulator, NCMD/DCMD writes (need `--allow-write` and confirmation) |
 | `iotcom mdns browse` / `advertise` | DNS-SD discovery (all types, one type, `--watch`, `--sim`) and advertising a service with TXT properties |
 | `iotcom payload <format> <hex>` | decode `protobuf`, `msgpack`, `ber-tlv`, `tlv`, `sparkplug` or `dns` payloads as a frame lane and tree |

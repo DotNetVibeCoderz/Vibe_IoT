@@ -85,6 +85,8 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `SparkplugEdgeNode`/`SparkplugHost` over `MqttEndpoint`, whose `AbortAsync` simulates a lost link so the will fires).
   Payload formats implement `IPayloadCodec<T>` (Abstractions): `Serialization.Protobuf`/`.MessagePack` (optional, not in the
   meta-package), `.Tlv`, `SenMLPayloadCodec`.
+- **OPC UA**: `Adapters.OpcUa` wraps the OPC Foundation stack (1.5.378, pinned; not in the meta-package, not AOT). PKI per
+  application under `%LOCALAPPDATA%/IoTCom.Net/opcua/pki*`; tests and notebooks use temp PKI paths and `AcceptUntrustedCertificates`.
 - **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).
 
 ## Conventions specific to this repo
