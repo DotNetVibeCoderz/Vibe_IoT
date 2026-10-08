@@ -3,6 +3,32 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.11.0-preview.1 — 2026-10-09
+
+Plant networks: discovery, Sparkplug B and payload codecs.
+
+- **New package `IoTCom.Net.Protocols.Mdns`:** DNS codec with name compression, `MdnsResponder` (announcements,
+  multicast and unicast answers, known-answer suppression, goodbyes) and `MdnsBrowser` (TTL cache, back-off,
+  service-type enumeration, `ServiceChanged`), plus `MdnsSimulator`. CLI `iotcom mdns browse|advertise`; sample
+  `MdnsDiscovery`. Core: `UdpDatagramTransport.Multicast(group, port)` and multicast delivery on
+  `InMemoryDatagramNetwork`.
+- **New package `IoTCom.Net.Protocols.Sparkplug`:** Sparkplug B payload codec and topics, `SparkplugEdgeNode`
+  (NDEATH will with bdSeq, births with aliases, data by exception, rebirth, guarded writes), `SparkplugHost` (STATE,
+  alias resolution, sequence-gap and late-join rebirth, typed writes) and a bottling-line simulator. CLI
+  `iotcom sparkplug watch|simulate|write`; sample `SparkplugEdgeNode`; hosting `AddSparkplugEdgeNode`,
+  `AddSparkplugHost`, `AddMdnsResponder`, `AddMdnsBrowser`.
+- **New packages `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv`** and the `IPayloadCodec<T>` contract
+  (Abstractions), also implemented by `SenMLPayloadCodec`. Schema-less views (`ProtobufWire`, `MessagePackView`,
+  `BerTlv.Describe`); CLI `iotcom payload <format> <hex>`; VS Code decoders `sparkplug`, `dns`, `protobuf`,
+  `msgpack`, `ber-tlv`.
+- **MQTT adapter:** binary will with retain and QoS (`WithWill(topic, bytes, retain, qos)`) and `AbortAsync()` to drop
+  a connection so the broker publishes the will.
+- Gallery *Plant network · Sparkplug B*; notebook pair `messaging/12-mdns-sparkplug`; docs *mDNS / DNS-SD*,
+  *Sparkplug B*, *Payload codecs*.
+
+*Penemuan mDNS/DNS-SD, Sparkplug B (edge node dan host application), adapter Protobuf/MessagePack, helper TLV,
+kontrak `IPayloadCodec<T>`, will MQTT biner, demo Galeri jaringan pabrik.*
+
 ## 0.10.0-preview.1 — 2026-10-09
 
 AIS, AT commands, ASTM — and the DLMS/M-Bus work, published.

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Sparkplug</RootNamespace>
+    <Description>Sparkplug B for IoTCom.Net, on top of the MQTTnet adapter: the Protobuf payload codec, topic namespace, an edge node (NDEATH will with bdSeq, NBIRTH/DBIRTH with aliases, NDATA/DDATA, rebirth and write commands) and a host application (STATE, alias resolution, sequence-gap rebirth, commands). Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);sparkplug;sparkplug-b;mqtt;uns;iiot;scada</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Adapters.Mqtt\IoTCom.Net.Adapters.Mqtt.csproj" />
+    <PackageReference Include="Google.Protobuf" />
+  </ItemGroup>
+</Project>

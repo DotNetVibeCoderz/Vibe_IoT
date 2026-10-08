@@ -12,12 +12,18 @@ public sealed class UdpDatagramTransport : IDatagramTransport
     private readonly byte[] _buffer = new byte[65_535];
 
     /// <summary>Binds to <paramref name="local"/> (port 0 = any free port).</summary>
-    public UdpDatagramTransport(IPEndPoint local)
+    public UdpDatagramTransport(IPEndPoint local) : this(local, reuseAddress: false)
+    {
+    }
+
+    /// <summary>Binds to <paramref name="local"/>; <paramref name="reuseAddress"/> lets several sockets share a port (mDNS 5353).</summary>
+    public UdpDatagramTransport(IPEndPoint local, bool reuseAddress)
     {
         ArgumentNullException.ThrowIfNull(local);
         _socket = new Socket(local.AddressFamily, SocketType.Dgram, ProtocolType.Udp);
         try
         {
+            if (reuseAddress) _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             if (OperatingSystem.IsWindows())
             {
                 // Ignore ICMP "port unreachable" (otherwise ReceiveFrom fails with ConnectionReset).
@@ -44,6 +50,26 @@ public sealed class UdpDatagramTransport : IDatagramTransport
             _socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.AddMembership, new IPv6MulticastOption(group));
         else
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(group));
+    }
+
+    /// <summary>A socket bound to <paramref name="port"/> on all interfaces (address reuse on) and joined to <paramref name="group"/>.</summary>
+    public static UdpDatagramTransport Multicast(IPAddress group, int port)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+        var any = group.AddressFamily == AddressFamily.InterNetworkV6 ? IPAddress.IPv6Any : IPAddress.Any;
+        var t = new UdpDatagramTransport(new IPEndPoint(any, port), reuseAddress: true);
+        try
+        {
+            t.JoinMulticastGroup(group);
+            t._socket.MulticastLoopback = true;
+        }
+        catch (SocketException ex)
+        {
+            t._socket.Dispose();
+            throw new TransportException($"Cannot join multicast group {group}: {ex.SocketErrorCode}", ex);
+        }
+
+        return t;
     }
 
     /// <inheritdoc />
@@ -115,6 +141,8 @@ public sealed class InMemoryDatagramNetwork
 
     internal void Unbind(InMemoryDatagramTransport t) => _bound.TryRemove(t.Local, out _);
 
+    private static bool IsMulticast(IPAddress a) => a.IsIPv6Multicast || (a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && (a.GetAddressBytes()[0] & 0xF0) == 0xE0);
+
     private bool Chance(double p)
     {
         if (p <= 0) return false;
@@ -123,6 +151,24 @@ public sealed class InMemoryDatagramNetwork
 
     internal void Deliver(IPEndPoint from, ReadOnlyMemory<byte> data, EndPoint to)
     {
+        if (to is IPEndPoint group && IsMulticast(group.Address))
+        {
+            // Multicast: every member of the group on that port receives a copy (not the sender).
+            var members = _bound.Values.Where(t => t.Local.Port == group.Port && t.Groups.Contains(group.Address) && !t.Local.Equals(from)).ToList();
+            var shared = data.ToArray();
+            var lost = members.Count == 0 || Chance(LossRate);
+            Transmitted?.Invoke(from, to, shared, !lost);
+            if (lost)
+            {
+                Interlocked.Increment(ref _dropped);
+                return;
+            }
+
+            foreach (var m in members) m.Enqueue(new Datagram(shared, from));
+            Interlocked.Increment(ref _delivered);
+            return;
+        }
+
         if (to is not IPEndPoint target || !_bound.TryGetValue(target, out var dest) || Chance(LossRate))
         {
             Interlocked.Increment(ref _dropped);
@@ -150,6 +196,15 @@ public sealed class InMemoryDatagramTransport : IDatagramTransport
     }
 
     internal IPEndPoint Local { get; }
+
+    internal ConcurrentBag<IPAddress> Groups { get; } = [];
+
+    /// <summary>Joins a multicast group: datagrams sent to that group on this port arrive here too.</summary>
+    public void JoinMulticastGroup(IPAddress group)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+        Groups.Add(group);
+    }
 
     /// <inheritdoc />
     public EndPoint LocalEndPoint => Local;

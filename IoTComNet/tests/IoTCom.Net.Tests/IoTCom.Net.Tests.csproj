@@ -36,6 +36,11 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.MBus\IoTCom.Net.Protocols.MBus.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.AtCommand\IoTCom.Net.Protocols.AtCommand.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Astm\IoTCom.Net.Protocols.Astm.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Mdns\IoTCom.Net.Protocols.Mdns.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Sparkplug\IoTCom.Net.Protocols.Sparkplug.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.Protobuf\IoTCom.Net.Serialization.Protobuf.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.MessagePack\IoTCom.Net.Serialization.MessagePack.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.Tlv\IoTCom.Net.Serialization.Tlv.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Mavlink\IoTCom.Net.Protocols.Mavlink.csproj" />
     <ProjectReference Include="..\..\samples\shared\IoTCom.Samples.Medical\IoTCom.Samples.Medical.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />

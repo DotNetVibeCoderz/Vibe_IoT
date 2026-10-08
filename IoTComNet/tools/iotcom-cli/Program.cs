@@ -175,6 +175,22 @@ app.Configure(c =>
         d.AddCommand<DicomSendCommand>("send").WithExample("dicom", "send", "--synthetic", "ct", "--finding", "Pneumothorax");
         d.AddCommand<DicomListenCommand>("listen").WithExample("dicom", "listen", "--port", "11112", "--output", "received");
     });
+    c.AddBranch("sparkplug", p =>
+    {
+        p.SetDescription("Sparkplug B over MQTT: watch as a host application, simulate an edge node, write metrics.");
+        p.AddCommand<SparkplugWatchCommand>("watch").WithExample("sparkplug", "watch", "--sim").WithExample("sparkplug", "watch", "--host", "broker.local");
+        p.AddCommand<SparkplugSimulateCommand>("simulate").WithExample("sparkplug", "simulate", "--embedded-broker");
+        p.AddCommand<SparkplugWriteCommand>("write").WithDescription("Write a metric with NCMD/DCMD (requires --allow-write).")
+            .WithExample("sparkplug", "write", "Plant/Line1/Filler", "Running", "false", "--allow-write");
+    });
+    c.AddBranch("mdns", m =>
+    {
+        m.SetDescription("mDNS / DNS-SD: discover devices on the local network and advertise services.");
+        m.AddCommand<MdnsBrowseCommand>("browse").WithExample("mdns", "browse").WithExample("mdns", "browse", "_modbus._tcp", "--watch").WithExample("mdns", "browse", "--sim");
+        m.AddCommand<MdnsAdvertiseCommand>("advertise").WithExample("mdns", "advertise", "Line 1 gateway", "_modbus._tcp", "502", "--txt", "units=1-8");
+    });
+    c.AddCommand<PayloadDecodeCommand>("payload").WithDescription("Decode a payload: protobuf, msgpack, ber-tlv, tlv, sparkplug or dns.")
+        .WithExample("payload", "protobuf", "08 96 01 12 02 68 69").WithExample("payload", "ber-tlv", "6F148407A0000000031010A5095004564953419F3800");
     c.AddBranch("mqtt", q =>
     {
         q.SetDescription("MQTT publish, subscribe and embedded broker.");

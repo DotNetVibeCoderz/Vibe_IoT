@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Serialization.Tlv</RootNamespace>
+    <Description>Tag-length-value helpers for IoTCom.Net: fixed-size TLV layouts (1/2/4-byte tags and lengths, either byte order) and BER-TLV (ISO/IEC 8825, EMV, ISO 7816) with multi-byte tags, long-form lengths and constructed nesting. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);tlv;ber-tlv;emv;iso7816;serialization</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Abstractions\IoTCom.Net.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

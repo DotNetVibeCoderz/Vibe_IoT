@@ -43,6 +43,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | LPWAN & smart city | LoRaWAN network monitor — two gateways and four sensors on a radio map with spreading-factor reach; drag a sensor and watch its SF, SNR and airtime change; downlinks in RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & city | Smart meter reading — a household meter with rooftop solar on an LCD faceplate, two days of load profile, the supply relay behind a password, and the building's M-Bus heat, water and electricity meters | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
+| Messaging | Plant network · Sparkplug B — mDNS finds the devices on the segment; a Unified Namespace of a bottling line with birth/death lamps; pull the network cable to see the NDEATH will, write metrics with DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Protocol workbench | Frame & checksum workbench — decode Modbus frames field by field, 23 CRCs, SLIP/COBS/HDLC live | Modbus, CRC, framing |
 
 ![Vehicle diagnostics](../../images/gallery-can-uds.png)
@@ -57,6 +58,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![CoAP greenhouse](../../images/gallery-coap.png)
 ![LoRaWAN network monitor](../../images/gallery-lorawan.png)
 ![Smart meter reading](../../images/gallery-metering.png)
+![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Lighting](../../images/gallery-lighting.png)
 ![Workbench](../../images/gallery-workbench.png)
 

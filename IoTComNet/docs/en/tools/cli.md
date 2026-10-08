@@ -54,6 +54,9 @@ iotcom --help
 | `iotcom dicom echo` | C-ECHO verification |
 | `iotcom artnet send|poll|monitor` | send DMX, discover nodes, watch universes |
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, run a broker |
+| `iotcom sparkplug watch` / `simulate` / `write` | Sparkplug B host view of a namespace (`--sim` embeds a broker and a bottling line), an edge node simulator, NCMD/DCMD writes (need `--allow-write` and confirmation) |
+| `iotcom mdns browse` / `advertise` | DNS-SD discovery (all types, one type, `--watch`, `--sim`) and advertising a service with TXT properties |
+| `iotcom payload <format> <hex>` | decode `protobuf`, `msgpack`, `ber-tlv`, `tlv`, `sparkplug` or `dns` payloads as a frame lane and tree |
 
 ## Connection options (Modbus)
 

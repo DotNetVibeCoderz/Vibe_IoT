@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.10.0-preview.1"
+VERSION = "0.11.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -394,6 +394,65 @@ NOTEBOOKS = {
            "Synthetic data only; not a medical device. See `docs/en/protocols/at-commands.md` and `docs/en/protocols/astm.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom at info --sim`, `iotcom astm listen --hl7`, dan sampel AstmAnalyzerBridge. "
            "Data sintetis saja; bukan perangkat medis. Lihat `docs/id/protocols/at-commands.md` dan `docs/id/protocols/astm.md`.\n\n" + CREDIT[1]),
+    ],
+    "messaging/12-mdns-sparkplug": [
+        md("# Plant networks: mDNS discovery, Sparkplug B and payload codecs\n\nFind devices without a DNS server, give MQTT a state model with Sparkplug B, "
+           "and read the binary payloads you meet on the way (Protobuf, MessagePack, TLV). Everything runs in this process.",
+           "# Jaringan pabrik: penemuan mDNS, Sparkplug B, dan codec payload\n\nTemukan perangkat tanpa server DNS, beri MQTT model state dengan Sparkplug B, "
+           "dan baca payload biner yang Anda temui di jalan (Protobuf, MessagePack, TLV). Semuanya berjalan di proses ini."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Serialization.Protobuf, {VERSION}"\n#r "nuget: IoTCom.Net.Serialization.MessagePack, {VERSION}"'),
+        md("## Who is on the network?\nA browser asks 224.0.0.251:5353 for every service type, then for the instances of each. "
+           "`MdnsSimulator` runs a small plant segment in memory; `MdnsBrowser.Create()` without options uses the real network.",
+           "## Siapa saja di jaringan?\nBrowser bertanya ke 224.0.0.251:5353 untuk setiap tipe layanan, lalu untuk instance masing-masing. "
+           "`MdnsSimulator` menjalankan segmen pabrik kecil di memori; `MdnsBrowser.Create()` tanpa opsi memakai jaringan sungguhan."),
+        code("using IoTCom.Net.Protocols.Mdns;\n\n"
+             "await using var plant = new MdnsSimulator();\nawait plant.StartAsync();\n"
+             "await using var browser = plant.Browser();\nawait browser.StartAsync();\n"
+             "foreach (var type in await browser.EnumerateTypesAsync(TimeSpan.FromMilliseconds(500)))\n"
+             "    foreach (var svc in await browser.BrowseAsync(type.Replace(\".local\", \"\"), TimeSpan.FromMilliseconds(300)))\n"
+             "        Console.WriteLine($\"{svc.Type,-14} {svc.Instance,-24} {svc.Address}:{svc.Port}  {string.Join(\" \", svc.Properties.Select(p => $\"{p.Key}={p.Value}\"))}\");"),
+        md("## Sparkplug B: births, data and death\nThe edge node registers NDEATH as its MQTT will and publishes NBIRTH/DBIRTH with every metric and an alias. "
+           "The host application resolves aliases in later DDATA messages.",
+           "## Sparkplug B: birth, data, dan death\nEdge node mendaftarkan NDEATH sebagai will MQTT dan menerbitkan NBIRTH/DBIRTH dengan setiap metrik beserta alias. "
+           "Host application menerjemahkan alias pada pesan DDATA berikutnya."),
+        code("using System.Net;\nusing System.Net.Sockets;\nusing IoTCom.Net.Adapters.Mqtt;\nusing IoTCom.Net.Protocols.Sparkplug;\n\n"
+             "var probe = new TcpListener(IPAddress.Loopback, 0);\nprobe.Start();\nvar mqttPort = ((IPEndPoint)probe.LocalEndpoint).Port;\nprobe.Stop();\n"
+             "var broker = MqttBroker.Create(mqttPort);\nawait broker.StartAsync();\n"
+             "var scada = SparkplugHost.Create(o => { o.HostId = \"notebook\"; o.Mqtt = m => m.UseBroker(\"127.0.0.1\", mqttPort); });\nawait scada.StartAsync();\n"
+             "var edge = SparkplugEdgeNode.Create(o => { o.Group = \"Plant\"; o.EdgeNode = \"Line1\"; o.Mqtt = m => m.UseBroker(\"127.0.0.1\", mqttPort); });\n"
+             "var bottling = new SparkplugLineSimulator(edge).Define();\nawait edge.StartAsync();\n"
+             "for (var i = 0; i < 3; i++) { await bottling.Step(); await Task.Delay(200); }\n"
+             "foreach (var v in scada.Views.OrderBy(v => v.Key))\n"
+             "    Console.WriteLine($\"{v.Key,-20} {(v.Online ? \"online \" : \"offline\")} {string.Join(\", \", v.Metrics.Values.Where(m => m.Name != \"Node Control/Rebirth\").Select(m => m.ToString()))}\");"),
+        md("## Commands and a pulled cable\nWrites travel as DCMD and come back as DDATA. When the connection drops, the broker publishes the NDEATH will "
+           "and the host marks the node and its devices offline.",
+           "## Perintah dan kabel yang dicabut\nPenulisan dikirim sebagai DCMD dan kembali sebagai DDATA. Saat koneksi putus, broker menerbitkan will NDEATH "
+           "dan host menandai node beserta perangkatnya offline."),
+        code("await scada.WriteAsync(\"Plant\", \"Line1\", \"Filler\", \"Running\", false);\nawait Task.Delay(300);\n"
+             "Console.WriteLine($\"Filler running: {scada.Find(\"Plant\", \"Line1\", \"Filler\")!.Metrics[\"Running\"].Value}\");\n"
+             "await edge.DropConnectionAsync();\nawait Task.Delay(500);\n"
+             "Console.WriteLine($\"Line1 online: {scada.Find(\"Plant\", \"Line1\")!.Online} · next bdSeq {edge.BdSeq}\");\n"
+             "await scada.DisposeAsync();\nawait broker.DisposeAsync();"),
+        md("## What a Sparkplug payload looks like\nIt is Protobuf: `SparkplugPayload.Describe` names the fields, `ProtobufWire` reads any message without a schema.",
+           "## Seperti apa payload Sparkplug\nIni Protobuf: `SparkplugPayload.Describe` memberi nama field, `ProtobufWire` membaca pesan apa pun tanpa skema."),
+        code("using IoTCom.Net.Serialization.Protobuf;\n\n"
+             "var payload = new SparkplugPayload { Timestamp = 1, Seq = 4, Metrics = [SparkplugMetric.Of(\"Level\", SparkplugDataType.Double, 61.5, alias: 7)] }.Encode();\n"
+             "Console.WriteLine(Convert.ToHexString(payload));\n"
+             "foreach (var f in SparkplugPayload.Describe(payload)) Console.WriteLine($\"{f.Name,-10} {f.Value}\");\n"
+             "ProtobufWire.TryInspect(payload, out var wire);\nforeach (var f in wire) Console.WriteLine($\"#{f.Number} wire {f.WireType}: {f.Value}\");"),
+        md("## MessagePack and TLV\nMessagePack is JSON-shaped binary; BER-TLV is the tag-length-value layout of smart cards and EMV.",
+           "## MessagePack dan TLV\nMessagePack adalah biner berbentuk JSON; BER-TLV adalah tata letak tag-length-value pada smart card dan EMV."),
+        code("using IoTCom.Net.Serialization.MessagePack;\nusing IoTCom.Net.Serialization.Tlv;\n\n"
+             "var packed = new MessagePackCodec<Dictionary<string, double>>(MessagePack.MessagePackSerializerOptions.Standard).Encode(new() { [\"temp\"] = 27.5, [\"rh\"] = 71 });\n"
+             "Console.WriteLine($\"{Convert.ToHexString(packed)} → {MessagePackView.ToJson(packed)}\");\n"
+             "var fci = Convert.FromHexString(\"6F148407A0000000031010A5095004564953419F3800\");\n"
+             "void Show(IEnumerable<TlvItem> items, string indent = \"\") { foreach (var i in items) { Console.WriteLine($\"{indent}{i.Tag:X} {(i.Children.Count > 0 ? \"\" : Convert.ToHexString(i.Value))}\"); Show(i.Children, indent + \"  \"); } }\n"
+             "Show(BerTlv.Decode(fci));"),
+        md("## Going further\n`iotcom mdns browse`, `iotcom sparkplug watch --sim`, `iotcom payload protobuf <hex>`, the Gallery's *Plant network* demo and the "
+           "MdnsDiscovery and SparkplugEdgeNode samples. See `docs/en/protocols/mdns.md`, `sparkplug.md` and `payload-codecs.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom mdns browse`, `iotcom sparkplug watch --sim`, `iotcom payload protobuf <hex>`, demo *Jaringan pabrik* di Gallery, serta "
+           "sampel MdnsDiscovery dan SparkplugEdgeNode. Lihat `docs/id/protocols/mdns.md`, `sparkplug.md`, dan `payload-codecs.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

@@ -36,12 +36,13 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **LoRaWAN 1.0.x** | light network server for Semtech UDP gateways (OTAA/ABP, dedup across gateways, Class A downlinks, MAC commands), packet forwarder, end-device MAC, EU868/US915/AS923-2, airtime, gateway + sensor simulator; codec mirrored by a fuzzed Rust crate |
 | **DLMS/COSEM · M-Bus** | smart-meter reading over HDLC or TCP: OBIS registers, load profiles with selective access, LLS/HLS with AES-GCM ciphering, relay control behind read-only defaults, meter simulator; wired M-Bus master with scan, secondary addressing and record decoding, heat/water/electricity simulator; codecs mirrored by fuzzed Rust crates |
 | **AT commands · ASTM** | cellular/GNSS modems (URC parsing, SMS, read-only mode, module simulator); lab analyzers over ASTM E1394/E1381 with NAK retransmission and an HL7 ORU bridge |
-| **MQTT 3.1.1 / 5.0** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
+| **MQTT 3.1.1 / 5.0 · Sparkplug B** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker; Sparkplug B edge node and host application (births, aliases, NDEATH will with bdSeq, rebirth, guarded writes) |
+| **mDNS / DNS-SD** | responder and browser (RFC 6762/6763): announcements, known-answer suppression, goodbyes, TTL cache, type enumeration, plant simulator |
 | **CAN / CAN FD** | one `ICanBus` for Linux SocketCAN, slcan USB adapters (CANable, CANtact) and a virtual bus; candump notation, filtered readers |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 as a fuzzed **Rust** state machine; UDS tester (sessions, security access, DIDs, DTCs, routines, read-only mode), OBD-II scan tool and an ECU simulator |
 | **HL7 v2 · MLLP** | ER7 parser/builder with escaping, MLLP sender/receiver with ACK matching, LOINC vital signs, bedside-monitor simulator (sepsis, hypoxia, …) |
 | **DICOM** | adapter over fo-dicom: Storage SCP/SCU (C-STORE, C-ECHO), windowed renderer to PNG, synthetic CT/MR/X-ray studies with planted findings |
-| **SenML (RFC 8428)** | JSON + CBOR, reflection-free, base-field resolution |
+| **Payload codecs** | SenML (RFC 8428, JSON + CBOR), Protobuf and MessagePack adapters with schema-less inspection, simple TLV and BER-TLV (EMV); one `IPayloadCodec<T>` contract |
 | **Framing** | CRC catalogue (23 presets, 8–64 bit), LRC, SLIP, COBS, HDLC, streaming decoders on `System.IO.Pipelines` |
 | **Core** | TCP / serial / in-memory transports, traffic tap (*frame lane*), OpenTelemetry metrics & traces, reconnect policy, hosting + health checks |
 

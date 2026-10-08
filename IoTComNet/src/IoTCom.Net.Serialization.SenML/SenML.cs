@@ -263,6 +263,20 @@ public static class SenMLCodec
     }
 }
 
+/// <summary>SenML as an <see cref="IPayloadCodec{T}"/> (application/senml+json, or CBOR).</summary>
+/// <param name="cbor">Use CBOR (application/senml+cbor).</param>
+public sealed class SenMLPayloadCodec(bool cbor = false) : IPayloadCodec<IReadOnlyList<SenMLRecord>>
+{
+    /// <inheritdoc />
+    public string ContentType => cbor ? "application/senml+cbor" : "application/senml+json";
+
+    /// <inheritdoc />
+    public byte[] Encode(IReadOnlyList<SenMLRecord> value) => cbor ? SenMLCodec.ToCbor(value) : SenMLCodec.ToJson(value);
+
+    /// <inheritdoc />
+    public IReadOnlyList<SenMLRecord> Decode(ReadOnlySpan<byte> payload) => cbor ? SenMLCodec.ParseCbor(payload.ToArray()) : SenMLCodec.ParseJson(payload);
+}
+
 /// <summary>Fluent builder for a SenML pack sharing a base name and base time.</summary>
 /// <example>
 /// <code>

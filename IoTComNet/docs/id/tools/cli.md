@@ -54,6 +54,9 @@ iotcom --help
 | `iotcom dicom echo` | verifikasi C-ECHO |
 | `iotcom artnet send|poll|monitor` | kirim DMX, temukan node, pantau universe |
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, menjalankan broker |
+| `iotcom sparkplug watch` / `simulate` / `write` | tampilan host Sparkplug B atas sebuah namespace (`--sim` menanam broker dan lini pembotolan), simulator edge node, penulisan NCMD/DCMD (perlu `--allow-write` dan konfirmasi) |
+| `iotcom mdns browse` / `advertise` | penemuan DNS-SD (semua tipe, satu tipe, `--watch`, `--sim`) dan mengiklankan layanan dengan properti TXT |
+| `iotcom payload <format> <hex>` | mengurai payload `protobuf`, `msgpack`, `ber-tlv`, `tlv`, `sparkplug`, atau `dns` sebagai frame lane dan pohon |
 
 ## Opsi koneksi (Modbus)
 

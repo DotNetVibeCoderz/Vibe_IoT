@@ -3,20 +3,20 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.6.0-preview.1` · **Last update:** 2026-10-08
+**Current version:** `0.11.0-preview.1` · **Last update:** 2026-10-09
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 449 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 471 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 35 tests passing, clippy `-D warnings` clean; 9 cargo-fuzz targets (≈ 15 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 38 + 38 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 13 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Docs EN/ID | ✅ 41 + 41 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 14 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 14 packages (+12 symbol packages) published to nuget.org as `0.1.0-preview.1`; Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v0.1.0-preview.1` |
+| NuGet packages | ✅ 31 packages (+ symbol packages) per release (latest `0.10.0-preview.1`; `0.11.0-preview.1` adds Mdns, Sparkplug, Protobuf, MessagePack, Tlv); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -30,8 +30,11 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Native.Modbus + Rust `iotcom-modbus` | ✅ win-x64 · ⏳ other RIDs | arm64/Linux/macOS binaries come from the CI native workflow |
 | IoTCom.Net.Protocols.Nmea | ✅ | GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GnssState, reader, server, simulator, AIS decoder/encoder/tracker/simulator |
 | IoTCom.Net.Protocols.Dmx | ✅ | Art-Net ArtDmx/ArtPoll/ArtPollReply/ArtSync, sACN data + sequence rules, DmxUniverse · RDM ⏳ |
-| IoTCom.Net.Adapters.Mqtt | ✅ | MQTTnet 5 adapter, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
-| IoTCom.Net.Serialization.SenML | ✅ | JSON + CBOR, resolution (RFC 8428 §4.6), builder |
+| IoTCom.Net.Adapters.Mqtt | ✅ | MQTTnet 5 adapter, reconnect + resubscribe, JSON/SenML helpers, embedded broker, binary retained will + `AbortAsync` |
+| IoTCom.Net.Serialization.SenML | ✅ | JSON + CBOR, resolution (RFC 8428 §4.6), builder, `SenMLPayloadCodec` |
+| IoTCom.Net.Serialization.Protobuf / .MessagePack / .Tlv | ✅ | `IPayloadCodec<T>` adapters over Google.Protobuf and MessagePack-CSharp with schema-less views; simple TLV and BER-TLV |
+| IoTCom.Net.Protocols.Mdns | ✅ | DNS codec, responder (known-answer suppression, goodbyes), browser (TTL cache, type enumeration), plant simulator · probing, IPv6 ⏳ |
+| IoTCom.Net.Protocols.Sparkplug | ✅ | payload codec + topics, edge node (NDEATH will, aliases, rebirth, guarded writes), host application (STATE, gaps, late join), line simulator · data sets, templates, offline buffering ⏳ |
 | IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus · PCAN/Kvaser/gs_usb ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
 | IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
@@ -49,9 +52,9 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Gallery (Avalonia) | ✅ | 13 demos (Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 14 demos (Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 | VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | Phase 1 |
@@ -65,6 +68,20 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.11
+
+- **Sparkplug B is managed C# over the MQTT adapter** (design §4: MQTT is wrapped, not rebuilt). The payload is
+  encoded with Google.Protobuf's `CodedOutputStream` and Tahu field numbers instead of generated classes, keeping the
+  package trimmable and reflection-free; tests pin a hand-encoded payload.
+- **A lost connection is simulated by dropping the socket.** MQTTnet's broker did not publish the will for an MQTT 5
+  DISCONNECT with reason 0x04, so `AbortAsync` closes the connection without DISCONNECT — what a pulled cable does.
+- **Hosts ask for a rebirth once per node** until its NBIRTH arrives: several devices' DDATA usually precede it when a
+  host joins late.
+- **The mDNS browser resolves from its cache** as well as from responses: with known-answer suppression a responder
+  stays silent about records the browser already holds.
+- **Protobuf and MessagePack are optional packages**, outside the meta-package, so their dependencies stay opt-in; TLV
+  has none and ships in the meta-package.
 
 ## Decisions taken in 0.10
 
@@ -150,6 +167,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | Plant networks (`0.11.0-preview.1`): mDNS/DNS-SD, Sparkplug B edge node + host, Protobuf/MessagePack/TLV codecs with `IPayloadCodec<T>`, MQTT binary will, CLI `mdns`/`sparkplug`/`payload`, Gallery plant-network demo, two samples, notebook pair, three docs pages. |
 | 2026-10-09 | Field devices (`0.10.0-preview.1`): AIS, AT commands, ASTM + HL7 bridge, Gallery harbour demo, notebooks, docs. 0.9.0 was tagged but not published (macOS runner never started); its CI also exposed macOS's 16-byte-only AES-GCM, fixed with portable 12-byte tags. |
 | 2026-10-09 | Metering (`0.9.0-preview.1`): DLMS/COSEM and M-Bus packages with simulators, Rust twins + fuzz targets 8–9 (≈ 1.5 M runs, no findings), CLI, RPC monitors, Gallery smart-meter demo, samples, notebook pair, docs. Fixed during testing: server replies went to SAP 16 even for the management client (peer address now learned per frame). |
 | 2026-10-08 | LoRaWAN (`0.8.0-preview.1`): package (codec, crypto, Semtech UDP, network server, device MAC, simulator), Rust twin + 7th fuzz target (2.7 M runs, no findings), LoRaTap pcapng, CLI `lorawan`, RPC decoders/monitors, Gallery radio map, sample, notebook pair, docs. Found while testing: replays were reported as MIC failures (FCnt epoch), real forwarders' unpadded base64 was rejected, LPP GPS altitude scale. |

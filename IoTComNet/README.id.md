@@ -37,12 +37,13 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **LoRaWAN 1.0.x** | network server ringan untuk gateway Semtech UDP (OTAA/ABP, deduplikasi antar-gateway, downlink Class A, MAC command), packet forwarder, MAC end device, EU868/US915/AS923-2, airtime, simulator gateway + sensor; codec dicerminkan oleh crate Rust yang di-fuzz |
 | **DLMS/COSEM · M-Bus** | pembacaan smart meter lewat HDLC atau TCP: register OBIS, load profile dengan selective access, LLS/HLS dengan enkripsi AES-GCM, kendali relay di balik default read-only, simulator meter; master M-Bus berkabel dengan pemindaian, alamat sekunder, dan penguraian record, simulator panas/air/listrik; codec dicerminkan oleh crate Rust yang di-fuzz |
 | **Perintah AT · ASTM** | modem seluler/GNSS (penguraian URC, SMS, mode read-only, simulator modul); analyzer lab lewat ASTM E1394/E1381 dengan pengiriman ulang NAK dan jembatan HL7 ORU |
-| **MQTT 3.1.1 / 5.0** | adapter di atas MQTTnet: subscription `IAsyncEnumerable`, reconnect + resubscribe, helper JSON/SenML, broker tertanam |
+| **MQTT 3.1.1 / 5.0 · Sparkplug B** | adapter di atas MQTTnet: subscription `IAsyncEnumerable`, reconnect + resubscribe, helper JSON/SenML, broker tertanam; edge node dan host application Sparkplug B (birth, alias, will NDEATH dengan bdSeq, rebirth, penulisan terjaga) |
+| **mDNS / DNS-SD** | responder dan browser (RFC 6762/6763): pengumuman, known-answer suppression, goodbye, cache TTL, enumerasi tipe, simulator pabrik |
 | **CAN / CAN FD** | satu `ICanBus` untuk Linux SocketCAN, adapter USB slcan (CANable, CANtact), dan bus virtual; notasi candump, reader terfilter |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 sebagai state machine **Rust** yang di-fuzz; tester UDS (session, security access, DID, DTC, routine, mode read-only), scan tool OBD-II, dan simulator ECU |
 | **HL7 v2 · MLLP** | parser/builder ER7 dengan escaping, pengirim/penerima MLLP dengan pencocokan ACK, tanda vital LOINC, simulator monitor pasien (sepsis, hipoksia, …) |
 | **DICOM** | adapter di atas fo-dicom: Storage SCP/SCU (C-STORE, C-ECHO), renderer dengan window ke PNG, studi CT/MR/X-ray sintetis dengan temuan yang ditanam |
-| **SenML (RFC 8428)** | JSON + CBOR, tanpa reflection, resolusi base field |
+| **Codec payload** | SenML (RFC 8428, JSON + CBOR), adapter Protobuf dan MessagePack dengan inspeksi tanpa skema, TLV sederhana dan BER-TLV (EMV); satu kontrak `IPayloadCodec<T>` |
 | **Framing** | katalog CRC (23 preset, 8–64 bit), LRC, SLIP, COBS, HDLC, decoder streaming di atas `System.IO.Pipelines` |
 | **Core** | transport TCP / serial / in-memory, traffic tap (*frame lane*), metrik & trace OpenTelemetry, kebijakan reconnect, hosting + health check |
 

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Serialization.Protobuf</RootNamespace>
+    <Description>Protocol Buffers adapter for IoTCom.Net over Google.Protobuf: an IPayloadCodec for generated messages, length-delimited streams, and a schema-less wire inspector for the traffic tap and the frame lane. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);protobuf;protocol-buffers;serialization;codec</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Abstractions\IoTCom.Net.Abstractions.csproj" />
+    <PackageReference Include="Google.Protobuf" />
+  </ItemGroup>
+</Project>

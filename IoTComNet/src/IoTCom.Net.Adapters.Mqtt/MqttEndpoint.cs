@@ -38,6 +38,12 @@ public sealed class MqttEndpointOptions
     public string? WillTopic { get; set; }
     /// <summary>Optional last-will payload.</summary>
     public byte[]? WillPayload { get; set; }
+
+    /// <summary>Retain the will message (Sparkplug host STATE).</summary>
+    public bool WillRetain { get; set; }
+
+    /// <summary>Will QoS.</summary>
+    public QualityOfService WillQualityOfService { get; set; } = QualityOfService.AtLeastOnce;
     /// <summary>Logger.</summary>
     public ILogger? Logger { get; set; }
     /// <summary>Endpoint name.</summary>
@@ -55,6 +61,9 @@ public sealed class MqttEndpointOptions
     public MqttEndpointOptions UseMqtt311() { UseMqtt5 = false; return this; }
     /// <summary>Sets a last will.</summary>
     public MqttEndpointOptions WithWill(string topic, string payload) { WillTopic = topic; WillPayload = Encoding.UTF8.GetBytes(payload); return this; }
+
+    /// <summary>Sets a binary last-will message (e.g. a Sparkplug NDEATH).</summary>
+    public MqttEndpointOptions WithWill(string topic, byte[] payload, bool retain, QualityOfService qos = QualityOfService.AtLeastOnce) { (WillTopic, WillPayload, WillRetain, WillQualityOfService) = (topic, payload, retain, qos); return this; }
     /// <summary>Sets the reconnect policy.</summary>
     public MqttEndpointOptions WithReconnect(ReconnectPolicy policy) { Reconnect = policy; return this; }
     /// <summary>Sets the logger.</summary>
@@ -139,6 +148,22 @@ public sealed class MqttEndpoint : EndpointBase, IClientEndpoint, IPublisher<Rea
         {
             SetState(EndpointState.Stopping);
             await _client.DisconnectAsync(new MqttClientDisconnectOptionsBuilder().Build(), ct).ConfigureAwait(false);
+        }
+        SetState(EndpointState.Disconnected);
+    }
+
+    /// <summary>
+    /// Drops the connection without DISCONNECT, so the broker publishes the will; the endpoint cannot be used
+    /// afterwards. Use it to simulate a lost device.
+    /// </summary>
+    public async ValueTask AbortAsync(CancellationToken ct = default)
+    {
+        _userDisconnected = true;
+        if (_reconnectCts is { } cts) await cts.CancelAsync().ConfigureAwait(false);
+        if (_client.IsConnected)
+        {
+            SetState(EndpointState.Stopping);
+            _client.Dispose();
         }
         SetState(EndpointState.Disconnected);
     }
@@ -236,7 +261,9 @@ public sealed class MqttEndpoint : EndpointBase, IClientEndpoint, IPublisher<Rea
             .WithProtocolVersion(_options.UseMqtt5 ? MqttProtocolVersion.V500 : MqttProtocolVersion.V311);
         if (_options.UserName is not null) b.WithCredentials(_options.UserName, _options.Password);
         if (_options.UseTls) b.WithTlsOptions(o => o.UseTls());
-        if (_options.WillTopic is not null) b.WithWillTopic(_options.WillTopic).WithWillPayload(_options.WillPayload ?? []);
+        if (_options.WillTopic is not null)
+            b.WithWillTopic(_options.WillTopic).WithWillPayload(_options.WillPayload ?? []).WithWillRetain(_options.WillRetain)
+                .WithWillQualityOfServiceLevel((MqttQualityOfServiceLevel)(int)_options.WillQualityOfService);
         return b.Build();
     }
 

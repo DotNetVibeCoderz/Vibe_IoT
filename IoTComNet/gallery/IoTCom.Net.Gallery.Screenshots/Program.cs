@@ -141,6 +141,12 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-sparkplug.png"))
+{
+    Show("plant-network", seconds: 8);
+    Shot("gallery-sparkplug.png");
+}
+
 if (Want("gallery-nmea.png"))
 {
     Show("nmea-tracker", seconds: 22);

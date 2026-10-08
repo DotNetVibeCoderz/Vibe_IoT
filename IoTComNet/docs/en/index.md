@@ -48,11 +48,14 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [DLMS/COSEM](protocols/dlms.md) | meter reader · meter simulator · HDLC · wrapper · LLS/HLS | `IoTCom.Net.Protocols.Dlms` |
 | [M-Bus (wired)](protocols/mbus.md) | master · scan · secondary addressing · simulator | `IoTCom.Net.Protocols.MBus` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
+| [Sparkplug B](protocols/sparkplug.md) | edge node · host application · line simulator | `IoTCom.Net.Protocols.Sparkplug` |
+| [mDNS / DNS-SD](protocols/mdns.md) | responder · browser · plant simulator | `IoTCom.Net.Protocols.Mdns` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
+| [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codecs · schema-less inspection | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-The [roadmap](../../PLAN.md) lists the protocols coming next (mDNS, Sparkplug B, Protobuf/MessagePack, OPC UA adapter, BLE, USB, …).
+The [roadmap](../../PLAN.md) lists the protocols coming next (OPC UA adapter, BLE, USB, CAN USB adapters, …).
 
 ## Build things
 

@@ -51,7 +51,7 @@ await foreach (var m in mqtt.SubscribeStringAsync("plant/+/state"))
 | `WithCredentials(user, password)` | — | tidak pernah dicatat di log |
 | `WithClientId(id)` | acak | id yang stabil memungkinkan sesi persisten |
 | `UseMqtt311()` | MQTT 5.0 | versi protokol |
-| `WithWill(topic, payload)` | — | last will |
+| `WithWill(topic, payload)` / `WithWill(topic, bytes, retain, qos)` | — | last will (teks, atau biner dengan retain dan QoS — dipakai Sparkplug B); `AbortAsync()` memutus koneksi sehingga broker menerbitkannya |
 | `WithReconnect(policy)` | backoff | reconnect dan resubscribe |
 
 `PublishOptions`: `QualityOfService` (AtMostOnce / AtLeastOnce / ExactlyOnce), `Retain`, `ContentType` (MQTT 5).

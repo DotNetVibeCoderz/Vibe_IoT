@@ -43,6 +43,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | LPWAN & kota pintar | Monitor jaringan LoRaWAN — dua gateway dan empat sensor di peta radio dengan jangkauan per spreading factor; seret sensor dan lihat SF, SNR, serta airtime-nya berubah; downlink di RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & kota | Pembacaan smart meter — meter rumah tangga dengan panel surya atap pada faceplate LCD, dua hari load profile, relay suplai di balik password, serta meter panas, air, dan listrik M-Bus gedung | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
+| Pesan | Jaringan pabrik · Sparkplug B — mDNS menemukan perangkat di segmen; Unified Namespace sebuah lini pembotolan dengan lampu birth/death; cabut kabel jaringan untuk melihat will NDEATH, tulis metrik dengan DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
 
 ![Diagnostik kendaraan](../../images/gallery-can-uds.png)
@@ -57,6 +58,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Rumah kaca CoAP](../../images/gallery-coap.png)
 ![Monitor jaringan LoRaWAN](../../images/gallery-lorawan.png)
 ![Pembacaan smart meter](../../images/gallery-metering.png)
+![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
 ![Meja kerja](../../images/gallery-workbench.png)
 

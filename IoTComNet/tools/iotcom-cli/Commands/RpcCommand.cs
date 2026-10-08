@@ -7,10 +7,15 @@ using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dlms;
 using IoTCom.Net.Protocols.LoRaWan;
 using IoTCom.Net.Protocols.MBus;
+using IoTCom.Net.Protocols.Mdns;
+using IoTCom.Net.Protocols.Sparkplug;
 using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Mavlink.Common;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Uds;
+using IoTCom.Net.Serialization.MessagePack;
+using IoTCom.Net.Serialization.Protobuf;
+using IoTCom.Net.Serialization.Tlv;
 using IoTCom.Net.Transport.Can;
 using IoTCom.Net.Transports;
 using Spectre.Console.Cli;
@@ -136,6 +141,9 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("hl7", "HL7 v2 over MLLP", "IoTCom.Net.Protocols.Hl7", "sender · receiver · monitor simulator", "protocols/hl7.md", "medical/05-hl7-dicom", "Hl7MllpListener", []),
         ("dicom", "DICOM", "IoTCom.Net.Adapters.Dicom", "storage SCP/SCU · rendering", "protocols/dicom.md", "medical/05-hl7-dicom", null, []),
         ("mqtt", "MQTT 3.1.1 / 5.0", "IoTCom.Net.Adapters.Mqtt", "publish · subscribe · broker", "protocols/mqtt.md", "messaging/04-mqtt-senml", "MqttSenMLBridge", []),
+        ("sparkplug", "Sparkplug B", "IoTCom.Net.Protocols.Sparkplug", "edge node · host application · line simulator", "protocols/sparkplug.md", "messaging/12-mdns-sparkplug", "SparkplugEdgeNode", ["sparkplug"]),
+        ("mdns", "mDNS / DNS-SD", "IoTCom.Net.Protocols.Mdns", "responder · browser", "protocols/mdns.md", "messaging/12-mdns-sparkplug", "MdnsDiscovery", ["dns"]),
+        ("payloads", "Protobuf · MessagePack · TLV", "IoTCom.Net.Serialization.Protobuf", "codecs · schema-less inspection", "protocols/payload-codecs.md", "messaging/12-mdns-sparkplug", null, ["protobuf", "msgpack", "ber-tlv"]),
         ("framing", "CRC · SLIP · COBS · HDLC", "IoTCom.Net.Framing", "codec", "protocols/framing.md", "transport/02-framing-crc", null, []),
         ("senml", "SenML", "IoTCom.Net.Serialization.SenML", "JSON · CBOR codec", "protocols/senml.md", "messaging/04-mqtt-senml", null, []),
     ];
@@ -204,14 +212,48 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 fields = MBusAnatomy.Describe(bytes);
                 summary = MBusFrame.TryRead(bytes, out var mb, out _, out var mbError) == MBusFrame.ReadStatus.Frame ? mb!.ToString() : "invalid: " + mbError;
                 break;
+            case "sparkplug":
+                fields = SparkplugPayload.Describe(bytes);
+                summary = TrySummary(() => SparkplugPayload.Decode(bytes).ToString());
+                break;
+            case "dns":
+                fields = DnsMessage.Describe(bytes);
+                summary = DnsMessage.TryDecode(bytes, out var dns, out var dnsError)
+                    ? $"{(dns!.IsResponse ? "response" : "query")} {string.Join(", ", dns.Questions.Select(q => $"{q.Name} {q.Type}").Concat(dns.Answers.Select(a => a.ToString())).Take(3))}"
+                    : "invalid: " + dnsError;
+                break;
+            case "protobuf":
+                fields = ProtobufWire.Describe(bytes);
+                summary = ProtobufWire.TryInspect(bytes, out var pf) ? $"{pf.Count} fields" : "not Protobuf";
+                break;
+            case "msgpack":
+                fields = MessagePackView.Describe(bytes);
+                summary = MessagePackView.ToJson(bytes) ?? "not MessagePack";
+                break;
+            case "ber-tlv":
+                fields = BerTlv.Describe(bytes);
+                summary = TrySummary(() => string.Join(", ", BerTlv.Decode(bytes)));
+                break;
             case "uds":
                 fields = UdsAnatomy.Describe(bytes);
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, can, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, can, uds)");
         }
         return Result(bytes, fields, summary);
+    }
+
+    private static string TrySummary(Func<string> summary)
+    {
+        try
+        {
+            return summary();
+        }
+        catch (Exception ex) when (ex is ProtocolException or FormatException)
+        {
+            return "invalid: " + ex.Message;
+        }
     }
 
     /// <summary>Fields of the SocketCAN tap layout: 4-byte identifier (with flag bits), length, flags/reserved, data.</summary>
@@ -311,6 +353,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
             "lorawan" or "semtech-udp" => LoRaWanAnatomy.Describe(data),
             "dlms" => DlmsAnatomy.Describe(data),
             "mbus" => MBusAnatomy.Describe(data),
+            "mdns" => DnsMessage.Describe(data),
             _ => [new FrameField("Data", 0, data.Length, FrameFieldKind.Data)],
         };
         return WriteAsync(new JsonObject

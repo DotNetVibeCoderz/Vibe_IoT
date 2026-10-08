@@ -38,12 +38,12 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | ✅ `0.8.0-preview.1`: managed C# runtime (server, forwarder, device MAC, simulator) + fuzzed Rust codec twin · Class B/C, ADR decisions, Basics Station ⏳ |
 | DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | ✅ `0.9.0-preview.1`: managed C# client/server/simulators + fuzzed Rust codec twins · suites 1/2, push, wireless M-Bus ⏳ |
 | NMEA: AIS decoding | P1 | ✅ `0.10.0-preview.1`: types 1–5, 18, 19, 21, 24, 27, tracker, simulator, Gallery harbour demo |
-| mDNS / DNS-SD (discovery for Gallery and CLI) | P1 | |
+| mDNS / DNS-SD (discovery for Gallery and CLI) | P1 | ✅ `0.11.0-preview.1`: responder, browser, simulator, CLI, Gallery · probing/conflicts, IPv6 ⏳ |
 | AT command engine (cellular modules, URC parser) | P1 | ✅ `0.10.0-preview.1`: parser, modem client, LTE-M simulator · PDU SMS, CMUX ⏳ |
 | HL7 v2 MLLP + ASTM E1394 (lab analyzers) | P1 | ✅ HL7 v2 + MLLP + simulator in `0.2.0-preview.1` · ASTM E1394/E1381 + HL7 bridge in `0.10.0-preview.1` |
 | DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies | P1 | ✅ `0.2.0-preview.1` (added on request: medical use cases) |
-| Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | |
-| Protobuf / MessagePack adapters, TLV helpers | P1 | |
+| Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | ✅ Sparkplug B in `0.11.0-preview.1` (edge node, host, simulator) · OPC UA, BLE, USB ⏳ |
+| Protobuf / MessagePack adapters, TLV helpers | P1 | ✅ `0.11.0-preview.1`: `IPayloadCodec<T>`, Protobuf + MessagePack adapters with schema-less views, TLV + BER-TLV |
 | Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | ✅ 10 demos (incl. MAVLink drone, CoAP greenhouse, vehicle diagnostics, ICU monitors, imaging AI pre-read) |
 | VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | ✅ 0.7.0-preview.1 |
 | `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | ✅ 6 targets (Modbus decode/master/PDU, ISO-TP, CoAP, MAVLink); smoke run per change + nightly 10 min |

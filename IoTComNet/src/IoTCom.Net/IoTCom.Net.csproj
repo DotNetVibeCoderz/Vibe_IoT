@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>IoTCom.Net</RootNamespace>
-    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, HL7 v2/MLLP, CoAP, MAVLink, LoRaWAN (Semtech UDP, light network server), DLMS/COSEM and M-Bus metering, AT-command modems, ASTM lab analyzers, MQTT, SenML, serial and CAN/CAN FD transports and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, HL7 v2/MLLP, CoAP, MAVLink, LoRaWAN (Semtech UDP, light network server), DLMS/COSEM and M-Bus metering, AT-command modems, ASTM lab analyzers, mDNS/DNS-SD discovery, MQTT, Sparkplug B, SenML, TLV, serial and CAN/CAN FD transports and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
     <PackageTags>$(PackageTags);nmea;artnet;sacn;hl7;coap;mavlink;senml;serial;can</PackageTags>
   </PropertyGroup>
   <ItemGroup>
@@ -21,6 +21,9 @@
     <ProjectReference Include="..\IoTCom.Net.Protocols.MBus\IoTCom.Net.Protocols.MBus.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.AtCommand\IoTCom.Net.Protocols.AtCommand.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Astm\IoTCom.Net.Protocols.Astm.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Mdns\IoTCom.Net.Protocols.Mdns.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Sparkplug\IoTCom.Net.Protocols.Sparkplug.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Serialization.Tlv\IoTCom.Net.Serialization.Tlv.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Adapters.Mqtt\IoTCom.Net.Adapters.Mqtt.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Serialization.SenML\IoTCom.Net.Serialization.SenML.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />

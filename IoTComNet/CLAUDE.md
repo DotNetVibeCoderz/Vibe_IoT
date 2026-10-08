@@ -80,6 +80,11 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   stdio, `tools/iotcom-cli/Commands/RpcCommand.cs`) and never decodes protocols itself; add decoders/monitor sources in
   the CLI. `cd tools/vscode-iotcom && npm test` (needs a built CLI; picks the newest Debug/Release build),
   `npm run package` → `.vsix`, `node test/preview.mjs <dir>` renders the webviews for screenshots.
+- **Plant networks**: `Protocols.Mdns` (DNS codec, `MdnsResponder`, `MdnsBrowser`, `MdnsSimulator` on the multicast-capable
+  `InMemoryDatagramNetwork`) and `Protocols.Sparkplug` (payload via Google.Protobuf `CodedOutputStream`, no generated code;
+  `SparkplugEdgeNode`/`SparkplugHost` over `MqttEndpoint`, whose `AbortAsync` simulates a lost link so the will fires).
+  Payload formats implement `IPayloadCodec<T>` (Abstractions): `Serialization.Protobuf`/`.MessagePack` (optional, not in the
+  meta-package), `.Tlv`, `SenMLPayloadCodec`.
 - **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).
 
 ## Conventions specific to this repo

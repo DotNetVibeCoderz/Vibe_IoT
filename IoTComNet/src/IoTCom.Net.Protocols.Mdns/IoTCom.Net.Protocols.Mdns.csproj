@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Mdns</RootNamespace>
+    <Description>mDNS / DNS-SD for IoTCom.Net (RFC 6762, RFC 6763): a DNS message codec with name compression, a responder that advertises services (announcements, known-answer suppression, goodbyes) and a browser that discovers and resolves them (TTL cache, back-off, service-type enumeration). Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);mdns;dns-sd;bonjour;zeroconf;discovery;rfc6762;rfc6763</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

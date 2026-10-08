@@ -50,7 +50,7 @@ await foreach (var m in mqtt.SubscribeStringAsync("plant/+/state"))
 | `WithCredentials(user, password)` | — | never logged |
 | `WithClientId(id)` | random | stable ids allow persistent sessions |
 | `UseMqtt311()` | MQTT 5.0 | protocol version |
-| `WithWill(topic, payload)` | — | last will |
+| `WithWill(topic, payload)` / `WithWill(topic, bytes, retain, qos)` | — | last will (text, or binary with retain and QoS — used by Sparkplug B); `AbortAsync()` drops the connection so the broker publishes it |
 | `WithReconnect(policy)` | backoff | reconnect and resubscribe |
 
 `PublishOptions`: `QualityOfService` (AtMostOnce / AtLeastOnce / ExactlyOnce), `Retain`, `ContentType` (MQTT 5).

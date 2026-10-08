@@ -49,11 +49,14 @@ perangkat keras.
 | [DLMS/COSEM](protocols/dlms.md) | pembaca meter · simulator meter · HDLC · wrapper · LLS/HLS | `IoTCom.Net.Protocols.Dlms` |
 | [M-Bus (berkabel)](protocols/mbus.md) | master · pemindaian · alamat sekunder · simulator | `IoTCom.Net.Protocols.MBus` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
+| [Sparkplug B](protocols/sparkplug.md) | edge node · host application · simulator lini | `IoTCom.Net.Protocols.Sparkplug` |
+| [mDNS / DNS-SD](protocols/mdns.md) | responder · browser · simulator pabrik | `IoTCom.Net.Protocols.Mdns` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
+| [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codec · inspeksi tanpa skema | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (mDNS, Sparkplug B, Protobuf/MessagePack, adapter OPC UA, BLE, USB, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (adapter OPC UA, BLE, USB, adapter CAN USB, …).
 
 ## Membangun aplikasi
 

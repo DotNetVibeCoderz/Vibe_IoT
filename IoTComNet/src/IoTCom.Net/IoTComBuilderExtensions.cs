@@ -7,11 +7,14 @@ using IoTCom.Net.Protocols.AtCommand;
 using IoTCom.Net.Protocols.Dlms;
 using IoTCom.Net.Protocols.LoRaWan;
 using IoTCom.Net.Protocols.MBus;
+using IoTCom.Net.Protocols.Mdns;
+using IoTCom.Net.Protocols.Sparkplug;
 using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
 using IoTCom.Net.Transport.Can;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace IoTCom.Net.Hosting;
@@ -168,6 +171,65 @@ public static class IoTComBuilderExtensions
             o.Logger = Logger(sp, "IoTCom.Astm");
             configure(o);
         }));
+
+    /// <summary>Registers an mDNS responder; services registered on it are advertised on the local network.</summary>
+    public static IoTComBuilder AddMdnsResponder(this IoTComBuilder builder, string name, Action<MdnsOptions>? configure = null)
+        => builder.AddEndpoint(name, sp => MdnsResponder.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Mdns");
+            configure?.Invoke(o);
+        }));
+
+    /// <summary>Registers an mDNS / DNS-SD browser.</summary>
+    public static IoTComBuilder AddMdnsBrowser(this IoTComBuilder builder, string name, Action<MdnsOptions>? configure = null)
+        => builder.AddEndpoint(name, sp => MdnsBrowser.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Mdns");
+            configure?.Invoke(o);
+        }));
+
+    /// <summary>
+    /// Registers a Sparkplug B edge node as a singleton, started (births) with the host and stopped (deaths) with it.
+    /// Define devices and metrics in <paramref name="define"/>.
+    /// </summary>
+    public static IoTComBuilder AddSparkplugEdgeNode(this IoTComBuilder builder, Action<SparkplugEdgeNodeOptions> configure, Action<SparkplugEdgeNode>? define = null)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.Services.AddSingleton(sp =>
+        {
+            var node = SparkplugEdgeNode.Create(o =>
+            {
+                o.Logger = Logger(sp, "IoTCom.Sparkplug");
+                configure(o);
+            });
+            define?.Invoke(node);
+            return node;
+        });
+        builder.Services.AddHostedService(sp => new SparkplugLifetime(sp.GetRequiredService<SparkplugEdgeNode>().StartAsync, ct => sp.GetRequiredService<SparkplugEdgeNode>().StopAsync(ct)));
+        return builder;
+    }
+
+    /// <summary>Registers a Sparkplug B host application as a singleton, started and stopped with the host.</summary>
+    public static IoTComBuilder AddSparkplugHost(this IoTComBuilder builder, Action<SparkplugHostOptions> configure)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.Services.AddSingleton(sp => SparkplugHost.Create(o =>
+        {
+            o.Logger = Logger(sp, "IoTCom.Sparkplug");
+            configure(o);
+        }));
+        builder.Services.AddHostedService(sp => new SparkplugLifetime(sp.GetRequiredService<SparkplugHost>().StartAsync, _ => sp.GetRequiredService<SparkplugHost>().StopAsync()));
+        return builder;
+    }
+
+    private sealed class SparkplugLifetime(Func<CancellationToken, Task> start, Func<CancellationToken, Task> stop) : IHostedService
+    {
+        public Task StartAsync(CancellationToken cancellationToken) => start(cancellationToken);
+
+        public Task StopAsync(CancellationToken cancellationToken) => stop(cancellationToken);
+    }
 
     /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>
     public static IoTComBuilder AddCanBus(this IoTComBuilder builder, string name, string uri, Action<CanBusOptions>? configure = null)
