@@ -19,8 +19,8 @@ public sealed class IsoTpChannelTests
     public async Task Long_message_with_flow_control_round_trips()
     {
         var net = new VirtualCanNetwork();
-        await using var a = IsoTpChannel.Create(net.CreateNode(), o => { o.TxId = 0x700; o.RxId = 0x708; });
-        await using var b = IsoTpChannel.Create(net.CreateNode(), o => { o.TxId = 0x708; o.RxId = 0x700; o.BlockSize = 8; o.SeparationTime = 0; });
+        await using var a = IsoTpChannel.Create(net.CreateNode(), o => { o.TxId = 0x700; o.RxId = 0x708; Relaxed(o); });
+        await using var b = IsoTpChannel.Create(net.CreateNode(), o => { o.TxId = 0x708; o.RxId = 0x700; o.BlockSize = 8; o.SeparationTime = 0; Relaxed(o); });
         await a.ConnectAsync();
         await b.ConnectAsync();
         var payload = Enumerable.Range(0, 1500).Select(i => (byte)i).ToArray();
@@ -35,14 +35,17 @@ public sealed class IsoTpChannelTests
     public async Task Can_fd_channel_carries_large_frames()
     {
         var net = new VirtualCanNetwork();
-        await using var a = IsoTpChannel.Create(net.CreateNode(o => o.Fd = true), o => { o.TxId = 0x18DA10F1; o.RxId = 0x18DAF110; o.Fd = true; o.MaxMessageLength = 10_000; });
-        await using var b = IsoTpChannel.Create(net.CreateNode(o => o.Fd = true), o => { o.TxId = 0x18DAF110; o.RxId = 0x18DA10F1; o.Fd = true; o.MaxMessageLength = 10_000; });
+        await using var a = IsoTpChannel.Create(net.CreateNode(o => o.Fd = true), o => { o.TxId = 0x18DA10F1; o.RxId = 0x18DAF110; o.Fd = true; o.MaxMessageLength = 10_000; Relaxed(o); });
+        await using var b = IsoTpChannel.Create(net.CreateNode(o => o.Fd = true), o => { o.TxId = 0x18DAF110; o.RxId = 0x18DA10F1; o.Fd = true; o.MaxMessageLength = 10_000; Relaxed(o); });
         await a.ConnectAsync();
         await b.ConnectAsync();
         var payload = Enumerable.Range(0, 5000).Select(i => (byte)(i * 3)).ToArray();
         await a.SendAsync(payload);
         Assert.Equal(payload, await b.ReceiveAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
     }
+
+    // Round-trip tests run beside hundreds of others on small CI runners; give N_Bs/N_Cr headroom against thread-pool stalls.
+    private static void Relaxed(IsoTpOptions o) => (o.FlowControlTimeout, o.ConsecutiveFrameTimeout) = (TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
     [IsoTpFact]
     public async Task Missing_receiver_times_out_and_overflow_is_reported()
