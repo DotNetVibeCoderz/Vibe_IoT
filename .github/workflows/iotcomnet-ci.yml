@@ -32,6 +32,15 @@ jobs:
           workspaces: IoTComNet/rust
       - run: cargo test --workspace
       - run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Generated bindings are up to date (cbindgen headers, csbindgen reference)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          cargo run -q -p iotcom-bindgen
+          git status --porcelain -- include ../tests/IoTCom.Net.Tests/Interop/Generated
+          test -z "$(git status --porcelain -- include ../tests/IoTCom.Net.Tests/Interop/Generated)" || { echo "::error::Run 'cargo run -p iotcom-bindgen' in IoTComNet/rust and commit the result."; git diff -- include ../tests/IoTCom.Net.Tests/Interop/Generated | head -80; exit 1; }
+          for h in include/iotcom_*.h; do printf '#include "%s"\n' "$(basename "$h")" | gcc -std=c99 -Wall -Werror -I include -fsyntax-only -x c -; done
+          for h in include/iotcom_*.h; do printf '#include "%s"\n' "$(basename "$h")" | g++ -Wall -Werror -I include -fsyntax-only -x c++ -; done
       - run: cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native
       - uses: actions/upload-artifact@v4
         with:

@@ -46,6 +46,8 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Modbus has two interchangeable engines** behind `IModbusClient`: managed `ModbusClient` and Rust `NativeModbusClient`
   (`src/IoTCom.Net.Native.Modbus` + `rust/crates`). The C ABI contract (ffi_guard, status codes, `iotcom_last_error`,
   `iotcom_abi_version` = `NativeMethods.ExpectedAbiVersion`) is in `rust/crates/iotcom-ffi-support`; bump both sides together.
+  After changing any exported Rust signature run `cd rust && cargo run -p iotcom-bindgen` (headers in `rust/include`, C# reference in
+  `tests/IoTCom.Net.Tests/Interop/Generated`) and fix what `BindingDriftTests` reports; CI fails when these files are stale.
 - **Capture**: `PcapngTap` (Core) is an `ITrafficTap` writing Wireshark-native pcapng (CAN as SocketCAN, TCP/UDP protocols in
   synthetic IPv4 on their well-known ports — map new protocols in `PcapngTap.Encapsulation`). `iotcom sniff` relays and decodes.
 - **Releases**: build, test and pack in **Release** before tagging (`dotnet build/test/pack -c Release`) — some analyzer rules only

@@ -1,0 +1,16 @@
+[package]
+name = "iotcom-bindgen"
+description = "Regenerates the C headers (cbindgen) and raw C# bindings (csbindgen) of the native libraries; CI fails when they drift."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+csbindgen = "=1.9.7"
+cbindgen = { version = "=0.29.3", default-features = false }
+
+[lints]
+workspace = true

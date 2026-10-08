@@ -10,12 +10,16 @@ translation-status: synced
 ```
 rust/
 ├─ Cargo.toml                       workspace, lint, profil release (thin LTO, panic=unwind)
-├─ cbindgen.toml                    pembuatan header C
+├─ include/                         header C hasil generate (iotcom_common.h + satu per pustaka)
+├─ tools/iotcom-bindgen/            membuat ulang header (cbindgen) dan referensi C# (csbindgen)
 └─ crates/
    ├─ iotcom-core/                  trait Machine, Instant, Error, helper CRC (#![forbid(unsafe_code)])
    ├─ iotcom-ffi-support/           ffi_guard, kode status, last error per thread, ABI_VERSION
    ├─ iotcom-modbus/                codec frame + MasterMachine (#![forbid(unsafe_code)])
-   └─ native/iotcom-modbus-native/  cdylib "iotcom_modbus" — C ABI
+   ├─ native/iotcom-modbus-native/  cdylib "iotcom_modbus" — C ABI
+   ├─ native/iotcom-isotp-native/   cdylib "iotcom_isotp"
+   ├─ native/iotcom-ble-native/     cdylib "iotcom_ble" (btleplug)
+   └─ native/iotcom-usb-native/     cdylib "iotcom_usb" (nusb, hidapi)
 ```
 
 ```bash
@@ -76,6 +80,16 @@ timer      ──► PollTimeout / HandleTimeout (timeout dan serialisasi RTU ad
 
 Panggilan pada satu handle diserialisasi dengan lock; panggilan FFI dibatch (semua frame dan event tertunda dikuras
 per panggilan). Machine bekerja dengan timestamp mikrodetik dari jam monotonik yang disuplai .NET.
+
+## Binding dan header hasil generate
+
+`cargo run -p iotcom-bindgen` (di `rust/`) menulis `rust/include/iotcom_*.h` dengan cbindgen, untuk pemanggil C dan C++,
+serta `tests/IoTCom.Net.Tests/Interop/Generated/*.g.cs` dengan csbindgen. Paket tetap memakai binding `LibraryImport`
+tulisan tangan, yang memakai SafeHandle dan parameter `out`. `BindingDriftTests` membandingkannya dengan deklarasi
+hasil generate: setiap ekspor yang di-bind harus ada dengan jumlah parameter yang sama dan ukuran ABI yang sama per
+parameter, dan struct `repr(C)` harus punya ukuran serta offset field yang sama. CI membuat ulang kedua keluaran dan
+gagal bila berbeda dari file yang di-commit, serta mengompilasi setiap header dengan gcc dan g++. Ubah signature Rust,
+jalankan alatnya, lalu perbaiki binding C# yang ditunjuk oleh pengujian.
 
 ## Pemuatan
 

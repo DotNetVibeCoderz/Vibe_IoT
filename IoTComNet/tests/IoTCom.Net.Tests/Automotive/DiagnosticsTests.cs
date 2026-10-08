@@ -70,9 +70,9 @@ public sealed class UdsTests
         var net = new VirtualCanNetwork();
         var ecu = EcuSimulator.Create(net.CreateNode());
         await ecu.StartAsync();
-        var uds = UdsClient.Create(net.CreateNode(), o => o.ReadOnly = readOnly);
+        var uds = UdsClient.Create(net.CreateNode(), o => { o.ReadOnly = readOnly; o.P2 = TimeSpan.FromSeconds(3); });   // slow CI runners (macOS) missed 500 ms
         await uds.ConnectAsync();
-        var obd = ObdClient.Create(net.CreateNode(), o => o.ReadOnly = readOnly);
+        var obd = ObdClient.Create(net.CreateNode(), o => { o.ReadOnly = readOnly; o.Timeout = TimeSpan.FromSeconds(3); });
         await obd.ConnectAsync();
         return (ecu, uds, obd);
     }

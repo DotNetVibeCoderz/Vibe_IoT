@@ -10,12 +10,16 @@ translation-status: synced
 ```
 rust/
 ├─ Cargo.toml                       workspace, lints, release profile (thin LTO, panic=unwind)
-├─ cbindgen.toml                    C header generation
+├─ include/                         generated C headers (iotcom_common.h + one per library)
+├─ tools/iotcom-bindgen/            regenerates the headers (cbindgen) and the C# reference (csbindgen)
 └─ crates/
    ├─ iotcom-core/                  Machine trait, Instant, Error, CRC helpers (#![forbid(unsafe_code)])
    ├─ iotcom-ffi-support/           ffi_guard, status codes, thread-local last error, ABI_VERSION
    ├─ iotcom-modbus/                frame codecs + MasterMachine (#![forbid(unsafe_code)])
-   └─ native/iotcom-modbus-native/  cdylib "iotcom_modbus" — the C ABI
+   ├─ native/iotcom-modbus-native/  cdylib "iotcom_modbus" — the C ABI
+   ├─ native/iotcom-isotp-native/   cdylib "iotcom_isotp"
+   ├─ native/iotcom-ble-native/     cdylib "iotcom_ble" (btleplug)
+   └─ native/iotcom-usb-native/     cdylib "iotcom_usb" (nusb, hidapi)
 ```
 
 ```bash
@@ -77,6 +81,16 @@ timer      ──► PollTimeout / HandleTimeout (timeouts and RTU serialisation
 Calls on one handle are serialised by a lock; FFI calls are batched (all pending frames and events are drained per
 call). The machine works with microsecond timestamps from a monotonic clock supplied by .NET.
 
+## Generated bindings and headers
+
+`cargo run -p iotcom-bindgen` (in `rust/`) writes `rust/include/iotcom_*.h` with cbindgen, for C and C++ callers, and
+`tests/IoTCom.Net.Tests/Interop/Generated/*.g.cs` with csbindgen. The packages keep their hand-written `LibraryImport`
+bindings, which use SafeHandles and `out` parameters. `BindingDriftTests` checks them against the generated
+declarations: every bound export must exist with the same number of parameters and the same ABI size per parameter,
+and the `repr(C)` structs must have the same size and field offsets. CI regenerates both outputs and fails when they
+differ from the committed files, and it compiles every header with gcc and g++. Change a Rust signature, run the
+tool, then fix the C# binding the test points at.
+
 ## Loading
 
 `NativeLibraryLoader` registers a `DllImportResolver` that probes, in order: `IOTCOM_NATIVE_PATH`, the app directory,
@@ -91,5 +105,5 @@ MSVC for Windows and macOS runners for Apple targets.
 ## Testing
 
 Rust unit tests cover codecs, the master machine (pipelining, split input, timeouts, back-pressure) and the C ABI
-(round trip, null pointers). Shared vectors in `/conformance` run on both sides, and a .NET test checks that the Rust
+(round trip, null pointers). `BindingDriftTests` keeps the C# declarations in line with the Rust exports. Shared vectors in `/conformance` run on both sides, and a .NET test checks that the Rust
 engine and the managed framing emit byte-identical frames.

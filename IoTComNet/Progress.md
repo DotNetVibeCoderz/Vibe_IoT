@@ -10,7 +10,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 501 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 509 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 35 tests passing, clippy `-D warnings` clean; 9 cargo-fuzz targets (≈ 15 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
 | Docs EN/ID | ✅ 44 + 44 pages, parity and links verified | `python build/check_docs_parity.py` |
@@ -72,6 +72,15 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken after 0.15 (tooling)
+
+- **Generated bindings are the reference, not the runtime code.** csbindgen emits `DllImport` with raw pointers; the
+  packages keep `LibraryImport` with SafeHandles and `out` parameters, which are safer and AOT-friendly. A reflection
+  test compares both (entry points, parameter count, ABI size per parameter, struct size and field offsets), so drift
+  fails the build without giving up the ergonomic bindings. The test was checked by deliberately breaking one signature.
+- Headers are generated with cbindgen from the crate sources (`rust/include`) and compiled as C99 and C++ in CI;
+  `iotcom_common.h` declares the two functions the `export_common!` macro adds, which neither generator expands.
 
 ## Decisions taken in 0.15
 
@@ -215,6 +224,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | Native bindings tooling: `iotcom-bindgen` (cbindgen headers + csbindgen reference for modbus, isotp, ble, usb), `BindingDriftTests`, CI drift and header compile gate. Phase 1 of PLAN complete. |
 | 2026-10-09 | USB CAN adapters (`0.15.0-preview.1`): gs_usb/candleLight and PCAN-USB backends with `gsusb:`/`pcan:` URIs, virtual candleLight, docs and notebook section. 0.14.0 published with `iotcom_usb` for all 9 RIDs. |
 | 2026-10-09 | USB and HID (`0.14.0-preview.1`): Transport.Usb with Rust `iotcom_usb` (nusb, hidapi), relay boards, virtual bus, CLI `usb`, Gallery USB bench, UsbRelay sample, notebook pair, docs. 0.13.0 published with `iotcom_ble` built for all 9 RIDs. |
 | 2026-10-09 | Bluetooth LE (`0.13.0-preview.1`): Transport.Ble with Rust `iotcom_ble` (btleplug), codecs, virtual radio, CLI `ble`, Gallery radar demo, BleHeartRate sample, notebook pair, docs. |

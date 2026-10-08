@@ -15,6 +15,7 @@ members = [
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",
     "crates/native/iotcom-usb-native",
+    "tools/iotcom-bindgen",
 ]
 
 [workspace.package]
