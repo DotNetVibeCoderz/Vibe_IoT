@@ -27,6 +27,16 @@ app.Configure(c =>
         f.AddCommand<FrameEncodeCommand>("encode").WithExample("frame", "encode", "cobs", "11 22 00 33");
         f.AddCommand<FrameDecodeCommand>("decode").WithExample("frame", "decode", "slip", "C0 DB DC 01 C0");
     });
+    c.AddBranch("sniff", n =>
+    {
+        n.SetDescription("Watch live traffic: a transparent TCP/UDP relay or a passive CAN capture, decoded and written to pcapng.");
+        n.AddCommand<SniffTcpCommand>("tcp").WithDescription("Proxy a TCP device (Modbus/TCP, HL7/MLLP or raw) and decode both directions.")
+            .WithExample("sniff", "tcp", "--listen", "1502", "--target", "192.168.1.10:502", "--pcap", "plc.pcapng");
+        n.AddCommand<SniffUdpCommand>("udp").WithDescription("Relay a UDP device (CoAP, MAVLink or raw) and decode both directions.")
+            .WithExample("sniff", "udp", "--listen", "15683", "--target", "192.168.1.40:5683", "--lanes");
+        n.AddCommand<SniffCanCommand>("can").WithDescription("Capture a CAN bus (listen only).")
+            .WithExample("sniff", "can", "--can", "socketcan:can0", "--pcap", "can.pcapng");
+    });
     c.AddBranch("modbus", m =>
     {
         m.SetDescription("Modbus TCP / RTU / ASCII master, slave simulator and frame decoder.");

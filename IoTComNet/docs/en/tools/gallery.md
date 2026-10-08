@@ -21,7 +21,7 @@ dotnet run --project gallery/IoTCom.Net.Gallery
 | **Run** | the interactive panel |
 | **Code** | the demo's source — the exact file compiled into the app, syntax highlighted |
 | **Docs** | a short explanation in English or Bahasa Indonesia, with the matching docs page |
-| **Traffic** | the Protocol Inspector: every frame as a coloured *frame lane*, plus a hex dump of the selected frame |
+| **Traffic** | the Protocol Inspector: every frame as a coloured *frame lane*, a hex dump of the selected frame, and **Save .pcapng** for Wireshark |
 
 The status bar shows the run lamp, the demo status and the latest frame on the wire.
 

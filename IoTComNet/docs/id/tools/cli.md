@@ -26,6 +26,8 @@ iotcom --help
 | `iotcom modbus decode <frame>` | frame lane per field untuk frame TCP, RTU, atau ASCII |
 | `iotcom mavlink listen` / `simulate` | log MAVLink atau tabel laju/telemetri langsung (`--stats`); quadcopter simulasi lewat UDP |
 | `iotcom mavlink cmd` / `params` / `decode` | arm, takeoff, land, rtl, dan penulisan parameter (`--allow-write`); frame lane sebuah frame |
+| `iotcom sniff tcp` / `udp` | relay transparan ke perangkat (Modbus/TCP, HL7, CoAP, MAVLink, raw), kedua arah diurai, `--pcap` untuk Wireshark, `--lanes` untuk frame lane |
+| `iotcom sniff can` | capture CAN pasif ke konsol dan pcapng (link type SocketCAN) |
 | `iotcom nmea listen` | panel fix GNSS langsung (`--raw` mencetak kalimat) |
 | `iotcom nmea simulate` | GPS lewat NMEA-over-TCP |
 | `iotcom can list` | antarmuka SocketCAN dan port serial (adapter slcan) |

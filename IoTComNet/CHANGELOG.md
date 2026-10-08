@@ -3,6 +3,27 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.6.0-preview.1 — 2026-10-08
+
+Capture and sniffing.
+
+- **pcapng export (Core):** `PcapngWriter` and `PcapngTap` (an `ITrafficTap`), flushed per packet so a capture
+  survives an abrupt stop. Wireshark dissects the protocols natively:
+  - CAN as `LINKTYPE_CAN_SOCKETCAN`;
+  - Modbus/TCP, NMEA and HL7 inside synthetic IPv4 + TCP (consistent sequence numbers, valid checksums);
+  - CoAP, Art-Net, sACN and MAVLink inside IPv4 + UDP;
+  - everything else as user data, with the decoded summary as the packet comment.
+  CI checks the encapsulation with `tshark` on Linux.
+- **CLI `iotcom sniff`:** `tcp` and `udp` transparent relays that decode both directions (Modbus/TCP, HL7/MLLP, CoAP,
+  MAVLink, raw), plus a passive `can` capture. All three print one line or a frame lane per frame and write pcapng
+  with `--pcap`.
+- **Gallery:** the Traffic tab gets **Save .pcapng**.
+- **Fix:** a NativeAOT publish (`-p:PublishAot=true -r <rid>`) no longer reaches the netstandard2.0 MAVLink generator
+  (NETSDK1207); the generator treats those properties as local.
+
+*Capture: ekspor pcapng yang diurai langsung oleh Wireshark (CAN, Modbus/TCP, CoAP, …), perintah `iotcom sniff`
+(relay TCP/UDP transparan dan capture CAN), tombol Simpan .pcapng di Galeri, dan perbaikan publish NativeAOT.*
+
 ## 0.5.0-preview.1 — 2026-10-05
 
 MAVLink, with a source generator for dialects.

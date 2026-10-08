@@ -48,7 +48,7 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | not started |
 | `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | ✅ 6 targets (Modbus decode/master/PDU, ISO-TP, CoAP, MAVLink); smoke run per change + nightly 10 min |
 | Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen header | P1 | bindings are hand-written today |
-| `iotcom sniff` (Modbus TCP proxy sniffer) and pcapng export from the traffic tap | P1 | |
+| `iotcom sniff` (Modbus TCP proxy sniffer) and pcapng export from the traffic tap | P1 | ✅ `0.6.0-preview.1`: TCP/UDP relays + CAN capture, Wireshark-native pcapng (tshark-checked in CI), Gallery export |
 
 ## Phase 2 — Expansion → `1.0.0` (± 12 weeks)
 

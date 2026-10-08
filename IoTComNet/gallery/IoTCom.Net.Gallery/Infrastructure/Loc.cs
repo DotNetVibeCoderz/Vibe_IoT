@@ -31,6 +31,8 @@ public sealed class Loc : INotifyPropertyChanged
         ["noHardware"] = new("No hardware needed", "Tanpa perangkat keras"),
         ["frames"] = new("frames", "frame"),
         ["clear"] = new("Clear", "Bersihkan"),
+        ["savePcap"] = new("Save .pcapng", "Simpan .pcapng"),
+        ["savePcapTip"] = new("Save the captured frames for Wireshark", "Simpan frame yang ditangkap untuk Wireshark"),
         ["idle"] = new("Press Start demo to bring the simulated devices online.", "Tekan Mulai demo untuk menyalakan perangkat simulasi."),
         ["noFrames"] = new("No frames yet. Start the demo and interact with it — every byte on the wire appears here, decoded field by field.",
                           "Belum ada frame. Mulai demo lalu berinteraksi — setiap byte di jalur muncul di sini, diurai per field."),

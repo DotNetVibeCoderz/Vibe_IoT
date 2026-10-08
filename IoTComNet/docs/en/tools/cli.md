@@ -26,6 +26,8 @@ iotcom --help
 | `iotcom modbus decode <frame>` | field-by-field frame lane for TCP, RTU or ASCII frames |
 | `iotcom mavlink listen` / `simulate` | MAVLink log or live rate/telemetry table (`--stats`); a simulated quadcopter over UDP |
 | `iotcom mavlink cmd` / `params` / `decode` | arm, takeoff, land, rtl and parameter writes (`--allow-write`); frame lane of a frame |
+| `iotcom sniff tcp` / `udp` | transparent relay to a device (Modbus/TCP, HL7, CoAP, MAVLink, raw), both directions decoded, `--pcap` for Wireshark, `--lanes` for frame lanes |
+| `iotcom sniff can` | passive CAN capture to the console and pcapng (SocketCAN link type) |
 | `iotcom nmea listen` | live GNSS fix panel (`--raw` prints sentences) |
 | `iotcom nmea simulate` | a GPS over NMEA-over-TCP |
 | `iotcom can list` | SocketCAN interfaces and serial ports (slcan adapters) |

@@ -126,6 +126,8 @@
                 <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#C9CBC4" /><TextBlock Text="data" Classes="muted" /></StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6"><Border Width="12" Height="12" CornerRadius="3" Background="#2E9E5B" /><TextBlock Text="checksum" Classes="muted" /></StackPanel>
                 <Button Classes="ghost" Content="{Binding L[clear]}" Command="{Binding ClearFramesCommand}" Padding="10,2" />
+                <Button Classes="ghost" Content="{Binding L[savePcap]}" Command="{Binding SaveCaptureCommand}" Padding="10,2" ToolTip.Tip="{Binding L[savePcapTip]}" />
+                <TextBlock Text="{Binding CaptureMessage}" Classes="muted" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" MaxWidth="420" />
               </StackPanel>
               <Border Grid.Row="1" Classes="card" Padding="6">
                 <Panel>

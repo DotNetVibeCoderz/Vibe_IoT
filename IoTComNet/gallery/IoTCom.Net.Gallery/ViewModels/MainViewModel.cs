@@ -52,6 +52,7 @@ public sealed partial class MainViewModel : ObservableObject, IAsyncDisposable
     [ObservableProperty] private FrameRow? _lastFrame;
     [ObservableProperty] private long _frameCount;
     [ObservableProperty] private bool _isDark;
+    [ObservableProperty] private string _captureMessage = "";
 
     public string Title => SelectedDemo is null ? "" : Loc.T(SelectedDemo.Title);
     public string Summary => SelectedDemo is null ? "" : Loc.T(SelectedDemo.Summary);
@@ -130,6 +131,25 @@ public sealed partial class MainViewModel : ObservableObject, IAsyncDisposable
         LastFrame = null;
         FrameCount = 0;
         OnPropertyChanged(nameof(HasFrames));
+    }
+
+    /// <summary>Writes the current demo's captured frames to a pcapng file Wireshark can open.</summary>
+    [RelayCommand]
+    private void SaveCapture()
+    {
+        if (SelectedDemo is not { } demo) return;
+        var frames = demo.Tap.Snapshot();
+        if (frames.Count == 0)
+        {
+            CaptureMessage = Loc.L("Nothing captured yet — start the demo first.", "Belum ada yang ditangkap — jalankan demo dulu.");
+            return;
+        }
+        var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "IoTCom.Net", "captures");
+        Directory.CreateDirectory(folder);
+        var path = Path.Combine(folder, $"{demo.Id}-{DateTime.Now:yyyyMMdd-HHmmss}.pcapng");
+        using (var pcap = PcapngTap.Create(path))
+            foreach (var f in frames) pcap.OnFrame(f);
+        CaptureMessage = $"{frames.Count} {Loc.L("frames saved to", "frame disimpan ke")} {path}";
     }
 
     /// <summary>Selects a demo by id (used by the screenshot tool).</summary>

@@ -21,7 +21,7 @@ dotnet run --project gallery/IoTCom.Net.Gallery
 | **Jalankan** | panel interaktif |
 | **Kode** | source demo — file yang sama persis yang dikompilasi ke aplikasi, dengan syntax highlight |
 | **Dokumentasi** | penjelasan singkat dalam English atau Bahasa Indonesia, dengan halaman docs terkait |
-| **Lalu lintas** | Protocol Inspector: setiap frame sebagai *frame lane* berwarna, plus hex dump frame yang dipilih |
+| **Lalu lintas** | Protocol Inspector: setiap frame sebagai *frame lane* berwarna, hex dump frame yang dipilih, dan **Simpan .pcapng** untuk Wireshark |
 
 Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 

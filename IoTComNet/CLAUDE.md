@@ -46,6 +46,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Modbus has two interchangeable engines** behind `IModbusClient`: managed `ModbusClient` and Rust `NativeModbusClient`
   (`src/IoTCom.Net.Native.Modbus` + `rust/crates`). The C ABI contract (ffi_guard, status codes, `iotcom_last_error`,
   `iotcom_abi_version` = `NativeMethods.ExpectedAbiVersion`) is in `rust/crates/iotcom-ffi-support`; bump both sides together.
+- **Capture**: `PcapngTap` (Core) is an `ITrafficTap` writing Wireshark-native pcapng (CAN as SocketCAN, TCP/UDP protocols in
+  synthetic IPv4 on their well-known ports — map new protocols in `PcapngTap.Encapsulation`). `iotcom sniff` relays and decodes.
+- **Releases**: build, test and pack in **Release** before tagging (`dotnet build/test/pack -c Release`) — some analyzer rules only
+  fire there, and CI also runs a NativeAOT publish that must keep analyzer projects out of AOT/RID settings.
 - **Frame lane** (the visual signature): `FrameField`/`FrameFieldKind` describe frame fields; the CLI (`Ui.FrameLane`),
   the gateway dashboard and the Gallery (`FrameRow`, `FrameLaneView`) all render them with the same colours.
 - **Datagrams & CoAP**: `IDatagramTransport` (Core: `UdpDatagramTransport`, `InMemoryDatagramNetwork` with `LossRate`/`DuplicateRate`)

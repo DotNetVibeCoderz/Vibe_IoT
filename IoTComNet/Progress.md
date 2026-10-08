@@ -3,14 +3,14 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.5.0-preview.1` · **Last update:** 2026-10-05
+**Current version:** `0.6.0-preview.1` · **Last update:** 2026-10-08
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 295 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 297 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 30 tests passing, clippy `-D warnings` clean; 6 cargo-fuzz targets (≈ 10 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
 | Docs EN/ID | ✅ 32 + 32 pages, parity and links verified | `python build/check_docs_parity.py` |
@@ -23,7 +23,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Component | Status | Notes |
 |---|---|---|
 | IoTCom.Net.Abstractions | ✅ | endpoints, pub/sub, transport, traffic tap, frame anatomy, exceptions, product info |
-| IoTCom.Net.Core | ✅ | TCP + in-memory transports, UDP + in-memory datagram network (loss/duplication), StreamTransport, EndpointBase, RecordingTap, HexDump, diagnostics, ReconnectPolicy, NativeLibraryLoader |
+| IoTCom.Net.Core | ✅ | pcapng writer + tap (Wireshark-native encapsulation), TCP + in-memory transports, UDP + in-memory datagram network (loss/duplication), StreamTransport, EndpointBase, RecordingTap, HexDump, diagnostics, ReconnectPolicy, NativeLibraryLoader |
 | IoTCom.Net.Framing | ✅ | 23 CRC presets (all pass check values), Crc16.Modbus fast path, LRC, SLIP, COBS, HDLC+FCS, LineFraming, pipe helpers |
 | IoTCom.Net.Transport.Serial | ✅ | `UseSerial` / `ServeSerial`; hardware test pending (no RS-485 rig in CI) |
 | IoTCom.Net.Protocols.Modbus | ✅ | TCP/RTU/ASCII, FC 1–6, 15, 16, 22, 23, 43/14; pipelining; read-only; simulator; anatomy |
@@ -42,7 +42,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Samples.Medical (sample, not packed) | ✅ | NEWS2 (RCP 2017), trends, anomalies, OpenAI-compatible AI client, SBAR + imaging pre-read with ground-truth scoring |
 | IoTCom.Net.Hosting | ✅ | AddIoTCom, IoTComEndpoints, keyed services, shared tap, health checks |
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
-| CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane |
+| CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
 | Gallery (Avalonia) | ✅ | 10 demos (Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
@@ -108,6 +108,8 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-08 | Capture (`0.6.0-preview.1`): pcapng writer/tap (verified with scapy locally, tshark in CI), `iotcom sniff tcp/udp/can`, Gallery Save .pcapng. Fixed: NativeAOT publish reached the MAVLink generator (NETSDK1207); CI green again. |
+| 2026-10-05 | Published 0.5.0-preview.1 (MAVLink); first attempt failed on a Release-only analyzer rule (CA1868), fixed and re-tagged before anything reached NuGet. |
 | 2026-10-05 | MAVLink (`0.5.0-preview.1`): package with the generated common dialect, Roslyn generator for custom dialects, signing, GCS helper, quadcopter simulator, Rust frame twin + fuzz target, Gallery drone demo, CLI `mavlink`, MavlinkTelemetry sample, notebook pair, docs. Fixed during the Gallery review: concurrent senders could reorder sequence numbers (false loss) — send is now atomic, covered by a test. |
 | 2026-10-05 | Published 0.4.0-preview.1 (CoAP). |
 | 2026-10-05 | CoAP (`0.4.0-preview.1`): CoAP package + Rust codec twin, datagram transports, Gallery greenhouse demo, CLI `coap`, CoapObserve sample, notebook pair, docs. Fixed during smoke test: null option setters added an empty value (now covered by a test). |
