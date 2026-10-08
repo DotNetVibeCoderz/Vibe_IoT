@@ -69,6 +69,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Metering**: `Protocols.Dlms` (`DlmsClient`/`DlmsServer` over `HdlcLink` or `WrapperLink`, codec `CosemData`/`HdlcFrame`/`DlmsApdu`,
   `DlmsSecurity` for suite 0, `DlmsMeterSimulator`) and `Protocols.MBus` (`MBusMaster`, `MBusSlaveSimulator`, `MBusTelegram`); Rust
   `iotcom-dlms`/`iotcom-mbus` are fuzzed codec twins (`/conformance/dlms.json`, `mbus.json`). Clients are read-only by default.
+- **Field devices**: AIS is in `Protocols.Nmea` (`AisDecoder`, `AisTracker`, `AisBits`, `AisSimulator`); `Protocols.AtCommand`
+  (`AtParser` sans-I/O, `AtModem`, `AtModemSimulator`); `Protocols.Astm` (`AstmMessage`, `AstmLink`, `AstmReceiver`/`AstmSender`,
+  `AnalyzerSimulator`, `AstmToHl7`). AES-GCM with 12-byte tags must go through DLMS `Gcm12` (macOS only supports 16-byte tags).
 - **Healthcare**: `Protocols.Hl7` (ER7 codec, MLLP endpoints, `PatientMonitorSimulator`) and `Adapters.Dicom` (fo-dicom
   wrapper, `DicomRenderer`, `SyntheticImaging`; not trimmable, not in the meta-package). Clinical analysis and the AI client
   live in `samples/shared/IoTCom.Samples.Medical` (sample code, never packed). AI config: `IOTCOM_AI_*` env vars or

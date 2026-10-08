@@ -135,6 +135,12 @@ if (Want("gallery-metering.png"))
     Shot("gallery-metering.png");
 }
 
+if (Want("gallery-ais.png"))
+{
+    Show("ais-harbour", seconds: 9);
+    Shot("gallery-ais.png");
+}
+
 if (Want("gallery-nmea.png"))
 {
     Show("nmea-tracker", seconds: 22);

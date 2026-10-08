@@ -87,11 +87,34 @@ end-to-end simulator → server → pembaca.
 NMEA tidak punya autentikasi; siapa pun di link dapat menyisipkan posisi. Perlakukan posisi sebagai input tak
 tepercaya di sistem yang terkait keselamatan dan bandingkan dengan sensor lain.
 
+## AIS
+
+Transponder dan penerima AIS mengirim kalimat `!AIVDM` (kapal lain) dan `!AIVDO` (kapal sendiri). Pesan biner
+di-armour enam bit per karakter, dan pesan panjang dipecah ke beberapa kalimat. `AisDecoder` menyambung fragmen,
+membuka armour bit, dan mengurai tipe 1–3 dan 27 (posisi), 4 (stasiun pangkalan), 5 (data statis dan pelayaran),
+18/19 (kelas B), 21 (sarana bantu navigasi), dan 24 (data statis kelas B). `AisTracker` menyimpan tabel kapal, dan
+`AisSimulator` menghasilkan lalu lintas di Teluk Jakarta.
+
+```csharp
+var ais = new AisDecoder();
+var tracker = new AisTracker();
+await foreach (var line in reader.ReadLinesAsync())          // atau sumber baris NMEA apa pun (UDP, TCP, serial)
+    if (ais.Feed(line) is { } message) tracker.Apply(message);
+foreach (var v in tracker.Vessels) Console.WriteLine(v);       // 525005123 KM SINAR JAKARTA -5.9831,106.8602 11.4 kn
+```
+
+`AisBits.EncodePosition` dan `AisBits.EncodeStatic` membangun kalimat untuk pengujian dan simulator. CLI mengurai
+kalimat (`iotcom nmea ais decode`) dan menampilkan tabel kapal langsung dari simulator, port UDP, atau feed TCP
+(`iotcom nmea ais watch --udp 10110`). Pengujian mematok contoh yang diterbitkan (laporan tipe 1 dan tipe 5 dua
+kalimat milik *EVER DIADEM*), diperiksa silang dengan decoder independen.
+
+![Lalu lintas pelabuhan](../../images/gallery-ais.png)
+
 ## Keterbatasan
 
-Payload AIS (`!AIVDM`) dikenali sebagai kalimat tetapi belum diurai (ada di roadmap). Tahun dua digit pada RMC
-memakai pivot 80 (80–99 → 19xx, 00–79 → 20xx).
+Pesan aplikasi biner AIS (tipe 6, 8, 25, 26) dilaporkan sebagai tipe tak dikenal, dan AIS diurai tetapi tidak
+di-encode untuk semua tipe. Tahun dua digit pada RMC memakai pivot 80 (80–99 → 19xx, 00–79 → 20xx).
 
 ## Pelajari lebih lanjut
 
-Notebook `notebooks/navigation/03-nmea.id.ipynb` · demo Galeri *Pelacak kendaraan GNSS* · `iotcom nmea --help`
+Notebook `notebooks/navigation/03-nmea.id.ipynb` · demo Galeri *Pelacak kendaraan GNSS* dan *Lalu lintas pelabuhan (AIS)* · `iotcom nmea --help`

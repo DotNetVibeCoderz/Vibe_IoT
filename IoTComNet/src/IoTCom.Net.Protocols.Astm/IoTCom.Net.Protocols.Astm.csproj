@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Astm</RootNamespace>
+    <Description>ASTM E1394 / CLSI LIS2-A2 and E1381 / LIS1-A for IoTCom.Net: record codec and builder, the low-level link (ENQ/ACK, framed records with checksums, NAK retransmission, EOT) as a receiver (LIS) and a sender (analyzer), a synthetic chemistry analyzer and an ASTM → HL7 ORU^R01 bridge. Synthetic data only, not a medical device. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);astm;e1394;lis2-a2;lis;laboratory;analyzer;healthcare;hl7</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Hl7\IoTCom.Net.Protocols.Hl7.csproj" />
+  </ItemGroup>
+</Project>

@@ -36,11 +36,13 @@ perangkat keras.
 |---|---|---|
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
 | [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · simulator kendaraan · generator dialek | `IoTCom.Net.Protocols.Mavlink` |
-| [NMEA 0183](protocols/nmea.md) | pembaca · server · simulator | `IoTCom.Net.Protocols.Nmea` |
+| [NMEA 0183 · AIS](protocols/nmea.md) | pembaca · server · simulator · decoder AIS dan pelacak kapal | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | kirim · terima · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 lewat MLLP](protocols/hl7.md) | kirim · terima · ACK · simulator monitor pasien | `IoTCom.Net.Protocols.Hl7` |
+| [ASTM E1394 / LIS2-A2](protocols/astm.md) | penerima (LIS) · pengirim (analyzer) · simulator · jembatan HL7 | `IoTCom.Net.Protocols.Astm` |
+| [Perintah AT](protocols/at-commands.md) | client modem · URC · SMS · simulator modul | `IoTCom.Net.Protocols.AtCommand` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · studi sintetis | `IoTCom.Net.Adapters.Dicom` |
 | [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
 | [LoRaWAN 1.0.x](protocols/lorawan.md) | network server · gateway Semtech UDP · end device · simulator | `IoTCom.Net.Protocols.LoRaWan` |
@@ -51,7 +53,7 @@ perangkat keras.
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (AIS NMEA, mDNS, perintah AT, ASTM, Sparkplug B, adapter OPC UA, BLE, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (mDNS, Sparkplug B, Protobuf/MessagePack, adapter OPC UA, BLE, USB, …).
 
 ## Membangun aplikasi
 

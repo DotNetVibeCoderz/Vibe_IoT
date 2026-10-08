@@ -3,6 +3,29 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.10.0-preview.1 — 2026-10-09
+
+AIS, AT commands, ASTM — and the DLMS/M-Bus work, published.
+
+- **0.9.0-preview.1 was tagged but never reached NuGet** (a macOS runner never started, so packing was skipped);
+  its DLMS/COSEM and M-Bus packages ship in this release.
+- **Fix (DLMS, macOS):** suite 0 ciphering and HLS failed on macOS, whose AES-GCM accepts only 16-byte tags. Tags are
+  now computed in full and truncated to 12 bytes (decryption recomputes them), byte-identical to native 12-byte GCM.
+- **NMEA: AIS.** `AisDecoder` reassembles `!AIVDM`/`!AIVDO` fragments and decodes types 1–5, 18, 19, 21, 24 and 27;
+  `AisTracker` keeps a vessel table; `AisBits` encodes position and voyage reports; `AisSimulator` produces traffic
+  in Jakarta Bay. CLI `iotcom nmea ais decode|watch`; Gallery *Harbour traffic (AIS)*.
+- **New package `IoTCom.Net.Protocols.AtCommand`:** a sans-I/O AT response parser that separates URCs, `AtModem`
+  (timeouts, URC stream, SMS text mode, identity/signal/registration, read-only mode) and `AtModemSimulator`
+  (LTE-M module with PIN, +CEREG, SMS). CLI `iotcom at send|info|sms|simulate`.
+- **New package `IoTCom.Net.Protocols.Astm`:** ASTM E1394 / LIS2-A2 records and the E1381 / LIS1-A link (ENQ/ACK,
+  checksummed frames, ETB splitting, NAK retransmission), `AstmReceiver`, `AstmSender`, a synthetic chemistry
+  analyzer and an ASTM → HL7 ORU^R01 bridge. CLI `iotcom astm listen|send`; sample `AstmAnalyzerBridge`.
+- Notebooks: AIS cells in `navigation/03-nmea`, new pair `devices/11-at-astm`; docs pages *AT commands* and
+  *ASTM E1394*, AIS section in *NMEA 0183*; hosting helpers `AddAtModem`, `AddAstmReceiver`.
+
+*AIS (decoder, pelacak kapal, simulator, demo Galeri), mesin perintah AT, ASTM E1394 dengan jembatan HL7, perbaikan
+enkripsi DLMS di macOS, dan paket DLMS/M-Bus yang belum sempat terbit di 0.9.0.*
+
 ## 0.9.0-preview.1 — 2026-10-09
 
 Metering: DLMS/COSEM and M-Bus.

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.AtCommand</RootNamespace>
+    <Description>AT command engine for IoTCom.Net (3GPP TS 27.007/27.005, V.250): a sans-I/O response parser that separates unsolicited result codes, a modem client (timeouts, URC stream, SMS in text mode, identity, signal and registration helpers, read-only mode) and a simulated LTE-M/NB-IoT module. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);at-commands;modem;lte-m;nb-iot;cellular;sms;3gpp;urc</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

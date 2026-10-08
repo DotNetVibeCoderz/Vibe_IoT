@@ -36,6 +36,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Medical & healthcare | ICU bedside monitors — 4 synthetic beds send ORU^R01 over MLLP; ward board, live traces, NEWS2, trends and an LLM SBAR note | HL7 v2, MLLP |
 | Medical & healthcare | Imaging AI pre-read — a simulated CT/MR/X-ray modality stores to a PACS; windowed viewer and a vision-model pre-read scored against the planted finding | DICOM C-STORE |
 | Navigation & marine | Drone telemetry over MAVLink — artificial horizon, flight track, battery, status texts; arm, take off, RTL and land with COMMAND_ACK (guarded) | MAVLink 2 |
+| Navigation & marine | Harbour traffic (AIS) — vessels off Tanjung Priok on a nautical chart, raw !AIVDM sentences and multi-part messages, a vessel table | AIS, NMEA 0183 |
 | Navigation & marine | GNSS vehicle tracker — live track, speed, satellites' signal strength | NMEA 0183 |
 | Smart building & stage | Smart greenhouse over CoAP — observed sensors, actuators, Block2 log, separate response; a packet-loss slider and a live message sequence chart show retransmissions | CoAP, Observe, Block-wise, SenML |
 | Smart building & stage | Stage lighting over Art-Net — faders, master, chase; fixtures show what the receiver decoded | Art-Net 4, DMX512 |
@@ -52,6 +53,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 
 ![MAVLink drone](../../images/gallery-mavlink.png)
 ![NMEA](../../images/gallery-nmea.png)
+![Harbour traffic (AIS)](../../images/gallery-ais.png)
 ![CoAP greenhouse](../../images/gallery-coap.png)
 ![LoRaWAN network monitor](../../images/gallery-lorawan.png)
 ![Smart meter reading](../../images/gallery-metering.png)

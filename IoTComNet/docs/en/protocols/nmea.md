@@ -86,11 +86,34 @@ end-to-end simulator → server → reader run.
 NMEA has no authentication; anyone on the link can inject positions. Treat positions as untrusted input in
 safety-relevant systems and cross-check with other sensors.
 
+## AIS
+
+AIS transponders and receivers send `!AIVDM` (other ships) and `!AIVDO` (own ship) sentences. The binary message is
+armoured six bits per character, and long messages are split over several sentences. `AisDecoder` reassembles the
+fragments, de-armours the bits and decodes types 1–3 and 27 (positions), 4 (base stations), 5 (static and voyage
+data), 18/19 (class B), 21 (aids to navigation) and 24 (class B static data). `AisTracker` keeps a vessel table, and
+`AisSimulator` produces traffic in Jakarta Bay.
+
+```csharp
+var ais = new AisDecoder();
+var tracker = new AisTracker();
+await foreach (var line in reader.ReadLinesAsync())          // or any source of NMEA lines (UDP, TCP, serial)
+    if (ais.Feed(line) is { } message) tracker.Apply(message);
+foreach (var v in tracker.Vessels) Console.WriteLine(v);       // 525005123 KM SINAR JAKARTA -5.9831,106.8602 11.4 kn
+```
+
+`AisBits.EncodePosition` and `AisBits.EncodeStatic` build sentences for tests and simulators. The CLI decodes
+sentences (`iotcom nmea ais decode`) and shows a live vessel table from a simulator, a UDP port or a TCP feed
+(`iotcom nmea ais watch --udp 10110`). Tests pin the published examples (a type 1 report and the two-sentence type 5
+of *EVER DIADEM*), cross-checked with an independent decoder.
+
+![Harbour traffic](../../images/gallery-ais.png)
+
 ## Limitations
 
-AIS (`!AIVDM`) payloads are recognised as sentences but not yet decoded (roadmap). Two-digit years in RMC use the
-pivot 80 (80–99 → 19xx, 00–79 → 20xx).
+AIS binary application messages (types 6, 8, 25, 26) are reported as unknown types, and AIS is decoded but not
+encoded for every type. Two-digit years in RMC use the pivot 80 (80–99 → 19xx, 00–79 → 20xx).
 
 ## Learn more
 
-Notebook `notebooks/navigation/03-nmea.en.ipynb` · Gallery demo *GNSS vehicle tracker* · `iotcom nmea --help`
+Notebook `notebooks/navigation/03-nmea.en.ipynb` · Gallery demos *GNSS vehicle tracker* and *Harbour traffic (AIS)* · `iotcom nmea --help`

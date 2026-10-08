@@ -35,11 +35,13 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 |---|---|---|
 | [Modbus TCP / RTU / ASCII](protocols/modbus.md) | master · slave · simulator | `IoTCom.Net.Protocols.Modbus` (+ `Native.Modbus`) |
 | [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · vehicle simulator · dialect generator | `IoTCom.Net.Protocols.Mavlink` |
-| [NMEA 0183](protocols/nmea.md) | reader · server · simulator | `IoTCom.Net.Protocols.Nmea` |
+| [NMEA 0183 · AIS](protocols/nmea.md) | reader · server · simulator · AIS decoder and vessel tracker | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | send · receive · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 over MLLP](protocols/hl7.md) | send · receive · ACK · bedside simulator | `IoTCom.Net.Protocols.Hl7` |
+| [ASTM E1394 / LIS2-A2](protocols/astm.md) | receiver (LIS) · sender (analyzer) · simulator · HL7 bridge | `IoTCom.Net.Protocols.Astm` |
+| [AT commands](protocols/at-commands.md) | modem client · URCs · SMS · module simulator | `IoTCom.Net.Protocols.AtCommand` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · synthetic studies | `IoTCom.Net.Adapters.Dicom` |
 | [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
 | [LoRaWAN 1.0.x](protocols/lorawan.md) | network server · Semtech UDP gateway · end device · simulator | `IoTCom.Net.Protocols.LoRaWan` |
@@ -50,7 +52,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-The [roadmap](../../PLAN.md) lists the protocols coming next (NMEA AIS, mDNS, AT commands, ASTM, Sparkplug B, OPC UA adapter, BLE, …).
+The [roadmap](../../PLAN.md) lists the protocols coming next (mDNS, Sparkplug B, Protobuf/MessagePack, OPC UA adapter, BLE, USB, …).
 
 ## Build things
 

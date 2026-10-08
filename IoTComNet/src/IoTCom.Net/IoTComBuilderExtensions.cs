@@ -2,6 +2,8 @@ using IoTCom.Net.Adapters.Mqtt;
 using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
+using IoTCom.Net.Protocols.Astm;
+using IoTCom.Net.Protocols.AtCommand;
 using IoTCom.Net.Protocols.Dlms;
 using IoTCom.Net.Protocols.LoRaWan;
 using IoTCom.Net.Protocols.MBus;
@@ -146,6 +148,24 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.MBus");
+            configure(o);
+        }));
+
+    /// <summary>Registers an AT-command modem (cellular / GNSS module).</summary>
+    public static IoTComBuilder AddAtModem(this IoTComBuilder builder, string name, Action<AtModemOptions> configure)
+        => builder.AddEndpoint(name, sp => AtModem.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.At");
+            configure(o);
+        }));
+
+    /// <summary>Registers an ASTM receiver (LIS side) for lab analyzers.</summary>
+    public static IoTComBuilder AddAstmReceiver(this IoTComBuilder builder, string name, Action<AstmReceiverOptions> configure)
+        => builder.AddEndpoint(name, sp => AstmReceiver.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Astm");
             configure(o);
         }));
 

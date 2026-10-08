@@ -43,6 +43,9 @@ iotcom --help
 | `iotcom dlms relay on\|off` / `simulate` | disconnect control (butuh `--allow-write` dan konfirmasi); meter simulasi di TCP |
 | `iotcom mbus scan` / `read` / `decode` / `simulate` | master M-Bus (`--serial` 2400 8E1, `-h` gateway, `--sim`): pemindaian primer, pembacaan primer atau sekunder, penguraian telegram, segmen simulasi |
 | `iotcom lorawan decode` / `airtime` | urai PHYPayload (hex atau base64; MIC dan dekripsi dengan `--appkey` atau `--nwkskey`/`--appskey`), tabel waktu di udara |
+| `iotcom nmea ais decode` / `watch` | urai kalimat !AIVDM; tabel kapal langsung dari `--sim`, `--udp <port>`, atau feed TCP |
+| `iotcom at send` / `info` / `sms` / `simulate` | modem perintah AT lewat `--serial`, TCP, atau `--sim`; perintah yang mengubah dan SMS butuh `--allow-write` |
+| `iotcom astm listen` / `send` | penerima ASTM E1394 (LIS) dengan keluaran `--hl7`; hasil analyzer sintetis |
 | `iotcom hl7 listen` | penerima MLLP dengan ACK otomatis dan observasi terurai (`--raw` mencetak segmen) |
 | `iotcom hl7 send` | kirim berkas ER7 (atau contoh ORU^R01) dan tampilkan ACK |
 | `iotcom hl7 simulate` | monitor pasien sintetis (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

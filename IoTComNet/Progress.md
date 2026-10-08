@@ -10,11 +10,11 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 423 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 449 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 35 tests passing, clippy `-D warnings` clean; 9 cargo-fuzz targets (≈ 15 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 36 + 36 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 12 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Docs EN/ID | ✅ 38 + 38 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 13 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
 | NuGet packages | ✅ 14 packages (+12 symbol packages) published to nuget.org as `0.1.0-preview.1`; Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v0.1.0-preview.1` |
 
@@ -28,7 +28,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Transport.Serial | ✅ | `UseSerial` / `ServeSerial`; hardware test pending (no RS-485 rig in CI) |
 | IoTCom.Net.Protocols.Modbus | ✅ | TCP/RTU/ASCII, FC 1–6, 15, 16, 22, 23, 43/14; pipelining; read-only; simulator; anatomy |
 | IoTCom.Net.Native.Modbus + Rust `iotcom-modbus` | ✅ win-x64 · ⏳ other RIDs | arm64/Linux/macOS binaries come from the CI native workflow |
-| IoTCom.Net.Protocols.Nmea | ✅ | GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GnssState, reader, server, simulator · AIS decode ⏳ |
+| IoTCom.Net.Protocols.Nmea | ✅ | GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GnssState, reader, server, simulator, AIS decoder/encoder/tracker/simulator |
 | IoTCom.Net.Protocols.Dmx | ✅ | Art-Net ArtDmx/ArtPoll/ArtPollReply/ArtSync, sACN data + sequence rules, DmxUniverse · RDM ⏳ |
 | IoTCom.Net.Adapters.Mqtt | ✅ | MQTTnet 5 adapter, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
 | IoTCom.Net.Serialization.SenML | ✅ | JSON + CBOR, resolution (RFC 8428 §4.6), builder |
@@ -40,16 +40,18 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Protocols.LoRaWan + Rust `iotcom-lorawan` | ✅ | 1.0.x codec + crypto, OTAA/ABP, MAC commands, EU868/US915/AS923-2 + airtime, Semtech UDP (forwarder + server), light network server, Class A device MAC, Cayenne LPP, simulator · Class B/C, ADR, Basics Station ⏳ |
 | IoTCom.Net.Protocols.Dlms + Rust `iotcom-dlms` | ✅ | HDLC + wrapper, A-XDR, OBIS, LLS/HLS-GMAC + suite 0 ciphering, GET blocks + selective access, SET/ACTION, client (read-only default), server + COSEM classes, meter simulator · suites 1/2, push ⏳ |
 | IoTCom.Net.Protocols.MBus + Rust `iotcom-mbus` | ✅ | frames, variable data records (DIF/VIF, BCD, dates), master (scan, secondary addressing), slave simulator · wireless M-Bus/OMS ⏳ |
-| IoTCom.Net.Protocols.Hl7 | ✅ | ER7 codec + escaping, MLLP server/client with ACK matching, LOINC vitals, PatientMonitorSimulator · ASTM E1394 ⏳ |
+| IoTCom.Net.Protocols.AtCommand | ✅ | URC-aware parser, modem client (SMS, info, read-only), LTE-M simulator · PDU SMS, CMUX ⏳ |
+| IoTCom.Net.Protocols.Astm | ✅ | E1394 records, E1381 link (NAK retransmission), receiver/sender, analyzer simulator, HL7 bridge · host query ⏳ |
+| IoTCom.Net.Protocols.Hl7 | ✅ | ER7 codec + escaping, MLLP server/client with ACK matching, LOINC vitals, PatientMonitorSimulator (ASTM in its own package) |
 | IoTCom.Net.Adapters.Dicom | ✅ | fo-dicom 5.2.6 Storage SCP/SCU, C-ECHO, windowed renderer → PNG, synthetic CT/MR/X-ray with planted findings (not trimmable/AOT) |
 | IoTCom.Samples.Medical (sample, not packed) | ✅ | NEWS2 (RCP 2017), trends, anomalies, OpenAI-compatible AI client, SBAR + imaging pre-read with ground-truth scoring |
 | IoTCom.Net.Hosting | ✅ | AddIoTCom, IoTComEndpoints, keyed services, shared tap, health checks |
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Gallery (Avalonia) | ✅ | 12 demos (LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 13 demos (Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 | VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | Phase 1 |
@@ -63,6 +65,18 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.10
+
+- **AIS lives in the NMEA package**: it arrives as NMEA sentences, so the decoder takes `NmeaSentence`s and the same
+  readers and servers carry it. Expected values in tests come from published examples cross-checked by an
+  independent decoder (one remembered value was wrong; the independent decode settled it).
+- **AT and ASTM are managed C#** (text protocols, design §5). The AT parser is sans-I/O and owns URC separation, the
+  part every hand-written modem driver gets wrong; the modem client is read-only on request.
+- **ASTM bridges to HL7** rather than inventing a result model: hospitals consume ORU^R01, and the HL7 package
+  already validates it.
+- **Portable GCM for DLMS.** macOS supports only 16-byte AES-GCM tags; DLMS needs 12. Full tags truncated to 12 bytes
+  are standard GCM truncation and are checked byte for byte against native 12-byte GCM on Windows and Linux.
 
 ## Decisions taken in 0.9
 
@@ -136,6 +150,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | Field devices (`0.10.0-preview.1`): AIS, AT commands, ASTM + HL7 bridge, Gallery harbour demo, notebooks, docs. 0.9.0 was tagged but not published (macOS runner never started); its CI also exposed macOS's 16-byte-only AES-GCM, fixed with portable 12-byte tags. |
 | 2026-10-09 | Metering (`0.9.0-preview.1`): DLMS/COSEM and M-Bus packages with simulators, Rust twins + fuzz targets 8–9 (≈ 1.5 M runs, no findings), CLI, RPC monitors, Gallery smart-meter demo, samples, notebook pair, docs. Fixed during testing: server replies went to SAP 16 even for the management client (peer address now learned per frame). |
 | 2026-10-08 | LoRaWAN (`0.8.0-preview.1`): package (codec, crypto, Semtech UDP, network server, device MAC, simulator), Rust twin + 7th fuzz target (2.7 M runs, no findings), LoRaTap pcapng, CLI `lorawan`, RPC decoders/monitors, Gallery radio map, sample, notebook pair, docs. Found while testing: replays were reported as MIC failures (FCnt epoch), real forwarders' unpadded base64 was rejected, LPP GPS altitude scale. |
 | 2026-10-08 | Editor tooling (`0.7.0-preview.1`): CLI `iotcom rpc` (JSON-RPC over stdio) and the VS Code extension v0.1 driving it; extension tests run against the real CLI in CI and the `.vsix` is an artifact. Docs page with screenshots rendered from the real webviews. |

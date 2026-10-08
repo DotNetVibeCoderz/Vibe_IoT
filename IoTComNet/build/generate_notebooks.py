@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.9.0-preview.1"
+VERSION = "0.10.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -131,6 +131,15 @@ NOTEBOOKS = {
              "var reader = NmeaReader.Create(o => o.UseInMemory(link));\nawait reader.ConnectAsync();\nawait Task.Delay(100);\n\n"
              "var sim = new NmeaSimulator();\nforeach (var s in sim.GenerateEpoch(DateTimeOffset.UtcNow, TimeSpan.FromSeconds(30))) await receiver.BroadcastAsync(s);\n"
              "await Task.Delay(200);\nvar fix = reader.Gnss.Current;\nConsole.WriteLine($\"{fix.Latitude:0.00000}, {fix.Longitude:0.00000} · {fix.SpeedKmh} km/h · {fix.SatellitesInView.Count} in view\");"),
+        md("## AIS: ships on the same wire\nAIS transponders send `!AIVDM` sentences: six-bit armoured binary, sometimes split over two sentences.",
+           "## AIS: kapal di jalur yang sama\nTransponder AIS mengirim kalimat `!AIVDM`: biner six-bit yang di-armour, kadang dipecah menjadi dua kalimat."),
+        code("var ais = new AisDecoder();\n"
+             "var voyage = (AisStaticData)(ais.Feed(\"!AIVDM,2,1,1,A,55?MbV02;H;s<HtKR20EHE:0@T4@Dn2222222216L961O5Gf0NSQEp6ClRp8,0*1C\")\n"
+             "    ?? ais.Feed(\"!AIVDM,2,2,1,A,88888888880,2*25\"))!;\n"
+             "Console.WriteLine($\"{voyage.Name} ({Ais.ShipTypeName(voyage.ShipType)}, {voyage.Length} m) → {voyage.Destination}, draught {voyage.Draught} m\");\n\n"
+             "var harbour = new AisSimulator();\nvar vessels = new AisTracker();\n"
+             "for (var step = 0; step < 6; step++)\n    foreach (var aisLine in harbour.Step(TimeSpan.FromSeconds(10)))\n        if (ais.Feed(aisLine) is { } msg) vessels.Apply(msg);\n"
+             "foreach (var v in vessels.Vessels.OrderBy(v => v.Name)) Console.WriteLine($\"{v.Name,-18} {v.Speed,5:0.0} kn  {v.Latitude:0.000}, {v.Longitude:0.000}\");"),
         md("## Troubleshooting\n- No data on serial: most receivers default to 9600 or 4800 baud, 8N1.\n- Fix but no position: check RMC status `A` (active) vs `V` (void).\n\n" + CREDIT[0],
            "## Pemecahan masalah\n- Tidak ada data di serial: kebanyakan penerima default 9600 atau 4800 baud, 8N1.\n- Ada fix tetapi tanpa posisi: periksa status RMC `A` (aktif) vs `V` (void).\n\n" + CREDIT[1]),
     ],
@@ -348,6 +357,43 @@ NOTEBOOKS = {
            "## Lebih lanjut\nDemo Galeri *Pembacaan smart meter* menggambar hari rumah tangga dari load profile dan meter M-Bus gedung. "
            "`iotcom dlms read --sim` dan `iotcom mbus scan --sim` melakukan hal yang sama di terminal. "
            "Lihat `docs/id/protocols/dlms.md` dan `docs/id/protocols/mbus.md`.\n\n" + CREDIT[1]),
+    ],
+    "devices/11-at-astm": [
+        md("# Modems and lab analyzers: AT commands and ASTM\n\nTwo serial-port veterans that are still everywhere: cellular modules driven with AT commands, "
+           "and laboratory analyzers that send results with ASTM E1394. Both run against simulators here.",
+           "# Modem dan analyzer lab: perintah AT dan ASTM\n\nDua veteran port serial yang masih ada di mana-mana: modul seluler yang dikendalikan dengan perintah AT, "
+           "dan analyzer laboratorium yang mengirim hasil dengan ASTM E1394. Keduanya berjalan terhadap simulator di sini."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## A cellular module\nCommands end with OK or an error; unsolicited result codes (URCs) such as `+CEREG` and `+CMTI` arrive at any time.",
+           "## Modul seluler\nPerintah diakhiri OK atau error; unsolicited result code (URC) seperti `+CEREG` dan `+CMTI` bisa datang kapan saja."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.AtCommand;\nusing IoTCom.Net.Transports;\n\n"
+             "var modemLink = new InMemoryTransportListener(\"modem\");\n"
+             "await using var module = AtModemSimulator.Create(o => { o.ListenInMemory(modemLink); o.RegistrationDelay = TimeSpan.FromMilliseconds(300); });\n"
+             "await module.StartAsync();\nawait using var modem = AtModem.Create(o => o.UseInMemory(modemLink));\nawait modem.ConnectAsync();\n"
+             "await modem.SendCheckedAsync(\"AT+CEREG=2\");\nawait Task.Delay(600);\n"
+             "var info = await modem.GetInfoAsync();\nConsole.WriteLine($\"{info.Model} · {info.Registration} on {info.Operator} ({info.AccessTechnology}) · {info.Signal}\");\n"
+             "Console.WriteLine(await modem.SendAsync(\"AT+CPIN=\\\"0000\\\"\"));"),
+        md("## SMS in and out", "## SMS masuk dan keluar"),
+        code("await modem.SendSmsAsync(\"+6281234567890\", \"Pompa air nyala\");\n"
+             "var inbox = new TaskCompletionSource<AtUrc>();\nmodem.UrcReceived += (_, u) => { if (u.Name == \"+CMTI\") inbox.TrySetResult(u); };\n"
+             "module.DeliverSms(\"+6289876543210\", \"STATUS?\");\nvar cmti = await inbox.Task;\n"
+             "var sms = await modem.ReadSmsAsync(int.Parse(cmti.Values[1]));\nConsole.WriteLine($\"{sms.Sender}: {sms.Text}\");"),
+        md("## A chemistry analyzer over ASTM\nThe analyzer sends ENQ, then one framed record at a time, each acknowledged; a corrupted frame is answered with NAK and sent again.",
+           "## Analyzer kimia lewat ASTM\nAnalyzer mengirim ENQ, lalu satu record berbingkai setiap kali, masing-masing di-ACK; frame yang rusak dijawab NAK dan dikirim ulang."),
+        code("using IoTCom.Net.Protocols.Astm;\n\nvar labLink = new InMemoryTransportListener(\"lab\");\n"
+             "await using var lis = AstmReceiver.Create(o => o.ListenInMemory(labLink));\nawait lis.StartAsync();\n"
+             "var resultArrived = new TaskCompletionSource<AstmMessage>();\nlis.MessageReceived += (_, m) => resultArrived.TrySetResult(m);\n"
+             "await using var analyzer = AstmSender.Create(o => o.UseInMemory(labLink));\nawait analyzer.ConnectAsync();\n"
+             "analyzer.CorruptNextFrame = true;\nawait analyzer.SendAsync(new AnalyzerSimulator().NextResult());\nvar labResult = await resultArrived.Task;\n"
+             "foreach (var r in labResult.Results) Console.WriteLine($\"{r.TestCode,-5} {r.Value,7} {r.Units,-7} {r.Flag}\");\n"
+             "Console.WriteLine($\"retransmitted frames: {analyzer.Retransmissions}\");"),
+        md("## Bridge to HL7\nMost hospitals want results as HL7 ORU^R01.", "## Jembatan ke HL7\nKebanyakan rumah sakit menginginkan hasil sebagai HL7 ORU^R01."),
+        code("Console.WriteLine(AstmToHl7.ToOru(labResult).Encode().Replace(\"\\r\", \"\\n\"));"),
+        md("## Going further\n`iotcom at info --sim`, `iotcom astm listen --hl7` and the AstmAnalyzerBridge sample. "
+           "Synthetic data only; not a medical device. See `docs/en/protocols/at-commands.md` and `docs/en/protocols/astm.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom at info --sim`, `iotcom astm listen --hl7`, dan sampel AstmAnalyzerBridge. "
+           "Data sintetis saja; bukan perangkat medis. Lihat `docs/id/protocols/at-commands.md` dan `docs/id/protocols/astm.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

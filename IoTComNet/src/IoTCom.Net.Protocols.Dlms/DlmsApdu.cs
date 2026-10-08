@@ -761,9 +761,7 @@ public sealed class DlmsSecurity
         aad[0] = 0x10;
         authenticationKey.CopyTo(aad, 1);
         challenge.CopyTo(aad.AsSpan(1 + authenticationKey.Length));
-        var tag = new byte[12];
-        using (var gcm = new AesGcm(blockCipherKey, 12))
-            gcm.Encrypt(Nonce(systemTitle, invocationCounter), ReadOnlySpan<byte>.Empty, Span<byte>.Empty, tag, aad);
+        var (_, tag) = Gcm12.Encrypt(blockCipherKey, Nonce(systemTitle, invocationCounter), [], aad);
         var result = new byte[17];
         result[0] = 0x10;
         BinaryPrimitives.WriteUInt32BigEndian(result.AsSpan(1), invocationCounter);
@@ -787,41 +785,36 @@ public sealed class DlmsSecurity
         var auth = (securityControl & 0x10) != 0;
         var enc = (securityControl & 0x20) != 0;
         var nonce = Nonce(systemTitle, ic);
-        using var gcm = new AesGcm(ek, 12);
-        var tag = new byte[12];
         if (enc)
         {
-            var cipher = new byte[plaintext.Length];
-            gcm.Encrypt(nonce, plaintext, cipher, tag, auth ? [securityControl, .. ak] : []);
-            return auth ? [.. cipher, .. tag] : cipher;
+            if (!auth) throw new NotSupportedException("Encryption without authentication is not supported (use security control 0x30).");
+            var (cipher, tag) = Gcm12.Encrypt(ek, nonce, plaintext, [securityControl, .. ak]);
+            return [.. cipher, .. tag];
         }
 
         if (!auth) return plaintext.ToArray();
-        gcm.Encrypt(nonce, ReadOnlySpan<byte>.Empty, Span<byte>.Empty, tag, (ReadOnlySpan<byte>)[securityControl, .. ak, .. plaintext]);
-        return [.. plaintext, .. tag];
+        var (_, macTag) = Gcm12.Encrypt(ek, nonce, [], [securityControl, .. ak, .. plaintext]);
+        return [.. plaintext, .. macTag];
     }
 
-    /// <summary>Suite 0 decryption; throws <see cref="AuthenticationTagMismatchException"/> on a bad tag.</summary>
+    /// <summary>Suite 0 decryption; throws <see cref="CryptographicException"/> on a bad tag.</summary>
     public static byte[] Decrypt(byte[] systemTitle, byte[] ek, byte[] ak, byte securityControl, uint ic, ReadOnlySpan<byte> payload)
     {
         ArgumentNullException.ThrowIfNull(ak);
         var auth = (securityControl & 0x10) != 0;
         var enc = (securityControl & 0x20) != 0;
         var nonce = Nonce(systemTitle, ic);
-        using var gcm = new AesGcm(ek, 12);
-        if (auth && payload.Length < 12) throw new CryptographicException("Ciphered APDU shorter than its tag.");
-        var body = auth ? payload[..^12] : payload;
-        var tag = auth ? payload[^12..] : [];
-        if (enc)
+        if (!auth)
         {
-            var plain = new byte[body.Length];
-            if (auth) gcm.Decrypt(nonce, body, tag, plain, [securityControl, .. ak]);
-            else throw new NotSupportedException("Encryption without authentication is not supported (use security control 0x30).");
-            return plain;
+            if (enc) throw new NotSupportedException("Encryption without authentication is not supported (use security control 0x30).");
+            return payload.ToArray();
         }
 
-        if (!auth) return body.ToArray();
-        gcm.Decrypt(nonce, ReadOnlySpan<byte>.Empty, tag, Span<byte>.Empty, (ReadOnlySpan<byte>)[securityControl, .. ak, .. body]);
+        if (payload.Length < 12) throw new CryptographicException("Ciphered APDU shorter than its tag.");
+        var body = payload[..^12];
+        var tag = payload[^12..];
+        if (enc) return Gcm12.Decrypt(ek, nonce, body, tag, [securityControl, .. ak]);
+        Gcm12.Decrypt(ek, nonce, [], tag, [securityControl, .. ak, .. body]);
         return body.ToArray();
     }
 
@@ -841,4 +834,48 @@ public sealed class DlmsSecurity
         >= 0xC0 and <= 0xC7 => (byte)(tag + 8),
         _ => throw new ArgumentException($"APDU 0x{tag:X2} has no global ciphering tag.", nameof(tag)),
     };
+}
+
+/// <summary>
+/// AES-GCM with the 12-byte tags DLMS uses, on every platform: the BCL computes the full 16-byte tag (some platforms,
+/// such as macOS, accept no other size) and GCM tag truncation keeps its first 12 bytes. Decryption runs CTR mode with
+/// AES-ECB, then recomputes the tag over the recovered plaintext and compares in constant time.
+/// </summary>
+internal static class Gcm12
+{
+    public static (byte[] Cipher, byte[] Tag) Encrypt(byte[] key, byte[] nonce, ReadOnlySpan<byte> plaintext, ReadOnlySpan<byte> aad)
+    {
+        var cipher = new byte[plaintext.Length];
+        var tag = new byte[16];
+        using (var gcm = new AesGcm(key, 16)) gcm.Encrypt(nonce, plaintext, cipher, tag, aad);
+        return (cipher, tag[..12]);
+    }
+
+    public static byte[] Decrypt(byte[] key, byte[] nonce, ReadOnlySpan<byte> cipher, ReadOnlySpan<byte> tag, ReadOnlySpan<byte> aad)
+    {
+        var plain = new byte[cipher.Length];
+        using (var aes = Aes.Create())
+        {
+            aes.Key = key;
+            Span<byte> counter = stackalloc byte[16];
+            Span<byte> stream = stackalloc byte[16];
+            nonce.CopyTo(counter);
+            for (var i = 0; i * 16 < cipher.Length; i++)
+            {
+                BinaryPrimitives.WriteUInt32BigEndian(counter[12..], (uint)(i + 2));   // J0 = nonce || 1; data starts at inc32(J0)
+                aes.EncryptEcb(counter, stream, PaddingMode.None);
+                var n = Math.Min(16, cipher.Length - (i * 16));
+                for (var j = 0; j < n; j++) plain[(i * 16) + j] = (byte)(cipher[(i * 16) + j] ^ stream[j]);
+            }
+        }
+
+        var (check, expected) = Encrypt(key, nonce, plain, aad);
+        if (!CryptographicOperations.FixedTimeEquals(expected, tag) || !CryptographicOperations.FixedTimeEquals(check, cipher))
+        {
+            CryptographicOperations.ZeroMemory(plain);
+            throw new AuthenticationTagMismatchException("The ciphered APDU failed authentication.");
+        }
+
+        return plain;
+    }
 }

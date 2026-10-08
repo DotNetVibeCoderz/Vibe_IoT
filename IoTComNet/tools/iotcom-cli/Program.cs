@@ -56,6 +56,12 @@ app.Configure(c =>
         n.SetDescription("NMEA 0183 GPS/GNSS tools.");
         n.AddCommand<NmeaListenCommand>("listen").WithExample("nmea", "listen", "--host", "127.0.0.1", "--port", "10110");
         n.AddCommand<NmeaSimulateCommand>("simulate").WithExample("nmea", "simulate", "--port", "10110");
+        n.AddBranch("ais", a =>
+        {
+            a.SetDescription("AIS (ship traffic) over NMEA: decode sentences, watch a feed.");
+            a.AddCommand<AisDecodeCommand>("decode").WithExample("nmea", "ais", "decode", "!AIVDM,1,1,,B,15NG6V0P01G?cFhE`R2IU?wn28R>,0*05");
+            a.AddCommand<AisWatchCommand>("watch").WithExample("nmea", "ais", "watch", "--sim").WithExample("nmea", "ais", "watch", "--udp", "10110");
+        });
     });
     c.AddBranch("mavlink", m =>
     {
@@ -140,6 +146,20 @@ app.Configure(c =>
         m.AddCommand<MBusReadCommand>("read").WithExample("mbus", "read", "1", "--sim").WithExample("mbus", "read", "26200002", "--sim");
         m.AddCommand<MBusDecodeCommand>("decode").WithExample("mbus", "decode", "681F1F680802727856341224400107550000000313153100DA023B13018B60043718021816");
         m.AddCommand<MBusSimulateCommand>("simulate").WithExample("mbus", "simulate", "--port", "10001");
+    });
+    c.AddBranch("at", a =>
+    {
+        a.SetDescription("AT commands for cellular/GNSS modules (3GPP 27.007): send, info, SMS; simulate a module.");
+        a.AddCommand<AtSendCommand>("send").WithExample("at", "send", "--sim", "AT+CSQ", "AT+COPS?").WithExample("at", "send", "--serial", "COM7", "ATI");
+        a.AddCommand<AtInfoCommand>("info").WithExample("at", "info", "--sim");
+        a.AddCommand<AtSmsCommand>("sms").WithDescription("Send an SMS (requires --allow-write).").WithExample("at", "sms", "--sim", "+6281234567890", "hello", "--allow-write");
+        a.AddCommand<AtSimulateCommand>("simulate").WithExample("at", "simulate", "--port", "2000");
+    });
+    c.AddBranch("astm", a =>
+    {
+        a.SetDescription("ASTM E1394 / LIS2-A2 lab analyzers: receive (LIS), send synthetic results, bridge to HL7.");
+        a.AddCommand<AstmListenCommand>("listen").WithExample("astm", "listen", "--port", "5000", "--hl7");
+        a.AddCommand<AstmSendCommand>("send").WithExample("astm", "send", "--port", "5000", "-n", "3");
     });
     c.AddBranch("hl7", h =>
     {

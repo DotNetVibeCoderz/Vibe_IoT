@@ -30,11 +30,12 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 |---|---|
 | **Modbus TCP / RTU / ASCII** | master + slave + virtual PLC simulator, TCP pipelining, read-only safety mode, device identification — and an optional **Rust engine** (`NativeModbusClient`) |
 | **MAVLink v1 / v2** | the full common dialect generated from the official XML (Roslyn source generator — bring your own dialect), signing, UDP/TCP/serial links, ground-station helper, quadcopter simulator; frame codec mirrored in Rust |
-| **NMEA 0183** | checksum-validated parser and builder, typed GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GNSS fix aggregator, NMEA server, GPS simulator |
+| **NMEA 0183 · AIS** | checksum-validated parser and builder, AIS decoding (types 1–5, 18, 19, 21, 24, 27) with a vessel tracker, typed GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GNSS fix aggregator, NMEA server, GPS simulator |
 | **Art-Net 4 · sACN (E1.31)** | DMX512 over IP: send, receive, ArtPoll discovery, multicast, priorities, universe model with fades |
 | **CoAP (RFC 7252)** | client + server over UDP: retransmission and deduplication, Observe, Block-wise, link-format discovery, SenML, greenhouse simulator; codec mirrored by a fuzzed Rust crate |
 | **LoRaWAN 1.0.x** | light network server for Semtech UDP gateways (OTAA/ABP, dedup across gateways, Class A downlinks, MAC commands), packet forwarder, end-device MAC, EU868/US915/AS923-2, airtime, gateway + sensor simulator; codec mirrored by a fuzzed Rust crate |
 | **DLMS/COSEM · M-Bus** | smart-meter reading over HDLC or TCP: OBIS registers, load profiles with selective access, LLS/HLS with AES-GCM ciphering, relay control behind read-only defaults, meter simulator; wired M-Bus master with scan, secondary addressing and record decoding, heat/water/electricity simulator; codecs mirrored by fuzzed Rust crates |
+| **AT commands · ASTM** | cellular/GNSS modems (URC parsing, SMS, read-only mode, module simulator); lab analyzers over ASTM E1394/E1381 with NAK retransmission and an HL7 ORU bridge |
 | **MQTT 3.1.1 / 5.0** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker |
 | **CAN / CAN FD** | one `ICanBus` for Linux SocketCAN, slcan USB adapters (CANable, CANtact) and a virtual bus; candump notation, filtered readers |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 as a fuzzed **Rust** state machine; UDS tester (sessions, security access, DIDs, DTCs, routines, read-only mode), OBD-II scan tool and an ECU simulator |

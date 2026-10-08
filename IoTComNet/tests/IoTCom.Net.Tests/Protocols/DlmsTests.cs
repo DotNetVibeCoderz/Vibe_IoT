@@ -137,6 +137,25 @@ public class DlmsCodecTests
     }
 
     [Fact]
+    public void Truncated_tags_match_native_twelve_byte_gcm_where_available()
+    {
+        var key = Convert.FromHexString("000102030405060708090A0B0C0D0E0F");
+        var st = Convert.FromHexString("4D4D4D0000BC614E");
+        var apdu = Convert.FromHexString("C001C1000801000100FF0200");
+        var ours = DlmsSecurity.Encrypt(st, key, key, 0x30, 0x01234567, apdu);
+        Assert.Equal(apdu.Length + 12, ours.Length);
+        Assert.Equal(apdu, DlmsSecurity.Decrypt(st, key, key, 0x30, 0x01234567, ours));
+        if (!System.Security.Cryptography.AesGcm.TagByteSizes.MinSize.Equals(16))
+        {
+            using var native = new System.Security.Cryptography.AesGcm(key, 12);
+            var cipher = new byte[apdu.Length];
+            var tag = new byte[12];
+            native.Encrypt((byte[])[.. st, 0x01, 0x23, 0x45, 0x67], apdu, cipher, tag, (byte[])[0x30, .. key]);
+            Assert.Equal([.. cipher, .. tag], ours);
+        }
+    }
+
+    [Fact]
     public void Anatomy_covers_hdlc_frames()
     {
         var info = new byte[] { 0xE6, 0xE6, 0x00 }.Concat(DlmsApdu.Encode(new GetRequestPdu(new CosemReference(3, ObisCode.Parse("1.0.1.8.0.255"), 2)))).ToArray();

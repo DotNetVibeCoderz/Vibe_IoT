@@ -43,6 +43,9 @@ iotcom --help
 | `iotcom dlms relay on\|off` / `simulate` | disconnect control (needs `--allow-write` and confirmation); a simulated meter on TCP |
 | `iotcom mbus scan` / `read` / `decode` / `simulate` | M-Bus master (`--serial` 2400 8E1, `-h` gateway, `--sim`): primary scan, primary or secondary read, telegram decoding, simulated segment |
 | `iotcom lorawan decode` / `airtime` | decode a PHYPayload (hex or base64; MIC and decryption with `--appkey` or `--nwkskey`/`--appskey`), time-on-air table |
+| `iotcom nmea ais decode` / `watch` | decode !AIVDM sentences; live vessel table from `--sim`, `--udp <port>` or a TCP feed |
+| `iotcom at send` / `info` / `sms` / `simulate` | AT-command modems over `--serial`, TCP or `--sim`; changing commands and SMS need `--allow-write` |
+| `iotcom astm listen` / `send` | ASTM E1394 receiver (LIS) with `--hl7` output; synthetic analyzer results |
 | `iotcom hl7 listen` | MLLP receiver with auto-ACK and decoded observations (`--raw` prints segments) |
 | `iotcom hl7 send` | send an ER7 file (or a sample ORU^R01) and print the ACK |
 | `iotcom hl7 simulate` | a synthetic bedside monitor (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |
