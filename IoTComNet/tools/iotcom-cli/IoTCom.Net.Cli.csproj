@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.MessagePack\IoTCom.Net.Serialization.MessagePack.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.OpcUa\IoTCom.Net.Adapters.OpcUa.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Ble\IoTCom.Net.Transport.Ble.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="Spectre.Console.Cli" />
   </ItemGroup>

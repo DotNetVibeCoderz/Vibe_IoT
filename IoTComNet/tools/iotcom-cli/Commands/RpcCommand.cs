@@ -141,6 +141,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("hl7", "HL7 v2 over MLLP", "IoTCom.Net.Protocols.Hl7", "sender · receiver · monitor simulator", "protocols/hl7.md", "medical/05-hl7-dicom", "Hl7MllpListener", []),
         ("dicom", "DICOM", "IoTCom.Net.Adapters.Dicom", "storage SCP/SCU · rendering", "protocols/dicom.md", "medical/05-hl7-dicom", null, []),
         ("mqtt", "MQTT 3.1.1 / 5.0", "IoTCom.Net.Adapters.Mqtt", "publish · subscribe · broker", "protocols/mqtt.md", "messaging/04-mqtt-senml", "MqttSenMLBridge", []),
+        ("usb", "USB · HID", "IoTCom.Net.Transport.Usb", "control · bulk · interrupt · HID reports · relay boards", "protocols/usb.md", "devices/15-usb", "UsbRelay", []),
         ("ble", "Bluetooth LE", "IoTCom.Net.Transport.Ble", "central · GATT · beacons · virtual radio", "protocols/ble.md", "devices/14-ble", "BleHeartRate", ["ble-adv"]),
         ("opcua", "OPC UA", "IoTCom.Net.Adapters.OpcUa", "client · plant simulator server", "protocols/opcua.md", "industrial/13-opcua", "OpcUaBrowser", []),
         ("sparkplug", "Sparkplug B", "IoTCom.Net.Protocols.Sparkplug", "edge node · host application · line simulator", "protocols/sparkplug.md", "messaging/12-mdns-sparkplug", "SparkplugEdgeNode", ["sparkplug"]),

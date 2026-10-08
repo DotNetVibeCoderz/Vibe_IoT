@@ -3,6 +3,23 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.14.0-preview.1 — 2026-10-09
+
+USB and HID.
+
+- **New package `IoTCom.Net.Transport.Usb`** (also in the meta-package): `UsbDevice` (control, bulk and interrupt
+  transfers, read-only switch, traffic tap), `UsbBulkTransport` / `UseUsbBulk`, `HidDevice` (input, output and feature
+  reports), `HidRelayBoard` for "USBRelayN" modules, enumeration with `UsbIds` names, and `VirtualUsbBus` with a
+  loopback device and a simulated relay board.
+- **New native library `iotcom_usb`** (Rust crate `iotcom-usb-native`: nusb 0.2 for WinUSB/usbfs/IOKit, hidapi with
+  pure-Rust backends on Windows and Linux), best effort per RID like `iotcom_ble`.
+- CLI `iotcom usb list|hid|control|write|relay`; hosting `AddUsbDevice`, `AddHidDevice`; Gallery *USB bench*; sample
+  `UsbRelay`; notebook pair `devices/15-usb`; docs page *USB and HID*.
+- Tests: M-Bus session tests get a 1 s response window (an Alpine runner missed 150 ms on a cold start).
+
+*Transport USB dan HID dengan pustaka native Rust (nusb, hidapi), papan relay USB HID, bus virtual, CLI, demo Galeri,
+sampel, notebook, dan dokumentasi.*
+
 ## 0.13.0-preview.1 — 2026-10-09
 
 Bluetooth Low Energy.

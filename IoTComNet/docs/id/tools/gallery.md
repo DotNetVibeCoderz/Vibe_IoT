@@ -47,6 +47,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Pesan | Jaringan pabrik · Sparkplug B — mDNS menemukan perangkat di segmen; Unified Namespace sebuah lini pembotolan dengan lampu birth/death; cabut kabel jaringan untuk melihat will NDEATH, tulis metrik dengan DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
+| Meja kerja protokol | Meja kerja USB — perangkat USB komputer ini (didaftar, tidak dibuka), papan relay USB HID yang dinyalakan dengan feature report di balik penjaga penulisan, perangkat loopback lewat transfer control dan bulk | USB, HID |
 
 ![Diagnostik kendaraan](../../images/gallery-can-uds.png)
 ![Monitor pasien ICU](../../images/gallery-hl7-icu.png)
@@ -63,6 +64,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Penjelajah tag OPC UA](../../images/gallery-opcua.png)
 ![Perangkat Bluetooth di sekitar](../../images/gallery-ble.png)
+![Meja kerja USB](../../images/gallery-usb.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
 ![Meja kerja](../../images/gallery-workbench.png)
 

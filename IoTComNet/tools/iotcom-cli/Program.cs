@@ -175,6 +175,17 @@ app.Configure(c =>
         d.AddCommand<DicomSendCommand>("send").WithExample("dicom", "send", "--synthetic", "ct", "--finding", "Pneumothorax");
         d.AddCommand<DicomListenCommand>("listen").WithExample("dicom", "listen", "--port", "11112", "--output", "received");
     });
+    c.AddBranch("usb", u =>
+    {
+        u.SetDescription("USB and HID (Rust nusb/hidapi): list devices, control and bulk transfers, USB HID relay boards.");
+        u.AddCommand<UsbListCommand>("list").WithExample("usb", "list").WithExample("usb", "list", "--sim");
+        u.AddCommand<HidListCommand>("hid").WithDescription("List HID collections.").WithExample("usb", "hid");
+        u.AddCommand<UsbControlCommand>("control").WithDescription("Control IN request (read-only).").WithExample("usb", "control", "--sim", "1209:0001", "0x01");
+        u.AddCommand<UsbWriteReadCommand>("write").WithDescription("Write to a bulk OUT endpoint and read the answer (requires --allow-write).")
+            .WithExample("usb", "write", "--sim", "1209:0001", "68656c6c6f", "--allow-write");
+        u.AddCommand<UsbRelayCommand>("relay").WithDescription("Show or switch a USB HID relay board (switching requires --allow-write).")
+            .WithExample("usb", "relay", "--sim").WithExample("usb", "relay", "--sim", "2", "on", "--allow-write");
+    });
     c.AddBranch("ble", b =>
     {
         b.SetDescription("Bluetooth Low Energy central (Rust btleplug): scan, list services, watch notifications, write.");

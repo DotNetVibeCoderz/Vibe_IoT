@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Uds\IoTCom.Net.Protocols.Uds.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.OpcUa\IoTCom.Net.Adapters.OpcUa.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Ble\IoTCom.Net.Transport.Ble.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
     <ProjectReference Include="..\..\samples\shared\IoTCom.Samples.Medical\IoTCom.Samples.Medical.csproj" />
   </ItemGroup>
 </Project>

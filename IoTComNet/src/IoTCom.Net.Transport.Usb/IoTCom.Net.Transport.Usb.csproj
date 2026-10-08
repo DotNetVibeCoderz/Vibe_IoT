@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Transport.Usb</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>USB and HID for IoTCom.Net: enumerate devices, control/bulk/interrupt transfers and HID input/output/feature reports through a Rust library (nusb, hidapi), a bulk byte-stream transport (UseUsbBulk), USB HID relay boards, read-only switches, and a virtual bus with simulated devices. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);usb;hid;winusb;libusb;nusb;hidapi;relay;rust;native</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Native binaries: CI places one folder per RID under artifacts/native/{rid}/; a local cargo build is used in development. -->
+  <ItemGroup>
+    <NativeArtifact Include="$(RepoRoot)artifacts/native/**/*iotcom_usb*" />
+    <None Include="@(NativeArtifact)" Pack="true" PackagePath="runtimes/%(RecursiveDir)native/%(Filename)%(Extension)" Visible="false" />
+  </ItemGroup>
+</Project>

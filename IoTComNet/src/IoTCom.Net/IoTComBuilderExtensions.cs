@@ -14,6 +14,7 @@ using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
 using IoTCom.Net.Transport.Ble;
 using IoTCom.Net.Transport.Can;
+using IoTCom.Net.Transport.Usb;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -239,6 +240,24 @@ public static class IoTComBuilderExtensions
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Ble");
             configure?.Invoke(o);
+        }));
+
+    /// <summary>Registers a raw USB device (control, bulk and interrupt transfers).</summary>
+    public static IoTComBuilder AddUsbDevice(this IoTComBuilder builder, string name, Action<UsbDeviceOptions> configure)
+        => builder.AddEndpoint(name, sp => UsbDevice.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Usb");
+            configure(o);
+        }));
+
+    /// <summary>Registers a HID device.</summary>
+    public static IoTComBuilder AddHidDevice(this IoTComBuilder builder, string name, Action<HidDeviceOptions> configure)
+        => builder.AddEndpoint(name, sp => HidDevice.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Hid");
+            configure(o);
         }));
 
     /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>

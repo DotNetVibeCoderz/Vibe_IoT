@@ -94,7 +94,7 @@ public class MBusSessionTests
         var listener = new InMemoryTransportListener("mbus");
         var bus = MBusSlaveSimulator.Create(o => o.ListenInMemory(listener)).AddDefaultDevices();
         await bus.StartAsync();
-        var master = MBusMaster.Create(o => { o.UseInMemory(listener); o.ResponseTimeout = TimeSpan.FromMilliseconds(150); o.Retries = 0; });
+        var master = MBusMaster.Create(o => { o.UseInMemory(listener); o.ResponseTimeout = TimeSpan.FromMilliseconds(1000); o.Retries = 0; });
         await master.ConnectAsync();
         return (bus, master);
     }

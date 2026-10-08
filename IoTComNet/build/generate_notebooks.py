@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.13.0-preview.1"
+VERSION = "0.14.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -536,6 +536,38 @@ NOTEBOOKS = {
            "and the BleHeartRate sample. See `docs/en/protocols/ble.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom ble scan` (radio sungguhan) atau `--sim`, `iotcom ble watch --sim C4:7C:8D:6A:21:0F 2a37`, *Perangkat Bluetooth di sekitar* di Gallery, "
            "dan sampel BleHeartRate. Lihat `docs/id/protocols/ble.md`.\n\n" + CREDIT[1]),
+    ],
+    "devices/15-usb": [
+        md("# USB and HID — enumerate, control, bulk, reports\n\nRaw USB transfers and HID reports through one API. The cells use a virtual bus; replace the backend "
+           "with `NativeUsbBackend.Instance` (the default) to reach real devices.",
+           "# USB dan HID — enumerasi, control, bulk, report\n\nTransfer USB mentah dan report HID lewat satu API. Sel-selnya memakai bus virtual; ganti backend "
+           "dengan `NativeUsbBackend.Instance` (bawaan) untuk menjangkau perangkat sungguhan."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Enumerate", "## Enumerasi"),
+        code("using System.Text;\nusing IoTCom.Net.Transport.Usb;\n\n"
+             "var usbBus = new VirtualUsbBus();\nusbBus.Add(new VirtualLoopbackDevice());\nvar boardSim = usbBus.AddHid(new VirtualHidRelayBoard(relays: 4));\n"
+             "foreach (var d in UsbDevice.List(usbBus)) Console.WriteLine($\"{d.Id}  {d.Manufacturer} {d.Product}  [{string.Join(\", \", d.Interfaces.Select(i => i.ClassName))}]\");\n"
+             "foreach (var h in HidDevice.List(usbBus)) Console.WriteLine($\"{h.VendorId:x4}:{h.ProductId:x4}  {h.Product}  {h.UsageName}\");\n"
+             "Console.WriteLine(UsbIds.Known(0x1D50, 0x606F));"),
+        md("## Control and bulk transfers\nA vendor request reads the firmware version; data written to bulk OUT 0x01 comes back on bulk IN 0x81.",
+           "## Transfer control dan bulk\nVendor request membaca versi firmware; data yang ditulis ke bulk OUT 0x01 kembali di bulk IN 0x81."),
+        code("var loopDev = UsbDevice.Create(o => { o.UseVirtual(usbBus); o.DeviceId = \"1209:0001\"; });\nawait loopDev.ConnectAsync();\n"
+             "Console.WriteLine(Encoding.ASCII.GetString(await loopDev.ControlInAsync(UsbSetup.Vendor(0x01), 16)));\n"
+             "await loopDev.WriteAsync(0x01, Encoding.ASCII.GetBytes(\"ping\"));\nConsole.WriteLine(Encoding.ASCII.GetString((await loopDev.ReadAsync(0x81))!));\n"
+             "await loopDev.DisposeAsync();"),
+        md("## A USB HID relay board\nFeature report `00 FF n` switches relay n on; reading feature report 0 returns the serial and the relay bits.",
+           "## Papan relay USB HID\nFeature report `00 FF n` menyalakan relay n; membaca feature report 0 mengembalikan serial dan bit relay."),
+        code("var relayHid = HidDevice.Create(o => { o.UseVirtual(usbBus); o.UseDevice(HidRelayBoard.VendorId, HidRelayBoard.ProductId); });\n"
+             "await relayHid.ConnectAsync();\nvar relayBoard = new HidRelayBoard(relayHid);\n"
+             "await relayBoard.SetAsync(3, true);\nConsole.WriteLine($\"{await relayBoard.GetSerialAsync()}: {string.Join(\" \", await relayBoard.GetStatesAsync())} (bits {boardSim.State})\");\n"
+             "var readOnlyHid = HidDevice.Create(o => { o.UseVirtual(usbBus); o.UseDevice(HidRelayBoard.VendorId, HidRelayBoard.ProductId); o.ReadOnly = true; });\n"
+             "await readOnlyHid.ConnectAsync();\n"
+             "try { await new HidRelayBoard(readOnlyHid).SetAllAsync(true); } catch (IoTCom.Net.ReadOnlyModeException e) { Console.WriteLine(\"read-only: \" + e.Message); }"),
+        md("## Going further\n`iotcom usb list`, `iotcom usb hid`, `iotcom usb relay --sim`, the Gallery's *USB bench* and the UsbRelay sample. "
+           "See `docs/en/protocols/usb.md` for drivers and permissions.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom usb list`, `iotcom usb hid`, `iotcom usb relay --sim`, *Meja kerja USB* di Gallery, dan sampel UsbRelay. "
+           "Lihat `docs/id/protocols/usb.md` untuk driver dan izin.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

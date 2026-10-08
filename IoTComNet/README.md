@@ -41,6 +41,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **mDNS / DNS-SD** | responder and browser (RFC 6762/6763): announcements, known-answer suppression, goodbyes, TTL cache, type enumeration, plant simulator |
 | **CAN / CAN FD** | one `ICanBus` for Linux SocketCAN, slcan USB adapters (CANable, CANtact) and a virtual bus; candump notation, filtered readers |
 | **Bluetooth LE** | central over a Rust library built on btleplug (WinRT, BlueZ, CoreBluetooth): scan, GATT read/write/notify with a read-only switch; advertising data, iBeacon, Eddystone and GATT value codecs; virtual radio |
+| **USB · HID** | raw control/bulk/interrupt transfers (Rust nusb) and HID reports (hidapi) with read-only switches, `UseUsbBulk` byte-stream transport, USB HID relay boards, virtual bus |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 as a fuzzed **Rust** state machine; UDS tester (sessions, security access, DIDs, DTCs, routines, read-only mode), OBD-II scan tool and an ECU simulator |
 | **HL7 v2 · MLLP** | ER7 parser/builder with escaping, MLLP sender/receiver with ACK matching, LOINC vital signs, bedside-monitor simulator (sepsis, hypoxia, …) |
 | **DICOM** | adapter over fo-dicom: Storage SCP/SCU (C-STORE, C-ECHO), windowed renderer to PNG, synthetic CT/MR/X-ray studies with planted findings |

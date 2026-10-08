@@ -47,6 +47,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
 | Messaging | Plant network · Sparkplug B — mDNS finds the devices on the segment; a Unified Namespace of a bottling line with birth/death lamps; pull the network cable to see the NDEATH will, write metrics with DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Protocol workbench | Frame & checksum workbench — decode Modbus frames field by field, 23 CRCs, SLIP/COBS/HDLC live | Modbus, CRC, framing |
+| Protocol workbench | USB bench — this computer's USB devices (listed, never opened), a USB HID relay board switched with feature reports behind a write guard, a loopback device over control and bulk transfers | USB, HID |
 
 ![Vehicle diagnostics](../../images/gallery-can-uds.png)
 ![ICU bedside monitors](../../images/gallery-hl7-icu.png)
@@ -63,6 +64,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![OPC UA tag browser](../../images/gallery-opcua.png)
 ![Nearby Bluetooth devices](../../images/gallery-ble.png)
+![USB bench](../../images/gallery-usb.png)
 ![Lighting](../../images/gallery-lighting.png)
 ![Workbench](../../images/gallery-workbench.png)
 

@@ -25,6 +25,7 @@
     <Project Path="samples/console/OpcUaBrowser/OpcUaBrowser.csproj" />
     <Project Path="samples/console/SparkplugEdgeNode/SparkplugEdgeNode.csproj" />
     <Project Path="samples/console/UdsTester/UdsTester.csproj" />
+    <Project Path="samples/console/UsbRelay/UsbRelay.csproj" />
   </Folder>
   <Folder Name="/samples/shared/">
     <Project Path="samples/shared/IoTCom.Samples.Medical/IoTCom.Samples.Medical.csproj" />
@@ -63,6 +64,7 @@
     <Project Path="src/IoTCom.Net.Serialization.Tlv/IoTCom.Net.Serialization.Tlv.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Ble/IoTCom.Net.Transport.Ble.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Can/IoTCom.Net.Transport.Can.csproj" />
+    <Project Path="src/IoTCom.Net.Transport.Usb/IoTCom.Net.Transport.Usb.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Serial/IoTCom.Net.Transport.Serial.csproj" />
     <Project Path="src/IoTCom.Net/IoTCom.Net.csproj" />
   </Folder>

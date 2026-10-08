@@ -141,6 +141,13 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-usb.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SAMPLE_USB", "1");
+    Show("usb-bench", seconds: 4);
+    Shot("gallery-usb.png");
+}
+
 if (Want("gallery-ble.png"))
 {
     Show("ble-nearby", seconds: 7);
