@@ -54,6 +54,7 @@ iotcom --help
 | `iotcom dicom echo` | verifikasi C-ECHO |
 | `iotcom artnet send|poll|monitor` | kirim DMX, temukan node, pantau universe |
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, menjalankan broker |
+| `iotcom ble scan` / `services` / `watch` / `write` | central Bluetooth LE di radio sungguhan atau `--sim`: advertisement (iBeacon/Eddystone terurai), pohon GATT dengan nilai, notifikasi; `write` perlu `--allow-write` |
 | `iotcom opcua browse` / `read` / `watch` | client OPC UA (`-e opc.tcp://…`, endpoint paling aman secara default, `--no-security`, `--accept-untrusted`, `--user`) atau `--sim` untuk simulator pabrik di dalam proses; sesi hanya-baca |
 | `iotcom opcua write` / `call` / `simulate` | menulis variabel atau memanggil method (perlu `--allow-write`; `write` meminta konfirmasi); menjalankan simulator pabrik di TCP |
 | `iotcom sparkplug watch` / `simulate` / `write` | tampilan host Sparkplug B atas sebuah namespace (`--sim` menanam broker dan lini pembotolan), simulator edge node, penulisan NCMD/DCMD (perlu `--allow-write` dan konfirmasi) |

@@ -34,7 +34,7 @@
     "iotcomVersion": {
       "type": "parameter",
       "datatype": "text",
-      "defaultValue": "0.12.0-preview.1",
+      "defaultValue": "0.13.0-preview.1",
       "replaces": "IOTCOM_VERSION",
       "description": "IoTCom.Net package version."
     },

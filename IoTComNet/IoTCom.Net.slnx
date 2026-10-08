@@ -10,6 +10,7 @@
   <Folder Name="/samples/console/">
     <Project Path="samples/console/ArtNetPlayer/ArtNetPlayer.csproj" />
     <Project Path="samples/console/AstmAnalyzerBridge/AstmAnalyzerBridge.csproj" />
+    <Project Path="samples/console/BleHeartRate/BleHeartRate.csproj" />
     <Project Path="samples/console/CoapObserve/CoapObserve.csproj" />
     <Project Path="samples/console/DlmsMeterReader/DlmsMeterReader.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
@@ -60,6 +61,7 @@
     <Project Path="src/IoTCom.Net.Serialization.Protobuf/IoTCom.Net.Serialization.Protobuf.csproj" />
     <Project Path="src/IoTCom.Net.Serialization.SenML/IoTCom.Net.Serialization.SenML.csproj" />
     <Project Path="src/IoTCom.Net.Serialization.Tlv/IoTCom.Net.Serialization.Tlv.csproj" />
+    <Project Path="src/IoTCom.Net.Transport.Ble/IoTCom.Net.Transport.Ble.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Can/IoTCom.Net.Transport.Can.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Serial/IoTCom.Net.Transport.Serial.csproj" />
     <Project Path="src/IoTCom.Net/IoTCom.Net.csproj" />

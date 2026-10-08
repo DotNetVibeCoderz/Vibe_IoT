@@ -3,20 +3,20 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.12.0-preview.1` · **Last update:** 2026-10-09
+**Current version:** `0.13.0-preview.1` · **Last update:** 2026-10-09
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 476 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 486 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 35 tests passing, clippy `-D warnings` clean; 9 cargo-fuzz targets (≈ 15 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 42 + 42 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 15 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Docs EN/ID | ✅ 43 + 43 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 16 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 32 packages (+ symbol packages) per release (latest `0.11.0-preview.1`; `0.12.0-preview.1` adds Adapters.OpcUa); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 33 packages (+ symbol packages) per release (latest `0.12.0-preview.1`; `0.13.0-preview.1` adds Transport.Ble); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -36,6 +36,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Protocols.Mdns | ✅ | DNS codec, responder (known-answer suppression, goodbyes), browser (TTL cache, type enumeration), plant simulator · probing, IPv6 ⏳ |
 | IoTCom.Net.Protocols.Sparkplug | ✅ | payload codec + topics, edge node (NDEATH will, aliases, rebirth, guarded writes), host application (STATE, gaps, late join), line simulator · data sets, templates, offline buffering ⏳ |
 | IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus · PCAN/Kvaser/gs_usb ⏳ |
+| IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
 | IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
 | IoTCom.Net.Protocols.Mavlink + generator + Rust `iotcom-mavlink` | ✅ | common dialect (235 msgs) via Roslyn generator, custom dialects, v1/v2 + signing, UDP/TCP/serial links, GCS helper, quadcopter simulator · mission protocol, FTP, routing ⏳ |
@@ -53,9 +54,9 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Gallery (Avalonia) | ✅ | 15 demos (Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 16 demos (Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 | VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | Phase 1 |
@@ -69,6 +70,16 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.13
+
+- **BLE goes through Rust** (design: hardware access in Rust): btleplug covers WinRT, BlueZ and CoreBluetooth with one
+  API. The C ABI stays small and stable by passing asynchronous events as one-line JSON drained by a poll call; GATT
+  calls block on the library's own Tokio runtime with timeouts. libdbus is vendored on Linux so zig cross builds link.
+- **Native BLE builds are best effort per RID** (`continue-on-error` in the native workflow) so a BlueZ or toolchain
+  problem on one target cannot block the Modbus and ISO-TP libraries or a release; the virtual radio works everywhere.
+- **Advertisements without properties are still reported**: WinRT can announce a device before its properties are
+  readable; dropping those hid weak, rarely advertising devices.
 
 ## Decisions taken in 0.12
 
@@ -178,6 +189,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | Bluetooth LE (`0.13.0-preview.1`): Transport.Ble with Rust `iotcom_ble` (btleplug), codecs, virtual radio, CLI `ble`, Gallery radar demo, BleHeartRate sample, notebook pair, docs. |
 | 2026-10-09 | OPC UA (`0.12.0-preview.1`): adapter package with client and plant simulator server (secure sessions verified in tests), CLI `opcua`, Gallery tag browser, OpcUaBrowser sample, notebook pair, docs. |
 | 2026-10-09 | Plant networks (`0.11.0-preview.1`): mDNS/DNS-SD, Sparkplug B edge node + host, Protobuf/MessagePack/TLV codecs with `IPayloadCodec<T>`, MQTT binary will, CLI `mdns`/`sparkplug`/`payload`, Gallery plant-network demo, two samples, notebook pair, three docs pages. |
 | 2026-10-09 | Field devices (`0.10.0-preview.1`): AIS, AT commands, ASTM + HL7 bridge, Gallery harbour demo, notebooks, docs. 0.9.0 was tagged but not published (macOS runner never started); its CI also exposed macOS's 16-byte-only AES-GCM, fixed with portable 12-byte tags. |

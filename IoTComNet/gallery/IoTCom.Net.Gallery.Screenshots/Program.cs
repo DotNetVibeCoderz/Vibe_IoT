@@ -141,6 +141,12 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-ble.png"))
+{
+    Show("ble-nearby", seconds: 7);
+    Shot("gallery-ble.png");
+}
+
 if (Want("gallery-opcua.png"))
 {
     Show("opcua-tags", seconds: 9);

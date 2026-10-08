@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Transport.Ble</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Bluetooth Low Energy central for IoTCom.Net: scan, connect, read, write (read-only switch) and subscribe over the platform radio through a Rust library built on btleplug (WinRT, BlueZ, CoreBluetooth), plus advertising-data, iBeacon/Eddystone and GATT value codecs and a virtual radio with simulated peripherals. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);ble;bluetooth;bluetooth-le;gatt;ibeacon;eddystone;btleplug;rust;native</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Native binaries: CI places one folder per RID under artifacts/native/{rid}/; a local cargo build is used in development. -->
+  <ItemGroup>
+    <NativeArtifact Include="$(RepoRoot)artifacts/native/**/*iotcom_ble*" />
+    <None Include="@(NativeArtifact)" Pack="true" PackagePath="runtimes/%(RecursiveDir)native/%(Filename)%(Extension)" Visible="false" />
+  </ItemGroup>
+</Project>

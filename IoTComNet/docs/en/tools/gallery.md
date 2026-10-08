@@ -41,6 +41,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Navigation & marine | GNSS vehicle tracker — live track, speed, satellites' signal strength | NMEA 0183 |
 | Smart building & stage | Smart greenhouse over CoAP — observed sensors, actuators, Block2 log, separate response; a packet-loss slider and a live message sequence chart show retransmissions | CoAP, Observe, Block-wise, SenML |
 | Smart building & stage | Stage lighting over Art-Net — faders, master, chase; fixtures show what the receiver decoded | Art-Net 4, DMX512 |
+| Smart building & stage | Nearby Bluetooth devices — a proximity radar by RSSI, a heart-rate strap and a greenhouse sensor over notifications, a smart plug switched only when writes are allowed | Bluetooth LE, GATT, iBeacon |
 | LPWAN & smart city | LoRaWAN network monitor — two gateways and four sensors on a radio map with spreading-factor reach; drag a sensor and watch its SF, SNR and airtime change; downlinks in RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & city | Smart meter reading — a household meter with rooftop solar on an LCD faceplate, two days of load profile, the supply relay behind a password, and the building's M-Bus heat, water and electricity meters | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
@@ -61,6 +62,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![Smart meter reading](../../images/gallery-metering.png)
 ![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![OPC UA tag browser](../../images/gallery-opcua.png)
+![Nearby Bluetooth devices](../../images/gallery-ble.png)
 ![Lighting](../../images/gallery-lighting.png)
 ![Workbench](../../images/gallery-workbench.png)
 

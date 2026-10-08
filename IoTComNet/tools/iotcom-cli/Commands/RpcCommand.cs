@@ -141,6 +141,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("hl7", "HL7 v2 over MLLP", "IoTCom.Net.Protocols.Hl7", "sender · receiver · monitor simulator", "protocols/hl7.md", "medical/05-hl7-dicom", "Hl7MllpListener", []),
         ("dicom", "DICOM", "IoTCom.Net.Adapters.Dicom", "storage SCP/SCU · rendering", "protocols/dicom.md", "medical/05-hl7-dicom", null, []),
         ("mqtt", "MQTT 3.1.1 / 5.0", "IoTCom.Net.Adapters.Mqtt", "publish · subscribe · broker", "protocols/mqtt.md", "messaging/04-mqtt-senml", "MqttSenMLBridge", []),
+        ("ble", "Bluetooth LE", "IoTCom.Net.Transport.Ble", "central · GATT · beacons · virtual radio", "protocols/ble.md", "devices/14-ble", "BleHeartRate", ["ble-adv"]),
         ("opcua", "OPC UA", "IoTCom.Net.Adapters.OpcUa", "client · plant simulator server", "protocols/opcua.md", "industrial/13-opcua", "OpcUaBrowser", []),
         ("sparkplug", "Sparkplug B", "IoTCom.Net.Protocols.Sparkplug", "edge node · host application · line simulator", "protocols/sparkplug.md", "messaging/12-mdns-sparkplug", "SparkplugEdgeNode", ["sparkplug"]),
         ("mdns", "mDNS / DNS-SD", "IoTCom.Net.Protocols.Mdns", "responder · browser", "protocols/mdns.md", "messaging/12-mdns-sparkplug", "MdnsDiscovery", ["dns"]),
@@ -235,12 +236,16 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 fields = BerTlv.Describe(bytes);
                 summary = TrySummary(() => string.Join(", ", BerTlv.Decode(bytes)));
                 break;
+            case "ble-adv":
+                fields = IoTCom.Net.Transport.Ble.AdvertisingData.Describe(bytes);
+                summary = TrySummary(() => IoTCom.Net.Transport.Ble.AdvertisingData.Parse("adv", bytes).ToString());
+                break;
             case "uds":
                 fields = UdsAnatomy.Describe(bytes);
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, can, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, uds)");
         }
         return Result(bytes, fields, summary);
     }

@@ -39,6 +39,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [NMEA 0183 · AIS](protocols/nmea.md) | reader · server · simulator · AIS decoder and vessel tracker | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | send · receive · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
+| [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · virtual radio (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 over MLLP](protocols/hl7.md) | send · receive · ACK · bedside simulator | `IoTCom.Net.Protocols.Hl7` |
 | [ASTM E1394 / LIS2-A2](protocols/astm.md) | receiver (LIS) · sender (analyzer) · simulator · HL7 bridge | `IoTCom.Net.Protocols.Astm` |
@@ -56,7 +57,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codecs · schema-less inspection | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-The [roadmap](../../PLAN.md) lists the protocols coming next (BLE, USB, CAN USB adapters, generated native bindings, …).
+The [roadmap](../../PLAN.md) lists the protocols coming next (USB, CAN USB adapters, generated native bindings, …).
 
 ## Build things
 

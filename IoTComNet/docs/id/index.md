@@ -40,6 +40,7 @@ perangkat keras.
 | [NMEA 0183 · AIS](protocols/nmea.md) | pembaca · server · simulator · decoder AIS dan pelacak kapal | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | kirim · terima · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
+| [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
 | [HL7 v2 lewat MLLP](protocols/hl7.md) | kirim · terima · ACK · simulator monitor pasien | `IoTCom.Net.Protocols.Hl7` |
 | [ASTM E1394 / LIS2-A2](protocols/astm.md) | penerima (LIS) · pengirim (analyzer) · simulator · jembatan HL7 | `IoTCom.Net.Protocols.Astm` |
@@ -57,7 +58,7 @@ perangkat keras.
 | [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codec · inspeksi tanpa skema | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (BLE, USB, adapter CAN USB, binding native hasil generate, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (USB, adapter CAN USB, binding native hasil generate, …).
 
 ## Membangun aplikasi
 

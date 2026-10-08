@@ -12,6 +12,7 @@ using IoTCom.Net.Protocols.Sparkplug;
 using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
+using IoTCom.Net.Transport.Ble;
 using IoTCom.Net.Transport.Can;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -230,6 +231,15 @@ public static class IoTComBuilderExtensions
 
         public Task StopAsync(CancellationToken cancellationToken) => stop(cancellationToken);
     }
+
+    /// <summary>Registers a Bluetooth LE central (native radio unless <paramref name="configure"/> chooses a virtual one).</summary>
+    public static IoTComBuilder AddBleCentral(this IoTComBuilder builder, string name, Action<BleCentralOptions>? configure = null)
+        => builder.AddEndpoint(name, sp => BleCentral.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Ble");
+            configure?.Invoke(o);
+        }));
 
     /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>
     public static IoTComBuilder AddCanBus(this IoTComBuilder builder, string name, string uri, Action<CanBusOptions>? configure = null)

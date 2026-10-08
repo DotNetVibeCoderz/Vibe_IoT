@@ -3,6 +3,22 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.13.0-preview.1 — 2026-10-09
+
+Bluetooth Low Energy.
+
+- **New package `IoTCom.Net.Transport.Ble`** (also in the meta-package): `BleCentral` (scan, connect, read, write behind a
+  read-only switch, notifications as `IAsyncEnumerable`, traffic tap), codecs for advertising data, iBeacon, Eddystone
+  and GATT values, and `VirtualBleNetwork` with a heart-rate strap, a greenhouse sensor, an iBeacon and a smart plug.
+- **New native library `iotcom_ble`** (Rust crate `iotcom-ble-native` on btleplug 0.13: WinRT, BlueZ with vendored
+  libdbus, CoreBluetooth), same C ABI contract as the other libraries; built per RID on a best-effort basis.
+- CLI `iotcom ble scan|services|watch|write`; RPC decoder `ble-adv`; hosting `AddBleCentral`; Gallery *Nearby Bluetooth
+  devices*; sample `BleHeartRate`; notebook pair `devices/14-ble`; docs page *Bluetooth LE*.
+- Tests: wider timing bounds for the LoRaWAN RX1 test on busy CI runners.
+
+*Central Bluetooth LE dengan pustaka native Rust (btleplug), codec advertisement/iBeacon/Eddystone/GATT, radio virtual,
+CLI, demo Galeri, sampel, notebook, dan dokumentasi.*
+
 ## 0.12.0-preview.1 — 2026-10-09
 
 OPC UA.

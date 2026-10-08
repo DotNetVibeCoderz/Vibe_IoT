@@ -1,7 +1,8 @@
 name: IoTCom.Net native libraries
 
-# Builds iotcom_modbus and iotcom_isotp for every supported RID. The release workflow packs them into
-# IoTCom.Net.Native.Modbus and IoTCom.Net.Protocols.IsoTp under runtimes/{rid}/native/.
+# Builds iotcom_modbus, iotcom_isotp and iotcom_ble for every supported RID. The release workflow packs them into
+# IoTCom.Net.Native.Modbus, IoTCom.Net.Protocols.IsoTp and IoTCom.Net.Transport.Ble under runtimes/{rid}/native/.
+# The BLE library (btleplug, vendored libdbus on Linux) is best effort: a RID where it fails still ships the others.
 on:
   workflow_dispatch:
   workflow_call:
@@ -55,11 +56,21 @@ jobs:
       - name: Build
         if: matrix.tool == 'cargo'
         run: cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native --target ${{ matrix.target }}
+      - name: Build BLE (zigbuild)
+        if: matrix.tool == 'zigbuild'
+        continue-on-error: true
+        env:
+          RUSTFLAGS: ${{ contains(matrix.target, 'musl') && '-C target-feature=-crt-static' || '' }}
+        run: cargo zigbuild --release -p iotcom-ble-native --target ${{ matrix.target }}${{ !contains(matrix.target, 'musl') && '.2.17' || '' }}
+      - name: Build BLE
+        if: matrix.tool == 'cargo'
+        continue-on-error: true
+        run: cargo build --release -p iotcom-ble-native --target ${{ matrix.target }}
       - name: Collect
         shell: bash
         run: |
           mkdir -p ../artifacts/native/${{ matrix.rid }}
-          cp target/${{ matrix.target }}/release/*iotcom_{modbus,isotp}.{dll,so,dylib} ../artifacts/native/${{ matrix.rid }}/ 2>/dev/null || true
+          cp target/${{ matrix.target }}/release/*iotcom_{modbus,isotp,ble}.{dll,so,dylib} ../artifacts/native/${{ matrix.rid }}/ 2>/dev/null || true
           ls -la ../artifacts/native/${{ matrix.rid }}
       - uses: actions/upload-artifact@v4
         with:

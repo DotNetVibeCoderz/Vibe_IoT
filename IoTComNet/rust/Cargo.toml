@@ -13,6 +13,7 @@ members = [
     "crates/iotcom-mbus",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
+    "crates/native/iotcom-ble-native",
 ]
 
 [workspace.package]

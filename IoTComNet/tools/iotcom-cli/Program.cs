@@ -175,6 +175,15 @@ app.Configure(c =>
         d.AddCommand<DicomSendCommand>("send").WithExample("dicom", "send", "--synthetic", "ct", "--finding", "Pneumothorax");
         d.AddCommand<DicomListenCommand>("listen").WithExample("dicom", "listen", "--port", "11112", "--output", "received");
     });
+    c.AddBranch("ble", b =>
+    {
+        b.SetDescription("Bluetooth Low Energy central (Rust btleplug): scan, list services, watch notifications, write.");
+        b.AddCommand<BleScanCommand>("scan").WithExample("ble", "scan").WithExample("ble", "scan", "--sim", "-t", "2");
+        b.AddCommand<BleServicesCommand>("services").WithExample("ble", "services", "--sim", "E8:4F:25:10:7A:33");
+        b.AddCommand<BleWatchCommand>("watch").WithExample("ble", "watch", "--sim", "C4:7C:8D:6A:21:0F", "2a37");
+        b.AddCommand<BleWriteCommand>("write").WithDescription("Write a characteristic (requires --allow-write).")
+            .WithExample("ble", "write", "--sim", "D0:8E:3A:55:10:C2", "6e400002-b5a3-f393-e0a9-e50e24dcca9e", "01", "--allow-write");
+    });
     c.AddBranch("opcua", u =>
     {
         u.SetDescription("OPC UA (adapter over the OPC Foundation stack): browse, read, watch, write, call; simulate a plant server.");

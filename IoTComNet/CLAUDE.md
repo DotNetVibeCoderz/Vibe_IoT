@@ -18,7 +18,7 @@ dotnet test tests/IoTCom.Net.Tests                                     # all .NE
 dotnet test tests/IoTCom.Net.Tests --filter "FullyQualifiedName~ModbusClientServerTests.Pipelined"   # single test
 cd rust && cargo test --workspace                                      # Rust tests
 cd rust && cargo clippy --workspace --all-targets -- -D warnings
-cd rust && cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native   # native libs (native tests skip without them)
+cd rust && cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native -p iotcom-ble-native   # native libs (native tests skip without them)
 dotnet pack IoTCom.Net.slnx -c Release -o artifacts/packages           # natives are picked up from artifacts/native/{rid}/
 python conformance/generate.py        # regenerate shared C#/Rust test vectors
 python build/generate_notebooks.py    # regenerate EN/ID notebooks from one spec (never edit .ipynb by hand)
@@ -85,6 +85,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `SparkplugEdgeNode`/`SparkplugHost` over `MqttEndpoint`, whose `AbortAsync` simulates a lost link so the will fires).
   Payload formats implement `IPayloadCodec<T>` (Abstractions): `Serialization.Protobuf`/`.MessagePack` (optional, not in the
   meta-package), `.Tlv`, `SenMLPayloadCodec`.
+- **Bluetooth LE**: `Transport.Ble` (`BleCentral`, `BlePeripheral`, codecs `BleUuid`/`AdvertisingData`/`GattValue`) over `IBleAdapter`:
+  `NativeBleAdapter` (Rust `iotcom-ble-native` → `iotcom_ble`, btleplug; events are JSON lines drained by `iotcom_ble_poll_event`)
+  or `VirtualBleNetwork` (tests, notebooks, Gallery, `--sim`). `cargo run -p iotcom-ble-native --example scan` checks the real radio.
 - **OPC UA**: `Adapters.OpcUa` wraps the OPC Foundation stack (1.5.378, pinned; not in the meta-package, not AOT). PKI per
   application under `%LOCALAPPDATA%/IoTCom.Net/opcua/pki*`; tests and notebooks use temp PKI paths and `AcceptUntrustedCertificates`.
 - **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).

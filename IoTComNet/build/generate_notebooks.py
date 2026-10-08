@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.12.0-preview.1"
+VERSION = "0.13.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -498,6 +498,44 @@ NOTEBOOKS = {
            "See `docs/en/protocols/opcua.md` for certificates and trust.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom opcua browse --sim`, `iotcom opcua watch`, *Penjelajah tag OPC UA* di Gallery, dan sampel OpcUaBrowser. "
            "Lihat `docs/id/protocols/opcua.md` untuk sertifikat dan trust.\n\n" + CREDIT[1]),
+    ],
+    "devices/14-ble": [
+        md("# Bluetooth Low Energy — advertisements, GATT, notifications\n\nA central scans advertisements, connects to peripherals and reads, writes and subscribes to "
+           "characteristics. The virtual radio below behaves like the real one; switch to `o.UseNative()` to use your Bluetooth adapter.",
+           "# Bluetooth Low Energy — advertisement, GATT, notifikasi\n\nCentral memindai advertisement, tersambung ke periferal, lalu membaca, menulis, dan subscribe ke "
+           "characteristic. Radio virtual di bawah berperilaku seperti yang sungguhan; ganti ke `o.UseNative()` untuk memakai adaptor Bluetooth Anda."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Decode an advertisement by hand\nAdvertising data is a list of length–type–value structures; an iBeacon is Apple manufacturer data.",
+           "## Urai advertisement secara manual\nAdvertising data adalah daftar struktur length–type–value; iBeacon adalah data pabrikan Apple."),
+        code("using IoTCom.Net.Transport.Ble;\n\n"
+             "var raw = Convert.FromHexString(\"020106\" + \"03030D18\" + \"040948524D\" + \"1AFF4C000215E2C56DB5DFFB48D2B060D0F5A71096E000070001C5\");\n"
+             "var parsed = AdvertisingData.Parse(\"demo\", raw, rssi: -68);\n"
+             "Console.WriteLine($\"{parsed.Name} · services {string.Join(\",\", parsed.Services.Select(BleUuid.Name))} · iBeacon {parsed.IBeacon} · ≈{parsed.EstimatedDistance} m\");\n"
+             "foreach (var f in AdvertisingData.Describe(raw)) Console.WriteLine($\"  {f.Name,-5} {f.Value}\");"),
+        md("## Scan a (virtual) room", "## Pindai ruangan (virtual)"),
+        code("var room = new VirtualBleNetwork();\nroom.AddHeartRateStrap();\nroom.AddEnvironmentSensor();\nroom.AddBeacon();\nroom.AddSmartPlug();\n"
+             "var physics = new VirtualBleSimulator(room);\n"
+             "var ble = BleCentral.Create(o => { o.UseVirtual(room); o.ReadOnly = true; });\nawait ble.ConnectAsync();\n"
+             "foreach (var ad in await ble.ScanAsync(TimeSpan.FromMilliseconds(600)))\n"
+             "    Console.WriteLine($\"{ad.Name,-18} {ad.Rssi,4} dBm  {string.Join(\", \", ad.Services.Select(BleUuid.Name))}{(ad.IBeacon is { } b ? $\" iBeacon {b.Major}/{b.Minor}\" : \"\")}\");"),
+        md("## Connect, read, subscribe", "## Sambung, baca, subscribe"),
+        code("var strap = await ble.OpenAsync(\"C4:7C:8D:6A:21:0F\");\n"
+             "foreach (var svc in strap.Services) Console.WriteLine($\"{svc.Name}: {string.Join(\", \", svc.Characteristics.Select(c => $\"{c.Name} ({c.Properties})\"))}\");\n"
+             "Console.WriteLine($\"battery {GattValue.Describe(BleUuid.Parse(\"2a19\"), await strap.ReadAsync(\"2a19\"))}\");\n"
+             "using var beatWindow = new CancellationTokenSource(TimeSpan.FromSeconds(3));\n"
+             "_ = Task.Run(async () => { while (!beatWindow.IsCancellationRequested) { physics.Step(); await Task.Delay(250); } });\n"
+             "try { await foreach (var v in strap.SubscribeAsync(BleUuid.FromShort(0x2A37), beatWindow.Token)) Console.WriteLine(GattValue.Describe(BleUuid.FromShort(0x2A37), v)); }\n"
+             "catch (OperationCanceledException) { }"),
+        md("## Writes are refused in read-only mode", "## Penulisan ditolak dalam mode read-only"),
+        code("var plug = await ble.OpenAsync(\"D0:8E:3A:55:10:C2\");\n"
+             "try { await plug.WriteAsync(VirtualBleNetwork.SmartPlugRelay, new byte[] { 1 }); }\n"
+             "catch (IoTCom.Net.ReadOnlyModeException e) { Console.WriteLine(\"read-only: \" + e.Message); }\n"
+             "await ble.DisposeAsync();"),
+        md("## Going further\n`iotcom ble scan` (real radio) or `--sim`, `iotcom ble watch --sim C4:7C:8D:6A:21:0F 2a37`, the Gallery's *Nearby Bluetooth devices* "
+           "and the BleHeartRate sample. See `docs/en/protocols/ble.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom ble scan` (radio sungguhan) atau `--sim`, `iotcom ble watch --sim C4:7C:8D:6A:21:0F 2a37`, *Perangkat Bluetooth di sekitar* di Gallery, "
+           "dan sampel BleHeartRate. Lihat `docs/id/protocols/ble.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "
