@@ -1,0 +1,17 @@
+{
+  "displayName": "IoTCom.Net Tools",
+  "description": "Decode Modbus, CAN, UDS, CoAP and MAVLink frames field by field, watch live traffic, save it for Wireshark, and browse the IoTCom.Net protocols — powered by the iotcom CLI.",
+  "container.title": "IoTCom.Net",
+  "view.protocols": "Protocols",
+  "view.devices": "Devices & simulators",
+  "welcome.protocols": "Connecting to the iotcom CLI…\nInstall it with `dotnet tool install -g IoTCom.Net.Cli --prerelease`, or set **iotcom.cliPath**.\n[Open settings](command:workbench.action.openSettings?%22iotcom.cliPath%22)",
+  "cmd.decodeFrame": "Decode a frame…",
+  "cmd.decodeSelection": "Decode selected bytes",
+  "cmd.startMonitor": "Start a traffic monitor…",
+  "cmd.refresh": "Refresh",
+  "cmd.openDocs": "Open documentation",
+  "cmd.copyInstall": "Copy install command",
+  "cmd.showOutput": "Show the CLI log",
+  "config.cliPath": "Command that runs the iotcom CLI, e.g. `iotcom` (global tool) or `dotnet /path/to/iotcom.dll`. Empty: the global tool, or the CLI built in this workspace.",
+  "config.docsLanguage": "Language of the documentation links. `auto` follows the VS Code display language."
+}

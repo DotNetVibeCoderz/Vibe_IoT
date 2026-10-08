@@ -137,6 +137,33 @@ jobs:
         run: dotnet publish samples/console/ModbusMaster -c Release -r linux-x64 -p:PublishAot=true -p:TreatWarningsAsErrors=true
       - run: timeout 5 samples/console/ModbusMaster/bin/Release/net10.0/linux-x64/publish/ModbusMaster --simulate || [ $? -eq 124 ]
 
+  vscode:
+    name: VS Code extension
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: IoTComNet
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the CLI the extension drives over JSON-RPC
+        run: dotnet build tools/iotcom-cli -c Release
+      - name: Test against the real CLI and package the .vsix
+        working-directory: IoTComNet/tools/vscode-iotcom
+        run: |
+          npm ci
+          npm test
+          npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iotcom-net-tools-vsix
+          path: IoTComNet/tools/vscode-iotcom/iotcom-net-tools.vsix
+
   docs:
     name: Docs & notebooks
     runs-on: ubuntu-latest

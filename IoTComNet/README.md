@@ -42,7 +42,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **Framing** | CRC catalogue (23 presets, 8–64 bit), LRC, SLIP, COBS, HDLC, streaming decoders on `System.IO.Pipelines` |
 | **Core** | TCP / serial / in-memory transports, traffic tap (*frame lane*), OpenTelemetry metrics & traces, reconnect policy, hosting + health checks |
 
-Plus: the **IoTCom.Net Gallery** desktop app, the **`iotcom` CLI**, an **edge gateway** web sample with a live HMI
+Plus: the **IoTCom.Net Gallery** desktop app, the **`iotcom` CLI**, the **VS Code extension** (frame viewer, traffic monitor), an **edge gateway** web sample with a live HMI
 dashboard, console samples, `dotnet new` **templates**, Polyglot **notebooks** and **documentation in English and
 Bahasa Indonesia**.
 

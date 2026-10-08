@@ -3,6 +3,22 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.7.0-preview.1 — 2026-10-08
+
+Editor tooling.
+
+- **VS Code extension v0.1 (`tools/vscode-iotcom`, IoTCom.Net Tools):** frame viewer (decode pasted or selected bytes
+  into a frame lane with a field table), traffic monitor (live decoded frames from simulators, CAN interfaces or a
+  MAVLink UDP port, filter, Save .pcapng), protocols view (package, docs EN/ID, notebook, sample), devices view and
+  C# snippets. English and Bahasa Indonesia. CI builds the CLI, tests the extension against it and publishes the
+  `.vsix` as an artifact.
+- **CLI `iotcom rpc`:** JSON-RPC 2.0 over stdio (`initialize`, `decode`, `devices`, `monitor.start/stop/save`,
+  `shutdown`, `frame` notifications) for editors and other tools; the extension never duplicates protocol logic.
+- **Docs:** new page *Tools → VS Code extension*.
+
+*Tooling editor: ekstensi VS Code v0.1 (penampil frame, pemantau lalu lintas dengan Simpan .pcapng, tampilan
+protokol, snippet; EN/ID) dan perintah `iotcom rpc` (JSON-RPC lewat stdio) yang dipakainya.*
+
 ## 0.6.0-preview.1 — 2026-10-08
 
 Capture and sniffing.

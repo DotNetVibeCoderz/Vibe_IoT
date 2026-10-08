@@ -68,6 +68,7 @@ perangkat keras.
 | [Galeri](tools/gallery.md) | Aplikasi desktop: jalankan setiap protokol, baca kodenya, periksa byte-nya |
 | [CLI (`iotcom`)](tools/cli.md) | Baca, tulis, layani, urai dari terminal |
 | [Template](tools/templates.md) | `dotnet new iotcom-console`, `iotcom-worker` |
+| [Ekstensi VS Code](tools/vscode.md) | Penampil frame, pemantau lalu lintas, tampilan protokol, snippet |
 | [Notebook](tools/notebooks.md) | Polyglot notebook per protokol, EN dan ID |
 
 ## Di balik layar

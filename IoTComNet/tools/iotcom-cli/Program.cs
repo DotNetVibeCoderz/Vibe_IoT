@@ -18,6 +18,7 @@ app.Configure(c =>
     c.SetApplicationVersion(IoTCom.Net.IoTComInfo.Version);
     c.AddCommand<InfoCommand>("info").WithDescription("Show version, credits and supported protocols.");
     c.AddCommand<PortsCommand>("ports").WithDescription("List serial ports on this machine.");
+    c.AddCommand<RpcCommand>("rpc").WithDescription("JSON-RPC 2.0 over stdio for editors (used by the VS Code extension).").IsHidden();
     c.AddCommand<CrcCommand>("crc").WithDescription("Compute CRCs (20+ presets) of hex or text input.")
         .WithExample("crc", "01 03 00 00 00 0A", "--algorithm", "modbus")
         .WithExample("crc", "--text", "123456789", "--all");

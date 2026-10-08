@@ -66,6 +66,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   wrapper, `DicomRenderer`, `SyntheticImaging`; not trimmable, not in the meta-package). Clinical analysis and the AI client
   live in `samples/shared/IoTCom.Samples.Medical` (sample code, never packed). AI config: `IOTCOM_AI_*` env vars or
   `%APPDATA%/IoTCom.Net/ai.json`; never log or commit keys. Everything medical is synthetic and labelled "not a medical device".
+- **VS Code extension** (`tools/vscode-iotcom`, TypeScript): drives the hidden CLI command `iotcom rpc` (JSON-RPC 2.0 over
+  stdio, `tools/iotcom-cli/Commands/RpcCommand.cs`) and never decodes protocols itself; add decoders/monitor sources in
+  the CLI. `cd tools/vscode-iotcom && npm test` (needs a built CLI; picks the newest Debug/Release build),
+  `npm run package` → `.vsix`, `node test/preview.mjs <dir>` renders the webviews for screenshots.
 - **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).
 
 ## Conventions specific to this repo

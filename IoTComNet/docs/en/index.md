@@ -67,6 +67,7 @@ The [roadmap](../../PLAN.md) lists the protocols coming next (CAN/UDS, MAVLink, 
 | [Gallery](tools/gallery.md) | Desktop app: run every protocol, read its code, inspect its bytes |
 | [CLI (`iotcom`)](tools/cli.md) | Read, write, serve, decode, sniff from the terminal |
 | [Templates](tools/templates.md) | `dotnet new iotcom-console`, `iotcom-worker` |
+| [VS Code extension](tools/vscode.md) | Frame viewer, traffic monitor, protocols view, snippets |
 | [Notebooks](tools/notebooks.md) | Polyglot notebooks per protocol, EN and ID |
 
 ## Under the hood

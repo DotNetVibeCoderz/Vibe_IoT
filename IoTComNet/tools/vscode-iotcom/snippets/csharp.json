@@ -1,0 +1,81 @@
+{
+  "IoTCom Modbus TCP client": {
+    "prefix": "iotcom-modbus-client",
+    "description": "Modbus TCP master reading holding registers (IoTCom.Net)",
+    "body": [
+      "await using var ${1:plc} = ModbusClient.Create(o => o.UseTcp(\"${2:192.168.1.10}\", ${3:502}).WithUnitId(${4:1}));",
+      "await $1.ConnectAsync();",
+      "ushort[] ${5:registers} = await $1.ReadHoldingRegistersAsync(address: ${6:0}, count: ${7:10});$0"
+    ]
+  },
+  "IoTCom Modbus simulator": {
+    "prefix": "iotcom-modbus-sim",
+    "description": "In-process virtual PLC for tests (IoTCom.Net)",
+    "body": [
+      "var ${1:listener} = new InMemoryTransportListener();",
+      "var ${2:store} = new ModbusDataStore();",
+      "await using var server = ModbusServer.Create(o => o.ListenInMemory($1).WithStore($2));",
+      "await using var simulator = ModbusSimulator.CreateVirtualPlc($2, TimeSpan.FromMilliseconds(200));",
+      "await server.StartAsync();",
+      "simulator.Start();$0"
+    ]
+  },
+  "IoTCom CAN bus": {
+    "prefix": "iotcom-can",
+    "description": "Open a CAN bus and read frames (IoTCom.Net)",
+    "body": [
+      "await using var ${1:bus} = await CanBus.OpenAsync(\"${2|socketcan:can0,slcan:COM5,virtual:demo|}\");",
+      "using var reader = $1.OpenReader(${3:CanFilter.Exact(0x7E8)});",
+      "await foreach (var frame in reader.ReadAllAsync())",
+      "    Console.WriteLine(frame);$0"
+    ]
+  },
+  "IoTCom UDS read VIN": {
+    "prefix": "iotcom-uds",
+    "description": "UDS tester reading the VIN and DTCs (IoTCom.Net)",
+    "body": [
+      "await using var ${1:uds} = UdsClient.Create(${2:bus}, o => { o.RequestId = 0x7E0; o.ResponseId = 0x7E8; o.ReadOnly = true; });",
+      "await $1.ConnectAsync();",
+      "string vin = await $1.ReadVinAsync();",
+      "var dtcs = await $1.ReadDtcsAsync();$0"
+    ]
+  },
+  "IoTCom CoAP observe": {
+    "prefix": "iotcom-coap",
+    "description": "CoAP GET and Observe (IoTCom.Net)",
+    "body": [
+      "await using var ${1:coap} = CoapClient.Create(o => o.UseServer(\"${2:192.168.1.40}\"));",
+      "await $1.ConnectAsync();",
+      "await foreach (var n in $1.ObserveAsync(\"${3:/sensors/temperature}\"))",
+      "    Console.WriteLine(n.PayloadText);$0"
+    ]
+  },
+  "IoTCom MAVLink ground station": {
+    "prefix": "iotcom-mavlink",
+    "description": "MAVLink link on UDP 14550 with a ground-station helper (IoTCom.Net)",
+    "body": [
+      "await using var ${1:link} = MavlinkConnection.Create(o => o.UseUdp(${2:14550}));",
+      "await $1.ConnectAsync();",
+      "using var gcs = new MavlinkGroundStation($1) { ReadOnly = true };",
+      "await gcs.WaitForHeartbeatAsync(TimeSpan.FromSeconds(5));",
+      "Console.WriteLine($\"{gcs.State.RelativeAltitude:0.0} m, {gcs.State.BatteryVoltage:0.00} V\");$0"
+    ]
+  },
+  "IoTCom MQTT publish": {
+    "prefix": "iotcom-mqtt",
+    "description": "MQTT client publishing a message (IoTCom.Net)",
+    "body": [
+      "await using var ${1:mqtt} = MqttEndpoint.Create(o => o.UseBroker(\"${2:broker.local}\"));",
+      "await $1.ConnectAsync();",
+      "await $1.PublishAsync(\"${3:plant/line1/temp}\", Encoding.UTF8.GetBytes(\"${4:23.5}\"));$0"
+    ]
+  },
+  "IoTCom pcapng capture": {
+    "prefix": "iotcom-pcap",
+    "description": "Write an endpoint's traffic to a pcapng file for Wireshark (IoTCom.Net)",
+    "body": [
+      "using var ${1:pcap} = PcapngTap.Create(\"${2:capture.pcapng}\");",
+      "${3:endpoint}.AddTap($1);$0"
+    ]
+  }
+}

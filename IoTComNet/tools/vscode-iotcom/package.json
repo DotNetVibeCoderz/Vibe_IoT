@@ -1,0 +1,182 @@
+{
+  "name": "iotcom-net-tools",
+  "displayName": "%displayName%",
+  "description": "%description%",
+  "version": "0.7.0",
+  "publisher": "gravicode",
+  "author": "Gravicode Studios (led by Kang Fadhil)",
+  "license": "Apache-2.0",
+  "icon": "resources/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DotNetVibeCoderz/Vibe_IoT",
+    "directory": "IoTComNet/tools/vscode-iotcom"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Debuggers",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "iot",
+    "modbus",
+    "can",
+    "uds",
+    "coap",
+    "mavlink",
+    "wireshark",
+    "pcapng",
+    "protocol",
+    "iotcom"
+  ],
+  "main": "./out/extension.js",
+  "l10n": "./l10n",
+  "activationEvents": [],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "iotcom",
+          "title": "%container.title%",
+          "icon": "resources/iotcom.svg"
+        }
+      ]
+    },
+    "views": {
+      "iotcom": [
+        {
+          "id": "iotcom.protocols",
+          "name": "%view.protocols%"
+        },
+        {
+          "id": "iotcom.devices",
+          "name": "%view.devices%"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "iotcom.protocols",
+        "contents": "%welcome.protocols%"
+      }
+    ],
+    "commands": [
+      {
+        "command": "iotcom.decodeFrame",
+        "title": "%cmd.decodeFrame%",
+        "category": "IoTCom",
+        "icon": "$(symbol-structure)"
+      },
+      {
+        "command": "iotcom.decodeSelection",
+        "title": "%cmd.decodeSelection%",
+        "category": "IoTCom"
+      },
+      {
+        "command": "iotcom.startMonitor",
+        "title": "%cmd.startMonitor%",
+        "category": "IoTCom",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "iotcom.refresh",
+        "title": "%cmd.refresh%",
+        "category": "IoTCom",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "iotcom.openDocs",
+        "title": "%cmd.openDocs%",
+        "category": "IoTCom"
+      },
+      {
+        "command": "iotcom.copyInstall",
+        "title": "%cmd.copyInstall%",
+        "category": "IoTCom"
+      },
+      {
+        "command": "iotcom.showOutput",
+        "title": "%cmd.showOutput%",
+        "category": "IoTCom"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "iotcom.decodeFrame",
+          "when": "view == iotcom.protocols",
+          "group": "navigation@1"
+        },
+        {
+          "command": "iotcom.startMonitor",
+          "when": "view == iotcom.devices",
+          "group": "navigation@1"
+        },
+        {
+          "command": "iotcom.refresh",
+          "when": "view == iotcom.devices || view == iotcom.protocols",
+          "group": "navigation@2"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "iotcom.decodeSelection",
+          "when": "editorHasSelection",
+          "group": "9_iotcom"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "iotcom.openDocs",
+          "when": "false"
+        },
+        {
+          "command": "iotcom.copyInstall",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "IoTCom.Net",
+      "properties": {
+        "iotcom.cliPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "%config.cliPath%"
+        },
+        "iotcom.docsLanguage": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "en",
+            "id"
+          ],
+          "default": "auto",
+          "markdownDescription": "%config.docsLanguage%"
+        }
+      }
+    },
+    "snippets": [
+      {
+        "language": "csharp",
+        "path": "./snippets/csharp.json"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "test": "npm run compile && node --test \"test/**/*.test.mjs\"",
+    "package": "vsce package --no-dependencies -o iotcom-net-tools.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "~1.90.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.6.0"
+  }
+}

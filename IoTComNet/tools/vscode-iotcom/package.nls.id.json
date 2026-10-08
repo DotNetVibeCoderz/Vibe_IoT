@@ -1,0 +1,17 @@
+{
+  "displayName": "IoTCom.Net Tools",
+  "description": "Urai frame Modbus, CAN, UDS, CoAP, dan MAVLink per field, pantau lalu lintas langsung, simpan untuk Wireshark, dan jelajahi protokol IoTCom.Net — didukung CLI iotcom.",
+  "container.title": "IoTCom.Net",
+  "view.protocols": "Protokol",
+  "view.devices": "Perangkat & simulator",
+  "welcome.protocols": "Menghubungkan ke CLI iotcom…\nPasang dengan `dotnet tool install -g IoTCom.Net.Cli --prerelease`, atau atur **iotcom.cliPath**.\n[Buka pengaturan](command:workbench.action.openSettings?%22iotcom.cliPath%22)",
+  "cmd.decodeFrame": "Urai sebuah frame…",
+  "cmd.decodeSelection": "Urai byte yang dipilih",
+  "cmd.startMonitor": "Mulai pemantau lalu lintas…",
+  "cmd.refresh": "Muat ulang",
+  "cmd.openDocs": "Buka dokumentasi",
+  "cmd.copyInstall": "Salin perintah instalasi",
+  "cmd.showOutput": "Tampilkan log CLI",
+  "config.cliPath": "Perintah yang menjalankan CLI iotcom, mis. `iotcom` (global tool) atau `dotnet /path/to/iotcom.dll`. Kosong: global tool, atau CLI yang di-build di workspace ini.",
+  "config.docsLanguage": "Bahasa tautan dokumentasi. `auto` mengikuti bahasa tampilan VS Code."
+}

@@ -13,7 +13,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | .NET tests | ✅ 297 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 30 tests passing, clippy `-D warnings` clean; 6 cargo-fuzz targets (≈ 10 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 32 + 32 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Docs EN/ID | ✅ 33 + 33 pages, parity and links verified | `python build/check_docs_parity.py` |
 | Notebooks | ✅ 10 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
 | NuGet packages | ✅ 14 packages (+12 symbol packages) published to nuget.org as `0.1.0-preview.1`; Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v0.1.0-preview.1` |
@@ -49,7 +49,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
-| VS Code extension | ⏳ not started | Phase 1 |
+| VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | Phase 1 |
 
 ## Decisions taken during Phase 0
 
@@ -108,6 +108,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-08 | Editor tooling (`0.7.0-preview.1`): CLI `iotcom rpc` (JSON-RPC over stdio) and the VS Code extension v0.1 driving it; extension tests run against the real CLI in CI and the `.vsix` is an artifact. Docs page with screenshots rendered from the real webviews. |
 | 2026-10-08 | Capture (`0.6.0-preview.1`): pcapng writer/tap (verified with scapy locally, tshark in CI), `iotcom sniff tcp/udp/can`, Gallery Save .pcapng. Fixed: NativeAOT publish reached the MAVLink generator (NETSDK1207); CI green again. |
 | 2026-10-05 | Published 0.5.0-preview.1 (MAVLink); first attempt failed on a Release-only analyzer rule (CA1868), fixed and re-tagged before anything reached NuGet. |
 | 2026-10-05 | MAVLink (`0.5.0-preview.1`): package with the generated common dialect, Roslyn generator for custom dialects, signing, GCS helper, quadcopter simulator, Rust frame twin + fuzz target, Gallery drone demo, CLI `mavlink`, MavlinkTelemetry sample, notebook pair, docs. Fixed during the Gallery review: concurrent senders could reorder sequence numbers (false loss) — send is now atomic, covered by a test. |
