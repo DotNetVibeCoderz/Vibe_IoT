@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>IoTCom.Net</RootNamespace>
-    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, HL7 v2/MLLP, CoAP, MAVLink, LoRaWAN (Semtech UDP, light network server), MQTT, SenML, serial and CAN/CAN FD transports and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, HL7 v2/MLLP, CoAP, MAVLink, LoRaWAN (Semtech UDP, light network server), DLMS/COSEM and M-Bus metering, MQTT, SenML, serial and CAN/CAN FD transports and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
     <PackageTags>$(PackageTags);nmea;artnet;sacn;hl7;coap;mavlink;senml;serial;can</PackageTags>
   </PropertyGroup>
   <ItemGroup>
@@ -17,6 +17,8 @@
     <ProjectReference Include="..\IoTCom.Net.Protocols.Coap\IoTCom.Net.Protocols.Coap.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Mavlink\IoTCom.Net.Protocols.Mavlink.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.LoRaWan\IoTCom.Net.Protocols.LoRaWan.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Dlms\IoTCom.Net.Protocols.Dlms.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.MBus\IoTCom.Net.Protocols.MBus.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Adapters.Mqtt\IoTCom.Net.Adapters.Mqtt.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Serialization.SenML\IoTCom.Net.Serialization.SenML.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />

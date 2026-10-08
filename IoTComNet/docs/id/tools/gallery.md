@@ -40,6 +40,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Gedung pintar & panggung | Rumah kaca pintar lewat CoAP — sensor yang diamati, aktuator, log Block2, separate response; slider kehilangan paket dan diagram urutan pesan langsung menampilkan pengiriman ulang | CoAP, Observe, Block-wise, SenML |
 | Gedung pintar & panggung | Lampu panggung lewat Art-Net — fader, master, chase; fixture menampilkan apa yang diurai penerima | Art-Net 4, DMX512 |
 | LPWAN & kota pintar | Monitor jaringan LoRaWAN — dua gateway dan empat sensor di peta radio dengan jangkauan per spreading factor; seret sensor dan lihat SF, SNR, serta airtime-nya berubah; downlink di RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
+| LPWAN, metering & kota | Pembacaan smart meter — meter rumah tangga dengan panel surya atap pada faceplate LCD, dua hari load profile, relay suplai di balik password, serta meter panas, air, dan listrik M-Bus gedung | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
 
@@ -53,6 +54,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![NMEA](../../images/gallery-nmea.png)
 ![Rumah kaca CoAP](../../images/gallery-coap.png)
 ![Monitor jaringan LoRaWAN](../../images/gallery-lorawan.png)
+![Pembacaan smart meter](../../images/gallery-metering.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
 ![Meja kerja](../../images/gallery-workbench.png)
 

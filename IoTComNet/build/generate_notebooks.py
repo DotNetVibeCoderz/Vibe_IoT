@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.8.0-preview.1"
+VERSION = "0.9.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -294,6 +294,61 @@ NOTEBOOKS = {
            "`iotcom lorawan server --sim` menjalankan jaringan yang sama di terminal, dan `iotcom lorawan simulate` menggerakkan ChirpStack atau The Things Stack. "
            "Lihat `docs/id/protocols/lorawan.md`.\n\n" + CREDIT[1]),
     ],
+    "metering/10-dlms-mbus": [
+        md("# Smart metering: DLMS/COSEM and M-Bus\n\nElectricity meters speak DLMS/COSEM (IEC 62056); heat and water meters in buildings hang on a wired "
+           "M-Bus. Here a simulated household meter with rooftop solar and a simulated M-Bus segment stand in for the hardware.",
+           "# Smart metering: DLMS/COSEM dan M-Bus\n\nMeter listrik berbicara DLMS/COSEM (IEC 62056); meter panas dan air di gedung tergantung "
+           "pada M-Bus berkabel. Di sini meter rumah tangga simulasi dengan panel surya atap dan segmen M-Bus simulasi menggantikan perangkat kerasnya."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## OBIS codes and COSEM data\nEvery value in a meter has a six-group logical name; values travel as A-XDR.",
+           "## Kode OBIS dan data COSEM\nSetiap nilai di meter punya nama logis enam grup; nilainya dikirim sebagai A-XDR."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Dlms;\n\nvar energyCode = ObisCode.Parse(\"1-0:1.8.0*255\");\n"
+             "Console.WriteLine($\"{energyCode} = {energyCode.Description}\");\n"
+             "var scalerUnit = CosemData.Structure(CosemData.Int8(-1), CosemData.Enum(CosemUnit.Volt));\n"
+             "Console.WriteLine($\"{scalerUnit} → {Convert.ToHexString(scalerUnit.Encode())}\");"),
+        md("## Read the meter\nThe public client (SAP 16) associates without a password: it may read, never write. "
+           "Registers carry a scaler and a unit; the profile is read with selective access by date.",
+           "## Membaca meter\nPublic client (SAP 16) berasosiasi tanpa password: boleh membaca, tidak pernah menulis. "
+           "Register membawa scaler dan unit; profil dibaca dengan selective access berdasarkan tanggal."),
+        code("using IoTCom.Net.Transports;\n\nvar meterLink = new InMemoryTransportListener(\"meter\");\n"
+             "await using var meterServer = DlmsServer.Create(o => o.ListenInMemory(meterLink));\n"
+             "await using var householdMeter = new DlmsMeterSimulator(meterServer);\nawait meterServer.StartAsync();\n\n"
+             "await using var reader = DlmsClient.Create(o => o.UseInMemory(meterLink));\nawait reader.ConnectAsync();\n"
+             "foreach (var code in new[] { \"1.0.1.8.0.255\", \"1.0.2.8.0.255\", \"1.0.32.7.0.255\", \"1.0.14.7.0.255\" })\n"
+             "    Console.WriteLine($\"{ObisCode.Parse(code).Description,-34} {await reader.ReadRegisterAsync(ObisCode.Parse(code))}\");\n"
+             "var meterNow = await reader.ReadClockAsync();\n"
+             "var lastHour = await reader.ReadProfileAsync(ObisCode.Parse(\"1.0.99.1.0.255\"), meterNow.AddHours(-1), meterNow);\n"
+             "Console.WriteLine($\"{lastHour.Rows.Count} load-profile rows in the last hour\");"),
+        md("## Write access is earned\nThe public client cannot open the relay; the management client with a password can.",
+           "## Hak tulis harus diperoleh\nPublic client tidak bisa membuka relay; management client dengan password bisa."),
+        code("// Even with the client-side read-only guard off, the meter refuses the public client.\n"
+             "await using var curious = DlmsClient.Create(o => { o.UseInMemory(meterLink); o.ReadOnly = false; });\n"
+             "await curious.ConnectAsync();\n"
+             "try { await curious.ActionAsync(CosemClass.DisconnectControl, ObisCode.Parse(\"0.0.96.3.10.255\"), 1); }\n"
+             "catch (DlmsException e) { Console.WriteLine($\"public client: {e.Message}\"); }\n"
+             "await using var engineer = DlmsClient.Create(o => { o.UseInMemory(meterLink).WithPassword(\"12345678\"); o.ReadOnly = false; });\n"
+             "await engineer.ConnectAsync();\n"
+             "await engineer.ActionAsync(CosemClass.DisconnectControl, ObisCode.Parse(\"0.0.96.3.10.255\"), 1);\n"
+             "Console.WriteLine($\"relay connected: {householdMeter.Relay.Connected}\");\n"
+             "await engineer.ActionAsync(CosemClass.DisconnectControl, ObisCode.Parse(\"0.0.96.3.10.255\"), 2);"),
+        md("## M-Bus: scan a segment\nA master pings the primary addresses, then reads each slave's variable data records.",
+           "## M-Bus: memindai segmen\nMaster melakukan ping ke alamat primer, lalu membaca record data variabel setiap slave."),
+        code("using IoTCom.Net.Protocols.MBus;\n\nvar busLink = new InMemoryTransportListener(\"mbus\");\n"
+             "await using var segment = MBusSlaveSimulator.Create(o => o.ListenInMemory(busLink)).AddDefaultDevices();\n"
+             "await segment.StartAsync();\n"
+             "await using var master = MBusMaster.Create(o => { o.UseInMemory(busLink); o.ResponseTimeout = TimeSpan.FromMilliseconds(100); });\n"
+             "await master.ConnectAsync();\n"
+             "foreach (var address in await master.ScanAsync(0, 5))\n{\n    var telegram = await master.ReadAsync(address);\n"
+             "    Console.WriteLine($\"[{address}] {telegram.SecondaryAddress} {telegram.MediumName}\");\n"
+             "    foreach (var record in telegram.Records.Take(3)) Console.WriteLine($\"    {record}\");\n}"),
+        md("## Going further\nThe Gallery demo *Smart meter reading* draws the household's day from the load profile and the building's "
+           "M-Bus meters. `iotcom dlms read --sim` and `iotcom mbus scan --sim` do the same in a terminal. "
+           "See `docs/en/protocols/dlms.md` and `docs/en/protocols/mbus.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nDemo Galeri *Pembacaan smart meter* menggambar hari rumah tangga dari load profile dan meter M-Bus gedung. "
+           "`iotcom dlms read --sim` dan `iotcom mbus scan --sim` melakukan hal yang sama di terminal. "
+           "Lihat `docs/id/protocols/dlms.md` dan `docs/id/protocols/mbus.md`.\n\n" + CREDIT[1]),
+    ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "
            "`socketcan:can0` or `slcan:COM5` to talk to real hardware — only on vehicles you are authorised to service.",
@@ -379,6 +434,7 @@ NOTEBOOKS = {
            "| Read position/time from a GPS or marine instruments | NMEA 0183 | `Protocols.Nmea` |\n"
            "| Drive stage or architectural lighting | Art-Net or sACN | `Protocols.Dmx` |\n"
            "| Collect battery sensors kilometres away | LoRaWAN (Semtech UDP gateways) | `Protocols.LoRaWan` |\n"
+           "| Read electricity meters / building sub-meters | DLMS/COSEM / M-Bus | `Protocols.Dlms`, `Protocols.MBus` |\n"
            "| Talk to a microcontroller over UART/USB with your own messages | COBS or SLIP + CRC | `Framing` |\n"
            "| Debug a link byte by byte | Traffic tap, `iotcom modbus decode`, Gallery workbench | `Core`, CLI |\n\n"
            "**Rules of thumb.** Polling one device on a LAN → Modbus TCP. Fan-out to many consumers or over the internet → MQTT with TLS. "
@@ -390,6 +446,7 @@ NOTEBOOKS = {
            "| Membaca posisi/waktu dari GPS atau instrumen kapal | NMEA 0183 | `Protocols.Nmea` |\n"
            "| Mengendalikan lampu panggung atau arsitektural | Art-Net atau sACN | `Protocols.Dmx` |\n"
            "| Mengumpulkan sensor baterai yang jauhnya berkilo-kilometer | LoRaWAN (gateway Semtech UDP) | `Protocols.LoRaWan` |\n"
+           "| Membaca meter listrik / sub-meter gedung | DLMS/COSEM / M-Bus | `Protocols.Dlms`, `Protocols.MBus` |\n"
            "| Berkomunikasi dengan mikrokontroler lewat UART/USB dengan pesan sendiri | COBS atau SLIP + CRC | `Framing` |\n"
            "| Debug link byte per byte | Traffic tap, `iotcom modbus decode`, workbench Galeri | `Core`, CLI |\n\n"
            "**Aturan praktis.** Membaca satu perangkat di LAN → Modbus TCP. Distribusi ke banyak konsumen atau lewat internet → MQTT dengan TLS. "

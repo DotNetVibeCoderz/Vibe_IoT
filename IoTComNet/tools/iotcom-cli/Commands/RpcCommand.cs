@@ -4,7 +4,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using IoTCom.Net.Protocols.Coap;
+using IoTCom.Net.Protocols.Dlms;
 using IoTCom.Net.Protocols.LoRaWan;
+using IoTCom.Net.Protocols.MBus;
 using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Mavlink.Common;
 using IoTCom.Net.Protocols.Modbus;
@@ -127,6 +129,8 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
         ("mavlink", "MAVLink v1 / v2", "IoTCom.Net.Protocols.Mavlink", "link · ground station · simulator · generator", "protocols/mavlink.md", "navigation/08-mavlink", "MavlinkTelemetry", ["mavlink"]),
         ("lorawan", "LoRaWAN 1.0.x", "IoTCom.Net.Protocols.LoRaWan", "network server · Semtech UDP · end device · simulator", "protocols/lorawan.md", "lpwan/09-lorawan", "LoRaWanGatewayMonitor", ["lorawan", "semtech-udp"]),
+        ("dlms", "DLMS/COSEM", "IoTCom.Net.Protocols.Dlms", "meter reader · meter simulator · HDLC · wrapper", "protocols/dlms.md", "metering/10-dlms-mbus", "DlmsMeterReader", ["dlms"]),
+        ("mbus", "M-Bus (wired)", "IoTCom.Net.Protocols.MBus", "master · scan · secondary addressing · simulator", "protocols/mbus.md", "metering/10-dlms-mbus", "MBusScanner", ["mbus"]),
         ("nmea", "NMEA 0183", "IoTCom.Net.Protocols.Nmea", "reader · server · simulator", "protocols/nmea.md", "navigation/03-nmea", "NmeaGpsReader", []),
         ("dmx", "Art-Net 4 · sACN", "IoTCom.Net.Protocols.Dmx", "send · receive · discovery", "protocols/dmx.md", null, "ArtNetPlayer", []),
         ("hl7", "HL7 v2 over MLLP", "IoTCom.Net.Protocols.Hl7", "sender · receiver · monitor simulator", "protocols/hl7.md", "medical/05-hl7-dicom", "Hl7MllpListener", []),
@@ -136,7 +140,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("senml", "SenML", "IoTCom.Net.Serialization.SenML", "JSON · CBOR codec", "protocols/senml.md", "messaging/04-mqtt-senml", null, []),
     ];
 
-    private static readonly string[] Sources = ["sim:modbus", "sim:can", "sim:coap", "sim:mavlink", "sim:lorawan", "can:<uri>", "mavlink:udp:<port>", "lorawan:udp:<port>"];
+    private static readonly string[] Sources = ["sim:modbus", "sim:can", "sim:coap", "sim:mavlink", "sim:lorawan", "sim:dlms", "sim:mbus", "can:<uri>", "mavlink:udp:<port>", "lorawan:udp:<port>"];
 
     private static JsonObject Initialize() => new()
     {
@@ -192,12 +196,20 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 fields = SemtechAnatomy.Describe(bytes);
                 summary = SemtechPacket.TryDecode(bytes, out var gw, out var gwError) ? gw!.ToString() : "invalid: " + gwError;
                 break;
+            case "dlms":
+                fields = DlmsAnatomy.Describe(bytes);
+                summary = fields.FirstOrDefault(f => f.Kind == FrameFieldKind.Function).Value ?? "DLMS";
+                break;
+            case "mbus":
+                fields = MBusAnatomy.Describe(bytes);
+                summary = MBusFrame.TryRead(bytes, out var mb, out _, out var mbError) == MBusFrame.ReadStatus.Frame ? mb!.ToString() : "invalid: " + mbError;
+                break;
             case "uds":
                 fields = UdsAnatomy.Describe(bytes);
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, can, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, can, uds)");
         }
         return Result(bytes, fields, summary);
     }
@@ -297,6 +309,8 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
             "uds" or "obd2" or "uds-ecu" => UdsAnatomy.Describe(data),
             "can" or "can-slcan" => CanFields(data),
             "lorawan" or "semtech-udp" => LoRaWanAnatomy.Describe(data),
+            "dlms" => DlmsAnatomy.Describe(data),
+            "mbus" => MBusAnatomy.Describe(data),
             _ => [new FrameField("Data", 0, data.Length, FrameFieldKind.Data)],
         };
         return WriteAsync(new JsonObject
@@ -388,6 +402,37 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 await vehicle.ConnectAsync(ct);
                 await gcs.ConnectAsync(ct);
                 sim.Start();
+                break;
+            }
+            case "sim:dlms":
+            {
+                var listener = new InMemoryTransportListener("monitor-dlms");
+                var server = DlmsServer.Create(o => o.ListenInMemory(listener));
+                var meter = new DlmsMeterSimulator(server);
+                var client = DlmsClient.Create(o => o.UseInMemory(listener));
+                m.Resources.AddRange([server, meter, client]);
+                client.AddTap(tap);
+                await server.StartAsync(ct);
+                meter.Start();
+                await client.ConnectAsync(ct);
+                _ = Loop(ct, TimeSpan.FromSeconds(2), async () =>
+                {
+                    await client.ReadRegisterAsync(ObisCode.Parse("1.0.1.7.0.255"), ct);
+                    await client.ReadRegisterAsync(ObisCode.Parse("1.0.32.7.0.255"), ct);
+                });
+                break;
+            }
+            case "sim:mbus":
+            {
+                var listener = new InMemoryTransportListener("monitor-mbus");
+                var segment = MBusSlaveSimulator.Create(o => o.ListenInMemory(listener)).AddDefaultDevices();
+                var master = MBusMaster.Create(o => o.UseInMemory(listener));
+                m.Resources.AddRange([segment, master]);
+                master.AddTap(tap);
+                await segment.StartAsync(ct);
+                await master.ConnectAsync(ct);
+                byte next = 0;
+                _ = Loop(ct, TimeSpan.FromSeconds(2), async () => await master.ReadAsync((byte)(1 + (next++ % 3)), ct));
                 break;
             }
             case "sim:lorawan":

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Dlms</RootNamespace>
+    <Description>DLMS/COSEM (IEC 62056) for IoTCom.Net: HDLC (62056-46) and TCP wrapper (62056-47) links, A-XDR data, OBIS codes, AARQ/AARE with no, low (password) or high (GMAC) authentication, GET/SET/ACTION with block transfer and selective access, security suite 0 ciphering (AES-GCM), a client for meters and a meter simulator (registers, clock, load profile, disconnect control). The codec is mirrored by a fuzzed Rust crate through shared conformance vectors. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);dlms;cosem;iec62056;obis;smart-meter;metering;hdlc;amr;ami</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Framing\IoTCom.Net.Framing.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.MBus</RootNamespace>
+    <Description>Wired M-Bus (EN 13757-2/-3) for IoTCom.Net: frame codec (E5, short, control, long), variable data structure with DIF/DIFE/VIF/VIFE records, BCD and type F/G dates, a master (ping, REQ_UD2 with FCB, primary scan, secondary-address selection) and a slave simulator with heat, water and electricity meters. The codec is mirrored by a fuzzed Rust crate through shared conformance vectors. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);mbus;m-bus;en13757;heat-meter;water-meter;metering;sub-metering</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

@@ -43,12 +43,14 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · synthetic studies | `IoTCom.Net.Adapters.Dicom` |
 | [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
 | [LoRaWAN 1.0.x](protocols/lorawan.md) | network server · Semtech UDP gateway · end device · simulator | `IoTCom.Net.Protocols.LoRaWan` |
+| [DLMS/COSEM](protocols/dlms.md) | meter reader · meter simulator · HDLC · wrapper · LLS/HLS | `IoTCom.Net.Protocols.Dlms` |
+| [M-Bus (wired)](protocols/mbus.md) | master · scan · secondary addressing · simulator | `IoTCom.Net.Protocols.MBus` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-The [roadmap](../../PLAN.md) lists the protocols coming next (DLMS/M-Bus, mDNS, AT commands, Sparkplug B, OPC UA adapter, BLE, …).
+The [roadmap](../../PLAN.md) lists the protocols coming next (NMEA AIS, mDNS, AT commands, ASTM, Sparkplug B, OPC UA adapter, BLE, …).
 
 ## Build things
 

@@ -116,6 +116,13 @@ name = "iotcom-core"
 version = "0.1.0"
 
 [[package]]
+name = "iotcom-dlms"
+version = "0.1.0"
+dependencies = [
+ "iotcom-core",
+]
+
+[[package]]
 name = "iotcom-ffi-support"
 version = "0.1.0"
 dependencies = [
@@ -148,6 +155,10 @@ dependencies = [
 
 [[package]]
 name = "iotcom-mavlink"
+version = "0.1.0"
+
+[[package]]
+name = "iotcom-mbus"
 version = "0.1.0"
 
 [[package]]

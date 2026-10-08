@@ -128,6 +128,13 @@ if (Want("gallery-lorawan.png"))
     Shot("gallery-lorawan.png");
 }
 
+if (Want("gallery-metering.png"))
+{
+    // Smart metering: wait for the first register, profile and M-Bus reads, then catch the LCD mid-cycle.
+    Show("smart-metering", seconds: 8);
+    Shot("gallery-metering.png");
+}
+
 if (Want("gallery-nmea.png"))
 {
     Show("nmea-tracker", seconds: 22);

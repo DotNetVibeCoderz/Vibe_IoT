@@ -44,12 +44,14 @@ perangkat keras.
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · studi sintetis | `IoTCom.Net.Adapters.Dicom` |
 | [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
 | [LoRaWAN 1.0.x](protocols/lorawan.md) | network server · gateway Semtech UDP · end device · simulator | `IoTCom.Net.Protocols.LoRaWan` |
+| [DLMS/COSEM](protocols/dlms.md) | pembaca meter · simulator meter · HDLC · wrapper · LLS/HLS | `IoTCom.Net.Protocols.Dlms` |
+| [M-Bus (berkabel)](protocols/mbus.md) | master · pemindaian · alamat sekunder · simulator | `IoTCom.Net.Protocols.MBus` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (DLMS/M-Bus, mDNS, perintah AT, Sparkplug B, adapter OPC UA, BLE, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (AIS NMEA, mDNS, perintah AT, ASTM, Sparkplug B, adapter OPC UA, BLE, …).
 
 ## Membangun aplikasi
 

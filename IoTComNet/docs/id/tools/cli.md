@@ -39,6 +39,9 @@ iotcom --help
 | `iotcom coap serve` | node rumah kaca simulasi di UDP 5683 |
 | `iotcom lorawan server` | network server LoRaWAN ringan untuk gateway Semtech UDP (`--devices`, `--sim` untuk gateway dan sensor simulasi, `--frames`, `--pcap`) |
 | `iotcom lorawan simulate` | gateway dan sensor simulasi terhadap network server mana pun (`--server host:1700`; key disimpan ke file perangkat) |
+| `iotcom dlms read` / `objects` / `profile` | meter DLMS/COSEM lewat HDLC (`--serial`), wrapper (`-h`, TCP 4059), atau `--sim`; `--password` atau `--hls` untuk management client |
+| `iotcom dlms relay on\|off` / `simulate` | disconnect control (butuh `--allow-write` dan konfirmasi); meter simulasi di TCP |
+| `iotcom mbus scan` / `read` / `decode` / `simulate` | master M-Bus (`--serial` 2400 8E1, `-h` gateway, `--sim`): pemindaian primer, pembacaan primer atau sekunder, penguraian telegram, segmen simulasi |
 | `iotcom lorawan decode` / `airtime` | urai PHYPayload (hex atau base64; MIC dan dekripsi dengan `--appkey` atau `--nwkskey`/`--appskey`), tabel waktu di udara |
 | `iotcom hl7 listen` | penerima MLLP dengan ACK otomatis dan observasi terurai (`--raw` mencetak segmen) |
 | `iotcom hl7 send` | kirim berkas ER7 (atau contoh ORU^R01) dan tampilkan ACK |

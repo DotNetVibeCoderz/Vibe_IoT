@@ -32,6 +32,8 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Uds\IoTCom.Net.Protocols.Uds.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Coap\IoTCom.Net.Protocols.Coap.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.LoRaWan\IoTCom.Net.Protocols.LoRaWan.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Dlms\IoTCom.Net.Protocols.Dlms.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.MBus\IoTCom.Net.Protocols.MBus.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Mavlink\IoTCom.Net.Protocols.Mavlink.csproj" />
     <ProjectReference Include="..\..\samples\shared\IoTCom.Samples.Medical\IoTCom.Samples.Medical.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />

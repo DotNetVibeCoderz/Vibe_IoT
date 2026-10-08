@@ -1,0 +1,103 @@
+[
+  {
+    "name": "water meter reference (checksum 0x18)",
+    "kind": "long",
+    "valid": true,
+    "wire": "681F1F680802727856341224400107550000000313153100DA023B13018B60043718021816",
+    "control": 8,
+    "address": 2,
+    "ci": 114,
+    "id": 305419896,
+    "manufacturer": 16420,
+    "medium": 7,
+    "records": [
+      "03||13||153100|0|0|0|12565|0",
+      "DA|02|3B||1301|5|0|0|113|5",
+      "8B|60|04||371802|0|2|1|21837|10"
+    ]
+  },
+  {
+    "name": "heat meter with storage, tariff and fillers",
+    "kind": "long",
+    "valid": true,
+    "wire": "6838386808017201001026F425010407000000040644470000025AAD028C100370284105046D2D13483A426C4131C40406CE42000002FD4801092F2FD416",
+    "control": 8,
+    "address": 1,
+    "ci": 114,
+    "id": 638582785,
+    "manufacturer": 9716,
+    "medium": 4,
+    "records": [
+      "04||06||44470000|0|0|0|18244|0",
+      "02||5A||AD02|0|0|0|685|6",
+      "8C|10|03||70284105|0|1|0|5412870|10",
+      "04||6D||2D13483A|0|0|0|977802029|17",
+      "42||6C||4131|1|0|0|12609|23",
+      "C4|04|06||CE420000|9|0|0|17102|27",
+      "02||FD|48|0109|0|0|0|2305|34"
+    ]
+  },
+  {
+    "name": "manufacturer data after 0x0F",
+    "kind": "long",
+    "valid": true,
+    "wire": "6819196808057201001026F4250104070000000413E80300000FAABBCC1D16",
+    "control": 8,
+    "address": 5,
+    "ci": 114,
+    "id": 638582785,
+    "manufacturer": 9716,
+    "medium": 4,
+    "records": [
+      "04||13||E8030000|0|0|0|1000|0"
+    ]
+  },
+  {
+    "name": "ack",
+    "kind": "frame",
+    "valid": true,
+    "wire": "E5"
+  },
+  {
+    "name": "snd_nke",
+    "kind": "frame",
+    "valid": true,
+    "wire": "1040014116"
+  },
+  {
+    "name": "req_ud2 fcb",
+    "kind": "frame",
+    "valid": true,
+    "wire": "107B017C16"
+  },
+  {
+    "name": "select secondary",
+    "kind": "frame",
+    "valid": true,
+    "wire": "680B0B6853FD5202002026FFFFFFFFE616"
+  },
+  {
+    "name": "short bad checksum",
+    "kind": "frame",
+    "valid": false,
+    "wire": "105B015D16"
+  },
+  {
+    "name": "long bad checksum",
+    "kind": "frame",
+    "valid": false,
+    "wire": "681F1F680802727856341224400107550000000313153100DA023B13018B60043718021916"
+  },
+  {
+    "name": "length mismatch",
+    "kind": "frame",
+    "valid": false,
+    "wire": "68050668"
+  },
+  {
+    "name": "bad stop",
+    "kind": "frame",
+    "valid": false,
+    "wire": "105B015C17"
+  }
+]

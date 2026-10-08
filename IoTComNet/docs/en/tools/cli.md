@@ -39,6 +39,9 @@ iotcom --help
 | `iotcom coap serve` | simulated greenhouse node on UDP 5683 |
 | `iotcom lorawan server` | light LoRaWAN network server for Semtech UDP gateways (`--devices`, `--sim` for simulated gateways and sensors, `--frames`, `--pcap`) |
 | `iotcom lorawan simulate` | simulated gateways and sensors against any network server (`--server host:1700`; keys saved to a device file) |
+| `iotcom dlms read` / `objects` / `profile` | DLMS/COSEM meter over HDLC (`--serial`), the wrapper (`-h`, TCP 4059) or `--sim`; `--password` or `--hls` for the management client |
+| `iotcom dlms relay on\|off` / `simulate` | disconnect control (needs `--allow-write` and confirmation); a simulated meter on TCP |
+| `iotcom mbus scan` / `read` / `decode` / `simulate` | M-Bus master (`--serial` 2400 8E1, `-h` gateway, `--sim`): primary scan, primary or secondary read, telegram decoding, simulated segment |
 | `iotcom lorawan decode` / `airtime` | decode a PHYPayload (hex or base64; MIC and decryption with `--appkey` or `--nwkskey`/`--appskey`), time-on-air table |
 | `iotcom hl7 listen` | MLLP receiver with auto-ACK and decoded observations (`--raw` prints segments) |
 | `iotcom hl7 send` | send an ER7 file (or a sample ORU^R01) and print the ACK |

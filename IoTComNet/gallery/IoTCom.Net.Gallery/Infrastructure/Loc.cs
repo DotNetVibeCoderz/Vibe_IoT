@@ -50,7 +50,7 @@ public sealed class Loc : INotifyPropertyChanged
         ["Medical"] = new("MEDICAL & HEALTHCARE", "MEDIS & KESEHATAN"),
         ["Navigation"] = new("NAVIGATION & MARINE", "NAVIGASI & MARITIM"),
         ["Building"] = new("SMART BUILDING & STAGE", "GEDUNG PINTAR & PANGGUNG"),
-        ["Lpwan"] = new("LPWAN & SMART CITY", "LPWAN & KOTA PINTAR"),
+        ["Lpwan"] = new("LPWAN, METERING & CITY", "LPWAN, METERING & KOTA"),
         ["Messaging"] = new("MESSAGING", "PESAN"),
         ["Workbench"] = new("PROTOCOL WORKBENCH", "MEJA KERJA PROTOKOL"),
     };

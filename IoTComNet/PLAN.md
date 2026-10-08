@@ -36,7 +36,7 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | CoAP (Observe, Block-wise) | P1 | ✅ `0.4.0-preview.1`: C# client/server + Rust codec twin (conformance + fuzz) · DTLS, OSCORE, CoAP-over-TCP ⏳ |
 | MAVLink v1/v2 + dialect source generator | P1 | ✅ `0.5.0-preview.1`: C# runtime + Roslyn generator (common dialect, custom dialects) + Rust frame codec twin · mission protocol, FTP, routing ⏳ |
 | LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | ✅ `0.8.0-preview.1`: managed C# runtime (server, forwarder, device MAC, simulator) + fuzzed Rust codec twin · Class B/C, ADR decisions, Basics Station ⏳ |
-| DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | |
+| DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | ✅ `0.9.0-preview.1`: managed C# client/server/simulators + fuzzed Rust codec twins · suites 1/2, push, wireless M-Bus ⏳ |
 | NMEA: AIS decoding | P1 | |
 | mDNS / DNS-SD (discovery for Gallery and CLI) | P1 | |
 | AT command engine (cellular modules, URC parser) | P1 | |

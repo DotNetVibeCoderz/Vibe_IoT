@@ -569,6 +569,207 @@ def lorawan_vectors():
         out.append({"name": name, "kind": "invalid", "valid": False, "phy": wire.upper()})
     return out
 
+# ---------------------------------------------------------------------------------------------------------------------
+# DLMS/COSEM: HDLC frames (IEC 62056-46) and A-XDR data. Data vectors carry a canonical text form that both suites
+# render identically: null, bool:true, i8:-5 … u64:…, enum:3, bcd:9, f32:<bits>, f64:<bits>, octets:HEX, vis:HEX,
+# utf8:HEX, bits:N:HEX, dt:HEX, date:HEX, time:HEX, array[…], struct[…].
+
+def hdlc_fcs(data):
+    return crc_bitwise(data, 16, 0x1021, 0xFFFF, True, True, 0xFFFF)
+
+
+def hdlc_addr(upper, lower=None, size=0):
+    if size == 0:
+        size = (1 if upper < 0x80 else 4) if lower is None else (2 if upper < 0x80 and lower < 0x80 else 4)
+    if size == 1:
+        return bytes([(upper << 1) | 1])
+    if size == 2:
+        return bytes([upper << 1, (lower << 1) | 1])
+    lower = lower or 0
+    return bytes([(upper >> 7) << 1, (upper & 0x7F) << 1, (lower >> 7) << 1, ((lower & 0x7F) << 1) | 1])
+
+
+def hdlc_frame(dest, src, control, info=b"", segmented=False):
+    head = dest + src + bytes([control])
+    length = 2 + len(head) + (2 + len(info) if info else 0) + 2
+    body = bytes([0xA0 | (0x08 if segmented else 0) | (length >> 8), length & 0xFF]) + head
+    if info:
+        hcs = hdlc_fcs(body)
+        body += bytes([hcs & 0xFF, hcs >> 8]) + info
+    fcs = hdlc_fcs(body)
+    return b"\x7e" + body + bytes([fcs & 0xFF, fcs >> 8]) + b"\x7e"
+
+
+def axdr_len(n):
+    if n < 0x80:
+        return bytes([n])
+    if n <= 0xFF:
+        return bytes([0x81, n])
+    return bytes([0x82, n >> 8, n & 0xFF])
+
+
+def axdr(v):
+    """v = (kind, value) → (bytes, canonical)."""
+    kind, val = v
+    ints = {"i8": (15, 1, True), "i16": (16, 2, True), "i32": (5, 4, True), "i64": (20, 8, True),
+            "u8": (17, 1, False), "u16": (18, 2, False), "u32": (6, 4, False), "u64": (21, 8, False),
+            "enum": (22, 1, False), "bcd": (13, 1, False)}
+    if kind == "null":
+        return b"\x00", "null"
+    if kind == "bool":
+        return bytes([3, 0xFF if val else 0]), "bool:" + ("true" if val else "false")
+    if kind in ints:
+        tag, size, signed = ints[kind]
+        return bytes([tag]) + val.to_bytes(size, "big", signed=signed), f"{kind}:{val}"
+    if kind in ("f32", "f64"):
+        import struct
+        raw = struct.pack(">f" if kind == "f32" else ">d", val)
+        return bytes([23 if kind == "f32" else 24]) + raw, f"{kind}:{raw.hex().upper()}"
+    if kind in ("octets", "vis", "utf8"):
+        tag = {"octets": 9, "vis": 10, "utf8": 12}[kind]
+        return bytes([tag]) + axdr_len(len(val)) + val, f"{kind}:{val.hex().upper()}"
+    if kind == "bits":
+        nbits, raw = val
+        return bytes([4]) + axdr_len(nbits) + raw, f"bits:{nbits}:{raw.hex().upper()}"
+    if kind in ("dt", "date", "time"):
+        tag = {"dt": 25, "date": 26, "time": 27}[kind]
+        return bytes([tag]) + val, f"{kind}:{val.hex().upper()}"
+    if kind in ("array", "struct"):
+        parts = [axdr(x) for x in val]
+        return (bytes([1 if kind == "array" else 2]) + axdr_len(len(parts)) + b"".join(p[0] for p in parts),
+                f"{kind}[" + ",".join(p[1] for p in parts) + "]")
+    raise ValueError(kind)
+
+
+def dlms_vectors():
+    out = []
+
+    def frame(name, raw, control, dest, src, info, segmented, published=None):
+        if published is not None:
+            assert raw.hex().upper() == published, (name, raw.hex())
+        out.append({"name": name, "kind": "hdlc", "valid": True, "wire": raw.hex().upper(), "control": control,
+                    "dest": dest, "src": src, "info": info.hex().upper(), "segmented": segmented})
+
+    client = hdlc_addr(16)
+    server = hdlc_addr(1, 17)
+    frame("snrm (classic)", hdlc_frame(hdlc_addr(1), client, 0x93), 0x93, "1", "16", b"", False, "7EA0070321930F017E")
+    params = bytes.fromhex("818014050200800602008007040000000108040000000 1".replace(" ", ""))
+    frame("ua with parameters", hdlc_frame(client, server, 0x73, params), 0x73, "16", "1/17", params, False)
+    get = bytes.fromhex("E6E600C001C100030100010800FF0200")
+    frame("i-frame get", hdlc_frame(server, client, 0x10, get), 0x10, "1/17", "16", get, False)
+    seg = bytes(range(60))
+    frame("segmented i-frame", hdlc_frame(client, server, 0x32, seg, True), 0x32, "16", "1/17", seg, True)
+    frame("rr", hdlc_frame(server, client, 0x51), 0x51, "1/17", "16", b"", False)
+    big = hdlc_addr(1, 0x3FFF, 4)
+    frame("four-byte server address", hdlc_frame(big, client, 0x53), 0x53, "1/16383", "16", b"", False)
+
+    good = hdlc_frame(server, client, 0x10, get)
+    bad_fcs = bytearray(good)
+    bad_fcs[-3] ^= 1
+    bad_hcs = bytearray(good)
+    bad_hcs[10] ^= 1
+    for name, wire in (("bad fcs", bytes(bad_fcs)), ("bad hcs", bytes(bad_hcs)), ("not type 3", b"\x7e\x80\x05\x03\x21\x93\x7e"),
+                       ("length past the closing flag", b"\x7e\xa0\x20\x03\x21\x93\x0f\x01\x7e")):
+        out.append({"name": name, "kind": "hdlc", "valid": False, "wire": wire.hex().upper()})
+
+    values = [
+        ("null", ("null", None)),
+        ("register value", ("u32", 4812345)),
+        ("negative power", ("i32", -1250)),
+        ("scaler unit", ("struct", [("i8", -1), ("enum", 35)])),
+        ("all integers", ("struct", [("i8", -128), ("i16", -32768), ("i64", -2), ("u8", 255), ("u16", 65535), ("u64", 18446744073709551615), ("bcd", 0x42), ("bool", True)])),
+        ("floats", ("struct", [("f32", 1.5), ("f64", -2.25)])),
+        ("strings", ("struct", [("vis", b"IOT2026000017"), ("utf8", "Rp 1.500".encode()), ("octets", bytes(range(6)))])),
+        ("long octet string", ("octets", bytes(range(200)))),
+        ("bit string", ("bits", (11, bytes([0xA5, 0xE0])))),
+        ("dates", ("struct", [("dt", bytes.fromhex("07EA0A0804132D1E00FE5C00")), ("date", bytes.fromhex("07EA0A08FF")), ("time", bytes.fromhex("132D1EFF"))])),
+        ("profile buffer", ("array", [("struct", [("octets", bytes.fromhex("07EA0A0804130000FFFE5C00")), ("u32", 4812000 + i * 250), ("u32", 1206000), ("u16", 2301)]) for i in range(3)])),
+        ("capture objects", ("array", [("struct", [("u16", 8), ("octets", bytes([0, 0, 1, 0, 0, 255])), ("i8", 2), ("u16", 0)])])),
+    ]
+    for name, v in values:
+        raw, canon = axdr(v)
+        out.append({"name": name, "kind": "axdr", "valid": True, "wire": raw.hex().upper(), "canonical": canon})
+    for name, wire in (("truncated u32", "0600"), ("array past end", "0103 1100"), ("unknown tag", "08"), ("octet length past end", "090500"),
+                       ("bad length form", "0985"), ("deep nesting", "0201" * 40 + "00")):
+        out.append({"name": name, "kind": "axdr", "valid": False, "wire": wire.replace(" ", "")})
+    return out
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# M-Bus (EN 13757-2/-3): frames and the structure of variable-data records (DIF/DIFE/VIF/VIFE, raw value).
+
+def mbus_long(c, a, ci, data):
+    body = bytes([c, a, ci]) + data
+    return bytes([0x68, len(body), len(body), 0x68]) + body + bytes([sum(body) & 0xFF, 0x16])
+
+
+def mbus_vectors():
+    out = []
+    reference = bytes.fromhex("681F1F680802727856341224400107550000000313153100DA023B13018B60043718021816")
+    assert mbus_long(0x08, 0x02, 0x72, reference[7:-2]) == reference
+
+    def records(data):
+        recs, pos = [], 0
+        while pos < len(data):
+            start = pos
+            dif = data[pos]
+            pos += 1
+            if dif == 0x2F:
+                continue
+            if dif & 0x0F == 0x0F:
+                break
+            dife = []
+            last = dif
+            while last & 0x80:
+                last = data[pos]
+                pos += 1
+                dife.append(last)
+            vif = data[pos]
+            pos += 1
+            vife = []
+            last = vif
+            while last & 0x80:
+                last = data[pos]
+                pos += 1
+                vife.append(last)
+            size = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 4, 6: 6, 7: 8, 9: 1, 10: 2, 11: 3, 12: 4, 14: 6}[dif & 0x0F]
+            raw = data[pos:pos + size]
+            pos += size
+            storage = (dif >> 6) & 1
+            tariff = subunit = 0
+            for i, e in enumerate(dife):
+                storage |= (e & 0x0F) << (1 + 4 * i)
+                tariff |= ((e >> 4) & 3) << (2 * i)
+                subunit |= ((e >> 6) & 1) << i
+            if dif & 0x0F in (9, 10, 11, 12, 14):
+                value = int(raw[::-1].hex() or "0")
+            else:
+                value = int.from_bytes(raw, "little", signed=True) if raw else 0
+            recs.append(f"{dif:02X}|{bytes(dife).hex().upper()}|{vif:02X}|{bytes(vife).hex().upper()}|{raw.hex().upper()}|{storage}|{tariff}|{subunit}|{value}|{start}")
+        return recs
+
+    def telegram(name, wire):
+        user = wire[7:-2]
+        out.append({"name": name, "kind": "long", "valid": True, "wire": wire.hex().upper(), "control": wire[4], "address": wire[5], "ci": wire[6],
+                    "id": int.from_bytes(user[0:4], "little"), "manufacturer": int.from_bytes(user[4:6], "little"), "medium": user[7],
+                    "records": records(user[12:])})
+
+    telegram("water meter reference (checksum 0x18)", reference)
+    header = bytes.fromhex("01001026") + (((9 << 10) | (15 << 5) | 20)).to_bytes(2, "little") + bytes([1, 4, 7, 0, 0, 0])
+    recs = (bytes.fromhex("0406") + (18244).to_bytes(4, "little") + bytes.fromhex("025A") + (685).to_bytes(2, "little")
+            + bytes.fromhex("8C1003") + bytes.fromhex("70284105") + bytes.fromhex("046D") + bytes([45, 19, 8 | (2 << 5), 10 | (3 << 4)])
+            + bytes.fromhex("426C") + bytes([1 | (2 << 5), 1 | (3 << 4)]) + bytes.fromhex("C40406") + (17102).to_bytes(4, "little")
+            + bytes.fromhex("02FD48") + (2305).to_bytes(2, "little") + bytes.fromhex("2F2F"))
+    telegram("heat meter with storage, tariff and fillers", mbus_long(0x08, 0x01, 0x72, header + recs))
+    telegram("manufacturer data after 0x0F", mbus_long(0x08, 0x05, 0x72, header + bytes.fromhex("0413E8030000 0F AABBCC".replace(" ", ""))))
+    for name, wire in (("ack", "E5"), ("snd_nke", "1040014116"), ("req_ud2 fcb", "107B017C16"),
+                       ("select secondary", mbus_long(0x53, 0xFD, 0x52, bytes.fromhex("02002026FFFFFFFF")).hex())):
+        out.append({"name": name, "kind": "frame", "valid": True, "wire": wire.upper()})
+    for name, wire in (("short bad checksum", "105B015D16"), ("long bad checksum", reference.hex()[:-4] + "1916"),
+                       ("length mismatch", "68050668"), ("bad stop", "105B015C17")):
+        out.append({"name": name, "kind": "frame", "valid": False, "wire": wire.upper()})
+    return out
+
 
 def main():
     files = {
@@ -580,6 +781,8 @@ def main():
         "mavlink_messages.json": mavlink_message_table(),
         "mavlink.json": mavlink_frames(),
         "lorawan.json": lorawan_vectors(),
+        "dlms.json": dlms_vectors(),
+        "mbus.json": mbus_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

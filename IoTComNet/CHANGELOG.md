@@ -3,6 +3,33 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.9.0-preview.1 — 2026-10-09
+
+Metering: DLMS/COSEM and M-Bus.
+
+- **New package `IoTCom.Net.Protocols.Dlms` (IEC 62056):** HDLC links (SNRM/UA negotiation, segmentation with RR)
+  and the TCP wrapper; A-XDR data, OBIS codes and catalog, COSEM date-time; AARQ/AARE with no, low (password) and
+  high (GMAC) security and ciphered APDUs (suite 0, AES-GCM, replay protection); GET with block transfer and
+  selective access, SET, ACTION; `DlmsClient` (read-only by default), `DlmsServer` with COSEM classes (Data,
+  Register, Clock, Profile generic, Disconnect control, Association LN), and `DlmsMeterSimulator` (three-phase
+  household with rooftop solar, PLN WBP/LWBP tariffs, 15-minute load profile, relay).
+- **New package `IoTCom.Net.Protocols.MBus` (EN 13757-2/-3):** frame codec, variable data records (DIF/DIFE,
+  VIF/VIFE, BCD, type F/G dates), `MBusMaster` (ping, REQ_UD2 with FCB, scan, secondary addressing) and
+  `MBusSlaveSimulator` (heat, water and electricity meters).
+- **Rust twins `iotcom-dlms` and `iotcom-mbus`** on shared vectors (`dlms.json`, `mbus.json`) from a separate Python
+  reference; fuzz targets 8 and 9.
+- **CLI:** `iotcom dlms read|objects|profile|relay|simulate`, `iotcom mbus scan|read|decode|simulate`; `iotcom rpc`
+  gains `dlms`/`mbus` decoders and `sim:dlms`/`sim:mbus` monitors.
+- **Gallery:** *Smart meter reading* — the meter's LCD faceplate, two days of load profile, the relay behind a
+  password, and the building's M-Bus meters.
+- Samples `DlmsMeterReader` and `MBusScanner`, notebook pair `metering/10-dlms-mbus`, hosting helpers
+  `AddDlmsClient`/`AddMBusMaster`, docs pages *DLMS/COSEM* and *M-Bus*.
+- **Fix:** ISO-TP round-trip tests had too little timeout headroom on busy CI runners.
+
+*Metering: paket DLMS/COSEM (HDLC dan wrapper, OBIS, LLS/HLS dengan AES-GCM, block transfer, simulator meter
+rumah tangga dengan panel surya) dan M-Bus berkabel (master, alamat sekunder, simulator), twin Rust yang di-fuzz,
+perintah CLI, demo Galeri faceplate LCD, sampel, notebook, dan dokumentasi EN/ID.*
+
 ## 0.8.0-preview.1 — 2026-10-08
 
 LoRaWAN.

@@ -123,6 +123,24 @@ app.Configure(c =>
         l.AddCommand<LoRaWanSimulateCommand>("simulate").WithExample("lorawan", "simulate", "--server", "chirpstack.local:1700", "--region", "EU868");
         l.AddCommand<LoRaWanAirtimeCommand>("airtime").WithExample("lorawan", "airtime", "12", "--region", "AS923");
     });
+    c.AddBranch("dlms", d =>
+    {
+        d.SetDescription("DLMS/COSEM smart meters (IEC 62056): read registers, objects, load profile, relay; simulate a meter.");
+        d.AddCommand<DlmsReadCommand>("read").WithExample("dlms", "read", "--sim").WithExample("dlms", "read", "--serial", "COM3", "1.0.1.8.0.255");
+        d.AddCommand<DlmsObjectsCommand>("objects").WithExample("dlms", "objects", "-h", "10.0.0.30");
+        d.AddCommand<DlmsProfileCommand>("profile").WithExample("dlms", "profile", "--sim", "--hours", "3");
+        d.AddCommand<DlmsRelayCommand>("relay").WithDescription("Disconnect control (requires --allow-write and a management client).")
+            .WithExample("dlms", "relay", "off", "--sim", "--password", "12345678", "--allow-write");
+        d.AddCommand<DlmsSimulateCommand>("simulate").WithExample("dlms", "simulate", "--port", "4059");
+    });
+    c.AddBranch("mbus", m =>
+    {
+        m.SetDescription("Wired M-Bus (EN 13757): scan, read (primary or secondary address), decode; simulate a segment.");
+        m.AddCommand<MBusScanCommand>("scan").WithExample("mbus", "scan", "--sim", "--to", "10").WithExample("mbus", "scan", "--serial", "COM4");
+        m.AddCommand<MBusReadCommand>("read").WithExample("mbus", "read", "1", "--sim").WithExample("mbus", "read", "26200002", "--sim");
+        m.AddCommand<MBusDecodeCommand>("decode").WithExample("mbus", "decode", "681F1F680802727856341224400107550000000313153100DA023B13018B60043718021816");
+        m.AddCommand<MBusSimulateCommand>("simulate").WithExample("mbus", "simulate", "--port", "10001");
+    });
     c.AddBranch("hl7", h =>
     {
         h.SetDescription("HL7 v2 over MLLP: receive (auto-ACK), send, and simulate a bedside monitor.");

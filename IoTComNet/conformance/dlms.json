@@ -1,0 +1,212 @@
+[
+  {
+    "name": "snrm (classic)",
+    "kind": "hdlc",
+    "valid": true,
+    "wire": "7EA0070321930F017E",
+    "control": 147,
+    "dest": "1",
+    "src": "16",
+    "info": "",
+    "segmented": false
+  },
+  {
+    "name": "ua with parameters",
+    "kind": "hdlc",
+    "valid": true,
+    "wire": "7EA021210223738F728180140502008006020080070400000001080400000001CE6A7E",
+    "control": 115,
+    "dest": "16",
+    "src": "1/17",
+    "info": "8180140502008006020080070400000001080400000001",
+    "segmented": false
+  },
+  {
+    "name": "i-frame get",
+    "kind": "hdlc",
+    "valid": true,
+    "wire": "7EA01A02232110E670E6E600C001C100030100010800FF020032687E",
+    "control": 16,
+    "dest": "1/17",
+    "src": "16",
+    "info": "E6E600C001C100030100010800FF0200",
+    "segmented": false
+  },
+  {
+    "name": "segmented i-frame",
+    "kind": "hdlc",
+    "valid": true,
+    "wire": "7EA846210223323591000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132333435363738393A3B0F8D7E",
+    "control": 50,
+    "dest": "16",
+    "src": "1/17",
+    "info": "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132333435363738393A3B",
+    "segmented": true
+  },
+  {
+    "name": "rr",
+    "kind": "hdlc",
+    "valid": true,
+    "wire": "7EA00802232151A3817E",
+    "control": 81,
+    "dest": "1/17",
+    "src": "16",
+    "info": "",
+    "segmented": false
+  },
+  {
+    "name": "four-byte server address",
+    "kind": "hdlc",
+    "valid": true,
+    "wire": "7EA00A0002FEFF2153D1447E",
+    "control": 83,
+    "dest": "1/16383",
+    "src": "16",
+    "info": "",
+    "segmented": false
+  },
+  {
+    "name": "bad fcs",
+    "kind": "hdlc",
+    "valid": false,
+    "wire": "7EA01A02232110E670E6E600C001C100030100010800FF020033687E"
+  },
+  {
+    "name": "bad hcs",
+    "kind": "hdlc",
+    "valid": false,
+    "wire": "7EA01A02232110E670E6E700C001C100030100010800FF020032687E"
+  },
+  {
+    "name": "not type 3",
+    "kind": "hdlc",
+    "valid": false,
+    "wire": "7E80050321937E"
+  },
+  {
+    "name": "length past the closing flag",
+    "kind": "hdlc",
+    "valid": false,
+    "wire": "7EA0200321930F017E"
+  },
+  {
+    "name": "null",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "00",
+    "canonical": "null"
+  },
+  {
+    "name": "register value",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "0600496E39",
+    "canonical": "u32:4812345"
+  },
+  {
+    "name": "negative power",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "05FFFFFB1E",
+    "canonical": "i32:-1250"
+  },
+  {
+    "name": "scaler unit",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "02020FFF1623",
+    "canonical": "struct[i8:-1,enum:35]"
+  },
+  {
+    "name": "all integers",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "02080F8010800014FFFFFFFFFFFFFFFE11FF12FFFF15FFFFFFFFFFFFFFFF0D4203FF",
+    "canonical": "struct[i8:-128,i16:-32768,i64:-2,u8:255,u16:65535,u64:18446744073709551615,bcd:66,bool:true]"
+  },
+  {
+    "name": "floats",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "0202173FC0000018C002000000000000",
+    "canonical": "struct[f32:3FC00000,f64:C002000000000000]"
+  },
+  {
+    "name": "strings",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "02030A0D494F54323032363030303031370C08527020312E3530300906000102030405",
+    "canonical": "struct[vis:494F5432303236303030303137,utf8:527020312E353030,octets:000102030405]"
+  },
+  {
+    "name": "long octet string",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "0981C8000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132333435363738393A3B3C3D3E3F404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F808182838485868788898A8B8C8D8E8F909192939495969798999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7",
+    "canonical": "octets:000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132333435363738393A3B3C3D3E3F404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F808182838485868788898A8B8C8D8E8F909192939495969798999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7"
+  },
+  {
+    "name": "bit string",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "040BA5E0",
+    "canonical": "bits:11:A5E0"
+  },
+  {
+    "name": "dates",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "02031907EA0A0804132D1E00FE5C001A07EA0A08FF1B132D1EFF",
+    "canonical": "struct[dt:07EA0A0804132D1E00FE5C00,date:07EA0A08FF,time:132D1EFF]"
+  },
+  {
+    "name": "profile buffer",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "01030204090C07EA0A0804130000FFFE5C000600496CE006001266F01208FD0204090C07EA0A0804130000FFFE5C000600496DDA06001266F01208FD0204090C07EA0A0804130000FFFE5C000600496ED406001266F01208FD",
+    "canonical": "array[struct[octets:07EA0A0804130000FFFE5C00,u32:4812000,u32:1206000,u16:2301],struct[octets:07EA0A0804130000FFFE5C00,u32:4812250,u32:1206000,u16:2301],struct[octets:07EA0A0804130000FFFE5C00,u32:4812500,u32:1206000,u16:2301]]"
+  },
+  {
+    "name": "capture objects",
+    "kind": "axdr",
+    "valid": true,
+    "wire": "0101020412000809060000010000FF0F02120000",
+    "canonical": "array[struct[u16:8,octets:0000010000FF,i8:2,u16:0]]"
+  },
+  {
+    "name": "truncated u32",
+    "kind": "axdr",
+    "valid": false,
+    "wire": "0600"
+  },
+  {
+    "name": "array past end",
+    "kind": "axdr",
+    "valid": false,
+    "wire": "01031100"
+  },
+  {
+    "name": "unknown tag",
+    "kind": "axdr",
+    "valid": false,
+    "wire": "08"
+  },
+  {
+    "name": "octet length past end",
+    "kind": "axdr",
+    "valid": false,
+    "wire": "090500"
+  },
+  {
+    "name": "bad length form",
+    "kind": "axdr",
+    "valid": false,
+    "wire": "0985"
+  },
+  {
+    "name": "deep nesting",
+    "kind": "axdr",
+    "valid": false,
+    "wire": "020102010201020102010201020102010201020102010201020102010201020102010201020102010201020102010201020102010201020102010201020102010201020102010201020102010201020100"
+  }
+]

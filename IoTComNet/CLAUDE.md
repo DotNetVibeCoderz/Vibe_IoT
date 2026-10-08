@@ -66,6 +66,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `LoRaWanNetworkServer`, sans-I/O `LoRaWanEndDevice`, `LoRaWanSimulator`); Rust `iotcom-lorawan` is the fuzzed twin kept in sync by
   `/conformance/lorawan.json` (Python reference with its own AES/CMAC). Tests use `InMemoryDatagramNetwork` and
   `HonorTimestamps = false` to skip the 5 s join delay; keys are secrets — never log them.
+- **Metering**: `Protocols.Dlms` (`DlmsClient`/`DlmsServer` over `HdlcLink` or `WrapperLink`, codec `CosemData`/`HdlcFrame`/`DlmsApdu`,
+  `DlmsSecurity` for suite 0, `DlmsMeterSimulator`) and `Protocols.MBus` (`MBusMaster`, `MBusSlaveSimulator`, `MBusTelegram`); Rust
+  `iotcom-dlms`/`iotcom-mbus` are fuzzed codec twins (`/conformance/dlms.json`, `mbus.json`). Clients are read-only by default.
 - **Healthcare**: `Protocols.Hl7` (ER7 codec, MLLP endpoints, `PatientMonitorSimulator`) and `Adapters.Dicom` (fo-dicom
   wrapper, `DicomRenderer`, `SyntheticImaging`; not trimmable, not in the meta-package). Clinical analysis and the AI client
   live in `samples/shared/IoTCom.Samples.Medical` (sample code, never packed). AI config: `IOTCOM_AI_*` env vars or

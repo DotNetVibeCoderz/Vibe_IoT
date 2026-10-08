@@ -34,8 +34,8 @@ memakai `tools/iotcom-cli` yang paling baru di-build. Atur **iotcom.cliPath** un
 | **Snippet** | ketik `iotcom-` di file C#: client dan simulator Modbus, CAN, UDS, CoAP, MAVLink, MQTT, network server LoRaWAN, capture pcapng |
 | **Bahasa** | English dan Bahasa Indonesia, mengikuti bahasa tampilan VS Code |
 
-Decoder: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`, `lorawan`, `semtech-udp`.
-Sumber pemantau: `sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink`, `sim:lorawan` (simulator bawaan), `can:<uri>`
+Decoder: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`, `lorawan`, `semtech-udp`, `dlms`,
+`mbus`. Sumber pemantau: `sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink`, `sim:lorawan`, `sim:dlms`, `sim:mbus` (simulator bawaan), `can:<uri>`
 (misalnya `can:socketcan:can0`, hanya mendengar), `mavlink:udp:<port>`, dan `lorawan:udp:<port>` (network server
 ringan yang menampilkan apa yang diteruskan gateway Anda).
 

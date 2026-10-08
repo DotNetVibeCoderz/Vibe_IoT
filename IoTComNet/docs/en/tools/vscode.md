@@ -33,8 +33,8 @@ most recently built `tools/iotcom-cli` instead. Set **iotcom.cliPath** to use an
 | **Snippets** | type `iotcom-` in a C# file: Modbus client and simulator, CAN, UDS, CoAP, MAVLink, MQTT, LoRaWAN network server, pcapng capture |
 | **Languages** | English and Bahasa Indonesia, following the VS Code display language |
 
-Decoders: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`, `lorawan`, `semtech-udp`.
-Monitor sources: `sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink`, `sim:lorawan` (built-in simulators), `can:<uri>`
+Decoders: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`, `lorawan`, `semtech-udp`, `dlms`,
+`mbus`. Monitor sources: `sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink`, `sim:lorawan`, `sim:dlms`, `sim:mbus` (built-in simulators), `can:<uri>`
 (for example `can:socketcan:can0`, listen only), `mavlink:udp:<port>` and `lorawan:udp:<port>` (a light network
 server that shows what your gateways forward).
 

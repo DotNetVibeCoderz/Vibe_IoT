@@ -151,14 +151,23 @@ name = "iotcom-core"
 version = "0.1.0"
 
 [[package]]
+name = "iotcom-dlms"
+version = "0.1.0"
+dependencies = [
+ "iotcom-core",
+]
+
+[[package]]
 name = "iotcom-fuzz"
 version = "0.0.0"
 dependencies = [
  "iotcom-coap",
  "iotcom-core",
+ "iotcom-dlms",
  "iotcom-isotp",
  "iotcom-lorawan",
  "iotcom-mavlink",
+ "iotcom-mbus",
  "iotcom-modbus",
  "libfuzzer-sys",
 ]
@@ -180,6 +189,10 @@ dependencies = [
 
 [[package]]
 name = "iotcom-mavlink"
+version = "0.1.0"
+
+[[package]]
+name = "iotcom-mbus"
 version = "0.1.0"
 
 [[package]]
