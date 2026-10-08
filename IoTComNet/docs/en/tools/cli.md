@@ -37,6 +37,9 @@ iotcom --help
 | `iotcom obd live` / `vin` / `dtc` | OBD-II live data (`--watch`), VIN, stored and pending DTCs |
 | `iotcom coap get` / `put` / `observe` / `discover` / `ping` | CoAP client on `coap://host/path` URIs (`--accept senml`, `--frames`; writes need `--allow-write`) |
 | `iotcom coap serve` | simulated greenhouse node on UDP 5683 |
+| `iotcom lorawan server` | light LoRaWAN network server for Semtech UDP gateways (`--devices`, `--sim` for simulated gateways and sensors, `--frames`, `--pcap`) |
+| `iotcom lorawan simulate` | simulated gateways and sensors against any network server (`--server host:1700`; keys saved to a device file) |
+| `iotcom lorawan decode` / `airtime` | decode a PHYPayload (hex or base64; MIC and decryption with `--appkey` or `--nwkskey`/`--appskey`), time-on-air table |
 | `iotcom hl7 listen` | MLLP receiver with auto-ACK and decoded observations (`--raw` prints segments) |
 | `iotcom hl7 send` | send an ER7 file (or a sample ORU^R01) and print the ACK |
 | `iotcom hl7 simulate` | a synthetic bedside monitor (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

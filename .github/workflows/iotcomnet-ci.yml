@@ -104,7 +104,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq tshark > /dev/null
           IOTCOM_PCAP_OUT=$PWD/sample.pcapng dotnet test tests/IoTCom.Net.Tests -c Release --no-build --filter "FullyQualifiedName~Writes_a_valid_capture"
           tshark -r sample.pcapng -T fields -e frame.protocols | tee protocols.txt
-          grep -q ':mbtcp' protocols.txt && grep -q ':coap' protocols.txt && grep -q 'can' protocols.txt
+          grep -q ':mbtcp' protocols.txt && grep -q ':coap' protocols.txt && grep -q 'can' protocols.txt && grep -q 'lorawan' protocols.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

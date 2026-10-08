@@ -31,12 +31,13 @@ memakai `tools/iotcom-cli` yang paling baru di-build. Atur **iotcom.cliPath** un
 | **Penampil frame** | pilih byte di file apa pun (hex, berawalan `0x`, atau baris candump), lalu klik kanan **IoTCom: Urai byte yang dipilih**; atau jalankan **IoTCom: Urai sebuah frame…** lalu tempel. Field tampil sebagai frame lane berwarna dengan tabel field; arahkan kursor ke sebuah baris untuk menyorot byte-nya. |
 | **Pemantau lalu lintas** | **IoTCom: Mulai pemantau lalu lintas…**, atau klik simulator atau antarmuka CAN di tampilan *Perangkat & simulator*. Saring frame, klik salah satunya untuk membuka lane-nya, lalu **Simpan .pcapng** untuk Wireshark. |
 | **Tampilan Protokol** | setiap protokol dengan paket NuGet-nya (klik untuk menyalin `dotnet add package …`), dokumentasi dalam English atau Bahasa Indonesia, notebook, sampel, dan decoder |
-| **Snippet** | ketik `iotcom-` di file C#: client dan simulator Modbus, CAN, UDS, CoAP, MAVLink, MQTT, capture pcapng |
+| **Snippet** | ketik `iotcom-` di file C#: client dan simulator Modbus, CAN, UDS, CoAP, MAVLink, MQTT, network server LoRaWAN, capture pcapng |
 | **Bahasa** | English dan Bahasa Indonesia, mengikuti bahasa tampilan VS Code |
 
-Decoder: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`. Sumber pemantau: `sim:modbus`,
-`sim:can`, `sim:coap`, `sim:mavlink` (simulator bawaan), `can:<uri>` (misalnya `can:socketcan:can0`, hanya
-mendengar), dan `mavlink:udp:<port>`.
+Decoder: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`, `lorawan`, `semtech-udp`.
+Sumber pemantau: `sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink`, `sim:lorawan` (simulator bawaan), `can:<uri>`
+(misalnya `can:socketcan:can0`, hanya mendengar), `mavlink:udp:<port>`, dan `lorawan:udp:<port>` (network server
+ringan yang menampilkan apa yang diteruskan gateway Anda).
 
 ![Pemantau lalu lintas](../../images/vscode-monitor.png)
 

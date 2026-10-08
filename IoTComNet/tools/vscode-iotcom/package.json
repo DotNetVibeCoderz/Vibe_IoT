@@ -2,7 +2,7 @@
   "name": "iotcom-net-tools",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "publisher": "gravicode",
   "author": "Gravicode Studios (led by Kang Fadhil)",
   "license": "Apache-2.0",

@@ -42,12 +42,13 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [HL7 v2 over MLLP](protocols/hl7.md) | send · receive · ACK · bedside simulator | `IoTCom.Net.Protocols.Hl7` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · synthetic studies | `IoTCom.Net.Adapters.Dicom` |
 | [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
+| [LoRaWAN 1.0.x](protocols/lorawan.md) | network server · Semtech UDP gateway · end device · simulator | `IoTCom.Net.Protocols.LoRaWan` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-The [roadmap](../../PLAN.md) lists the protocols coming next (CAN/UDS, MAVLink, DLMS, CoAP, OPC UA adapter, BLE, …).
+The [roadmap](../../PLAN.md) lists the protocols coming next (DLMS/M-Bus, mDNS, AT commands, Sparkplug B, OPC UA adapter, BLE, …).
 
 ## Build things
 

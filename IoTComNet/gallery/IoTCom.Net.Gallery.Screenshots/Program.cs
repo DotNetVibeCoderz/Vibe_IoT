@@ -116,6 +116,18 @@ if (Want("gallery-coap.png"))
     Shot("gallery-coap.png");
 }
 
+if (Want("gallery-lorawan.png"))
+{
+    // LoRaWAN: joins take 5 s; the water meter is moved to the edge so it climbs to a slow spreading factor.
+    Show("lorawan-network", seconds: 9);
+    var lorawan = (LoRaWanDemo)vm.SelectedDemo!;
+    lorawan.MoveDevice("water-12", 7.2, 3.6);
+    lorawan.SelectedDevice = "water-12";
+    lorawan.SetInterval(10);
+    Pump(TimeSpan.FromSeconds(16));
+    Shot("gallery-lorawan.png");
+}
+
 if (Want("gallery-nmea.png"))
 {
     Show("nmea-tracker", seconds: 22);

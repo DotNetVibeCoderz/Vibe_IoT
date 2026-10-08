@@ -16,6 +16,7 @@ iotcom-modbus = { path = "../crates/iotcom-modbus" }
 iotcom-isotp = { path = "../crates/iotcom-isotp" }
 iotcom-coap = { path = "../crates/iotcom-coap" }
 iotcom-mavlink = { path = "../crates/iotcom-mavlink" }
+iotcom-lorawan = { path = "../crates/iotcom-lorawan" }
 
 [workspace]
 members = ["."]
@@ -58,6 +59,13 @@ bench = false
 [[bin]]
 name = "mavlink"
 path = "fuzz_targets/mavlink.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "lorawan"
+path = "fuzz_targets/lorawan.rs"
 test = false
 doc = false
 bench = false

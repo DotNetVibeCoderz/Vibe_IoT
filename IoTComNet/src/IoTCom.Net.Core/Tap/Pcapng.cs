@@ -13,6 +13,8 @@ public static class PcapLinkType
     public const ushort User0 = 147;
     /// <summary>SocketCAN frames with a big-endian identifier (LINKTYPE_CAN_SOCKETCAN).</summary>
     public const ushort CanSocketCan = 227;
+    /// <summary>LoRa frames with a LoRaTap header (LINKTYPE_LORATAP); Wireshark hands sync word 0x34 to its LoRaWAN dissector.</summary>
+    public const ushort LoRaTap = 270;
 }
 
 /// <summary>
@@ -179,6 +181,7 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
         "sacn" => ("udp", 5568),
         "mavlink" => ("udp", 14550),
         "can" or "can-slcan" => ("can", 0),
+        "lorawan" or "semtech-udp" => ("loratap", 0),
         _ => ("user", 0),
     };
 
@@ -196,6 +199,9 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
                 case "can":
                     _writer.WritePacket(Interface("can", PcapLinkType.CanSocketCan), frame.Timestamp, frame.Data.Span, inbound, comment);
                     break;
+                case "loratap":
+                    _writer.WritePacket(Interface("lora", PcapLinkType.LoRaTap), frame.Timestamp, LoRaTap(frame.Data.Span), inbound, comment);
+                    break;
                 case "tcp" or "udp":
                     var packet = BuildIpPacket(transport == "tcp", port, inbound, frame.Data.Span, frame.Protocol);
                     _writer.WritePacket(Interface("ip", PcapLinkType.RawIp), frame.Timestamp, packet, inbound, comment);
@@ -206,6 +212,19 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
             }
             if (AutoFlush) _writer.Flush();
         }
+    }
+
+    // LoRaTap v0 header (15 bytes): version, padding, length (BE), frequency (Hz, BE; 0 = unknown), bandwidth
+    // (×125 kHz), SF, packet/max/current RSSI, SNR, sync word 0x34 (public LoRaWAN).
+    private static byte[] LoRaTap(ReadOnlySpan<byte> phy)
+    {
+        var packet = new byte[15 + phy.Length];
+        packet[3] = 15;
+        packet[8] = 1;
+        packet[9] = 7;
+        packet[14] = 0x34;
+        phy.CopyTo(packet.AsSpan(15));
+        return packet;
     }
 
     private int Interface(string name, ushort linkType)

@@ -35,7 +35,7 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 | ISO-TP, UDS, OBD-II (tester + ECU simulator) | P1 | ✅ `0.3.0-preview.1`: ISO-TP in Rust; UDS/OBD-II/ECU simulator in C# · flashing helpers, DoIP ⏳ |
 | CoAP (Observe, Block-wise) | P1 | ✅ `0.4.0-preview.1`: C# client/server + Rust codec twin (conformance + fuzz) · DTLS, OSCORE, CoAP-over-TCP ⏳ |
 | MAVLink v1/v2 + dialect source generator | P1 | ✅ `0.5.0-preview.1`: C# runtime + Roslyn generator (common dialect, custom dialects) + Rust frame codec twin · mission protocol, FTP, routing ⏳ |
-| LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | |
+| LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | ✅ `0.8.0-preview.1`: managed C# runtime (server, forwarder, device MAC, simulator) + fuzzed Rust codec twin · Class B/C, ADR decisions, Basics Station ⏳ |
 | DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | |
 | NMEA: AIS decoding | P1 | |
 | mDNS / DNS-SD (discovery for Gallery and CLI) | P1 | |

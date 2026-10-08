@@ -39,6 +39,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Navigasi & maritim | Pelacak kendaraan GNSS — lintasan langsung, kecepatan, kekuatan sinyal satelit | NMEA 0183 |
 | Gedung pintar & panggung | Rumah kaca pintar lewat CoAP — sensor yang diamati, aktuator, log Block2, separate response; slider kehilangan paket dan diagram urutan pesan langsung menampilkan pengiriman ulang | CoAP, Observe, Block-wise, SenML |
 | Gedung pintar & panggung | Lampu panggung lewat Art-Net — fader, master, chase; fixture menampilkan apa yang diurai penerima | Art-Net 4, DMX512 |
+| LPWAN & kota pintar | Monitor jaringan LoRaWAN — dua gateway dan empat sensor di peta radio dengan jangkauan per spreading factor; seret sensor dan lihat SF, SNR, serta airtime-nya berubah; downlink di RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
 
@@ -51,6 +52,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Drone MAVLink](../../images/gallery-mavlink.png)
 ![NMEA](../../images/gallery-nmea.png)
 ![Rumah kaca CoAP](../../images/gallery-coap.png)
+![Monitor jaringan LoRaWAN](../../images/gallery-lorawan.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
 ![Meja kerja](../../images/gallery-workbench.png)
 

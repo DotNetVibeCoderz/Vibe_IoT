@@ -113,6 +113,16 @@ app.Configure(c =>
         q.AddCommand<CoapPingCommand>("ping").WithExample("coap", "ping", "coap://127.0.0.1/");
         q.AddCommand<CoapServeCommand>("serve").WithExample("coap", "serve", "--port", "5683", "--frames");
     });
+    c.AddBranch("lorawan", l =>
+    {
+        l.SetDescription("LoRaWAN 1.0.x: decode frames, run a light network server (Semtech UDP), simulate gateways and devices, airtime.");
+        l.AddCommand<LoRaWanDecodeCommand>("decode")
+            .WithExample("lorawan", "decode", "40F17DBE4900020001954378762B11FF0D", "--nwkskey", "44024241ED4CE9A68C6A8BC055233FD3", "--appskey", "EC925802AE430CA77FD3DD73CB2CC588");
+        l.AddCommand<LoRaWanServerCommand>("server").WithExample("lorawan", "server", "--sim", "--region", "AS923")
+            .WithExample("lorawan", "server", "--port", "1700", "--devices", "devices.json", "--pcap", "lora.pcapng");
+        l.AddCommand<LoRaWanSimulateCommand>("simulate").WithExample("lorawan", "simulate", "--server", "chirpstack.local:1700", "--region", "EU868");
+        l.AddCommand<LoRaWanAirtimeCommand>("airtime").WithExample("lorawan", "airtime", "12", "--region", "AS923");
+    });
     c.AddBranch("hl7", h =>
     {
         h.SetDescription("HL7 v2 over MLLP: receive (auto-ACK), send, and simulate a bedside monitor.");

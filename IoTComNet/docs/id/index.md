@@ -43,12 +43,13 @@ perangkat keras.
 | [HL7 v2 lewat MLLP](protocols/hl7.md) | kirim · terima · ACK · simulator monitor pasien | `IoTCom.Net.Protocols.Hl7` |
 | [DICOM](protocols/dicom.md) | C-STORE SCP/SCU · rendering · studi sintetis | `IoTCom.Net.Adapters.Dicom` |
 | [CoAP](protocols/coap.md) | client · server · observe · block-wise · simulator | `IoTCom.Net.Protocols.Coap` |
+| [LoRaWAN 1.0.x](protocols/lorawan.md) | network server · gateway Semtech UDP · end device · simulator | `IoTCom.Net.Protocols.LoRaWan` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (CAN/UDS, MAVLink, DLMS, CoAP, adapter OPC UA, BLE, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (DLMS/M-Bus, mDNS, perintah AT, Sparkplug B, adapter OPC UA, BLE, …).
 
 ## Membangun aplikasi
 

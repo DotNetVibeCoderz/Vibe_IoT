@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.7.0-preview.1"
+VERSION = "0.8.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -230,6 +230,70 @@ NOTEBOOKS = {
            "## Lebih lanjut\nDemo Galeri *Rumah kaca pintar lewat CoAP* menggambar setiap datagram di diagram urutan pesan. "
            "Lihat `docs/id/protocols/coap.md`.\n\n" + CREDIT[1]),
     ],
+    "lpwan/09-lorawan": [
+        md("# LoRaWAN: sensors kilometres away\n\nA frame on the air, an over-the-air join by hand, the airtime budget, and a whole network — "
+           "gateways speaking the Semtech UDP protocol to a light network server — running in memory.",
+           "# LoRaWAN: sensor yang jauhnya berkilo-kilometer\n\nSatu frame di udara, join over-the-air secara manual, anggaran airtime, dan "
+           "satu jaringan utuh — gateway yang berbicara protokol Semtech UDP ke network server ringan — berjalan di memori."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## A frame on the air\nThe classic example: 17 bytes, the payload is encrypted with the AppSKey and signed with the NwkSKey.",
+           "## Satu frame di udara\nContoh klasik: 17 byte, payload dienkripsi dengan AppSKey dan ditandatangani dengan NwkSKey."),
+        code("using IoTCom.Net.Protocols.LoRaWan;\n\nvar phy = Convert.FromHexString(\"40F17DBE4900020001954378762B11FF0D\");\n"
+             "foreach (var f in LoRaWanAnatomy.Describe(phy)) Console.WriteLine($\"{f.Name,-11} {Convert.ToHexString(phy, f.Offset, f.Length),-10} {f.Value}\");\n"
+             "var keys = LoRaWanSessionKeys.FromHex(\"44024241ED4CE9A68C6A8BC055233FD3\", \"EC925802AE430CA77FD3DD73CB2CC588\");\n"
+             "var frame = LoRaWanPacket.Decode(phy);\n"
+             "Console.WriteLine($\"MIC valid: {frame.VerifyMic(keys.NwkSKey)}, payload: {System.Text.Encoding.ASCII.GetString(frame.DecryptPayload(keys))}\");"),
+        md("## Joining over the air, by hand\nThe device and the network derive the same session keys from the AppKey, the DevNonce and the "
+           "Join-Accept. `LoRaWanEndDevice` is the device's MAC layer without any I/O.",
+           "## Join over-the-air, secara manual\nPerangkat dan jaringan menurunkan session key yang sama dari AppKey, DevNonce, dan "
+           "Join-Accept. `LoRaWanEndDevice` adalah lapisan MAC perangkat tanpa I/O."),
+        code("var appKey = LoRaWanKeys.Parse(\"2B7E151628AED2A6ABF7158809CF4F3C\");\n"
+             "var node = new LoRaWanEndDevice(Eui64.Parse(\"70B3D57ED0000101\"), default, appKey);\n"
+             "var joinRequest = LoRaWanPacket.Decode(node.CreateJoinRequest());\nConsole.WriteLine(joinRequest);\n"
+             "var accept = new LoRaWanJoinAccept(JoinNonce: 0x00A1B2, NetId: 0x13, DevAddr: DevAddr.Parse(\"26011BDA\"));\n"
+             "node.HandleDownlink(accept.Encode(appKey));\n"
+             "var networkKeys = accept.DeriveSessionKeys(appKey, joinRequest.DevNonce);\n"
+             "Console.WriteLine($\"joined as {node.DevAddr}; same keys on both sides: {node.SessionKeys!.NwkSKey.SequenceEqual(networkKeys.NwkSKey)}\");\n"
+             "var uplink = LoRaWanPacket.Decode(node.CreateUplink(1, new CayenneLpp().AddTemperature(1, 28.4).AddHumidity(2, 71).ToArray()));\n"
+             "Console.WriteLine($\"{uplink} → {string.Join(\", \", CayenneLpp.Decode(uplink.DecryptPayload(networkKeys)))}\");"),
+        md("## The airtime budget\nEvery step from SF7 to SF12 doubles the time on air: more range, less capacity. "
+           "In EU868 a 1 % duty cycle turns that into a mandatory wait.",
+           "## Anggaran airtime\nSetiap langkah dari SF7 ke SF12 menggandakan waktu di udara: jangkauan bertambah, kapasitas berkurang. "
+           "Di EU868, duty cycle 1 % mengubahnya menjadi waktu tunggu wajib."),
+        code("foreach (var sf in new[] { 7, 8, 9, 10, 11, 12 })\n"
+             "{\n    var air = LoRaAirtime.Compute(12 + 13, sf);\n"
+             "    Console.WriteLine($\"SF{sf,-2} {air.TotalMilliseconds,7:0.0} ms   then wait {air.TotalSeconds * 99,6:0.0} s at 1 %\");\n}"),
+        md("## A network in memory\nTwo gateways forward over Semtech UDP to the network server; four sensors join and report. "
+           "`HonorTimestamps = false` skips the real 5 s join delay so the cell finishes quickly.",
+           "## Jaringan di memori\nDua gateway meneruskan lewat Semtech UDP ke network server; empat sensor join dan melapor. "
+           "`HonorTimestamps = false` melewati jeda join 5 detik yang sebenarnya agar sel cepat selesai."),
+        code("using System.Net;\nusing IoTCom.Net.Transports;\n\nvar radio = new InMemoryDatagramNetwork();\n"
+             "var nsAddress = new IPEndPoint(IPAddress.Parse(\"10.0.0.1\"), 1700);\n"
+             "await using var ns = LoRaWanNetworkServer.Create(o => o.UseInMemory(radio, nsAddress).Region = LoRaRegion.AS923Group2);\n"
+             "var simOptions = LoRaWanSimulatorOptions.Demo(nsAddress);\nsimOptions.GatewayTransportFactory = () => radio.Bind();\n"
+             "simOptions.HonorTimestamps = false;\n"
+             "await using var sim = new LoRaWanSimulator(simOptions);\nforeach (var r in sim.Registrations) ns.AddDevice(r);\n\n"
+             "var reports = new List<LoRaWanUplink>();\nns.UplinkReceived += (_, u) => { lock (reports) reports.Add(u); };\n"
+             "await ns.StartAsync();\nawait sim.StartAsync();\n"
+             "while (reports.Count < 4) await Task.Delay(100);\n"
+             "lock (reports)\n    foreach (var u in reports)\n"
+             "        Console.WriteLine($\"{u.Device.Name,-11} {u.DataRate,-9} via {u.Gateways.Count} gw, best SNR {u.Gateways[0].Snr,5:0.0}  {LoRaWanSimulator.DescribePayload(u.FPort, u.Payload)}\");"),
+        md("## A downlink\nClass A devices listen only right after they transmit, so a downlink waits in a queue for the next uplink. "
+           "FPort 10 tells the simulated sensors how often to report.",
+           "## Downlink\nPerangkat Class A hanya mendengar sesaat setelah mengirim, jadi downlink menunggu di antrean sampai uplink berikutnya. "
+           "FPort 10 memberi tahu sensor simulasi seberapa sering melapor."),
+        code("var weather = ns.Devices.First(d => d.Name == \"weather-01\");\nvar weatherNode = sim.Devices.First(d => d.Name == \"weather-01\");\n"
+             "ns.EnqueueDownlink(weather.DevEui, 10, [0x00, 0x3C]);\nsim.TriggerUplink(\"weather-01\");\n"
+             "while (weatherNode.Interval != TimeSpan.FromSeconds(60)) await Task.Delay(100);\n"
+             "Console.WriteLine($\"weather-01 now reports every {weatherNode.Interval.TotalSeconds} s ({weather.DownlinkCount} downlinks)\");"),
+        md("## Going further\nThe Gallery demo *LoRaWAN network monitor* puts gateways and sensors on a map, with every uplink and its RX windows. "
+           "`iotcom lorawan server --sim` runs the same network in a terminal, and `iotcom lorawan simulate` drives ChirpStack or The Things Stack. "
+           "See `docs/en/protocols/lorawan.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nDemo Galeri *Monitor jaringan LoRaWAN* menaruh gateway dan sensor di peta, lengkap dengan setiap uplink dan jendela RX-nya. "
+           "`iotcom lorawan server --sim` menjalankan jaringan yang sama di terminal, dan `iotcom lorawan simulate` menggerakkan ChirpStack atau The Things Stack. "
+           "Lihat `docs/id/protocols/lorawan.md`.\n\n" + CREDIT[1]),
+    ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "
            "`socketcan:can0` or `slcan:COM5` to talk to real hardware — only on vehicles you are authorised to service.",
@@ -314,6 +378,7 @@ NOTEBOOKS = {
            "| Ship telemetry to the cloud or many consumers | MQTT (+ SenML payloads) | `Adapters.Mqtt`, `Serialization.SenML` |\n"
            "| Read position/time from a GPS or marine instruments | NMEA 0183 | `Protocols.Nmea` |\n"
            "| Drive stage or architectural lighting | Art-Net or sACN | `Protocols.Dmx` |\n"
+           "| Collect battery sensors kilometres away | LoRaWAN (Semtech UDP gateways) | `Protocols.LoRaWan` |\n"
            "| Talk to a microcontroller over UART/USB with your own messages | COBS or SLIP + CRC | `Framing` |\n"
            "| Debug a link byte by byte | Traffic tap, `iotcom modbus decode`, Gallery workbench | `Core`, CLI |\n\n"
            "**Rules of thumb.** Polling one device on a LAN → Modbus TCP. Fan-out to many consumers or over the internet → MQTT with TLS. "
@@ -324,6 +389,7 @@ NOTEBOOKS = {
            "| Mengirim telemetri ke cloud atau banyak konsumen | MQTT (+ payload SenML) | `Adapters.Mqtt`, `Serialization.SenML` |\n"
            "| Membaca posisi/waktu dari GPS atau instrumen kapal | NMEA 0183 | `Protocols.Nmea` |\n"
            "| Mengendalikan lampu panggung atau arsitektural | Art-Net atau sACN | `Protocols.Dmx` |\n"
+           "| Mengumpulkan sensor baterai yang jauhnya berkilo-kilometer | LoRaWAN (gateway Semtech UDP) | `Protocols.LoRaWan` |\n"
            "| Berkomunikasi dengan mikrokontroler lewat UART/USB dengan pesan sendiri | COBS atau SLIP + CRC | `Framing` |\n"
            "| Debug link byte per byte | Traffic tap, `iotcom modbus decode`, workbench Galeri | `Core`, CLI |\n\n"
            "**Aturan praktis.** Membaca satu perangkat di LAN → Modbus TCP. Distribusi ke banyak konsumen atau lewat internet → MQTT dengan TLS. "

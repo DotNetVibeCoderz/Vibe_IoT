@@ -8,6 +8,7 @@ members = [
     "crates/iotcom-isotp",
     "crates/iotcom-coap",
     "crates/iotcom-mavlink",
+    "crates/iotcom-lorawan",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
 ]

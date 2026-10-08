@@ -50,6 +50,16 @@
       "    Console.WriteLine(n.PayloadText);$0"
     ]
   },
+  "IoTCom LoRaWAN network server": {
+    "prefix": "iotcom-lorawan",
+    "description": "Light LoRaWAN network server for Semtech UDP gateways (IoTCom.Net)",
+    "body": [
+      "await using var ${1:ns} = LoRaWanNetworkServer.Create(o => o.Region = LoRaRegion.${2|AS923Group2,EU868,US915|});",
+      "$1.AddDevice(LoRaWanDeviceRegistration.Otaa(Eui64.Parse(\"${3:70B3D57ED0000001}\"), LoRaWanKeys.Parse(${4:appKeyHex}), \"${5:node-1}\"));",
+      "$1.UplinkReceived += (_, up) => Console.WriteLine($\"{up.Device.Name} FCnt {up.FCnt}: {Convert.ToHexString(up.Payload)}\");",
+      "await $1.StartAsync();   // gateways: packet forwarder → this host, UDP 1700$0"
+    ]
+  },
   "IoTCom MAVLink ground station": {
     "prefix": "iotcom-mavlink",
     "description": "MAVLink link on UDP 14550 with a ground-station helper (IoTCom.Net)",

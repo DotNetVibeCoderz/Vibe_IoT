@@ -29,6 +29,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "coap" => Protocols.Coap.CoapAnatomy.Describe(data),
             "mavlink" => Protocols.Mavlink.MavlinkAnatomy.Describe(data, Protocols.Mavlink.Common.CommonDialect.Instance),
             "uds" or "uds-ecu" or "obd2" => Protocols.Uds.UdsAnatomy.Describe(data),
+            "lorawan" or "semtech-udp" => Protocols.LoRaWan.LoRaWanAnatomy.Describe(data),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],
         };
         return new FrameRow(

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.LoRaWan</RootNamespace>
+    <Description>LoRaWAN 1.0.x for IoTCom.Net: PHYPayload codec, AES-CMAC MIC and payload encryption, OTAA/ABP, MAC commands, regional parameters (EU868, US915, AS923-2) and time on air, the Semtech UDP packet-forwarder protocol (gateway and server side), a light network server, a Class A end-device MAC, Cayenne LPP and a gateway/device simulator. The codec is mirrored by a fuzzed Rust crate through shared conformance vectors. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);lorawan;lora;lpwan;semtech;packet-forwarder;network-server;otaa;cayenne-lpp;as923;eu868</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

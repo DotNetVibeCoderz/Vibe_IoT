@@ -40,6 +40,7 @@ public sealed class PcapngTests
         var modbusResponse = Convert.FromHexString("000100000007" + "010304002A002B");
         var coap = new CoapMessage { Code = CoapCode.Get, MessageId = 0x7D34, UriPath = "/temperature" }.Encode();
         var can = CanBusBase.ToTapBytes(CanFrame.Parse("7E8#0441 0C1AF8".Replace(" ", "", StringComparison.Ordinal)));
+        var lorawan = Convert.FromHexString("40F17DBE4900020001954378762B11FF0D");
         var t0 = new DateTimeOffset(2026, 10, 5, 12, 0, 0, TimeSpan.Zero);
 
         using var ms = new MemoryStream();
@@ -50,7 +51,8 @@ public sealed class PcapngTests
             tap.OnFrame(new TrafficFrame("coap", FrameDirection.Outbound, coap, t0.AddSeconds(1)));
             tap.OnFrame(new TrafficFrame("can", FrameDirection.Inbound, can, t0.AddSeconds(2)));
             tap.OnFrame(new TrafficFrame("uds", FrameDirection.Outbound, new byte[] { 0x22, 0xF1, 0x90 }, t0.AddSeconds(3), summary: "ReadDataByIdentifier"));
-            Assert.Equal(5, tap.PacketCount);
+            tap.OnFrame(new TrafficFrame("lorawan", FrameDirection.Inbound, lorawan, t0.AddSeconds(4), summary: "Unconfirmed up"));
+            Assert.Equal(6, tap.PacketCount);
         }
         var file = ms.ToArray();
         if (Environment.GetEnvironmentVariable("IOTCOM_PCAP_OUT") is { Length: > 0 } outPath) File.WriteAllBytes(outPath, file); // CI: tshark gate
@@ -59,9 +61,9 @@ public sealed class PcapngTests
         Assert.Equal(0x0A0D0D0Au, blocks[0].Type);
         Assert.Equal(0x1A2B3C4Du, BinaryPrimitives.ReadUInt32LittleEndian(blocks[0].Body));
         var linkTypes = blocks.Where(b => b.Type == 1).Select(b => BinaryPrimitives.ReadUInt16LittleEndian(b.Body)).ToList();
-        Assert.Equal([PcapLinkType.RawIp, PcapLinkType.CanSocketCan, PcapLinkType.User0], linkTypes);
+        Assert.Equal([PcapLinkType.RawIp, PcapLinkType.CanSocketCan, PcapLinkType.User0, PcapLinkType.LoRaTap], linkTypes);
         var packets = blocks.Where(b => b.Type == 6).ToList();
-        Assert.Equal(5, packets.Count);
+        Assert.Equal(6, packets.Count);
 
         // Packet 1: IPv4 + TCP to port 502 with valid checksums; the payload is the Modbus ADU.
         var p1 = packets[0].Body;
@@ -86,6 +88,11 @@ public sealed class PcapngTests
         Assert.Equal(5683, BinaryPrimitives.ReadUInt16BigEndian(packets[2].Body.AsSpan(20 + 22)));
         Assert.Equal(can, packets[3].Body.AsSpan(20, can.Length).ToArray());
         Assert.Contains("uds: ReadDataByIdentifier", System.Text.Encoding.UTF8.GetString(packets[4].Body));
+        // Packet 6: LoRaTap header (15 bytes, sync word 0x34) followed by the PHYPayload.
+        var lora = packets[5].Body.AsSpan(20, 15 + lorawan.Length);
+        Assert.Equal(15, BinaryPrimitives.ReadUInt16BigEndian(lora[2..]));
+        Assert.Equal(0x34, lora[14]);
+        Assert.Equal(lorawan, lora[15..].ToArray());
     }
 
     [Fact]

@@ -37,6 +37,9 @@ iotcom --help
 | `iotcom obd live` / `vin` / `dtc` | data langsung OBD-II (`--watch`), VIN, DTC tersimpan dan tertunda |
 | `iotcom coap get` / `put` / `observe` / `discover` / `ping` | client CoAP dengan URI `coap://host/path` (`--accept senml`, `--frames`; penulisan butuh `--allow-write`) |
 | `iotcom coap serve` | node rumah kaca simulasi di UDP 5683 |
+| `iotcom lorawan server` | network server LoRaWAN ringan untuk gateway Semtech UDP (`--devices`, `--sim` untuk gateway dan sensor simulasi, `--frames`, `--pcap`) |
+| `iotcom lorawan simulate` | gateway dan sensor simulasi terhadap network server mana pun (`--server host:1700`; key disimpan ke file perangkat) |
+| `iotcom lorawan decode` / `airtime` | urai PHYPayload (hex atau base64; MIC dan dekripsi dengan `--appkey` atau `--nwkskey`/`--appskey`), tabel waktu di udara |
 | `iotcom hl7 listen` | penerima MLLP dengan ACK otomatis dan observasi terurai (`--raw` mencetak segmen) |
 | `iotcom hl7 send` | kirim berkas ER7 (atau contoh ORU^R01) dan tampilkan ACK |
 | `iotcom hl7 simulate` | monitor pasien sintetis (`--scenario sepsis\|hypoxia\|hypertension\|stable`) |

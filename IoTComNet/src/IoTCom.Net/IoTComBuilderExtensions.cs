@@ -2,6 +2,7 @@ using IoTCom.Net.Adapters.Mqtt;
 using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
+using IoTCom.Net.Protocols.LoRaWan;
 using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Modbus;
 using IoTCom.Net.Protocols.Nmea;
@@ -110,6 +111,23 @@ public static class IoTComBuilderExtensions
             o.Logger = Logger(sp, "IoTCom.Mavlink");
             configure(o);
         }));
+
+    /// <summary>
+    /// Registers a light LoRaWAN network server (Semtech UDP, default port 1700); register devices in
+    /// <paramref name="devices"/> and subscribe to <see cref="LoRaWanNetworkServer.UplinkReceived"/>.
+    /// </summary>
+    public static IoTComBuilder AddLoRaWanNetworkServer(this IoTComBuilder builder, string name, Action<LoRaWanNetworkServerOptions>? configure = null, Action<LoRaWanNetworkServer>? devices = null)
+        => builder.AddEndpoint(name, sp =>
+        {
+            var server = LoRaWanNetworkServer.Create(o =>
+            {
+                o.Name = name;
+                o.Logger = Logger(sp, "IoTCom.LoRaWan");
+                configure?.Invoke(o);
+            });
+            devices?.Invoke(server);
+            return server;
+        });
 
     /// <summary>Registers a CAN bus by URI (<c>socketcan:can0</c>, <c>slcan:COM5</c>, <c>virtual:demo</c>).</summary>
     public static IoTComBuilder AddCanBus(this IoTComBuilder builder, string name, string uri, Action<CanBusOptions>? configure = null)

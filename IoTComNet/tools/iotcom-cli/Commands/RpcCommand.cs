@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using IoTCom.Net.Protocols.Coap;
+using IoTCom.Net.Protocols.LoRaWan;
 using IoTCom.Net.Protocols.Mavlink;
 using IoTCom.Net.Protocols.Mavlink.Common;
 using IoTCom.Net.Protocols.Modbus;
@@ -125,6 +126,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("uds", "ISO-TP · UDS · OBD-II", "IoTCom.Net.Protocols.Uds", "tester · scan tool · ECU simulator", "protocols/uds.md", "automotive/06-can-uds", "UdsTester", ["uds"]),
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
         ("mavlink", "MAVLink v1 / v2", "IoTCom.Net.Protocols.Mavlink", "link · ground station · simulator · generator", "protocols/mavlink.md", "navigation/08-mavlink", "MavlinkTelemetry", ["mavlink"]),
+        ("lorawan", "LoRaWAN 1.0.x", "IoTCom.Net.Protocols.LoRaWan", "network server · Semtech UDP · end device · simulator", "protocols/lorawan.md", "lpwan/09-lorawan", "LoRaWanGatewayMonitor", ["lorawan", "semtech-udp"]),
         ("nmea", "NMEA 0183", "IoTCom.Net.Protocols.Nmea", "reader · server · simulator", "protocols/nmea.md", "navigation/03-nmea", "NmeaGpsReader", []),
         ("dmx", "Art-Net 4 · sACN", "IoTCom.Net.Protocols.Dmx", "send · receive · discovery", "protocols/dmx.md", null, "ArtNetPlayer", []),
         ("hl7", "HL7 v2 over MLLP", "IoTCom.Net.Protocols.Hl7", "sender · receiver · monitor simulator", "protocols/hl7.md", "medical/05-hl7-dicom", "Hl7MllpListener", []),
@@ -134,7 +136,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("senml", "SenML", "IoTCom.Net.Serialization.SenML", "JSON · CBOR codec", "protocols/senml.md", "messaging/04-mqtt-senml", null, []),
     ];
 
-    private static readonly string[] Sources = ["sim:modbus", "sim:can", "sim:coap", "sim:mavlink", "can:<uri>", "mavlink:udp:<port>"];
+    private static readonly string[] Sources = ["sim:modbus", "sim:can", "sim:coap", "sim:mavlink", "sim:lorawan", "can:<uri>", "mavlink:udp:<port>", "lorawan:udp:<port>"];
 
     private static JsonObject Initialize() => new()
     {
@@ -182,12 +184,20 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 var frame = CanFrame.TryParse(text, out var parsed) ? parsed : bytes.Length >= 8 ? SocketCanBus.Decode(Pad(bytes)) : throw new FormatException("CAN: expected candump text or the 8-byte SocketCAN header + data");
                 var tap = CanBusBase.ToTapBytes(frame);
                 return Result(tap, CanFields(tap), frame.ToString());
+            case "lorawan":
+                fields = LoRaWanAnatomy.Describe(bytes);
+                summary = LoRaWanPacket.TryDecode(bytes, out var lw, out var lwError) ? lw!.ToString() : "invalid: " + lwError;
+                break;
+            case "semtech-udp":
+                fields = SemtechAnatomy.Describe(bytes);
+                summary = SemtechPacket.TryDecode(bytes, out var gw, out var gwError) ? gw!.ToString() : "invalid: " + gwError;
+                break;
             case "uds":
                 fields = UdsAnatomy.Describe(bytes);
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, can, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, can, uds)");
         }
         return Result(bytes, fields, summary);
     }
@@ -286,6 +296,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
             "mavlink" => MavlinkAnatomy.Describe(data, CommonDialect.Instance),
             "uds" or "obd2" or "uds-ecu" => UdsAnatomy.Describe(data),
             "can" or "can-slcan" => CanFields(data),
+            "lorawan" or "semtech-udp" => LoRaWanAnatomy.Describe(data),
             _ => [new FrameField("Data", 0, data.Length, FrameFieldKind.Data)],
         };
         return WriteAsync(new JsonObject
@@ -379,7 +390,31 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 sim.Start();
                 break;
             }
+            case "sim:lorawan":
+            {
+                var net = new InMemoryDatagramNetwork();
+                var serverAddress = new IPEndPoint(IPAddress.Parse("10.0.0.50"), 1700);
+                var server = LoRaWanNetworkServer.Create(o => { o.UseInMemory(net, serverAddress); o.Region = LoRaRegion.AS923Group2; });
+                var options = LoRaWanSimulatorOptions.Demo(serverAddress);
+                options.GatewayTransportFactory = () => net.Bind();
+                var sim = new LoRaWanSimulator(options);
+                foreach (var r in sim.Registrations) server.AddDevice(r);
+                m.Resources.AddRange([server, sim]);
+                server.AddTap(tap);
+                await server.StartAsync(ct);
+                await sim.StartAsync(ct);
+                break;
+            }
             default:
+                if (source.StartsWith("lorawan:udp:", StringComparison.Ordinal))
+                {
+                    var port = int.Parse(source["lorawan:udp:".Length..], System.Globalization.CultureInfo.InvariantCulture);
+                    var server = LoRaWanNetworkServer.Create(o => o.Port = port);
+                    m.Resources.Add(server);
+                    server.AddTap(tap);
+                    await server.StartAsync(ct);
+                    break;
+                }
                 if (source.StartsWith("can:", StringComparison.Ordinal))
                 {
                     var bus = await CanBus.OpenAsync(source[4..], o => o.ListenOnly = true, ct);

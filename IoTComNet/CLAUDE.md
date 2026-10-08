@@ -62,6 +62,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `Protocols.IsoTp` (Rust `iotcom-isotp` → native `iotcom_isotp`, driven by `IsoTpChannel`) and `Protocols.Uds` (`UdsClient`,
   `ObdClient`, `EcuSimulator`). Tests and CLI use `VirtualCanNetwork`; `--can sim` starts an in-process ECU. Fuzz targets live
   in `rust/fuzz` (nightly; `cargo +nightly fuzz run isotp`; on Windows put the MSVC `clang_rt.asan_dynamic` DLL on PATH).
+- **LoRaWAN**: `Protocols.LoRaWan` is managed C# (`LoRaWanPacket` codec + `LoRaWanCrypto`, `SemtechPacket`/`SemtechPacketForwarder`,
+  `LoRaWanNetworkServer`, sans-I/O `LoRaWanEndDevice`, `LoRaWanSimulator`); Rust `iotcom-lorawan` is the fuzzed twin kept in sync by
+  `/conformance/lorawan.json` (Python reference with its own AES/CMAC). Tests use `InMemoryDatagramNetwork` and
+  `HonorTimestamps = false` to skip the 5 s join delay; keys are secrets — never log them.
 - **Healthcare**: `Protocols.Hl7` (ER7 codec, MLLP endpoints, `PatientMonitorSimulator`) and `Adapters.Dicom` (fo-dicom
   wrapper, `DicomRenderer`, `SyntheticImaging`; not trimmable, not in the meta-package). Clinical analysis and the AI client
   live in `samples/shared/IoTCom.Samples.Medical` (sample code, never packed). AI config: `IOTCOM_AI_*` env vars or

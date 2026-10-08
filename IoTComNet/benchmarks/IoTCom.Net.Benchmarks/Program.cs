@@ -115,3 +115,27 @@ public class ModbusRoundTripBenchmarks
         await _server.DisposeAsync();
     }
 }
+
+[MemoryDiagnoser]
+public class LoRaWanBenchmarks
+{
+    private readonly IoTCom.Net.Protocols.LoRaWan.LoRaWanSessionKeys _keys = IoTCom.Net.Protocols.LoRaWan.LoRaWanSessionKeys.FromHex("44024241ED4CE9A68C6A8BC055233FD3", "EC925802AE430CA77FD3DD73CB2CC588");
+    private readonly byte[] _payload = Enumerable.Range(0, 24).Select(i => (byte)i).ToArray();
+    private byte[] _phy = [];
+
+    [GlobalSetup]
+    public void Setup() => _phy = EncodeUplink();
+
+    /// <summary>Encrypt + MIC: what a device (or the simulator) does per uplink.</summary>
+    [Benchmark]
+    public byte[] EncodeUplink() => IoTCom.Net.Protocols.LoRaWan.LoRaWanPacket.EncodeData(IoTCom.Net.Protocols.LoRaWan.LoRaWanMType.UnconfirmedDataUp,
+        new IoTCom.Net.Protocols.LoRaWan.DevAddr(0x26011BDA), IoTCom.Net.Protocols.LoRaWan.LoRaWanFCtrl.Create(true, adr: true), 42, [], 1, _payload, _keys);
+
+    /// <summary>Decode + MIC check + decrypt: what the network server does per uplink.</summary>
+    [Benchmark]
+    public int DecodeVerifyDecrypt()
+    {
+        var p = IoTCom.Net.Protocols.LoRaWan.LoRaWanPacket.Decode(_phy);
+        return p.VerifyMic(_keys.NwkSKey, 42) ? p.DecryptPayload(_keys, 42).Length : -1;
+    }
+}

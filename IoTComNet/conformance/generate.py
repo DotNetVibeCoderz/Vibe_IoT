@@ -372,6 +372,204 @@ def mavlink_frames():
     return out
 
 
+# ---------------------------------------------------------------------------------------------------------------------
+# LoRaWAN 1.0.x. A deliberately plain AES-128 (FIPS-197) and AES-CMAC (RFC 4493), self-checked against the published
+# test vectors below, so the vectors do not depend on any of the engines under test.
+
+def _xtime(a):
+    return ((a << 1) ^ 0x1B) & 0xFF if a & 0x80 else a << 1
+
+
+def _gmul(a, b):
+    r = 0
+    while b:
+        if b & 1:
+            r ^= a
+        a = _xtime(a)
+        b >>= 1
+    return r
+
+
+def _sbox():
+    box = [0] * 256
+    for x in range(256):
+        inv = 0 if x == 0 else next(y for y in range(1, 256) if _gmul(x, y) == 1)
+        s = inv
+        for i in range(1, 5):
+            s ^= ((inv << i) | (inv >> (8 - i))) & 0xFF
+        box[x] = s ^ 0x63
+    return box
+
+
+SBOX = _sbox()
+INV_SBOX = [SBOX.index(i) for i in range(256)]
+
+
+def _expand(key):
+    w = [list(key[i:i + 4]) for i in range(0, 16, 4)]
+    rcon = 1
+    for i in range(4, 44):
+        t = list(w[i - 1])
+        if i % 4 == 0:
+            t = [SBOX[b] for b in t[1:] + t[:1]]
+            t[0] ^= rcon
+            rcon = _xtime(rcon)
+        w.append([a ^ b for a, b in zip(w[i - 4], t)])
+    return [sum(w[r * 4:r * 4 + 4], []) for r in range(11)]
+
+
+def _mix(s, m):
+    out = []
+    for j in range(0, 16, 4):
+        c = s[j:j + 4]
+        for row in range(4):
+            out.append(_gmul(c[0], m[row][0]) ^ _gmul(c[1], m[row][1]) ^ _gmul(c[2], m[row][2]) ^ _gmul(c[3], m[row][3]))
+    return out
+
+
+MIX = [[2, 3, 1, 1], [1, 2, 3, 1], [1, 1, 2, 3], [3, 1, 1, 2]]
+INV_MIX = [[14, 11, 13, 9], [9, 14, 11, 13], [13, 9, 14, 11], [11, 13, 9, 14]]
+
+
+def aes_encrypt(key, block):
+    rk = _expand(key)
+    s = [b ^ k for b, k in zip(block, rk[0])]
+    for r in range(1, 11):
+        s = [SBOX[b] for b in s]
+        s = [s[(i + 4 * (i % 4)) % 16] for i in range(16)]  # ShiftRows (column-major state)
+        if r != 10:
+            s = _mix(s, MIX)
+        s = [b ^ k for b, k in zip(s, rk[r])]
+    return bytes(s)
+
+
+def aes_decrypt(key, block):
+    rk = _expand(key)
+    s = [b ^ k for b, k in zip(block, rk[10])]
+    for r in range(9, -1, -1):
+        s = [s[(i - 4 * (i % 4)) % 16] for i in range(16)]  # InvShiftRows
+        s = [INV_SBOX[b] for b in s]
+        s = [b ^ k for b, k in zip(s, rk[r])]
+        if r != 0:
+            s = _mix(s, INV_MIX)
+    return bytes(s)
+
+
+def _dbl(b):
+    v = int.from_bytes(b, "big") << 1
+    if b[0] & 0x80:
+        v ^= 0x87
+    return (v & ((1 << 128) - 1)).to_bytes(16, "big")
+
+
+def aes_cmac(key, msg):
+    k1 = _dbl(aes_encrypt(key, bytes(16)))
+    k2 = _dbl(k1)
+    n = max(1, (len(msg) + 15) // 16)
+    last = msg[(n - 1) * 16:]
+    if len(msg) and len(msg) % 16 == 0:
+        last = bytes(a ^ b for a, b in zip(last, k1))
+    else:
+        last = bytes(a ^ b for a, b in zip(last + b"\x80" + bytes(15 - len(last)), k2))
+    x = bytes(16)
+    for i in range(n - 1):
+        x = aes_encrypt(key, bytes(a ^ b for a, b in zip(x, msg[i * 16:i * 16 + 16])))
+    return aes_encrypt(key, bytes(a ^ b for a, b in zip(x, last)))
+
+
+def _aes_self_check():
+    k = bytes(range(16))
+    assert aes_encrypt(k, bytes.fromhex("00112233445566778899aabbccddeeff")).hex() == "69c4e0d86a7b0430d8cdb78070b4c55a"
+    assert aes_decrypt(k, bytes.fromhex("69c4e0d86a7b0430d8cdb78070b4c55a")).hex() == "00112233445566778899aabbccddeeff"
+    rk = bytes.fromhex("2b7e151628aed2a6abf7158809cf4f3c")
+    m = bytes.fromhex("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e51"
+                      "30c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710")
+    for length, tag in ((0, "bb1d6929e95937287fa37d129b756746"), (16, "070a16b46b4d4144f79bdd9dd04a287c"),
+                        (40, "dfa66747de9ae63030ca32611497c827"), (64, "51f0bebf7e3b9d92fc49741779363cfe")):
+        assert aes_cmac(rk, m[:length]).hex() == tag, length
+
+
+def lw_b0(uplink, dev_addr, fcnt, length):
+    return (bytes([0x49, 0, 0, 0, 0, 0 if uplink else 1]) + dev_addr.to_bytes(4, "little")
+            + fcnt.to_bytes(4, "little") + bytes([0, length]))
+
+
+def lw_crypt(key, uplink, dev_addr, fcnt, data):
+    out = bytearray()
+    for i in range(0, len(data), 16):
+        a = (bytes([1, 0, 0, 0, 0, 0 if uplink else 1]) + dev_addr.to_bytes(4, "little")
+             + fcnt.to_bytes(4, "little") + bytes([0, i // 16 + 1]))
+        s = aes_encrypt(key, a)
+        out += bytes(x ^ y for x, y in zip(data[i:i + 16], s))
+    return bytes(out)
+
+
+def lw_data(mtype, dev_addr, fctrl, fcnt, fopts, fport, payload, nwk, app):
+    uplink = mtype in (2, 4)
+    fctrl = (fctrl & 0xF0) | len(fopts)
+    msg = bytes([mtype << 5]) + dev_addr.to_bytes(4, "little") + bytes([fctrl]) + (fcnt & 0xFFFF).to_bytes(2, "little") + fopts
+    if fport is not None:
+        msg += bytes([fport]) + lw_crypt(nwk if fport == 0 else app, uplink, dev_addr, fcnt, payload)
+    return msg + aes_cmac(nwk, lw_b0(uplink, dev_addr, fcnt, len(msg)) + msg)[:4]
+
+
+def lorawan_vectors():
+    _aes_self_check()
+    out = []
+    nwk = bytes.fromhex("44024241ED4CE9A68C6A8BC055233FD3")
+    app = bytes.fromhex("EC925802AE430CA77FD3DD73CB2CC588")
+
+    def data(name, mtype, dev_addr, fctrl, fcnt, fopts, fport, payload, wire=None):
+        phy = lw_data(mtype, dev_addr, fctrl, fcnt, fopts, fport, payload, nwk, app)
+        if wire is not None:
+            assert phy.hex().upper() == wire, (name, phy.hex())
+        out.append({"name": name, "kind": "data", "valid": True, "phy": phy.hex().upper(), "mtype": mtype,
+                    "devAddr": f"{dev_addr:08X}", "fctrl": (fctrl & 0xF0) | len(fopts), "fcnt": fcnt,
+                    "fopts": fopts.hex().upper(), "fport": fport, "payload": payload.hex().upper(),
+                    "mic": phy[-4:].hex().upper(), "nwkSKey": nwk.hex().upper(), "appSKey": app.hex().upper()})
+
+    # The example from the lora-packet README ("test" on FPort 1, FCnt 2) pins the reference to a published frame.
+    data("lora-packet readme uplink", 2, 0x49BE7DF1, 0x00, 2, b"", 1, b"test", wire="40F17DBE4900020001954378762B11FF0D")
+    data("confirmed up with FOpts", 4, 0x26011BDA, 0x80, 17, bytes([0x02, 0x06, 0xE6, 0x0A]), 1, bytes(range(20)))
+    data("downlink ack only", 3, 0x26011BDA, 0x20, 5, b"", None, b"")
+    data("downlink mac on port 0", 3, 0x26011BDA, 0x00, 6, b"", 0, bytes([0x02, 0x0C, 0x02, 0x06]))
+    data("confirmed down 40 bytes", 5, 0x26011BDA, 0x10, 7, b"", 10, bytes(range(100, 140)))
+    data("fcnt above 16 bits", 2, 0x00ABCDEF, 0x00, 0x00012345, b"", 2, bytes.fromhex("00002EE000"))
+    data("empty payload with port", 2, 0x01020304, 0x00, 1, b"", 1, b"")
+
+    app_key = bytes.fromhex("2B7E151628AED2A6ABF7158809CF4F3C")
+    for name, join_eui, dev_eui, nonce in (("join request", 0x70B3D57ED0000000, 0x0004A30B001C0530, 1),
+                                           ("join request nonce 0x1234", 0, 0x70B3D57ED0000101, 0x1234)):
+        body = bytes([0x00]) + join_eui.to_bytes(8, "little") + dev_eui.to_bytes(8, "little") + nonce.to_bytes(2, "little")
+        phy = body + aes_cmac(app_key, body)[:4]
+        out.append({"name": name, "kind": "join-request", "valid": True, "phy": phy.hex().upper(),
+                    "appKey": app_key.hex().upper(), "joinEui": f"{join_eui:016X}", "devEui": f"{dev_eui:016X}",
+                    "devNonce": nonce, "mic": phy[-4:].hex().upper()})
+
+    cflist = bytes.fromhex("184F84E85684B85E8488668400000000")
+    for name, join_nonce, net_id, dev_addr, dl, rx_delay, cf, dev_nonce in (
+            ("join accept", 0x00A1B2, 0x000013, 0x26011BDA, 0x02, 1, b"", 1),
+            ("join accept with cflist", 0x123456, 0x00000B, 0x16AB0001, 0x13, 5, cflist, 0x1234)):
+        plain = (bytes([0x20]) + join_nonce.to_bytes(3, "little") + net_id.to_bytes(3, "little")
+                 + dev_addr.to_bytes(4, "little") + bytes([dl, rx_delay]) + cf)
+        plain += aes_cmac(app_key, plain)[:4]
+        phy = bytes([0x20]) + b"".join(aes_decrypt(app_key, plain[1 + i:17 + i]) for i in range(0, len(plain) - 1, 16))
+
+        def key(kind):
+            return aes_encrypt(app_key, bytes([kind]) + join_nonce.to_bytes(3, "little") + net_id.to_bytes(3, "little")
+                               + dev_nonce.to_bytes(2, "little") + bytes(7))
+        out.append({"name": name, "kind": "join-accept", "valid": True, "phy": phy.hex().upper(),
+                    "appKey": app_key.hex().upper(), "joinNonce": join_nonce, "netId": net_id, "devAddr": f"{dev_addr:08X}",
+                    "dlSettings": dl, "rxDelay": rx_delay, "cfList": cf.hex().upper(), "devNonce": dev_nonce,
+                    "nwkSKey": key(1).hex().upper(), "appSKey": key(2).hex().upper()})
+
+    for name, wire in (("too short", "40010203"), ("join request wrong length", "00" + "11" * 20),
+                       ("join accept wrong length", "20" + "00" * 20), ("fopts past end", "400403020105000001020304"),
+                       ("fport 0 with fopts", "4004030201010000020001020304")):
+        out.append({"name": name, "kind": "invalid", "valid": False, "phy": wire.upper()})
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -381,6 +579,7 @@ def main():
         "coap.json": coap_vectors(),
         "mavlink_messages.json": mavlink_message_table(),
         "mavlink.json": mavlink_frames(),
+        "lorawan.json": lorawan_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

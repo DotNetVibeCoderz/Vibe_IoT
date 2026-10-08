@@ -30,12 +30,13 @@ most recently built `tools/iotcom-cli` instead. Set **iotcom.cliPath** to use an
 | **Frame viewer** | select bytes in any file (hex, `0x`-prefixed or a candump line), then right-click **IoTCom: Decode selected bytes**; or run **IoTCom: Decode a frame…** and paste. Fields appear as a colored frame lane with a field table; hover a row to highlight its bytes. |
 | **Traffic monitor** | **IoTCom: Start a traffic monitor…**, or click a simulator or CAN interface in the *Devices & simulators* view. Filter the frames, click one to expand its lane, and **Save .pcapng** for Wireshark. |
 | **Protocols view** | every protocol with its NuGet package (click to copy `dotnet add package …`), documentation in English or Indonesian, notebook, sample and decoders |
-| **Snippets** | type `iotcom-` in a C# file: Modbus client and simulator, CAN, UDS, CoAP, MAVLink, MQTT, pcapng capture |
+| **Snippets** | type `iotcom-` in a C# file: Modbus client and simulator, CAN, UDS, CoAP, MAVLink, MQTT, LoRaWAN network server, pcapng capture |
 | **Languages** | English and Bahasa Indonesia, following the VS Code display language |
 
-Decoders: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`. Monitor sources:
-`sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink` (built-in simulators), `can:<uri>` (for example
-`can:socketcan:can0`, listen only) and `mavlink:udp:<port>`.
+Decoders: `modbus-tcp`, `modbus-rtu`, `modbus-ascii`, `can`, `uds`, `coap`, `mavlink`, `lorawan`, `semtech-udp`.
+Monitor sources: `sim:modbus`, `sim:can`, `sim:coap`, `sim:mavlink`, `sim:lorawan` (built-in simulators), `can:<uri>`
+(for example `can:socketcan:can0`, listen only), `mavlink:udp:<port>` and `lorawan:udp:<port>` (a light network
+server that shows what your gateways forward).
 
 ![Traffic monitor](../../images/vscode-monitor.png)
 

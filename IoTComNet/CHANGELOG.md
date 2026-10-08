@@ -3,6 +3,34 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.8.0-preview.1 — 2026-10-08
+
+LoRaWAN.
+
+- **New package `IoTCom.Net.Protocols.LoRaWan` (LoRaWAN 1.0.x):**
+  - PHYPayload codec, AES-CMAC MICs, FRMPayload and Join-Accept encryption, OTAA key derivation, ABP;
+  - MAC commands (1.0.4 Class A set) and regional parameters (EU868, US915 sub-band 2, AS923-2) with time on air;
+  - the Semtech UDP packet-forwarder protocol on both sides (`SemtechPacket`, `SemtechPacketForwarder`), including
+    the unpadded base64 that real forwarders send;
+  - a light network server (`LoRaWanNetworkServer`): deduplication across gateways, join and replay checks, Class A
+    downlinks in RX1 (ACKs, queued data, MAC answers), LinkCheck, DeviceTime, DevStatus;
+  - a sans-I/O Class A end-device MAC, Cayenne LPP, and `LoRaWanSimulator` (gateways and sensors with a path-loss
+    radio model).
+- **Rust twin `iotcom-lorawan`** (RustCrypto AES/CMAC) runs the same vectors (`/conformance/lorawan.json`, produced
+  by a self-checked pure-Python AES/CMAC reference) and is fuzzed (`cargo fuzz run lorawan`, 7th target).
+- **pcapng:** LoRaWAN frames are written as LoRaTap (LINKTYPE 270), so Wireshark decodes them; the CI tshark gate
+  checks it.
+- **CLI:** `iotcom lorawan server` (`--sim`, `--devices`, `--pcap`), `simulate` (drive ChirpStack/TTS), `decode`, `airtime`;
+  `iotcom rpc` gains the `lorawan`/`semtech-udp` decoders and the `sim:lorawan`/`lorawan:udp:<port>` monitors (VS Code).
+- **Gallery:** *LoRaWAN network monitor* — a radio map with spreading-factor reach, draggable sensors, uplinks to
+  every gateway that heard them and downlinks in RX1.
+- Sample `LoRaWanGatewayMonitor`, notebook pair `lpwan/09-lorawan`, hosting helper `AddLoRaWanNetworkServer`, docs
+  page *LoRaWAN*, benchmark (≈ 5 µs per uplink to encode, or to decode, verify and decrypt).
+
+*LoRaWAN: paket baru (codec, kriptografi, MAC command, region, Semtech UDP, network server ringan, MAC end device,
+simulator), twin Rust yang di-fuzz, capture pcapng LoRaTap, perintah `iotcom lorawan`, demo Galeri peta radio,
+sampel, notebook, dan dokumentasi EN/ID.*
+
 ## 0.7.0-preview.1 — 2026-10-08
 
 Editor tooling.
