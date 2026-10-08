@@ -11,6 +11,7 @@
     <Project Path="samples/console/ArtNetPlayer/ArtNetPlayer.csproj" />
     <Project Path="samples/console/AstmAnalyzerBridge/AstmAnalyzerBridge.csproj" />
     <Project Path="samples/console/BleHeartRate/BleHeartRate.csproj" />
+    <Project Path="samples/console/CanOpenMaster/CanOpenMaster.csproj" />
     <Project Path="samples/console/CoapObserve/CoapObserve.csproj" />
     <Project Path="samples/console/DlmsMeterReader/DlmsMeterReader.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
@@ -44,6 +45,7 @@
     <Project Path="src/IoTCom.Net.Native.Modbus/IoTCom.Net.Native.Modbus.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Astm/IoTCom.Net.Protocols.Astm.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.AtCommand/IoTCom.Net.Protocols.AtCommand.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.CanOpen/IoTCom.Net.Protocols.CanOpen.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Coap/IoTCom.Net.Protocols.Coap.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Dlms/IoTCom.Net.Protocols.Dlms.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Dmx/IoTCom.Net.Protocols.Dmx.csproj" />

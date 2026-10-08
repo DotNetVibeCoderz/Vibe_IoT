@@ -141,6 +141,13 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-canopen.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("canopen-io", seconds: 4);
+    Shot("gallery-canopen.png");
+}
+
 if (Want("gallery-usb.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SAMPLE_USB", "1");

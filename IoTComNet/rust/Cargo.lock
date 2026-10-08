@@ -550,6 +550,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "iotcom-canopen"
+version = "0.1.0"
+
+[[package]]
 name = "iotcom-coap"
 version = "0.1.0"
 

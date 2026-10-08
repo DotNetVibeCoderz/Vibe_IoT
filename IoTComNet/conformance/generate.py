@@ -771,6 +771,88 @@ def mbus_vectors():
     return out
 
 
+# ---- CANopen (CiA 301) -------------------------------------------------------------------------------------------
+# Independent reference: SDO command bytes are built from the bit fields of CiA 301 §7.2.4.3 (ccs/scs in bits 7-5,
+# toggle bit 4, n in bits 3-2 or 3-1, e bit 1, s bit 0). Each vector records the 8 data bytes, the direction and the
+# decoded fields "kind|index|sub|expedited|size_indicated|size|toggle|last|data|abort".
+
+def canopen_vectors():
+    out = []
+
+    def mux(index, sub):
+        return index.to_bytes(2, "little") + bytes([sub])
+
+    def sdo(name, from_server, data, kind, index=0, sub=0, expedited=False, size_ind=False, size=0, toggle=False, last=False, payload=b"", abort=0):
+        assert len(data) == 8, name
+        fields = f"{kind}|{index:04X}|{sub:02X}|{int(expedited)}|{int(size_ind)}|{size}|{int(toggle)}|{int(last)}|{payload.hex().upper()}|{abort:08X}"
+        out.append({"name": name, "kind": "sdo", "from_server": from_server, "data": data.hex().upper(), "fields": fields})
+
+    def expedited(ccs, n_bytes):
+        return (ccs << 5) | ((4 - n_bytes) << 2) | 0x02 | 0x01
+
+    # Reads
+    sdo("upload request 1000:00", False, bytes([2 << 5]) + mux(0x1000, 0) + bytes(4), "InitiateUploadRequest", 0x1000, 0)
+    for n, value in ((4, bytes.fromhex("91010F00")), (2, bytes.fromhex("E803")), (1, b"\x05"), (3, bytes.fromhex("010203"))):
+        sdo(f"upload response expedited {n} byte(s)", True, bytes([expedited(2, n)]) + mux(0x1017 if n == 2 else 0x1000, 0) + value + bytes(4 - n),
+            "InitiateUploadResponse", 0x1017 if n == 2 else 0x1000, 0, expedited=True, size_ind=True, payload=value)
+    sdo("upload response segmented, size 21", True, bytes([(2 << 5) | 0x01]) + mux(0x2100, 0) + (21).to_bytes(4, "little"),
+        "InitiateUploadResponse", 0x2100, 0, size_ind=True, size=21)
+    for t in (0, 1):
+        sdo(f"upload segment request t={t}", False, bytes([(3 << 5) | (t << 4)]) + bytes(7), "UploadSegmentRequest", toggle=bool(t))
+    chunk = b"Pump sk"
+    sdo("upload segment 7 bytes t=0", True, bytes([(0 << 5) | (0 << 4) | (0 << 1)]) + chunk, "UploadSegmentResponse", payload=chunk)
+    tail = b"ng"
+    sdo("upload last segment 2 bytes t=1", True, bytes([(1 << 4) | ((7 - len(tail)) << 1) | 1]) + tail + bytes(5),
+        "UploadSegmentResponse", toggle=True, last=True, payload=tail)
+
+    # Writes
+    sdo("download expedited 2 bytes 1017:00", False, bytes([expedited(1, 2)]) + mux(0x1017, 0) + bytes.fromhex("E8030000"),
+        "InitiateDownloadRequest", 0x1017, 0, expedited=True, size_ind=True, payload=bytes.fromhex("E803"))
+    sdo("download expedited 1 byte 6200:01", False, bytes([expedited(1, 1)]) + mux(0x6200, 1) + bytes.fromhex("01000000"),
+        "InitiateDownloadRequest", 0x6200, 1, expedited=True, size_ind=True, payload=b"\x01")
+    sdo("download response", True, bytes([3 << 5]) + mux(0x1017, 0) + bytes(4), "InitiateDownloadResponse", 0x1017, 0)
+    sdo("download segmented, size 21", False, bytes([(1 << 5) | 0x01]) + mux(0x2100, 0) + (21).to_bytes(4, "little"),
+        "InitiateDownloadRequest", 0x2100, 0, size_ind=True, size=21)
+    sdo("download segment 7 bytes t=0", False, bytes([0]) + b"Pump sk", "DownloadSegmentRequest", payload=b"Pump sk")
+    sdo("download last segment 3 bytes t=1", False, bytes([(1 << 4) | (4 << 1) | 1]) + b"ang" + bytes(4), "DownloadSegmentRequest", toggle=True, last=True, payload=b"ang")
+    for t in (0, 1):
+        sdo(f"download segment response t={t}", True, bytes([(1 << 5) | (t << 4)]) + bytes(7), "DownloadSegmentResponse", toggle=bool(t))
+
+    # Aborts
+    for code, idx, sub in ((0x06020000, 0x9999, 0), (0x06090011, 0x1018, 9), (0x06010002, 0x1000, 0), (0x06070010, 0x6200, 1), (0x05040000, 0x2100, 0)):
+        sdo(f"abort 0x{code:08X}", True, bytes([4 << 5]) + mux(idx, sub) + code.to_bytes(4, "little"), "Abort", idx, sub, abort=code)
+
+    # COB-ID classification (function|node|pdo)
+    def cob(cob_id, function, node=0, pdo=0):
+        out.append({"name": f"cob-id 0x{cob_id:03X}", "kind": "cob", "id": cob_id, "fields": f"{function}|{node}|{pdo}"})
+
+    cob(0x000, "Nmt")
+    cob(0x080, "Sync")
+    cob(0x100, "Time")
+    cob(0x7E5, "Lss")
+    for node in (1, 5, 127):
+        cob(0x080 + node, "Emergency", node)
+        for n in range(1, 5):
+            cob(0x180 + (n - 1) * 0x100 + node, "Tpdo", node, n)
+            cob(0x200 + (n - 1) * 0x100 + node, "Rpdo", node, n)
+        cob(0x580 + node, "SdoResponse", node)
+        cob(0x600 + node, "SdoRequest", node)
+        cob(0x700 + node, "Heartbeat", node)
+    cob(0x7FF, "Other")   # 0x780–0x7FF is not in the predefined connection set (heartbeat ends at 0x77F)
+    cob(0x780, "Other")
+
+    # Emergency
+    for code, reg, mfr in ((0x4210, 0x09, bytes([1, 2, 3, 4, 5])), (0x0000, 0x00, bytes(5)), (0x8130, 0x11, b"\xAA" * 5)):
+        data = code.to_bytes(2, "little") + bytes([reg]) + mfr
+        out.append({"name": f"emcy 0x{code:04X}", "kind": "emcy", "data": data.hex().upper(), "fields": f"{code:04X}|{reg:02X}|{mfr.hex().upper()}"})
+
+    # Invalid SDO data (short frames, block transfer specifiers)
+    for name, data, from_server in (("short", "40001000", False), ("block upload request (ccs 5)", "A000100000000000", False),
+                                    ("block download response (scs 5)", "A000100000000000", True)):
+        out.append({"name": f"invalid: {name}", "kind": "sdo-invalid", "from_server": from_server, "data": data})
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -783,6 +865,7 @@ def main():
         "lorawan.json": lorawan_vectors(),
         "dlms.json": dlms_vectors(),
         "mbus.json": mbus_vectors(),
+        "canopen.json": canopen_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

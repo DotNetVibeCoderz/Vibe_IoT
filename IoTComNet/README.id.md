@@ -41,6 +41,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **MQTT 3.1.1 / 5.0 · Sparkplug B** | adapter di atas MQTTnet: subscription `IAsyncEnumerable`, reconnect + resubscribe, helper JSON/SenML, broker tertanam; edge node dan host application Sparkplug B (birth, alias, will NDEATH dengan bdSeq, rebirth, penulisan terjaga) |
 | **mDNS / DNS-SD** | responder dan browser (RFC 6762/6763): pengumuman, known-answer suppression, goodbye, cache TTL, enumerasi tipe, simulator pabrik |
 | **CAN / CAN FD** | satu `ICanBus` untuk Linux SocketCAN, adapter USB slcan (CANable, CANtact), adapter candleLight/gs_usb dan PEAK PCAN-USB, serta bus virtual; notasi candump, reader terfilter |
+| **CANopen (CiA 301)** | master dan perangkat di bus CAN apa pun: NMT, heartbeat, SDO (expedited, bersegmen, abort), mapping PDO dengan event timer dan SYNC, emergency, pemindaian, simulator modul I/O; codec dicerminkan oleh crate Rust yang di-fuzz |
 | **Bluetooth LE** | central lewat pustaka Rust di atas btleplug (WinRT, BlueZ, CoreBluetooth): pindai, GATT read/write/notify dengan saklar read-only; codec advertising data, iBeacon, Eddystone, dan nilai GATT; radio virtual |
 | **USB · HID** | transfer control/bulk/interrupt mentah (Rust nusb) dan report HID (hidapi) dengan saklar read-only, transport aliran byte `UseUsbBulk`, papan relay USB HID, bus virtual |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 sebagai state machine **Rust** yang di-fuzz; tester UDS (session, security access, DID, DTC, routine, mode read-only), scan tool OBD-II, dan simulator ECU |

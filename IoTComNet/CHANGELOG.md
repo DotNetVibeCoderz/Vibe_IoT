@@ -3,6 +3,24 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.16.0-preview.1 — 2026-10-09
+
+CANopen.
+
+- **New package `IoTCom.Net.Protocols.CanOpen`** (also in the meta-package): `CanOpenMaster` (NMT, heartbeat consumer,
+  SDO client expedited/segmented with abort codes, SYNC, PDO and EMCY events, TPDO mapping, network scan, read-only
+  mode), `CanOpenNode` (boot-up, NMT state machine, heartbeat producer, SDO server, event/SYNC TPDOs, RPDOs,
+  emergencies), `ObjectDictionary`/`PdoMapping`, `CanOpenCodec` with the frame lane, and a CiA 401-style I/O module
+  simulator.
+- **New Rust crate `iotcom-canopen`**: the codec twin, fuzz target `canopen` (7 M local runs, no findings) and 71
+  shared vectors in `/conformance/canopen.json` from an independent Python reference.
+- CLI `iotcom canopen scan|read|write|nmt|monitor`; RPC decoder `canopen`; hosting `AddCanOpenMaster`; Gallery
+  *CANopen I/O modules*; sample `CanOpenMaster`; notebook pair `industrial/16-canopen`; docs page *CANopen*.
+- Tooling since 0.15: generated C headers and binding drift checks (`rust/tools/iotcom-bindgen`), CI header compile.
+
+*CANopen (master, perangkat, SDO, PDO, NMT, heartbeat, emergency) dengan kembaran Rust yang di-fuzz, CLI, demo Galeri,
+sampel, notebook, dan dokumentasi.*
+
 ## 0.15.0-preview.1 — 2026-10-09
 
 USB CAN adapters.

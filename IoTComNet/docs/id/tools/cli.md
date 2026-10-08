@@ -56,6 +56,7 @@ iotcom --help
 | `iotcom mqtt pub|sub|broker` | publish, subscribe, menjalankan broker |
 | `iotcom ble scan` / `services` / `watch` / `write` | central Bluetooth LE di radio sungguhan atau `--sim`: advertisement (iBeacon/Eddystone terurai), pohon GATT dengan nilai, notifikasi; `write` perlu `--allow-write` |
 | `iotcom usb list` / `hid` / `control` / `write` / `relay` | perangkat USB dan HID (atau `--sim`): enumerasi, control IN, tulis bulk + baca (`--allow-write`), papan relay USB HID (menyalakan perlu `--allow-write`) |
+| `iotcom canopen scan` / `read` / `write` / `nmt` / `monitor` | CANopen di URI `--can` apa pun atau `sim` (dua modul I/O): pemindaian node dengan identitas, baca/tulis SDO (`--allow-write`), NMT (`--allow-write`), heartbeat/PDO/emergency |
 | `iotcom opcua browse` / `read` / `watch` | client OPC UA (`-e opc.tcp://…`, endpoint paling aman secara default, `--no-security`, `--accept-untrusted`, `--user`) atau `--sim` untuk simulator pabrik di dalam proses; sesi hanya-baca |
 | `iotcom opcua write` / `call` / `simulate` | menulis variabel atau memanggil method (perlu `--allow-write`; `write` meminta konfirmasi); menjalankan simulator pabrik di TCP |
 | `iotcom sparkplug watch` / `simulate` / `write` | tampilan host Sparkplug B atas sebuah namespace (`--sim` menanam broker dan lini pembotolan), simulator edge node, penulisan NCMD/DCMD (perlu `--allow-write` dan konfirmasi) |

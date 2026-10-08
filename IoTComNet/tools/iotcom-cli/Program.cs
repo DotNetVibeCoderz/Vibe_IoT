@@ -92,6 +92,15 @@ app.Configure(c =>
         b.AddCommand<CanSendCommand>("send").WithExample("can", "send", "--can", "slcan:COM5", "7DF#02010C");
         b.AddCommand<CanSimulateCommand>("simulate").WithExample("can", "simulate", "--port", "20100");
     });
+    c.AddBranch("canopen", o =>
+    {
+        o.SetDescription("CANopen (CiA 301): scan nodes, SDO read/write, NMT, monitor heartbeats, PDOs and emergencies.");
+        o.AddCommand<CanOpenScanCommand>("scan").WithExample("canopen", "scan", "--can", "sim").WithExample("canopen", "scan", "--can", "gsusb:", "-b", "250000");
+        o.AddCommand<CanOpenReadCommand>("read").WithExample("canopen", "read", "5", "1008", "-t", "str", "--can", "sim").WithExample("canopen", "read", "5", "6401:01", "-t", "i16", "--can", "sim");
+        o.AddCommand<CanOpenWriteCommand>("write").WithDescription("SDO download (requires --allow-write).").WithExample("canopen", "write", "5", "6200:01", "1", "-t", "u8", "--can", "sim", "--allow-write");
+        o.AddCommand<CanOpenNmtCommand>("nmt").WithDescription("NMT command (requires --allow-write).").WithExample("canopen", "nmt", "start", "5", "--can", "sim", "--allow-write");
+        o.AddCommand<CanOpenMonitorCommand>("monitor").WithExample("canopen", "monitor", "--can", "sim");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.CanOpen</RootNamespace>
+    <Description>CANopen (CiA 301) for IoTCom.Net on any ICanBus: NMT, heartbeat, SDO client and server (expedited and segmented, abort codes), PDO mapping with event timers and SYNC, emergency messages, object dictionary, network scan, frame-lane anatomy and a CiA 401-style I/O module simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);canopen;cia301;cia401;sdo;pdo;nmt;can;industrial;automation</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Transport.Can\IoTCom.Net.Transport.Can.csproj" />
+  </ItemGroup>
+</Project>

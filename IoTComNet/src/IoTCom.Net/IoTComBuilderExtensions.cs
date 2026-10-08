@@ -1,4 +1,5 @@
 using IoTCom.Net.Adapters.Mqtt;
+using IoTCom.Net.Protocols.CanOpen;
 using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
@@ -210,7 +211,7 @@ public static class IoTComBuilderExtensions
             define?.Invoke(node);
             return node;
         });
-        builder.Services.AddHostedService(sp => new SparkplugLifetime(sp.GetRequiredService<SparkplugEdgeNode>().StartAsync, ct => sp.GetRequiredService<SparkplugEdgeNode>().StopAsync(ct)));
+        builder.Services.AddHostedService(sp => new HostedLifetime(sp.GetRequiredService<SparkplugEdgeNode>().StartAsync, ct => sp.GetRequiredService<SparkplugEdgeNode>().StopAsync(ct)));
         return builder;
     }
 
@@ -223,11 +224,33 @@ public static class IoTComBuilderExtensions
             o.Logger = Logger(sp, "IoTCom.Sparkplug");
             configure(o);
         }));
-        builder.Services.AddHostedService(sp => new SparkplugLifetime(sp.GetRequiredService<SparkplugHost>().StartAsync, _ => sp.GetRequiredService<SparkplugHost>().StopAsync()));
+        builder.Services.AddHostedService(sp => new HostedLifetime(sp.GetRequiredService<SparkplugHost>().StartAsync, _ => sp.GetRequiredService<SparkplugHost>().StopAsync()));
         return builder;
     }
 
-    private sealed class SparkplugLifetime(Func<CancellationToken, Task> start, Func<CancellationToken, Task> stop) : IHostedService
+    /// <summary>
+    /// Registers a CANopen master as a singleton on a CAN bus opened from <paramref name="canUri"/> (started and stopped
+    /// with the host). Read-only by default; set <c>ReadOnly = false</c> to allow SDO downloads and NMT.
+    /// </summary>
+    public static IoTComBuilder AddCanOpenMaster(this IoTComBuilder builder, string canUri, Action<CanOpenMasterOptions>? configure = null, Action<CanBusOptions>? bus = null)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        CanAdapters.Register();
+        builder.Services.AddSingleton(sp => CanOpenMaster.Create(CanBus.Create(canUri, o =>
+        {
+            o.Logger = Logger(sp, "IoTCom.Can");
+            bus?.Invoke(o);
+        }), o =>
+        {
+            o.ReadOnly = true;
+            o.Logger = Logger(sp, "IoTCom.CanOpen");
+            configure?.Invoke(o);
+        }));
+        builder.Services.AddHostedService(sp => new HostedLifetime(sp.GetRequiredService<CanOpenMaster>().StartAsync, async _ => await sp.GetRequiredService<CanOpenMaster>().DisposeAsync().ConfigureAwait(false)));
+        return builder;
+    }
+
+    private sealed class HostedLifetime(Func<CancellationToken, Task> start, Func<CancellationToken, Task> stop) : IHostedService
     {
         public Task StartAsync(CancellationToken cancellationToken) => start(cancellationToken);
 

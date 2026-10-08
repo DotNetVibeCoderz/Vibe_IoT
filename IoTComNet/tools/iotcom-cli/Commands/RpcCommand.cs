@@ -130,6 +130,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
     [
         ("modbus", "Modbus TCP / RTU / ASCII", "IoTCom.Net.Protocols.Modbus", "master · slave · simulator", "protocols/modbus.md", "industrial/01-modbus", "ModbusMaster", ["modbus-tcp", "modbus-rtu", "modbus-ascii"]),
         ("can", "CAN / CAN FD", "IoTCom.Net.Transport.Can", "SocketCAN · slcan · virtual bus", "protocols/can.md", "automotive/06-can-uds", null, ["can"]),
+        ("canopen", "CANopen (CiA 301)", "IoTCom.Net.Protocols.CanOpen", "master · device · SDO · PDO · NMT · I/O simulator", "protocols/canopen.md", "industrial/16-canopen", "CanOpenMaster", ["canopen"]),
         ("uds", "ISO-TP · UDS · OBD-II", "IoTCom.Net.Protocols.Uds", "tester · scan tool · ECU simulator", "protocols/uds.md", "automotive/06-can-uds", "UdsTester", ["uds"]),
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
         ("mavlink", "MAVLink v1 / v2", "IoTCom.Net.Protocols.Mavlink", "link · ground station · simulator · generator", "protocols/mavlink.md", "navigation/08-mavlink", "MavlinkTelemetry", ["mavlink"]),
@@ -193,11 +194,17 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 parser.Feed(bytes);
                 summary = parser.TryRead(out var pk) ? pk.ToString() : $"not a valid frame (CRC errors {parser.CrcErrors})";
                 break;
-            case "can":
+            case "can" or "canopen":
                 // Accepts the SocketCAN tap layout (8-byte header + data) or candump text bytes.
                 var text = Encoding.ASCII.GetString(bytes);
                 var frame = CanFrame.TryParse(text, out var parsed) ? parsed : bytes.Length >= 8 ? SocketCanBus.Decode(Pad(bytes)) : throw new FormatException("CAN: expected candump text or the 8-byte SocketCAN header + data");
                 var tap = CanBusBase.ToTapBytes(frame);
+                if (protocol == "canopen")
+                {
+                    var co = IoTCom.Net.Protocols.CanOpen.CanOpenCodec.Describe(frame);
+                    return Result(tap, co, string.Join(" ", co.Skip(2).Select(f => f.Value).Prepend(co[0].Value)));
+                }
+
                 return Result(tap, CanFields(tap), frame.ToString());
             case "lorawan":
                 fields = LoRaWanAnatomy.Describe(bytes);
@@ -246,7 +253,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, uds)");
         }
         return Result(bytes, fields, summary);
     }

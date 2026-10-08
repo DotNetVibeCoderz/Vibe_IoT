@@ -11,6 +11,7 @@ members = [
     "crates/iotcom-lorawan",
     "crates/iotcom-dlms",
     "crates/iotcom-mbus",
+    "crates/iotcom-canopen",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",

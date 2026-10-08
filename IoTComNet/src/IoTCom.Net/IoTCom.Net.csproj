@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>IoTCom.Net</RootNamespace>
-    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, HL7 v2/MLLP, CoAP, MAVLink, LoRaWAN (Semtech UDP, light network server), DLMS/COSEM and M-Bus metering, AT-command modems, ASTM lab analyzers, mDNS/DNS-SD discovery, MQTT, Sparkplug B, SenML, TLV, serial, CAN/CAN FD (SocketCAN, slcan, gs_usb, PCAN), Bluetooth LE and USB/HID transports and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <Description>IoTCom.Net — complete IoT communication protocol library for .NET 10 (meta-package). Brings Core, Framing (CRC/SLIP/COBS/HDLC), Modbus TCP/RTU/ASCII, NMEA 0183, Art-Net/sACN, HL7 v2/MLLP, CoAP, MAVLink, LoRaWAN (Semtech UDP, light network server), DLMS/COSEM and M-Bus metering, AT-command modems, ASTM lab analyzers, mDNS/DNS-SD discovery, MQTT, Sparkplug B, SenML, TLV, serial, CAN/CAN FD (SocketCAN, slcan, gs_usb, PCAN) with CANopen, Bluetooth LE and USB/HID transports and Hosting with one reference. Built by Gravicode Studios, led by Kang Fadhil.</Description>
     <PackageTags>$(PackageTags);nmea;artnet;sacn;hl7;coap;mavlink;senml;serial;can</PackageTags>
   </PropertyGroup>
   <ItemGroup>
@@ -13,6 +13,7 @@
     <ProjectReference Include="..\IoTCom.Net.Transport.Ble\IoTCom.Net.Transport.Ble.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Transport.Can.Adapters\IoTCom.Net.Transport.Can.Adapters.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.CanOpen\IoTCom.Net.Protocols.CanOpen.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Nmea\IoTCom.Net.Protocols.Nmea.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Dmx\IoTCom.Net.Protocols.Dmx.csproj" />

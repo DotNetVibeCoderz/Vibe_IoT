@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.15.0-preview.1"
+VERSION = "0.16.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -568,6 +568,45 @@ NOTEBOOKS = {
            "See `docs/en/protocols/usb.md` for drivers and permissions.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom usb list`, `iotcom usb hid`, `iotcom usb relay --sim`, *Meja kerja USB* di Gallery, dan sampel UsbRelay. "
            "Lihat `docs/id/protocols/usb.md` untuk driver dan izin.\n\n" + CREDIT[1]),
+    ],
+    "industrial/16-canopen": [
+        md("# CANopen — SDO, PDO, NMT and heartbeats\n\nA master and a simulated CiA 401-style I/O module share a virtual CAN bus. Replace the bus with "
+           "`await CanBus.OpenAsync(\"socketcan:can0\")` (or `slcan:`, `gsusb:`, `pcan:usb1`) to reach real nodes.",
+           "# CANopen — SDO, PDO, NMT, dan heartbeat\n\nMaster dan modul I/O simulasi bergaya CiA 401 berbagi bus CAN virtual. Ganti bus dengan "
+           "`await CanBus.OpenAsync(\"socketcan:can0\")` (atau `slcan:`, `gsusb:`, `pcan:usb1`) untuk menjangkau node sungguhan."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Boot a node and scan the network\nThe module sends a boot-up message, then heartbeats; the scan reads 0x1000, 0x1008 and 0x1018 over SDO.",
+           "## Nyalakan node dan pindai jaringan\nModul mengirim pesan boot-up, lalu heartbeat; pemindaian membaca 0x1000, 0x1008, dan 0x1018 lewat SDO."),
+        code("using IoTCom.Net.Protocols.CanOpen;\nusing IoTCom.Net.Transport.Can;\n\n"
+             "var coNet = new VirtualCanNetwork(\"notebook\");\nvar ioModule = CanOpenIoModuleSimulator.Create(coNet.CreateNode(), nodeId: 5, heartbeatMs: 200, eventTimerMs: 150);\n"
+             "var coBus = coNet.CreateNode();\nvar coMaster = CanOpenMaster.Create(coBus);\nawait coMaster.StartAsync();\nawait ioModule.StartAsync();\n"
+             "foreach (var n in await coMaster.ScanAsync(1, 10, TimeSpan.FromMilliseconds(50)))\n"
+             "    Console.WriteLine($\"node {n.Id}: {n.Name}, type 0x{n.DeviceType:X8}, vendor 0x{n.Identity?.Vendor:X8}, serial {n.Identity?.Serial:X8}, {n.State}\");"),
+        md("## SDO: expedited, segmented and aborts\nValues up to 4 bytes fit one frame; longer ones are split into 7-byte segments with a toggle bit.",
+           "## SDO: expedited, bersegmen, dan abort\nNilai hingga 4 byte muat dalam satu frame; yang lebih panjang dipecah menjadi segmen 7 byte dengan bit toggle."),
+        code("Console.WriteLine(await coMaster.ReadAsync(5, 0x6401, 1, CanOpenDataType.Integer16));             // expedited\n"
+             "Console.WriteLine(await coMaster.ReadAsync(5, 0x2100, 0, CanOpenDataType.VisibleString));          // segmented\n"
+             "await coMaster.WriteAsync(5, 0x2100, 0, CanOpenDataType.VisibleString, \"Pump skid 9, Bekasi\");\n"
+             "Console.WriteLine(ioModule.Node.Dictionary[0x2100, 0]);\n"
+             "try { await coMaster.UploadAsync(5, 0x9999, 0); } catch (CanOpenSdoException e) { Console.WriteLine(e.Message); }\n"
+             "try { await coMaster.WriteAsync(5, 0x1000, 0, CanOpenDataType.Unsigned32, 1); } catch (CanOpenSdoException e) { Console.WriteLine(e.Message); }"),
+        md("## NMT start, PDOs and SYNC\nOnly operational nodes send PDOs. TPDO1 is event-driven with an event timer; TPDO2 answers every SYNC.",
+           "## NMT start, PDO, dan SYNC\nHanya node operational yang mengirim PDO. TPDO1 digerakkan event dengan event timer; TPDO2 menjawab setiap SYNC."),
+        code("var mapping = await coMaster.ReadTpdoMappingAsync(5, 1);\nConsole.WriteLine(string.Join(\", \", mapping.Objects));\n"
+             "var pdoCount = 0;\ncoMaster.PdoReceived += (node, pdo, data) => { if (pdoCount++ < 4) Console.WriteLine($\"TPDO{pdo} node {node}: {Convert.ToHexString(data)}\"); };\n"
+             "await coMaster.NmtAsync(NmtCommand.Start, 5);\n"
+             "await coMaster.WriteAsync(5, 0x6200, 1, CanOpenDataType.Unsigned8, 1);                             // pump on\n"
+             "ioModule.Step();\nawait coMaster.SyncAsync();\nawait Task.Delay(400);\n"
+             "Console.WriteLine($\"flow {ioModule.Node.Dictionary[0x6401, 2].Value} (0.1 l/min), state {coMaster.Nodes.First().State}\");"),
+        md("## On the wire", "## Di jalur"),
+        code("foreach (var f in CanOpenCodec.Describe(new CanFrame(0x585, Convert.FromHexString(\"410810000B000000\"))))\n"
+             "    Console.WriteLine($\"{f.Name,-8} {f.Value}\");\n"
+             "await ioModule.DisposeAsync();\nawait coMaster.DisposeAsync();"),
+        md("## Going further\n`iotcom canopen scan --can sim`, `iotcom canopen monitor --can sim`, the Gallery's *CANopen I/O modules* and the CanOpenMaster sample. "
+           "See `docs/en/protocols/canopen.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom canopen scan --can sim`, `iotcom canopen monitor --can sim`, *Modul I/O CANopen* di Gallery, dan sampel CanOpenMaster. "
+           "Lihat `docs/id/protocols/canopen.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

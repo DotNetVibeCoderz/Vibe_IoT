@@ -39,6 +39,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [NMEA 0183 · AIS](protocols/nmea.md) | reader · server · simulator · AIS decoder and vessel tracker | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | send · receive · discovery | `IoTCom.Net.Protocols.Dmx` |
 | [CAN / CAN FD](protocols/can.md) | send · receive · SocketCAN · slcan · gs_usb · PCAN · virtual | `IoTCom.Net.Transport.Can` |
+| [CANopen (CiA 301)](protocols/canopen.md) | master · device · SDO · PDO · NMT · I/O module simulator | `IoTCom.Net.Protocols.CanOpen` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · virtual radio (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB and HID](protocols/usb.md) | control · bulk · interrupt · HID reports · relay boards · virtual bus (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
