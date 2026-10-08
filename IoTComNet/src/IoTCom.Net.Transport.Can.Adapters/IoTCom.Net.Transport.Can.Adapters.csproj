@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Transport.Can.Adapters</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>USB CAN adapters for IoTCom.Net's ICanBus: candleLight / gs_usb (CANable, CANtact Pro…) over raw USB, and PEAK-System PCAN-USB through PCANBasic, opened as gsusb: and pcan: URIs; includes the gs_usb codec, bit-timing calculation and a virtual candleLight bridged to a virtual CAN network. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);can;gs_usb;candlelight;canable;pcan;peak;pcanbasic;automotive;usb</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Transport.Can\IoTCom.Net.Transport.Can.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
+  </ItemGroup>
+</Project>

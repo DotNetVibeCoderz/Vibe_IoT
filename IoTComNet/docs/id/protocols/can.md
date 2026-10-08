@@ -25,9 +25,13 @@ SocketCAN, adapter USB slcan, dan bus virtual di dalam proses.
 | `socketcan:can0` | `SocketCanBus` | Linux | antarmuka SocketCAN apa pun (`can0`, `vcan0`, `slcan0`); mendukung CAN FD |
 | `slcan:COM5`, `slcan:/dev/ttyACM0` | `SlcanBus` | semua | adapter Lawicel/slcan: CANable, CANtact, USBtin; CAN FD dengan firmware CANable 2 |
 | `slcan-tcp:host:port` | `SlcanBus` | semua | slcan lewat TCP (serial server, `iotcom can simulate`) |
+| `gsusb:`, `gsusb:1d50:606f:SERIAL#1` | `GsUsbCanBus` | semua | firmware candleLight / gs_usb (CANable 2, CANtact Pro, …) lewat USB mentah; bit timing dihitung dari clock adapter; CAN FD bila adapter melaporkannya |
+| `pcan:usb1` … `pcan:usb16` | `PcanCanBus` | semua | PEAK PCAN-USB lewat PCANBasic (perlu paket driver); CAN klasik pada bit rate standar |
 | `virtual:nama` | `VirtualCanBus` | semua | di dalam proses; setiap node dengan nama yang sama melihat frame node lain |
 
-Backend PCAN, Kvaser, dan gs_usb ada di [roadmap](../../../PLAN.md).
+`gsusb:` dan `pcan:` ada di `IoTCom.Net.Transport.Can.Adapters` (bagian dari meta-package); keduanya mendaftarkan diri ke
+`CanBus.Create` saat paket dimuat, atau secara eksplisit dengan `CanAdapters.Register()`. Kvaser dan Vector ada di
+[roadmap](../../../PLAN.md).
 
 ## Instalasi
 
@@ -94,6 +98,11 @@ sudo modprobe vcan && sudo ip link add vcan0 type vcan && sudo ip link set vcan0
 Adapter slcan tidak butuh driver di OS mana pun. Cukup berikan port serial dan bit rate, dan `SlcanBus` mengirim
 `S6`/`O` sendiri.
 
+Adapter candleLight (`gsusb:`) terenumerasi dengan driver WinUSB di Windows, sehingga berfungsi tanpa memasang apa pun; di
+Linux pakai driver kernel `gs_usb` lewat `socketcan:`, atau lepaskan driver itu dan tambahkan aturan udev untuk `1d50:606f`
+agar `gsusb:` bisa dipakai dari user space. Adapter PEAK (`pcan:`) memerlukan paket driver PEAK: PCANBasic di Windows,
+driver PCAN dengan `libpcanbasic` di Linux, atau PCBUSB di macOS.
+
 ## Simulator dan alat
 
 ```bash
@@ -110,7 +119,10 @@ memori. Keduanya membuat jalur slcan bisa diuji ujung ke ujung dalam unit test.
 ## Pengujian dan interoperabilitas
 
 Pengujian mencakup notasi can-utils, tabel DLC, filter, fan-out di bus virtual, codec slcan (termasuk CAN FD dan
-akhiran timestamp), sesi slcan lengkap lewat adapter tiruan, serta tata letak `can_frame`/`canfd_frame` SocketCAN.
+akhiran timestamp), sesi slcan lengkap lewat adapter tiruan, serta tata letak `can_frame`/`canfd_frame` SocketCAN. Uji adapter memeriksa frame host gs_usb terhadap tata letak
+driver Linux dan bit timing untuk candleLight 48 MHz (500 kbit/s → prescaler 6, 16 quanta, 87,5 %). Uji itu juga
+menjalankan sesi gs_usb penuh lewat candleLight virtual yang dijembatani ke jaringan CAN virtual, serta memeriksa
+handle kanal PCAN dan image `TPCANMsg`.
 CI juga menjalankan uji `vcan0` langsung di Linux bila modul kernelnya tersedia.
 
 ## Keamanan
@@ -121,7 +133,7 @@ meja uji atau saat peralatan dalam kondisi aman.
 
 ## Keterbatasan
 
-Belum ada backend PCAN, Kvaser, atau Vector; pakai driver SocketCAN di Linux atau adapter slcan. Error frame muncul
+Belum ada backend Kvaser atau Vector, dan `pcan:` hanya CAN klasik (kanal CAN FD memerlukan `CAN_InitializeFD`). Error frame muncul
 sebagai frame bertanda, tetapi pemulihan bus-off diserahkan ke driver. CAN XL tidak didukung.
 
 ## Pelajari lebih lanjut

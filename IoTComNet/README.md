@@ -39,7 +39,7 @@ ushort[] registers = await plc.ReadHoldingRegistersAsync(address: 0, count: 10);
 | **AT commands · ASTM** | cellular/GNSS modems (URC parsing, SMS, read-only mode, module simulator); lab analyzers over ASTM E1394/E1381 with NAK retransmission and an HL7 ORU bridge |
 | **MQTT 3.1.1 / 5.0 · Sparkplug B** | adapter over MQTTnet: `IAsyncEnumerable` subscriptions, reconnect + resubscribe, JSON/SenML helpers, embedded broker; Sparkplug B edge node and host application (births, aliases, NDEATH will with bdSeq, rebirth, guarded writes) |
 | **mDNS / DNS-SD** | responder and browser (RFC 6762/6763): announcements, known-answer suppression, goodbyes, TTL cache, type enumeration, plant simulator |
-| **CAN / CAN FD** | one `ICanBus` for Linux SocketCAN, slcan USB adapters (CANable, CANtact) and a virtual bus; candump notation, filtered readers |
+| **CAN / CAN FD** | one `ICanBus` for Linux SocketCAN, slcan USB adapters (CANable, CANtact), candleLight/gs_usb and PEAK PCAN-USB adapters, and a virtual bus; candump notation, filtered readers |
 | **Bluetooth LE** | central over a Rust library built on btleplug (WinRT, BlueZ, CoreBluetooth): scan, GATT read/write/notify with a read-only switch; advertising data, iBeacon, Eddystone and GATT value codecs; virtual radio |
 | **USB · HID** | raw control/bulk/interrupt transfers (Rust nusb) and HID reports (hidapi) with read-only switches, `UseUsbBulk` byte-stream transport, USB HID relay boards, virtual bus |
 | **ISO-TP · UDS · OBD-II** | ISO 15765-2 as a fuzzed **Rust** state machine; UDS tester (sessions, security access, DIDs, DTCs, routines, read-only mode), OBD-II scan tool and an ECU simulator |

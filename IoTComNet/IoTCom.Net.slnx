@@ -64,6 +64,7 @@
     <Project Path="src/IoTCom.Net.Serialization.Tlv/IoTCom.Net.Serialization.Tlv.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Ble/IoTCom.Net.Transport.Ble.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Can/IoTCom.Net.Transport.Can.csproj" />
+    <Project Path="src/IoTCom.Net.Transport.Can.Adapters/IoTCom.Net.Transport.Can.Adapters.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Usb/IoTCom.Net.Transport.Usb.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Serial/IoTCom.Net.Transport.Serial.csproj" />
     <Project Path="src/IoTCom.Net/IoTCom.Net.csproj" />

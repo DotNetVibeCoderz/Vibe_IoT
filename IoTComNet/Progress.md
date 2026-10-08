@@ -3,20 +3,20 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.14.0-preview.1` · **Last update:** 2026-10-09
+**Current version:** `0.15.0-preview.1` · **Last update:** 2026-10-09
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 493 passing | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 501 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 35 tests passing, clippy `-D warnings` clean; 9 cargo-fuzz targets (≈ 15 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
 | Docs EN/ID | ✅ 44 + 44 pages, parity and links verified | `python build/check_docs_parity.py` |
 | Notebooks | ✅ 17 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 34 packages (+ symbol packages) per release (latest `0.13.0-preview.1`, natives for all 9 RIDs including `iotcom_ble`; `0.14.0-preview.1` adds Transport.Usb); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 35 packages (+ symbol packages) per release (latest `0.14.0-preview.1`, natives for all 9 RIDs including `iotcom_ble` and `iotcom_usb`; `0.15.0-preview.1` adds Transport.Can.Adapters); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -35,7 +35,8 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Serialization.Protobuf / .MessagePack / .Tlv | ✅ | `IPayloadCodec<T>` adapters over Google.Protobuf and MessagePack-CSharp with schema-less views; simple TLV and BER-TLV |
 | IoTCom.Net.Protocols.Mdns | ✅ | DNS codec, responder (known-answer suppression, goodbyes), browser (TTL cache, type enumeration), plant simulator · probing, IPv6 ⏳ |
 | IoTCom.Net.Protocols.Sparkplug | ✅ | payload codec + topics, edge node (NDEATH will, aliases, rebirth, guarded writes), host application (STATE, gaps, late join), line simulator · data sets, templates, offline buffering ⏳ |
-| IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus · PCAN/Kvaser/gs_usb ⏳ |
+| IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus; `gsusb:`/`pcan:` via Transport.Can.Adapters · Kvaser/Vector ⏳ |
+| IoTCom.Net.Transport.Can.Adapters | ✅ | gs_usb/candleLight over Transport.Usb (host protocol, bit timing, TX echo, FD when supported), PEAK PCAN-USB via PCANBasic (classic), virtual candleLight · hardware-in-the-loop run on real adapters ⏳ |
 | IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
 | IoTCom.Net.Transport.Usb + Rust `iotcom-usb-native` | ✅ | control/bulk/interrupt (nusb), HID reports (hidapi), bulk byte-stream transport, HID relay boards, virtual bus; verified enumerating real devices on Windows · isochronous, hotplug, gadget role ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
@@ -71,6 +72,18 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.15
+
+- **gs_usb is managed C# on top of Transport.Usb** rather than another Rust crate: the protocol is a handful of control
+  requests and fixed little-endian frames, so the USB library already in Rust is enough (design §4: no duplicate
+  hardware layer).
+- **PCAN through PEAK's PCANBasic** (P/Invoke, resolved per OS: PCANBasic.dll, libpcanbasic.so, PCBUSB) because the
+  adapter's own protocol is undocumented; the driver package is a prerequisite and missing drivers are reported as
+  `PlatformNotSupportedException`.
+- **URI schemes are pluggable** (`CanBus.RegisterScheme`) so `Transport.Can` stays free of USB and vendor dependencies.
+- Neither adapter has been run against physical hardware in this release; the gs_usb path is verified against the
+  Linux driver's frame layout and a protocol-level simulator.
 
 ## Decisions taken in 0.14
 
@@ -202,6 +215,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | USB CAN adapters (`0.15.0-preview.1`): gs_usb/candleLight and PCAN-USB backends with `gsusb:`/`pcan:` URIs, virtual candleLight, docs and notebook section. 0.14.0 published with `iotcom_usb` for all 9 RIDs. |
 | 2026-10-09 | USB and HID (`0.14.0-preview.1`): Transport.Usb with Rust `iotcom_usb` (nusb, hidapi), relay boards, virtual bus, CLI `usb`, Gallery USB bench, UsbRelay sample, notebook pair, docs. 0.13.0 published with `iotcom_ble` built for all 9 RIDs. |
 | 2026-10-09 | Bluetooth LE (`0.13.0-preview.1`): Transport.Ble with Rust `iotcom_ble` (btleplug), codecs, virtual radio, CLI `ble`, Gallery radar demo, BleHeartRate sample, notebook pair, docs. |
 | 2026-10-09 | OPC UA (`0.12.0-preview.1`): adapter package with client and plant simulator server (secure sessions verified in tests), CLI `opcua`, Gallery tag browser, OpcUaBrowser sample, notebook pair, docs. |

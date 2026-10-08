@@ -3,6 +3,22 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.15.0-preview.1 — 2026-10-09
+
+USB CAN adapters.
+
+- **New package `IoTCom.Net.Transport.Can.Adapters`** (also in the meta-package): `GsUsbCanBus` for candleLight / gs_usb
+  firmware (CANable 2, CANtact Pro…) over `Transport.Usb`, with the gs_usb host protocol, bit-timing calculation from
+  the adapter's clock and limits, TX echo handling and CAN FD when supported; `PcanCanBus` for PEAK PCAN-USB through
+  PCANBasic (classic CAN, standard bit rates, listen-only); `VirtualGsUsbDevice` bridging a virtual candleLight to a
+  `VirtualCanNetwork`.
+- `CanBus.RegisterScheme` lets adapter packages add URI schemes; `gsusb:` and `pcan:` register themselves.
+  `iotcom can list` finds candleLight and PCAN adapters, and every `--can` option accepts the new URIs.
+- Notebook `automotive/06-can-uds` gains a gs_usb section; docs page *CAN / CAN FD* documents both adapters.
+
+*Adapter CAN USB: candleLight/gs_usb lewat USB mentah dan PEAK PCAN-USB lewat PCANBasic, dengan skema URI `gsusb:` dan
+`pcan:`.*
+
 ## 0.14.0-preview.1 — 2026-10-09
 
 USB and HID.

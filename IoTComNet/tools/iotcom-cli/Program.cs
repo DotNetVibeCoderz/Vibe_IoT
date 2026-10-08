@@ -11,6 +11,7 @@ if (Environment.GetEnvironmentVariable("IOTCOM_FORCE_ANSI") == "1")
     AnsiConsole.Profile.Width = 100;
 }
 
+IoTCom.Net.Transport.Can.Adapters.CanAdapters.Register();   // gsusb: and pcan: URIs
 var app = new CommandApp<InfoCommand>();
 app.Configure(c =>
 {

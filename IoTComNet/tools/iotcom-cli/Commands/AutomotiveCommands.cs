@@ -72,6 +72,17 @@ internal sealed class CanListCommand : Command<CanListCommand.Settings>
         var table = new Table().Border(TableBorder.Rounded).AddColumn("Interface").AddColumn("URI");
         foreach (var name in SocketCanBus.ListInterfaces()) table.AddRow(name, $"socketcan:{name}");
         foreach (var port in IoTCom.Net.Transport.Serial.SerialTransport.GetPortNames().Order(StringComparer.Ordinal)) table.AddRow($"{port} (slcan adapter?)", $"slcan:{port}");
+        try
+        {
+            foreach (var d in IoTCom.Net.Transport.Usb.UsbDevice.List().Where(d => d.VendorId == 0x1D50 && d.ProductId == 0x606F))
+                table.AddRow($"{d.Product ?? "candleLight"} {d.Serial}", $"gsusb:{d.Id}");
+        }
+        catch (Exception ex) when (ex is IoTComException or PlatformNotSupportedException)
+        {
+            Ui.Warn(Markup.Escape($"USB enumeration unavailable: {ex.Message}"));
+        }
+
+        if (IoTCom.Net.Transport.Can.Adapters.Pcan.IsAvailable) table.AddRow("PEAK PCAN-USB (PCANBasic installed)", "pcan:usb1");
         table.AddRow("built-in ECU simulator", "sim");
         AnsiConsole.Write(table);
         if (!SocketCanBus.IsSupported) Ui.Warn("SocketCAN is Linux-only; on this OS use an slcan USB adapter (CANable, CANtact, USBtin).");

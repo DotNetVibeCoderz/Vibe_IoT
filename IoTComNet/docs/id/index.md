@@ -39,7 +39,7 @@ perangkat keras.
 | [MAVLink v1 / v2](protocols/mavlink.md) | link · ground station · simulator kendaraan · generator dialek | `IoTCom.Net.Protocols.Mavlink` |
 | [NMEA 0183 · AIS](protocols/nmea.md) | pembaca · server · simulator · decoder AIS dan pelacak kapal | `IoTCom.Net.Protocols.Nmea` |
 | [Art-Net 4 · sACN (DMX512)](protocols/dmx.md) | kirim · terima · discovery | `IoTCom.Net.Protocols.Dmx` |
-| [CAN / CAN FD](protocols/can.md) | kirim · terima · SocketCAN · slcan · virtual | `IoTCom.Net.Transport.Can` |
+| [CAN / CAN FD](protocols/can.md) | kirim · terima · SocketCAN · slcan · gs_usb · PCAN · virtual | `IoTCom.Net.Transport.Can` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB dan HID](protocols/usb.md) | control · bulk · interrupt · report HID · papan relay · bus virtual (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
@@ -59,7 +59,7 @@ perangkat keras.
 | [Protobuf · MessagePack · TLV](protocols/payload-codecs.md) | codec · inspeksi tanpa skema | `IoTCom.Net.Serialization.Protobuf`, `.MessagePack`, `.Tlv` |
 | Serial RS-232/485 | transport | `IoTCom.Net.Transport.Serial` |
 
-[Roadmap](../../PLAN.md) berisi protokol berikutnya (adapter CAN USB, binding native hasil generate, …).
+[Roadmap](../../PLAN.md) berisi protokol berikutnya (binding native hasil generate, CAN Kvaser/Vector, protokol Fase 2, …).
 
 ## Membangun aplikasi
 

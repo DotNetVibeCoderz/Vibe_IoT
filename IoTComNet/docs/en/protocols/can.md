@@ -25,9 +25,13 @@ in-process virtual bus.
 | `socketcan:can0` | `SocketCanBus` | Linux | any SocketCAN interface (`can0`, `vcan0`, `slcan0`); CAN FD supported |
 | `slcan:COM5`, `slcan:/dev/ttyACM0` | `SlcanBus` | all | Lawicel/slcan adapters: CANable, CANtact, USBtin; CAN FD with CANable 2 firmware |
 | `slcan-tcp:host:port` | `SlcanBus` | all | slcan over TCP (serial servers, `iotcom can simulate`) |
+| `gsusb:`, `gsusb:1d50:606f:SERIAL#1` | `GsUsbCanBus` | all | candleLight / gs_usb firmware (CANable 2, CANtact Pro, …) over raw USB; bit timing computed from the adapter's clock; CAN FD when the adapter reports it |
+| `pcan:usb1` … `pcan:usb16` | `PcanCanBus` | all | PEAK PCAN-USB through PCANBasic (driver package required); classic CAN at the standard bit rates |
 | `virtual:name` | `VirtualCanBus` | all | in-process; every node on the same name sees the others' frames |
 
-PCAN, Kvaser and gs_usb backends are on the [roadmap](../../../PLAN.md).
+`gsusb:` and `pcan:` live in `IoTCom.Net.Transport.Can.Adapters` (part of the meta-package); they register themselves with
+`CanBus.Create` when the package loads, or explicitly with `CanAdapters.Register()`. Kvaser and Vector are on the
+[roadmap](../../../PLAN.md).
 
 ## Installation
 
@@ -92,6 +96,11 @@ sudo modprobe vcan && sudo ip link add vcan0 type vcan && sudo ip link set vcan0
 
 slcan adapters need no driver on any OS. Pass the serial port and the bit rate, and `SlcanBus` sends `S6`/`O` itself.
 
+candleLight adapters (`gsusb:`) enumerate with the WinUSB driver on Windows, so they work without installing anything; on
+Linux either use the kernel `gs_usb` driver through `socketcan:`, or unbind it and add a udev rule for `1d50:606f` to use
+`gsusb:` from user space. PEAK adapters (`pcan:`) need PEAK's driver package: PCANBasic on Windows, the PCAN driver with
+`libpcanbasic` on Linux, or PCBUSB on macOS.
+
 ## Simulator and tools
 
 ```bash
@@ -109,7 +118,10 @@ memory. Together they let you test the slcan path end to end in unit tests.
 
 Tests cover the can-utils notation, DLC tables, filters, fan-out on the virtual bus, the slcan codec (including
 CAN FD and timestamp suffixes), a full slcan session through the emulated adapter, and the SocketCAN
-`can_frame`/`canfd_frame` layouts. CI also runs a live `vcan0` round trip on Linux when the kernel module is
+`can_frame`/`canfd_frame` layouts. Adapter tests check gs_usb host frames against the Linux driver's layout and
+bit timing for a 48 MHz candleLight (500 kbit/s → prescaler 6, 16 quanta, 87.5 %). They also run a full gs_usb
+session through a virtual candleLight bridged to a virtual CAN network, and check PCAN channel handles and
+`TPCANMsg` images. CI also runs a live `vcan0` round trip on Linux when the kernel module is
 available.
 
 ## Security
@@ -120,7 +132,7 @@ safe state.
 
 ## Limitations
 
-There are no PCAN, Kvaser or Vector backends yet; use SocketCAN drivers on Linux or an slcan adapter. Error frames
+There are no Kvaser or Vector backends yet, and `pcan:` is classic CAN only (CAN FD channels need `CAN_InitializeFD`). Error frames
 are surfaced as flagged frames, but bus-off recovery is left to the driver. CAN XL is not supported.
 
 ## Learn more

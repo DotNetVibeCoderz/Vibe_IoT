@@ -31,7 +31,7 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 
 | Item | Priority | Notes |
 |---|---|---|
-| CAN / CAN FD transport (`ICanBus`): SocketCAN + one USB adapter (gs_usb / candleLight or PCAN) | P0 | ✅ `0.3.0-preview.1`: SocketCAN + slcan adapters + virtual bus (C#; see Progress decisions) · PCAN/Kvaser/gs_usb ⏳ |
+| CAN / CAN FD transport (`ICanBus`): SocketCAN + one USB adapter (gs_usb / candleLight or PCAN) | P0 | ✅ `0.3.0-preview.1`: SocketCAN + slcan adapters + virtual bus · ✅ gs_usb/candleLight and PCAN-USB in `0.15.0-preview.1` · Kvaser/Vector ⏳ |
 | ISO-TP, UDS, OBD-II (tester + ECU simulator) | P1 | ✅ `0.3.0-preview.1`: ISO-TP in Rust; UDS/OBD-II/ECU simulator in C# · flashing helpers, DoIP ⏳ |
 | CoAP (Observe, Block-wise) | P1 | ✅ `0.4.0-preview.1`: C# client/server + Rust codec twin (conformance + fuzz) · DTLS, OSCORE, CoAP-over-TCP ⏳ |
 | MAVLink v1/v2 + dialect source generator | P1 | ✅ `0.5.0-preview.1`: C# runtime + Roslyn generator (common dialect, custom dialects) + Rust frame codec twin · mission protocol, FTP, routing ⏳ |

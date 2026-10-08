@@ -305,6 +305,22 @@ public abstract class CanBusBase : EndpointBase, ICanBus
 /// <summary>Opens CAN interfaces by URI.</summary>
 public static class CanBus
 {
+    private static readonly ConcurrentDictionary<string, Func<string, string, CanBusOptions, ICanBus>> Schemes = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Registers a URI scheme (e.g. <c>gsusb</c>, <c>pcan</c>) implemented in another package. The factory receives the
+    /// part after the colon, the whole URI and the options.
+    /// </summary>
+    public static void RegisterScheme(string scheme, Func<string, string, CanBusOptions, ICanBus> factory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(scheme);
+        ArgumentNullException.ThrowIfNull(factory);
+        Schemes[scheme] = factory;
+    }
+
+    /// <summary>Schemes registered by adapter packages.</summary>
+    public static IReadOnlyCollection<string> RegisteredSchemes => [.. Schemes.Keys];
+
     /// <summary>
     /// Creates (but does not open) a bus:
     /// <list type="bullet">
@@ -328,7 +344,8 @@ public static class CanBus
             "socketcan" => new SocketCanBus(target, options),
             "slcan" => new SlcanBus(SlcanBus.SerialFactory(target), $"slcan:{target}", options),
             "slcan-tcp" => new SlcanBus(SlcanBus.TcpFactory(target), uri, options),
-            _ => throw new ArgumentException($"Unknown CAN interface '{uri}'. Use virtual:, socketcan:, slcan: or slcan-tcp:.", nameof(uri)),
+            _ when Schemes.TryGetValue(scheme, out var factory) => factory(target, uri, options),
+            _ => throw new ArgumentException($"Unknown CAN interface '{uri}'. Use virtual:, socketcan:, slcan:, slcan-tcp:{(Schemes.IsEmpty ? "" : ", " + string.Join(", ", Schemes.Keys.Order(StringComparer.Ordinal).Select(k => k + ":")))} (gsusb: and pcan: need IoTCom.Net.Transport.Can.Adapters).", nameof(uri)),
         };
     }
 

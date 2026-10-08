@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.14.0-preview.1"
+VERSION = "0.15.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -602,10 +602,21 @@ NOTEBOOKS = {
              "await uds.StartSessionAsync(UdsSession.Extended);\nawait uds.SecurityAccessAsync(0x01, EcuSimulator.ComputeKey);\n"
              "await uds.WriteDataByIdentifierAsync(UdsDid.RepairShopCode, \"WS-01\"u8.ToArray());\n"
              "Console.WriteLine(await uds.ReadStringAsync(UdsDid.RepairShopCode));"),
+        md("## A USB CAN adapter\n`gsusb:` opens a candleLight / CANable adapter over raw USB and `pcan:usb1` a PEAK PCAN-USB. Here a virtual "
+           "candleLight sits on a virtual USB bus and is wired to its own virtual CAN network, so the gs_usb protocol runs end to end.",
+           "## Adapter CAN USB\n`gsusb:` membuka adapter candleLight / CANable lewat USB mentah dan `pcan:usb1` membuka PEAK PCAN-USB. Di sini "
+           "candleLight virtual berada di bus USB virtual dan tersambung ke jaringan CAN virtualnya sendiri, sehingga protokol gs_usb berjalan dari ujung ke ujung."),
+        code("using IoTCom.Net.Transport.Can.Adapters;\nusing IoTCom.Net.Transport.Usb;\n\n"
+             "var benchCan = new VirtualCanNetwork(\"bench\");\nvar benchUsb = new VirtualUsbBus();\nvar candle = benchUsb.Add(new VirtualGsUsbDevice(benchCan));\n"
+             "var benchEcu = benchCan.CreateNode();\nawait benchEcu.ConnectAsync();\nusing var atEcu = benchEcu.OpenReader();\n"
+             "await using var gs = new GsUsbCanBus(backend: benchUsb, options: new CanBusOptions { Bitrate = 500_000 });\nawait gs.ConnectAsync();\n"
+             "Console.WriteLine($\"{gs.Channel}: brp {gs.Timing!.Brp}, {gs.Timing.Quanta} tq, sample point {gs.Timing.SamplePoint:P1}\");\n"
+             "await gs.SendAsync(CanFrame.Parse(\"7DF#02010C0000000000\"));\nConsole.WriteLine($\"ECU received {await atEcu.ReadAsync()}\");\n"
+             "Console.WriteLine(Convert.ToHexString(GsUsbCodec.EncodeFrame(GsUsbCodec.EchoIdRx, CanFrame.Parse(\"7E8#03410C1A\"))));"),
         md("## Going further\nThe Gallery demo *Vehicle diagnostics* shows the same stack with a live dashboard; the CLI has "
-           "`iotcom obd live --can sim`. See `docs/en/protocols/uds.md`.\n\n" + CREDIT[0],
+           "`iotcom obd live --can sim` and `iotcom can list` (it finds candleLight and PCAN adapters). See `docs/en/protocols/uds.md` and `can.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\nDemo Galeri *Diagnostik kendaraan* menampilkan tumpukan yang sama dengan dasbor langsung; CLI punya "
-           "`iotcom obd live --can sim`. Lihat `docs/id/protocols/uds.md`.\n\n" + CREDIT[1]),
+           "`iotcom obd live --can sim` dan `iotcom can list` (menemukan adapter candleLight dan PCAN). Lihat `docs/id/protocols/uds.md` dan `can.md`.\n\n" + CREDIT[1]),
     ],
     "medical/05-hl7-dicom": [
         md("# Healthcare: HL7 v2 and DICOM\n\nBedside monitors, analyzers and modalities talk **HL7 v2** (events and results over MLLP) and "
