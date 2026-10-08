@@ -3,6 +3,22 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.17.0-preview.1 — 2026-10-09
+
+SAE J1939.
+
+- **New package `IoTCom.Net.Protocols.J1939`** (also in the meta-package): `J1939Node` (address claim with NAME
+  arbitration, BAM and RTS/CTS transport protocol up to 1785 bytes, requests and responders, listen-only and read-only
+  modes, `Claims`), `J1939Id`, `J1939Name`, `J1939Spn` (EEC1, EEC2, CCVS1, ET1, EFL/P1, LFE1, VEP1, HOURS with the
+  frame lane), `J1939Dm1`/`J1939Dtc`, and `J1939EngineSimulator` with an oil-leak fault.
+- **New Rust crate `iotcom-j1939`**: the codec twin, fuzz target `j1939` (2.9 M local runs, no findings) and 28 shared
+  vectors in `/conformance/j1939.json` from an independent Python reference.
+- CLI `iotcom j1939 monitor|request|claims`; RPC decoder `j1939`; Gallery *Truck cluster over J1939*; sample
+  `J1939Monitor`; notebook pair `automotive/17-j1939`; docs page *SAE J1939*.
+
+*SAE J1939 (klaim alamat, transport protocol BAM dan RTS/CTS, SPN, DM1) dengan kembaran Rust yang di-fuzz, CLI, demo
+Galeri, sampel, notebook, dan dokumentasi.*
+
 ## 0.16.0-preview.1 — 2026-10-09
 
 CANopen.

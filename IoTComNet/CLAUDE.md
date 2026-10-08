@@ -63,7 +63,8 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Automotive**: `Transport.Can` (`ICanBus`, `CanBus.Create("socketcan:can0" | "slcan:COM5" | "slcan-tcp:h:p" | "virtual:x")`;
   `gsusb:` and `pcan:usbN` come from `Transport.Can.Adapters` via `CanBus.RegisterScheme`, call `CanAdapters.Register()` in hosts),
   `Protocols.CanOpen` (`CanOpenMaster`, `CanOpenNode`, `ObjectDictionary`, `CanOpenIoModuleSimulator`; Rust twin `iotcom-canopen`,
-  `/conformance/canopen.json`),
+  `/conformance/canopen.json`), `Protocols.J1939` (`J1939Node` with address claim and BAM/RTS-CTS, `J1939Spn`, `J1939Dm1`,
+  `J1939EngineSimulator`; Rust twin `iotcom-j1939`, `/conformance/j1939.json`),
   `Protocols.IsoTp` (Rust `iotcom-isotp` → native `iotcom_isotp`, driven by `IsoTpChannel`) and `Protocols.Uds` (`UdsClient`,
   `ObdClient`, `EcuSimulator`). Tests and CLI use `VirtualCanNetwork`; `--can sim` starts an in-process ECU. Fuzz targets live
   in `rust/fuzz` (nightly; `cargo +nightly fuzz run isotp`; on Windows put the MSVC `clang_rt.asan_dynamic` DLL on PATH).

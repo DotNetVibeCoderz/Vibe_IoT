@@ -101,6 +101,13 @@ app.Configure(c =>
         o.AddCommand<CanOpenNmtCommand>("nmt").WithDescription("NMT command (requires --allow-write).").WithExample("canopen", "nmt", "start", "5", "--can", "sim", "--allow-write");
         o.AddCommand<CanOpenMonitorCommand>("monitor").WithExample("canopen", "monitor", "--can", "sim");
     });
+    c.AddBranch("j1939", j =>
+    {
+        j.SetDescription("SAE J1939 (trucks, buses, agriculture, marine): monitor decoded PGNs, request parameters, list address claims.");
+        j.AddCommand<J1939MonitorCommand>("monitor").WithExample("j1939", "monitor", "--can", "sim").WithExample("j1939", "monitor", "--can", "socketcan:can0", "--pgn", "eec1", "--pgn", "dm1");
+        j.AddCommand<J1939RequestCommand>("request").WithExample("j1939", "request", "vin", "--can", "sim").WithExample("j1939", "request", "hours", "--to", "00", "--can", "sim");
+        j.AddCommand<J1939ClaimsCommand>("claims").WithExample("j1939", "claims", "--can", "sim");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");

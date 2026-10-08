@@ -15,7 +15,7 @@ in-process virtual bus.
 
 - Logging or decoding a vehicle or machine bus (`candump`-style).
 - Sending commands to CAN devices (motor controllers, BMS, sensors).
-- Carrying higher protocols: [ISO-TP, UDS and OBD-II](uds.md), and in the future CANopen and J1939.
+- Carrying higher protocols: [ISO-TP, UDS and OBD-II](uds.md), [CANopen](canopen.md) and [SAE J1939](j1939.md).
 - Testing CAN software without hardware on a virtual bus.
 
 ## Backends

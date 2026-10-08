@@ -35,6 +35,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Industri | Penjelajah tag OPC UA — address space simulator pabrik lewat sesi Basic256Sha256, semua tag dalam satu subscription, tren langsung, penulisan terjaga, dan pemanggilan method | OPC UA |
 | Industri | Modul I/O CANopen — dua modul bergaya CiA 401 di rel DIN dengan LED input/output dan nilai analog dari PDO, NMT start/stop, output pompa dinyalakan lewat SDO di balik penjaga penulisan, konsol SDO | CANopen |
 | Otomotif | Diagnostik kendaraan — scan tool dan simulator ECU mesin di bus CAN virtual: takometer dan lampu indikator, data langsung OBD-II, VIN, DTC, security access, dan penulisan yang dijaga | CAN, ISO-TP (Rust), UDS, OBD-II |
+| Otomotif | Panel truk lewat J1939 — ECU mesin truk berat di bus virtual 250 kbit/s: takometer dan spidometer dari SPN, suhu pendingin, tekanan oli, konsumsi BBM, dan aki, pedal gas, VIN lewat RTS/CTS, serta kebocoran oli yang menyalakan lampu kuning lewat DM1 | SAE J1939, DM1 |
 | Medis & kesehatan | Monitor pasien ICU — 4 bed sintetis mengirim ORU^R01 lewat MLLP; papan bangsal, kurva langsung, NEWS2, tren, dan catatan SBAR dari LLM | HL7 v2, MLLP |
 | Medis & kesehatan | Pra-baca gambar dengan AI — modalitas CT/MR/X-ray simulasi menyimpan ke PACS; viewer dengan window dan pra-baca model vision yang dinilai terhadap temuan yang ditanam | DICOM C-STORE |
 | Navigasi & maritim | Telemetri drone lewat MAVLink — artificial horizon, jejak terbang, baterai, pesan status; arm, lepas landas, RTL, dan mendarat dengan COMMAND_ACK (dijaga) | MAVLink 2 |
@@ -65,6 +66,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Penjelajah tag OPC UA](../../images/gallery-opcua.png)
 ![Modul I/O CANopen](../../images/gallery-canopen.png)
+![Panel truk lewat J1939](../../images/gallery-j1939.png)
 ![Perangkat Bluetooth di sekitar](../../images/gallery-ble.png)
 ![Meja kerja USB](../../images/gallery-usb.png)
 ![Pencahayaan](../../images/gallery-lighting.png)

@@ -853,6 +853,70 @@ def canopen_vectors():
     return out
 
 
+# ---- SAE J1939 -----------------------------------------------------------------------------------------------------
+# Independent reference built from J1939-21 (identifier layout P|EDP|DP|PF|PS|SA, TP.CM layouts), J1939-81 (NAME bit
+# fields) and J1939-73 (DTC with SPN conversion method 0). Fields are "|"-separated strings shared by C# and Rust.
+
+def j1939_vectors():
+    out = []
+
+    def ident(priority, edp, dp, pf, ps, sa):
+        can_id = (priority << 26) | (edp << 25) | (dp << 24) | (pf << 16) | (ps << 8) | sa
+        pgn = (edp << 17) | (dp << 16) | (pf << 8) | (ps if pf >= 240 else 0)
+        dest = ps if pf < 240 else 0xFF
+        out.append({"name": f"id 0x{can_id:08X}", "kind": "id", "can_id": can_id, "fields": f"{priority}|{pgn}|{dest}|{sa}"})
+
+    ident(3, 0, 0, 0xF0, 0x04, 0x00)     # EEC1 from the engine
+    ident(6, 0, 0, 0xFE, 0xF1, 0x00)     # CCVS1
+    ident(6, 0, 0, 0xEA, 0x00, 0xF9)     # request to 0x00 from 0xF9
+    ident(7, 0, 0, 0xEC, 0xFF, 0x00)     # TP.CM broadcast
+    ident(7, 0, 0, 0xEB, 0x21, 0x17)     # TP.DT to 0x21
+    ident(6, 0, 0, 0xEE, 0xFF, 0x80)     # address claimed
+    ident(7, 0, 1, 0xF0, 0x04, 0x03)     # data page 1
+    ident(0, 1, 0, 0x10, 0x20, 0x30)     # extended data page, PDU1
+
+    def name(identity, manufacturer, ecu, func_inst, function, vsys, vsys_inst, industry, aac):
+        value = (identity | (manufacturer << 21) | (ecu << 32) | (func_inst << 35) | (function << 40) | (vsys << 49)
+                 | (vsys_inst << 56) | (industry << 60) | (aac << 63))
+        out.append({"name": f"NAME function {function}", "kind": "name", "data": value.to_bytes(8, "little").hex().upper(),
+                    "fields": f"{identity}|{manufacturer}|{ecu}|{func_inst}|{function}|{vsys}|{vsys_inst}|{industry}|{aac}"})
+
+    name(0x0A2B3, 0x146, 0, 0, 0, 0, 0, 1, 0)
+    name(0x1D0F5, 0x7FF, 0, 0, 249, 0, 0, 1, 1)
+    name(0x1FFFFF, 0x7FF, 7, 31, 255, 127, 15, 7, 1)
+    name(1, 1, 0, 0, 30, 0, 0, 2, 1)
+
+    def dtc(spn, fmi, oc):
+        data = bytes([spn & 0xFF, (spn >> 8) & 0xFF, ((spn >> 16) << 5) | fmi, oc])
+        out.append({"name": f"dtc SPN {spn} FMI {fmi}", "kind": "dtc", "data": data.hex().upper(), "fields": f"{spn}|{fmi}|{oc}"})
+
+    for args in ((100, 1, 1), (110, 0, 2), (190, 2, 0), (520192, 31, 126), (524287, 0, 127), (3226, 16, 5)):
+        dtc(*args)
+
+    def tp(control, data, fields):
+        out.append({"name": f"tp.cm {control}", "kind": "tp", "data": data.hex().upper(), "fields": fields})
+
+    def pgn3(p):
+        return bytes([p & 0xFF, (p >> 8) & 0xFF, p >> 16])
+
+    tp("bam", bytes([32]) + (18).to_bytes(2, "little") + bytes([3, 0xFF]) + pgn3(0xFEEC), f"Broadcast|18|3|0|0|0|{0xFEEC}")
+    tp("rts", bytes([16]) + (1785).to_bytes(2, "little") + bytes([255, 0xFF]) + pgn3(0xEF00), f"RequestToSend|1785|255|0|255|0|{0xEF00}")
+    tp("cts", bytes([17, 255, 1, 0xFF, 0xFF]) + pgn3(0xEF00), f"ClearToSend|0|255|1|0|0|{0xEF00}")
+    tp("ack", bytes([19]) + (1785).to_bytes(2, "little") + bytes([255, 0xFF]) + pgn3(0xEF00), f"EndOfMessageAck|1785|255|0|0|0|{0xEF00}")
+    tp("abort", bytes([255, 3, 0xFF, 0xFF, 0xFF]) + pgn3(0xFEEC), f"Abort|0|0|0|0|3|{0xFEEC}")
+
+    def spn(pgn, data, fields):
+        out.append({"name": f"spn pgn {pgn}", "kind": "spn", "pgn": pgn, "data": data.hex().upper(), "fields": fields})
+
+    # EEC1: torque mode 1, demand 0 %, actual 15 %, 1500 rpm, controlling device n/a
+    spn(0xF004, bytes([0xF1, 125, 140]) + (12000).to_bytes(2, "little") + bytes([0xFF, 0xFF, 0xFF]), "899=1|512=0|513=15|190=1500|1483=na")
+    spn(0xFEF1, bytes([0xFF]) + (88 * 256).to_bytes(2, "little") + bytes(5 * [0xFF]), "84=88")
+    spn(0xFEEE, bytes([130, 81]) + int((99 + 273) / 0.03125).to_bytes(2, "little") + bytes(4 * [0xFF]), "110=90|174=41|175=99")
+    spn(0xFEF7, bytes([0xFF, 0xFF]) + (562).to_bytes(2, "little") + (552).to_bytes(2, "little") + bytes([0xFF, 0xFF]), "167=28.1|168=27.6")
+    spn(0xFEE5, (256872).to_bytes(4, "little") + bytes(4 * [0xFF]), "247=12843.6|249=na")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -866,6 +930,7 @@ def main():
         "dlms.json": dlms_vectors(),
         "mbus.json": mbus_vectors(),
         "canopen.json": canopen_vectors(),
+        "j1939.json": j1939_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

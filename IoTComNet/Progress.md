@@ -12,11 +12,11 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
 | .NET tests | ✅ 596 passing | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 43 tests passing, clippy `-D warnings` clean; 10 cargo-fuzz targets (≈ 22 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
-| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 45 + 45 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 18 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
+| Docs EN/ID | ✅ 46 + 46 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 19 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 36 packages (+ symbol packages) per release (latest `0.15.0-preview.1`; `0.16.0-preview.1` adds Protocols.CanOpen); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 37 packages (+ symbol packages) per release (latest `0.16.0-preview.1` with Protocols.CanOpen; `0.17.0-preview.1` adds Protocols.J1939); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -38,6 +38,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus; `gsusb:`/`pcan:` via Transport.Can.Adapters · Kvaser/Vector ⏳ |
 | IoTCom.Net.Transport.Can.Adapters | ✅ | gs_usb/candleLight over Transport.Usb (host protocol, bit timing, TX echo, FD when supported), PEAK PCAN-USB via PCANBasic (classic), virtual candleLight · hardware-in-the-loop run on real adapters ⏳ |
 | IoTCom.Net.Protocols.CanOpen + Rust `iotcom-canopen` | ✅ | master (NMT, heartbeat consumer, SDO client, SYNC, PDO/EMCY, scan, read-only), device (SDO server, TPDO/RPDO, heartbeat, EMCY), object dictionary, I/O module simulator; fuzzed codec twin + 71 vectors · SDO block, LSS, EDS import ⏳ |
+| IoTCom.Net.Protocols.J1939 + Rust `iotcom-j1939` | ✅ | node (address claim with NAME arbitration, BAM + RTS/CTS up to 1785 bytes, requests/responders, listen-only, read-only), SPN decode/encode for common engine PGNs, DM1/DM2, engine ECU simulator; fuzzed codec twin + 28 vectors · ETP, DM3/DM11, NMEA 2000 fast packet ⏳ |
 | IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
 | IoTCom.Net.Transport.Usb + Rust `iotcom-usb-native` | ✅ | control/bulk/interrupt (nusb), HID reports (hidapi), bulk byte-stream transport, HID relay boards, virtual bus; verified enumerating real devices on Windows · isochronous, hotplug, gadget role ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
@@ -57,9 +58,9 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Gallery (Avalonia) | ✅ | 18 demos (Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 19 demos (Automotive: truck cluster over J1939; Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 | VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | Phase 1 |
@@ -73,6 +74,16 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.17
+
+- **J1939 also follows the codec-twin pattern.** The transport protocol is a small per-connection state machine whose
+  timeouts sit next to the address claim, so it stays managed with the node; the Rust crate mirrors the codec for
+  fuzzing and conformance.
+- **Listen-only means silent.** A listen-only node does not claim an address, refuses requests and still reassembles
+  RTS/CTS transfers between other nodes, so a monitor on a moving vehicle sees VINs and DM1s without transmitting.
+- **Read-only nodes may only request.** `SendAsync` is refused, so tools built on the node cannot send commands
+  (TSC1 and similar).
 
 ## Decisions taken in 0.16
 
@@ -235,6 +246,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-09 | SAE J1939 (`0.17.0-preview.1`): node with address claim and transport protocol, SPNs, DM1, engine simulator, fuzzed Rust twin, 28 conformance vectors, CLI `j1939`, Gallery truck cluster, sample, notebook pair, docs. |
 | 2026-10-09 | CANopen (`0.16.0-preview.1`): master + device + simulator, fuzzed Rust twin, 71 conformance vectors, CLI `canopen`, Gallery I/O modules, sample, notebook pair, docs. First Phase 2 item. |
 | 2026-10-09 | Native bindings tooling: `iotcom-bindgen` (cbindgen headers + csbindgen reference for modbus, isotp, ble, usb), `BindingDriftTests`, CI drift and header compile gate. Phase 1 of PLAN complete. |
 | 2026-10-09 | USB CAN adapters (`0.15.0-preview.1`): gs_usb/candleLight and PCAN-USB backends with `gsusb:`/`pcan:` URIs, virtual candleLight, docs and notebook section. 0.14.0 published with `iotcom_usb` for all 9 RIDs. |

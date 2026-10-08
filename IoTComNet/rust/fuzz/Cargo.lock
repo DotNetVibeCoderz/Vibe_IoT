@@ -170,6 +170,7 @@ dependencies = [
  "iotcom-core",
  "iotcom-dlms",
  "iotcom-isotp",
+ "iotcom-j1939",
  "iotcom-lorawan",
  "iotcom-mavlink",
  "iotcom-mbus",
@@ -183,6 +184,10 @@ version = "0.1.0"
 dependencies = [
  "iotcom-core",
 ]
+
+[[package]]
+name = "iotcom-j1939"
+version = "0.1.0"
 
 [[package]]
 name = "iotcom-lorawan"

@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.16.0-preview.1"
+VERSION = "0.17.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -607,6 +607,44 @@ NOTEBOOKS = {
            "See `docs/en/protocols/canopen.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom canopen scan --can sim`, `iotcom canopen monitor --can sim`, *Modul I/O CANopen* di Gallery, dan sampel CanOpenMaster. "
            "Lihat `docs/id/protocols/canopen.md`.\n\n" + CREDIT[1]),
+    ],
+    "automotive/17-j1939": [
+        md("# J1939 — trucks, buses and machines\n\nA diagnostic tool and a simulated heavy-duty engine ECU share a virtual 250 kbit/s CAN bus. Replace the bus with "
+           "`await CanBus.OpenAsync(\"socketcan:can0\")` (or `slcan:`, `gsusb:`, `pcan:usb1`) to listen to a real vehicle — only vehicles you are authorised to work on.",
+           "# J1939 — truk, bus, dan alat berat\n\nAlat diagnostik dan ECU mesin truk simulasi berbagi bus CAN virtual 250 kbit/s. Ganti bus dengan "
+           "`await CanBus.OpenAsync(\"socketcan:can0\")` (atau `slcan:`, `gsusb:`, `pcan:usb1`) untuk mendengarkan kendaraan sungguhan — hanya kendaraan yang Anda berwenang tangani."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## The 29-bit identifier\nPriority, parameter group number (PGN) and source address; PDU1 PGNs (PF < 240) also carry a destination.",
+           "## Identifier 29-bit\nPrioritas, parameter group number (PGN), dan alamat sumber; PGN PDU1 (PF < 240) juga membawa tujuan."),
+        code("using IoTCom.Net.Protocols.J1939;\nusing IoTCom.Net.Transport.Can;\n\n"
+             "var eec1Id = J1939Id.FromCanId(0x0CF00400);\nConsole.WriteLine($\"priority {eec1Id.Priority}, PGN {eec1Id.Pgn} ({Pgn.Name(eec1Id.Pgn)}), source 0x{eec1Id.Source:X2}\");\n"
+             "var reqId = J1939Id.FromCanId(0x18EA00F9);\nConsole.WriteLine($\"PGN {reqId.Pgn} ({Pgn.Name(reqId.Pgn)}) from 0x{reqId.Source:X2} to 0x{reqId.Destination:X2}\");"),
+        md("## SPNs: scaling, offsets and 'not available'\nEach parameter has a fixed position, resolution and offset. 0xFF… means not available.",
+           "## SPN: skala, offset, dan 'tidak tersedia'\nSetiap parameter punya posisi, resolusi, dan offset tetap. 0xFF… berarti tidak tersedia."),
+        code("foreach (var v in J1939Spn.Decode(Pgn.Eec1, Convert.FromHexString(\"F17D82A02200FF7D\")))\n    Console.WriteLine(v);\n"
+             "var et1 = new byte[8];\net1.AsSpan().Fill(0xFF);\nJ1939Spn.Encode(Pgn.Et1, 110, 88, et1);\nConsole.WriteLine($\"ET1 with coolant 88 °C: {Convert.ToHexString(et1)}\");"),
+        md("## A node, an engine and a VIN over RTS/CTS\nThe tool claims address 0xF9; the VIN is longer than 8 bytes, so the engine answers with the transport protocol.",
+           "## Node, mesin, dan VIN lewat RTS/CTS\nAlat mengklaim alamat 0xF9; VIN lebih dari 8 byte, sehingga mesin menjawab dengan transport protocol."),
+        code("var jNet = new VirtualCanNetwork(\"notebook-j1939\");\nvar truck = J1939EngineSimulator.Create(jNet.CreateNode());\ntruck.Throttle = 50;\n"
+             "var tool = J1939Node.Create(jNet.CreateNode(), o => o.ReadOnly = true);\nawait tool.StartAsync();\nawait truck.StartAsync();\n"
+             "var vinMsg = await tool.RequestAsync(Pgn.VehicleIdentification, 0x00);\nConsole.WriteLine($\"VIN: {System.Text.Encoding.ASCII.GetString(vinMsg.Data)} ({vinMsg.Data.Length} bytes)\");\n"
+             "foreach (var (addr, name) in tool.Claims) Console.WriteLine($\"0x{addr:X2}: function {name.Function}, identity {name.IdentityNumber}\");"),
+        md("## Broadcasts and DM1\nThe engine broadcasts EEC1/CCVS1 every 100 ms and DM1 every second. Start an oil leak and watch the amber lamp.",
+           "## Siaran dan DM1\nMesin menyiarkan EEC1/CCVS1 tiap 100 ms dan DM1 tiap detik. Mulai kebocoran oli dan lihat lampu kuning."),
+        code("J1939Dm1? lastDm1 = null;\ndouble rpmNow = 0;\n"
+             "tool.MessageReceived += m =>\n{\n    if (m.Pgn == Pgn.Dm1) lastDm1 = J1939Dm1.Parse(m.Data);\n"
+             "    if (m.Pgn == Pgn.Eec1) rpmNow = m.Values.First(v => v.Spn == 190).Value ?? 0;\n};\n"
+             "truck.OilLeak();\nfor (var i = 0; i < 40; i++) truck.Step(1);\nawait Task.Delay(1300);\n"
+             "Console.WriteLine($\"{rpmNow:0} rpm, amber lamp {lastDm1?.AmberWarningLamp}\");\nforeach (var d in lastDm1!.Dtcs) Console.WriteLine($\"SPN {d.Spn} {J1939Spn.Name(d.Spn)}: FMI {d.Fmi} {d.FailureMode}\");"),
+        md("## On the wire", "## Di jalur"),
+        code("foreach (var f in J1939Spn.Describe(new CanFrame(0x18FECA00, Convert.FromHexString(\"04FF640001010000\"), CanFrameFlags.Extended)))\n"
+             "    Console.WriteLine($\"{f.Name,-10} {f.Value}\");\n"
+             "await tool.DisposeAsync();\nawait truck.DisposeAsync();"),
+        md("## Going further\n`iotcom j1939 monitor --can sim`, `iotcom j1939 request vin --to 00 --can sim`, `iotcom j1939 claims --can sim`, the Gallery's *Truck cluster over J1939* and the J1939Monitor sample. "
+           "See `docs/en/protocols/j1939.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom j1939 monitor --can sim`, `iotcom j1939 request vin --to 00 --can sim`, `iotcom j1939 claims --can sim`, *Panel truk lewat J1939* di Gallery, dan sampel J1939Monitor. "
+           "Lihat `docs/id/protocols/j1939.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.J1939</RootNamespace>
+    <Description>SAE J1939 for IoTCom.Net on any ICanBus: 29-bit identifiers and PGNs, NAME and address claim, the transport protocol (BAM and RTS/CTS up to 1785 bytes), requests, SPN decoding for common engine and vehicle PGNs, DM1/DM2 trouble codes, frame-lane anatomy and a heavy-duty engine ECU simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);j1939;sae-j1939;can;truck;heavy-duty;pgn;spn;dm1;telematics;automotive</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Transport.Can\IoTCom.Net.Transport.Can.csproj" />
+  </ItemGroup>
+</Project>

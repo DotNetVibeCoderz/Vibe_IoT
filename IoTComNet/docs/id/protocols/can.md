@@ -15,7 +15,7 @@ SocketCAN, adapter USB slcan, dan bus virtual di dalam proses.
 
 - Merekam atau mengurai bus kendaraan atau mesin (gaya `candump`).
 - Mengirim perintah ke perangkat CAN (pengendali motor, BMS, sensor).
-- Membawa protokol di atasnya: [ISO-TP, UDS, dan OBD-II](uds.md), dan nantinya CANopen serta J1939.
+- Membawa protokol di atasnya: [ISO-TP, UDS, dan OBD-II](uds.md), [CANopen](canopen.md), serta [SAE J1939](j1939.md).
 - Menguji perangkat lunak CAN tanpa perangkat keras di bus virtual.
 
 ## Backend

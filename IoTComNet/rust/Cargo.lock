@@ -592,6 +592,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "iotcom-j1939"
+version = "0.1.0"
+
+[[package]]
 name = "iotcom-lorawan"
 version = "0.1.0"
 dependencies = [

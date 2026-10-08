@@ -20,6 +20,7 @@ iotcom-lorawan = { path = "../crates/iotcom-lorawan" }
 iotcom-dlms = { path = "../crates/iotcom-dlms" }
 iotcom-mbus = { path = "../crates/iotcom-mbus" }
 iotcom-canopen = { path = "../crates/iotcom-canopen" }
+iotcom-j1939 = { path = "../crates/iotcom-j1939" }
 
 [workspace]
 members = ["."]
@@ -90,6 +91,13 @@ bench = false
 [[bin]]
 name = "canopen"
 path = "fuzz_targets/canopen.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "j1939"
+path = "fuzz_targets/j1939.rs"
 test = false
 doc = false
 bench = false

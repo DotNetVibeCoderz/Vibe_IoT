@@ -1,0 +1,175 @@
+[
+  {
+    "name": "id 0x0CF00400",
+    "kind": "id",
+    "can_id": 217056256,
+    "fields": "3|61444|255|0"
+  },
+  {
+    "name": "id 0x18FEF100",
+    "kind": "id",
+    "can_id": 419361024,
+    "fields": "6|65265|255|0"
+  },
+  {
+    "name": "id 0x18EA00F9",
+    "kind": "id",
+    "can_id": 417988857,
+    "fields": "6|59904|0|249"
+  },
+  {
+    "name": "id 0x1CECFF00",
+    "kind": "id",
+    "can_id": 485293824,
+    "fields": "7|60416|255|0"
+  },
+  {
+    "name": "id 0x1CEB2117",
+    "kind": "id",
+    "can_id": 485171479,
+    "fields": "7|60160|33|23"
+  },
+  {
+    "name": "id 0x18EEFF80",
+    "kind": "id",
+    "can_id": 418316160,
+    "fields": "6|60928|255|128"
+  },
+  {
+    "name": "id 0x1DF00403",
+    "kind": "id",
+    "can_id": 502268931,
+    "fields": "7|126980|255|3"
+  },
+  {
+    "name": "id 0x02102030",
+    "kind": "id",
+    "can_id": 34611248,
+    "fields": "0|135168|32|48"
+  },
+  {
+    "name": "NAME function 0",
+    "kind": "name",
+    "data": "B3A2C02800000010",
+    "fields": "41651|326|0|0|0|0|0|1|0"
+  },
+  {
+    "name": "NAME function 249",
+    "kind": "name",
+    "data": "F5D0E1FF00F90090",
+    "fields": "119029|2047|0|0|249|0|0|1|1"
+  },
+  {
+    "name": "NAME function 255",
+    "kind": "name",
+    "data": "FFFFFFFFFFFFFEFF",
+    "fields": "2097151|2047|7|31|255|127|15|7|1"
+  },
+  {
+    "name": "NAME function 30",
+    "kind": "name",
+    "data": "01002000001E00A0",
+    "fields": "1|1|0|0|30|0|0|2|1"
+  },
+  {
+    "name": "dtc SPN 100 FMI 1",
+    "kind": "dtc",
+    "data": "64000101",
+    "fields": "100|1|1"
+  },
+  {
+    "name": "dtc SPN 110 FMI 0",
+    "kind": "dtc",
+    "data": "6E000002",
+    "fields": "110|0|2"
+  },
+  {
+    "name": "dtc SPN 190 FMI 2",
+    "kind": "dtc",
+    "data": "BE000200",
+    "fields": "190|2|0"
+  },
+  {
+    "name": "dtc SPN 520192 FMI 31",
+    "kind": "dtc",
+    "data": "00F0FF7E",
+    "fields": "520192|31|126"
+  },
+  {
+    "name": "dtc SPN 524287 FMI 0",
+    "kind": "dtc",
+    "data": "FFFFE07F",
+    "fields": "524287|0|127"
+  },
+  {
+    "name": "dtc SPN 3226 FMI 16",
+    "kind": "dtc",
+    "data": "9A0C1005",
+    "fields": "3226|16|5"
+  },
+  {
+    "name": "tp.cm bam",
+    "kind": "tp",
+    "data": "20120003FFECFE00",
+    "fields": "Broadcast|18|3|0|0|0|65260"
+  },
+  {
+    "name": "tp.cm rts",
+    "kind": "tp",
+    "data": "10F906FFFF00EF00",
+    "fields": "RequestToSend|1785|255|0|255|0|61184"
+  },
+  {
+    "name": "tp.cm cts",
+    "kind": "tp",
+    "data": "11FF01FFFF00EF00",
+    "fields": "ClearToSend|0|255|1|0|0|61184"
+  },
+  {
+    "name": "tp.cm ack",
+    "kind": "tp",
+    "data": "13F906FFFF00EF00",
+    "fields": "EndOfMessageAck|1785|255|0|0|0|61184"
+  },
+  {
+    "name": "tp.cm abort",
+    "kind": "tp",
+    "data": "FF03FFFFFFECFE00",
+    "fields": "Abort|0|0|0|0|3|65260"
+  },
+  {
+    "name": "spn pgn 61444",
+    "kind": "spn",
+    "pgn": 61444,
+    "data": "F17D8CE02EFFFFFF",
+    "fields": "899=1|512=0|513=15|190=1500|1483=na"
+  },
+  {
+    "name": "spn pgn 65265",
+    "kind": "spn",
+    "pgn": 65265,
+    "data": "FF0058FFFFFFFFFF",
+    "fields": "84=88"
+  },
+  {
+    "name": "spn pgn 65262",
+    "kind": "spn",
+    "pgn": 65262,
+    "data": "8251802EFFFFFFFF",
+    "fields": "110=90|174=41|175=99"
+  },
+  {
+    "name": "spn pgn 65271",
+    "kind": "spn",
+    "pgn": 65271,
+    "data": "FFFF32022802FFFF",
+    "fields": "167=28.1|168=27.6"
+  },
+  {
+    "name": "spn pgn 65253",
+    "kind": "spn",
+    "pgn": 65253,
+    "data": "68EB0300FFFFFFFF",
+    "fields": "247=12843.6|249=na"
+  }
+]
