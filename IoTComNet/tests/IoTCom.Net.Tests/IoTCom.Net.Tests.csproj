@@ -21,7 +21,7 @@
     <CompilerVisibleProperty Include="MavlinkDialectName" />
     <AdditionalFiles Include="Protocols/Dialects/iotcom_test.xml" />
     <AdditionalFiles Include="../../src/IoTCom.Net.Protocols.Mavlink/Dialects/minimal.xml" />
-    <ProjectReference Include="../../src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../../src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" UndefineProperties="PublishAot;PublishTrimmed;PublishSingleFile;SelfContained;RuntimeIdentifier;_IsPublishing" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />

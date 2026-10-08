@@ -1,4 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<!-- An analyzer always builds as a plain netstandard2.0 library, even when an app is published with AOT/RID/trim
+     options on the command line (global properties); TreatAsLocalProperty lets this project override them. -->
+<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="PublishAot;PublishTrimmed;PublishSingleFile;SelfContained;RuntimeIdentifier">
   <!--
     Roslyn incremental source generator: MAVLink dialect XML (AdditionalFiles) → message classes, enums and a dialect
     registry. Packed inside IoTCom.Net.Protocols.Mavlink under analyzers/dotnet/cs, so users can compile their own dialects.
@@ -9,6 +11,11 @@
     <IsRoslynComponent>true</IsRoslynComponent>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsPackable>false</IsPackable>
+    <PublishAot>false</PublishAot>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <RuntimeIdentifier></RuntimeIdentifier>
     <IsTrimmable>false</IsTrimmable>
     <IsAotCompatible>false</IsAotCompatible>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

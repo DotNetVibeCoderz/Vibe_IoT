@@ -17,7 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Mavlink.Generator\IoTCom.Net.Protocols.Mavlink.Generator.csproj"
-                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all"
+                      UndefineProperties="PublishAot;PublishTrimmed;PublishSingleFile;SelfContained;RuntimeIdentifier;_IsPublishing" />
   </ItemGroup>
   <!-- Ship the generator so applications can compile their own dialect XML (AdditionalFiles). -->
   <ItemGroup>
