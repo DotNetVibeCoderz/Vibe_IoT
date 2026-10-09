@@ -45,6 +45,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Can.Adapters\IoTCom.Net.Transport.Can.Adapters.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.CanOpen\IoTCom.Net.Protocols.CanOpen.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.J1939\IoTCom.Net.Protocols.J1939.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Iec104\IoTCom.Net.Protocols.Iec104.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.Protobuf\IoTCom.Net.Serialization.Protobuf.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.MessagePack\IoTCom.Net.Serialization.MessagePack.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.Tlv\IoTCom.Net.Serialization.Tlv.csproj" />

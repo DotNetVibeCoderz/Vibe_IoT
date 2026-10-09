@@ -132,6 +132,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("can", "CAN / CAN FD", "IoTCom.Net.Transport.Can", "SocketCAN · slcan · virtual bus", "protocols/can.md", "automotive/06-can-uds", null, ["can"]),
         ("canopen", "CANopen (CiA 301)", "IoTCom.Net.Protocols.CanOpen", "master · device · SDO · PDO · NMT · I/O simulator", "protocols/canopen.md", "industrial/16-canopen", "CanOpenMaster", ["canopen"]),
         ("j1939", "SAE J1939", "IoTCom.Net.Protocols.J1939", "node · transport protocol · address claim · engine simulator", "protocols/j1939.md", "automotive/17-j1939", "J1939Monitor", ["j1939"]),
+        ("iec104", "IEC 60870-5-104", "IoTCom.Net.Protocols.Iec104", "controlling station · controlled station · feeder bay simulator", "protocols/iec104.md", "industrial/18-iec104", "Iec104Scada", ["iec104"]),
         ("uds", "ISO-TP · UDS · OBD-II", "IoTCom.Net.Protocols.Uds", "tester · scan tool · ECU simulator", "protocols/uds.md", "automotive/06-can-uds", "UdsTester", ["uds"]),
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
         ("mavlink", "MAVLink v1 / v2", "IoTCom.Net.Protocols.Mavlink", "link · ground station · simulator · generator", "protocols/mavlink.md", "navigation/08-mavlink", "MavlinkTelemetry", ["mavlink"]),
@@ -255,12 +256,16 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 fields = IoTCom.Net.Transport.Ble.AdvertisingData.Describe(bytes);
                 summary = TrySummary(() => IoTCom.Net.Transport.Ble.AdvertisingData.Parse("adv", bytes).ToString());
                 break;
+            case "iec104":
+                fields = IoTCom.Net.Protocols.Iec104.Iec104Apdu.Describe(bytes);
+                summary = TrySummary(() => IoTCom.Net.Protocols.Iec104.Iec104Apdu.Parse(bytes).ToString());
+                break;
             case "uds":
                 fields = UdsAnatomy.Describe(bytes);
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, j1939, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, j1939, iec104, uds)");
         }
         return Result(bytes, fields, summary);
     }

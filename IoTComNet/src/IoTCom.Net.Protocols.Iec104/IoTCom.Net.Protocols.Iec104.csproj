@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Iec104</RootNamespace>
+    <Description>IEC 60870-5-104 for IoTCom.Net: controlling station (general/group/counter interrogation, read, direct and select-before-operate commands, set points, clock sync) and controlled station (point table, spontaneous time-tagged data, command handlers, interlocks) over TCP, with the APCI windows and timers, CP56Time2a, frame-lane anatomy and a 20 kV feeder bay simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);iec104;iec60870;iec-60870-5-104;scada;rtu;substation;telecontrol;smartgrid</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Framing\IoTCom.Net.Framing.csproj" />
+  </ItemGroup>
+</Project>

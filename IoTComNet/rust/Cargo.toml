@@ -13,6 +13,7 @@ members = [
     "crates/iotcom-mbus",
     "crates/iotcom-canopen",
     "crates/iotcom-j1939",
+    "crates/iotcom-iec104",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",

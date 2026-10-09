@@ -141,6 +141,13 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-iec104.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("iec104-substation", seconds: 5);
+    Shot("gallery-iec104.png");
+}
+
 if (Want("gallery-j1939.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

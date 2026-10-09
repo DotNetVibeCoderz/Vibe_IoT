@@ -169,6 +169,7 @@ dependencies = [
  "iotcom-coap",
  "iotcom-core",
  "iotcom-dlms",
+ "iotcom-iec104",
  "iotcom-isotp",
  "iotcom-j1939",
  "iotcom-lorawan",
@@ -177,6 +178,10 @@ dependencies = [
  "iotcom-modbus",
  "libfuzzer-sys",
 ]
+
+[[package]]
+name = "iotcom-iec104"
+version = "0.1.0"
 
 [[package]]
 name = "iotcom-isotp"

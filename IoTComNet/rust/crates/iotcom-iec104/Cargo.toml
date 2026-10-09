@@ -1,0 +1,12 @@
+[package]
+name = "iotcom-iec104"
+description = "IEC 60870-5-104 APCI, ASDU, information elements and CP56Time2a for IoTCom.Net, kept in sync with the C# codec by shared conformance vectors."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

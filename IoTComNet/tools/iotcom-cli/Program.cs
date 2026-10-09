@@ -108,6 +108,15 @@ app.Configure(c =>
         j.AddCommand<J1939RequestCommand>("request").WithExample("j1939", "request", "vin", "--can", "sim").WithExample("j1939", "request", "hours", "--to", "00", "--can", "sim");
         j.AddCommand<J1939ClaimsCommand>("claims").WithExample("j1939", "claims", "--can", "sim");
     });
+    c.AddBranch("iec104", i =>
+    {
+        i.SetDescription("IEC 60870-5-104 telecontrol (substations, RTUs, SCADA): interrogate, read, monitor, command, or serve a simulated feeder bay.");
+        i.AddCommand<Iec104InterrogateCommand>("gi").WithDescription("General, group or counter interrogation.").WithExample("iec104", "gi", "--sim").WithExample("iec104", "gi", "-h", "10.0.0.5", "--counters");
+        i.AddCommand<Iec104ReadCommand>("read").WithExample("iec104", "read", "2001", "--sim");
+        i.AddCommand<Iec104MonitorCommand>("monitor").WithDescription("Interrogate, then print spontaneous changes (read-only).").WithExample("iec104", "monitor", "--sim");
+        i.AddCommand<Iec104CommandCommand>("command").WithDescription("Single/double/step command or set point (requires --allow-write).").WithExample("iec104", "command", "double", "5001", "off", "--sbo", "--sim", "--allow-write");
+        i.AddCommand<Iec104ServeCommand>("serve").WithDescription("Run the 20 kV feeder bay RTU simulator on TCP.").WithExample("iec104", "serve", "--port", "2404");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");

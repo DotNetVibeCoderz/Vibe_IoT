@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.17.0-preview.1"
+VERSION = "0.18.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -645,6 +645,46 @@ NOTEBOOKS = {
            "See `docs/en/protocols/j1939.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom j1939 monitor --can sim`, `iotcom j1939 request vin --to 00 --can sim`, `iotcom j1939 claims --can sim`, *Panel truk lewat J1939* di Gallery, dan sampel J1939Monitor. "
            "Lihat `docs/id/protocols/j1939.md`.\n\n" + CREDIT[1]),
+    ],
+    "industrial/18-iec104": [
+        md("# IEC 60870-5-104 — substations and RTUs\n\nA SCADA master and a simulated 20 kV feeder bay RTU talk over an in-memory TCP link. Replace "
+           "`UseInMemory(rtuListener)` with `UseTcp(\"10.0.0.5\")` to reach a real RTU — commands only on equipment you are authorised to operate.",
+           "# IEC 60870-5-104 — gardu dan RTU\n\nMaster SCADA dan RTU bay penyulang 20 kV simulasi berbicara lewat link TCP dalam memori. Ganti "
+           "`UseInMemory(rtuListener)` dengan `UseTcp(\"10.0.0.5\")` untuk menjangkau RTU sungguhan — perintah hanya pada peralatan yang Anda berwenang operasikan."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## APDUs on the wire\nU frames start and test the link, S frames acknowledge, I frames carry numbered ASDUs.",
+           "## APDU di jalur\nFrame U memulai dan menguji link, frame S mengakui, frame I membawa ASDU bernomor."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Iec104;\nusing IoTCom.Net.Transports;\n\n"
+             "Console.WriteLine(Iec104Apdu.Parse(Convert.FromHexString(\"680407000000\")));\n"
+             "Console.WriteLine(Iec104Apdu.Parse(Convert.FromHexString(\"680401000400\")));\n"
+             "var giFrame = Convert.FromHexString(\"680E0000000064010600010000000014\");\nConsole.WriteLine(Iec104Apdu.Parse(giFrame));\n"
+             "foreach (var f in Iec104Apdu.Describe(giFrame)) Console.WriteLine($\"{f.Name,-8} {f.Value}\");"),
+        md("## Connect and interrogate\nSTARTDT, then a general interrogation returns every value; counters come with a counter interrogation.",
+           "## Hubungkan dan interogasi\nSTARTDT, lalu interogasi umum mengembalikan semua nilai; counter datang lewat interogasi counter."),
+        code("var rtuListener = new InMemoryTransportListener(\"notebook-rtu\");\n"
+             "var rtu = Iec104SubstationSimulator.Create(o => { o.ListenInMemory(rtuListener); o.RequireSelectBeforeOperate = true; });\nawait rtu.StartAsync();\n"
+             "var scada = Iec104Client.Create(o => o.UseInMemory(rtuListener).AllowCommands());\nawait scada.ConnectAsync();\n"
+             "foreach (var p in (await scada.InterrogateAsync()).OrderBy(p => p.Object.Address)) Console.WriteLine(p);\n"
+             "Console.WriteLine((await scada.CounterInterrogateAsync()).Single());"),
+        md("## Spontaneous, time-tagged changes\nAfter the interrogation the RTU only sends changes, each with a CP56Time2a time tag.",
+           "## Perubahan spontan bertanda waktu\nSetelah interogasi RTU hanya mengirim perubahan, masing-masing dengan tanda waktu CP56Time2a."),
+        code("var changes = new System.Collections.Concurrent.ConcurrentQueue<Iec104PointValue>();\n"
+             "scada.PointReceived += p => { if (p.Cause == Iec104Cause.Spontaneous) changes.Enqueue(p); };\n"
+             "rtu.Trip();\nawait Task.Delay(300);\nforeach (var c in changes.Where(c => c.Object.Address < 2000)) Console.WriteLine(c);"),
+        md("## Select-before-operate and interlocks\nThe breaker needs select then execute; the RTU refuses to close while the protection trip is latched.",
+           "## Select-before-operate dan interlock\nPemutus perlu select lalu execute; RTU menolak menutup selama trip proteksi masih terkunci."),
+        code("try { await scada.DoubleCommandAsync(Iec104SubstationSimulator.Ioa.BreakerCommand, on: true, selectBeforeOperate: true); }\n"
+             "catch (IoTCom.Net.DeviceException e) { Console.WriteLine(\"refused: \" + e.Message); }\n"
+             "await scada.SingleCommandAsync(Iec104SubstationSimulator.Ioa.TripReset, true, selectBeforeOperate: true);\n"
+             "var term = await scada.DoubleCommandAsync(Iec104SubstationSimulator.Ioa.BreakerCommand, on: true, selectBeforeOperate: true);\n"
+             "Console.WriteLine(term);\nawait Task.Delay(200);\n"
+             "Console.WriteLine(scada.Points[(1, Iec104SubstationSimulator.Ioa.Breaker)]);\n"
+             "await scada.DisposeAsync();\nawait rtu.DisposeAsync();"),
+        md("## Going further\n`iotcom iec104 gi --sim`, `iotcom iec104 monitor --sim`, `iotcom iec104 command double 5001 off --sbo --sim --allow-write`, `iotcom iec104 serve`, the Gallery's *Substation control over IEC 104* and the Iec104Scada sample. "
+           "See `docs/en/protocols/iec104.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom iec104 gi --sim`, `iotcom iec104 monitor --sim`, `iotcom iec104 command double 5001 off --sbo --sim --allow-write`, `iotcom iec104 serve`, *Kendali gardu lewat IEC 104* di Gallery, dan sampel Iec104Scada. "
+           "Lihat `docs/id/protocols/iec104.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

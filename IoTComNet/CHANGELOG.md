@@ -3,6 +3,25 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.18.0-preview.1 — 2026-10-09
+
+IEC 60870-5-104.
+
+- **New package `IoTCom.Net.Protocols.Iec104`** (also in the meta-package): `Iec104Client` (STARTDT/STOPDT, point table,
+  general/group/counter interrogation, read, single/double/step commands and float/scaled/normalized set points, direct
+  or select-before-operate, clock sync; read-only until `AllowCommands()`), `Iec104Server` (point table, spontaneous
+  time-tagged changes, command handlers, mandatory SBO option, negative answers for unknown type/cause/address, end of
+  initialisation), the APCI link (sequence checks, k/w windows, t1/t2/t3, TESTFR), the codec with CP56Time2a and the
+  frame lane, and a 20 kV feeder bay simulator with interlocks, protection trip, tap changer and energy counter.
+- **New Rust crate `iotcom-iec104`**: the codec twin, fuzz target `iec104` (1.6 M local runs, no findings) and 52 shared
+  vectors in `/conformance/iec104.json` from an independent Python reference.
+- CLI `iotcom iec104 gi|read|monitor|command|serve`; RPC decoder `iec104`; pcapng on TCP 2404; hosting
+  `AddIec104Client`/`AddIec104Server`; Gallery *Substation control over IEC 104* in a new *Energy & grid* category; sample
+  `Iec104Scada`; notebook pair `industrial/18-iec104`; docs page *IEC 60870-5-104*.
+
+*IEC 60870-5-104 (master SCADA dan RTU, interogasi, data spontan bertanda waktu, select-before-operate) dengan kembaran
+Rust yang di-fuzz, CLI, demo Galeri, sampel, notebook, dan dokumentasi.*
+
 ## 0.17.0-preview.1 — 2026-10-09
 
 SAE J1939.

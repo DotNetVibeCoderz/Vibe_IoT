@@ -41,6 +41,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [CAN / CAN FD](protocols/can.md) | send · receive · SocketCAN · slcan · gs_usb · PCAN · virtual | `IoTCom.Net.Transport.Can` |
 | [CANopen (CiA 301)](protocols/canopen.md) | master · device · SDO · PDO · NMT · I/O module simulator | `IoTCom.Net.Protocols.CanOpen` |
 | [SAE J1939](protocols/j1939.md) | trucks · PGNs/SPNs · DM1 · transport protocol · address claim · engine simulator | `IoTCom.Net.Protocols.J1939` |
+| [IEC 60870-5-104](protocols/iec104.md) | SCADA master · RTU · interrogation · select-before-operate · feeder bay simulator | `IoTCom.Net.Protocols.Iec104` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · virtual radio (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB and HID](protocols/usb.md) | control · bulk · interrupt · HID reports · relay boards · virtual bus (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |

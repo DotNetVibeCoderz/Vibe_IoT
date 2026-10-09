@@ -3,6 +3,7 @@ using IoTCom.Net.Protocols.CanOpen;
 using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
+using IoTCom.Net.Protocols.Iec104;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
 using IoTCom.Net.Protocols.Dlms;
@@ -71,6 +72,24 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Nmea");
+            configure(o);
+        }));
+
+    /// <summary>Registers an IEC 60870-5-104 controlling station (read-only unless <c>AllowCommands()</c>).</summary>
+    public static IoTComBuilder AddIec104Client(this IoTComBuilder builder, string name, Action<Iec104ClientOptions> configure)
+        => builder.AddEndpoint(name, sp => Iec104Client.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Iec104");
+            configure(o);
+        }));
+
+    /// <summary>Registers an IEC 60870-5-104 controlled station (define points and map commands on the resolved server).</summary>
+    public static IoTComBuilder AddIec104Server(this IoTComBuilder builder, string name, Action<Iec104ServerOptions> configure)
+        => builder.AddEndpoint(name, sp => Iec104Server.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Iec104");
             configure(o);
         }));
 

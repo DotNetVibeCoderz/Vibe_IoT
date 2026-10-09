@@ -68,6 +68,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `Protocols.IsoTp` (Rust `iotcom-isotp` → native `iotcom_isotp`, driven by `IsoTpChannel`) and `Protocols.Uds` (`UdsClient`,
   `ObdClient`, `EcuSimulator`). Tests and CLI use `VirtualCanNetwork`; `--can sim` starts an in-process ECU. Fuzz targets live
   in `rust/fuzz` (nightly; `cargo +nightly fuzz run isotp`; on Windows put the MSVC `clang_rt.asan_dynamic` DLL on PATH).
+- **Telecontrol**: `Protocols.Iec104` is managed C# (`Iec104Client` controlling station, read-only until `AllowCommands()`;
+  `Iec104Server` with `Define`/`Update`/`MapCommand`; internal `Iec104Link` owns APCI windows/timers and dispatches ASDUs off the
+  read loop so handlers may send; `Iec104SubstationSimulator` feeder bay). Rust `iotcom-iec104` is the fuzzed codec twin
+  (`/conformance/iec104.json`); pcapng maps it to TCP 2404.
 - **LoRaWAN**: `Protocols.LoRaWan` is managed C# (`LoRaWanPacket` codec + `LoRaWanCrypto`, `SemtechPacket`/`SemtechPacketForwarder`,
   `LoRaWanNetworkServer`, sans-I/O `LoRaWanEndDevice`, `LoRaWanSimulator`); Rust `iotcom-lorawan` is the fuzzed twin kept in sync by
   `/conformance/lorawan.json` (Python reference with its own AES/CMAC). Tests use `InMemoryDatagramNetwork` and

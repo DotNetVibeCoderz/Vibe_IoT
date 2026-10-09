@@ -176,6 +176,7 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
         "mqtt-raw" => ("tcp", 1883),
         "nmea0183" => ("tcp", 10110),
         "hl7" => ("tcp", 2575),
+        "iec104" => ("tcp", 2404),
         "coap" => ("udp", 5683),
         "artnet" => ("udp", 6454),
         "sacn" => ("udp", 5568),

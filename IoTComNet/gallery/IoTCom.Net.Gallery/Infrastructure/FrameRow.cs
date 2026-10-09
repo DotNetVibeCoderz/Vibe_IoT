@@ -32,6 +32,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "lorawan" or "semtech-udp" => Protocols.LoRaWan.LoRaWanAnatomy.Describe(data),
             "dlms" => Protocols.Dlms.DlmsAnatomy.Describe(data),
             "mbus" => Protocols.MBus.MBusAnatomy.Describe(data),
+            "iec104" => Protocols.Iec104.Iec104Apdu.Describe(data),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],
         };
         return new FrameRow(

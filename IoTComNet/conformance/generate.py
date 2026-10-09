@@ -917,6 +917,99 @@ def j1939_vectors():
     return out
 
 
+def iec104_vectors():
+    """IEC 60870-5-104 APDUs. The canonical text is built from the inputs, not by parsing the bytes."""
+    import struct
+    out = []
+
+    def num(v):
+        v = float(v)
+        return str(int(v)) if v.is_integer() else repr(v)
+
+    def cp56(t):
+        y, mo, d, h, mi, sec, ms, iv, su = t
+        b = struct.pack("<H", sec * 1000 + ms) + bytes([mi | (0x80 if iv else 0), h | (0x80 if su else 0), d, mo, y % 100])
+        text = f"{y:04}-{mo:02}-{d:02} {h:02}:{mi:02}:{sec:02}.{ms:03}" + ("I" if iv else "") + ("S" if su else "")
+        return b, text
+
+    def u(name, code):
+        out.append({"name": name, "data": bytes([0x68, 4, code, 0, 0, 0]).hex().upper(), "fields": f"U|{code}"})
+
+    for name, code in [("STARTDT act", 0x07), ("STARTDT con", 0x0B), ("STOPDT act", 0x13), ("STOPDT con", 0x23), ("TESTFR act", 0x43), ("TESTFR con", 0x83)]:
+        u(name, code)
+    for nr in (0, 2, 32767):
+        out.append({"name": f"S N(R)={nr}", "data": (bytes([0x68, 4, 1, 0]) + struct.pack("<H", nr << 1)).hex().upper(), "fields": f"S|{nr}"})
+
+    # Each object: (ioa, element bytes, canonical value, quality flags, qualifier, time text)
+    def i_frame(name, ns, nr, type_id, cot, ca, objects, sq=False, neg=False, test=False, org=0):
+        body = bytes([type_id, (0x80 if sq else 0) | len(objects), cot | (0x40 if neg else 0) | (0x80 if test else 0), org]) + struct.pack("<H", ca)
+        for k, (ioa, element, *_rest) in enumerate(objects):
+            if not sq or k == 0:
+                body += struct.pack("<I", ioa)[:3]
+            body += element
+        apdu = bytes([0x68, len(body) + 4]) + struct.pack("<HH", ns << 1, nr << 1) + body
+        objs = ";".join(f"{ioa}:{value}:{q}:{qual}:{t}" for ioa, _e, value, q, qual, t in objects)
+        out.append({"name": name, "data": apdu.hex().upper(),
+                    "fields": f"I|{ns}|{nr}|{type_id}|{1 if sq else 0}|{cot}|{1 if neg else 0}|{1 if test else 0}|{org}|{ca}|{objs}"})
+
+    OV, TR, CY, CA, BL, SB, NT, IV = 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80
+    T1 = cp56((2026, 10, 9, 6, 30, 15, 250, False, False))
+    T2 = cp56((2025, 12, 31, 23, 59, 59, 999, True, True))
+    T3 = cp56((2000, 2, 29, 0, 0, 0, 0, False, False))
+    f20 = struct.pack("<f", 20.0)
+    f01 = struct.pack("<f", 0.1)
+    v01 = struct.unpack("<f", f01)[0]
+
+    i_frame("C_IC_NA_1 act QOI 20", 0, 0, 100, 6, 1, [(0, bytes([20]), "0", 0, 20, "-")])
+    i_frame("C_IC_NA_1 actcon negative", 4, 1, 100, 7, 1, [(0, bytes([20]), "0", 0, 20, "-")], neg=True)
+    i_frame("M_SP_NA_1 two objects", 1, 2, 1, 20, 1, [(1101, bytes([0x01]), "1", 0, 0, "-"), (1102, bytes([0x90]), "0", IV | BL, 0, "-")])
+    i_frame("M_DP_NA_1 SQ=1", 2, 2, 3, 20, 1, [(1001, bytes([0x02]), "2", 0, 0, "-"), (1002, bytes([0x01]), "1", 0, 0, "-"), (1003, bytes([0x43]), "3", NT, 0, "-")], sq=True)
+    i_frame("M_ST_NA_1 transient", 3, 2, 5, 20, 1, [(2007, bytes([0xFD, 0x80]), "-3", TR | IV, 0, "-")])
+    i_frame("M_ST_NA_1 +63", 3, 2, 5, 3, 1, [(2007, bytes([0x3F, 0x00]), "63", 0, 0, "-")])
+    i_frame("M_BO_NA_1", 5, 0, 7, 3, 2, [(70000, struct.pack("<I", 0xDEADBEEF) + bytes([0x20]), num(0xDEADBEEF), SB, 0, "-")])
+    i_frame("M_ME_NA_1 -0.5 blocked", 6, 0, 9, 3, 1, [(1, struct.pack("<h", -16384) + bytes([0x10]), num(-0.5), BL, 0, "-")])
+    i_frame("M_ME_NB_1 -1234", 7, 0, 11, 3, 1, [(1, struct.pack("<h", -1234) + bytes([0]), "-1234", 0, 0, "-")])
+    i_frame("M_ME_NC_1 floats", 8, 0, 13, 1, 1, [(2001, f20 + bytes([0]), "20", 0, 0, "-"), (2002, f01 + bytes([0x01]), num(v01), OV, 0, "-")])
+    i_frame("M_IT_NA_1 sequence 7 carry adjusted", 9, 0, 15, 37, 1, [(3001, struct.pack("<i", 1281614) + bytes([0x67]), "1281614", CY | CA, 7, "-")])
+    i_frame("M_IT_NA_1 negative invalid", 9, 0, 15, 38, 1, [(3002, struct.pack("<i", -5) + bytes([0x9F]), "-5", IV, 31, "-")])
+    i_frame("M_ME_ND_1", 10, 0, 21, 2, 1, [(5, struct.pack("<h", 8192), num(0.25), 0, 0, "-")])
+    i_frame("M_SP_TB_1 IV SU", 11, 0, 30, 3, 1, [(1101, bytes([0x01]) + T2[0], "1", 0, 0, T2[1])])
+    i_frame("M_DP_TB_1 leap day", 11, 0, 31, 11, 1, [(1001, bytes([0x00]) + T3[0], "0", 0, 0, T3[1])])
+    i_frame("M_ME_TF_1", 12, 0, 36, 3, 1, [(2001, f20 + bytes([0]) + T1[0], "20", 0, 0, T1[1])])
+    i_frame("M_ME_TE_1", 12, 0, 35, 3, 1, [(2006, struct.pack("<h", 71) + bytes([0]) + T1[0], "71", 0, 0, T1[1])])
+    i_frame("M_IT_TB_1", 13, 0, 37, 37, 1, [(3001, struct.pack("<i", 42) + bytes([0x01]) + T1[0], "42", 0, 1, T1[1])])
+    i_frame("C_SC_NA_1 select on QU 1", 0, 14, 45, 6, 1, [(5005, bytes([0x85]), "1", 0, 0x84, "-")])
+    i_frame("C_DC_NA_1 execute close", 1, 14, 46, 6, 1, [(5001, bytes([0x02]), "2", 0, 0, "-")])
+    i_frame("C_DC_NA_1 actterm", 20, 2, 46, 10, 1, [(5001, bytes([0x02]), "2", 0, 0, "-")])
+    i_frame("C_RC_NA_1 higher", 2, 14, 47, 6, 1, [(5004, bytes([0x02]), "2", 0, 0, "-")])
+    i_frame("C_SE_NA_1 0.75", 3, 14, 48, 6, 1, [(6002, struct.pack("<h", 24576) + bytes([0]), num(0.75), 0, 0, "-")])
+    i_frame("C_SE_NB_1 select", 3, 14, 49, 6, 1, [(6003, struct.pack("<h", -300) + bytes([0x80]), "-300", 0, 0x80, "-")])
+    i_frame("C_SE_NC_1 1.5", 4, 14, 50, 6, 1, [(6001, struct.pack("<f", 1.5) + bytes([0]), "1.5", 0, 0, "-")])
+    i_frame("C_BO_NA_1", 4, 14, 51, 6, 1, [(6100, struct.pack("<I", 0x0000FF00), "65280", 0, 0, "-")])
+    i_frame("C_DC_TA_1", 5, 14, 59, 6, 1, [(5001, bytes([0x01]) + T1[0], "1", 0, 0, T1[1])])
+    i_frame("C_CS_NA_1", 6, 14, 103, 6, 1, [(0, T1[0], "0", 0, 0, T1[1])])
+    i_frame("C_CI_NA_1 general", 7, 14, 101, 6, 1, [(0, bytes([0x05]), "0", 0, 5, "-")])
+    i_frame("C_RD_NA_1", 8, 14, 102, 5, 1, [(2001, b"", "0", 0, 0, "-")])
+    i_frame("M_EI_NA_1", 0, 0, 70, 4, 1, [(0, bytes([0x00]), "0", 0, 0, "-")])
+    i_frame("C_TS_TA_1", 9, 14, 107, 6, 1, [(0, struct.pack("<H", 0x55AA) + T1[0], "21930", 0, 0, T1[1])])
+    i_frame("C_RP_NA_1", 10, 14, 105, 6, 1, [(0, bytes([0x01]), "0", 0, 1, "-")])
+    i_frame("broadcast, test, originator, 24-bit IOA", 32767, 32767, 1, 3, 0xFFFF, [(0xFFFFFF, bytes([0x01]), "1", 0, 0, "-")], test=True, org=7)
+
+    def bad(name, hexdata):
+        out.append({"name": name, "data": hexdata, "fields": "error"})
+
+    bad("U frame without function", "680403000000")
+    bad("S frame with payload", "68050100000000")
+    bad("length byte disagrees", "680507000000")
+    bad("I frame without ASDU", "680400000000")
+    bad("I frame N(R) low bit set", "680E0000010064010600010000000014")
+    bad("unknown type", "680E00000000FA010600010000000000")
+    bad("count larger than data", "680E000000000302030001 00E9030002".replace(" ", ""))
+    bad("no objects", "680A000000000D0003000100")
+    bad("31 February", "6819" "00000000" "240103000100" "D10700" "0000A04100" "923B1E061F021A")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -931,6 +1024,7 @@ def main():
         "mbus.json": mbus_vectors(),
         "canopen.json": canopen_vectors(),
         "j1939.json": j1939_vectors(),
+        "iec104.json": iec104_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:
