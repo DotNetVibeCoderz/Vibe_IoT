@@ -132,6 +132,8 @@ public class SparkplugSessionTests
         var births = 0;
         node.Published += (_, e) => { if (e.Topic.Type == SparkplugMessageType.NBirth) Interlocked.Increment(ref births); };
         await node.StartAsync();
+        // The first NBIRTH must be out before the host subscribes, or the host simply sees it and never asks for a rebirth.
+        await Until(() => Volatile.Read(ref births) >= 1, "first NBIRTH");
 
         await using var host = SparkplugHost.Create(o => { o.HostId = "late"; o.Mqtt = m => m.UseBroker("127.0.0.1", port); });
         await host.StartAsync();
