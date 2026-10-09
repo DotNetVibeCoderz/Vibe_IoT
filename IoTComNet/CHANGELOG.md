@@ -3,6 +3,24 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.20.0-preview.1 — 2026-10-09
+
+NFC / NDEF.
+
+- **New package `IoTCom.Net.Protocols.Nfc`** (also in the meta-package): NDEF codec (Text in UTF-8/UTF-16, URI prefix
+  codes, Smart Poster, MIME, absolute URI, external types, Android Application Records, Wi-Fi credentials with masked
+  keys, long and chunked records, frame lane); NFC Forum Type 2 tag memory (NTAG213/215/216: UID check bytes,
+  capability container, TLVs with 3-byte lengths, page map); `Type2TagClient` over PC/SC storage-card APDUs with writes
+  off by default, only changed pages written, tear-safe ordering and pages 0–3 protected; `PcscNfcReader` on Windows,
+  Linux and macOS preferring contactless readers; `VirtualNfcReader` and `VirtualType2Tag`.
+- 30 shared vectors in `/conformance/ndef.json` from an independent Python reference (C# only, as designed).
+- CLI `iotcom nfc readers|read|write|decode`; RPC decoder `ndef`; Gallery *NFC asset tags*; sample `NfcTagReader`;
+  notebook pair `devices/20-nfc`; docs page *NFC / NDEF*.
+- Fix: the Sparkplug late-host rebirth test waits for the first NBIRTH (flaky on the Alpine runner).
+
+*NFC/NDEF (codec NDEF, memori tag Type 2, pembaca PC/SC di tiga OS, penulisan yang dijaga) dengan CLI, demo Galeri,
+sampel, notebook, dan dokumentasi.*
+
 ## 0.19.0-preview.1 — 2026-10-09
 
 NTP / SNTP.

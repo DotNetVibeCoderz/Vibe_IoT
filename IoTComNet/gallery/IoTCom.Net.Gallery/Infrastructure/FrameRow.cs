@@ -34,6 +34,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "mbus" => Protocols.MBus.MBusAnatomy.Describe(data),
             "iec104" => Protocols.Iec104.Iec104Apdu.Describe(data),
             "ntp" => Protocols.Ntp.NtpPacket.Describe(data),
+            "ndef" => Protocols.Nfc.NdefMessage.Describe(data),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],
         };
         return new FrameRow(
@@ -58,7 +59,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
         ];
     }
 
-    private static List<FieldTiles> Tiles(ReadOnlySpan<byte> data, IReadOnlyList<FrameField> fields, bool ascii)
+    internal static List<FieldTiles> Tiles(ReadOnlySpan<byte> data, IReadOnlyList<FrameField> fields, bool ascii)
     {
         const int maxBytes = 72;
         var list = new List<FieldTiles>();

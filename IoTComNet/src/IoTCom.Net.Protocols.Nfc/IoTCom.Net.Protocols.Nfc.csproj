@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Nfc</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>NFC for IoTCom.Net: NDEF codec (Text, URI, Smart Poster, MIME, external and Android app records, Wi-Fi credentials, chunked records), NFC Forum Type 2 tag memory (NTAG213/215/216) with read and guarded write of NDEF, contactless readers through PC/SC (Windows, Linux, macOS), and a virtual reader with simulated tags. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);nfc;ndef;rfid;pcsc;ntag;ntag213;acr122u;smartcard</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

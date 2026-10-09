@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.19.0-preview.1"
+VERSION = "0.20.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -724,6 +724,41 @@ NOTEBOOKS = {
            "See `docs/en/protocols/ntp.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom ntp query`, `iotcom ntp query --sim --frames`, `iotcom ntp serve`, *Sinkronisasi jam armada lewat NTP* di Gallery, dan sampel NtpClock. "
            "Lihat `docs/id/protocols/ntp.md`.\n\n" + CREDIT[1]),
+    ],
+    "devices/20-nfc": [
+        md("# NFC tags — NDEF records and Type 2 tag memory\n\nA virtual PC/SC reader with a simulated NTAG213 tag. With a real contactless reader (ACR122U, ACR1252U…), "
+           "replace the virtual reader with `PcscNfcReader.Open()`; the rest of the code stays the same.",
+           "# Tag NFC — record NDEF dan memori tag Type 2\n\nPembaca PC/SC virtual dengan tag NTAG213 simulasi. Dengan pembaca contactless sungguhan (ACR122U, ACR1252U…), "
+           "ganti pembaca virtual dengan `PcscNfcReader.Open()`; sisa kodenya tetap sama."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## NDEF records\nA URI uses a one-byte prefix code (0x04 = https://), a Text record carries its language, and a Smart Poster nests both.",
+           "## Record NDEF\nURI memakai kode prefiks satu byte (0x04 = https://), record Text membawa bahasanya, dan Smart Poster menampung keduanya."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Nfc;\n\n"
+             "var ndef = new NdefMessage([NdefRecord.SmartPoster(\"https://docs.example.com/p7\", \"Pump P-0007 manual\"), NdefRecord.Text(\"Asset P-0007\")]);\n"
+             "var ndefBytes = ndef.Encode();\nConsole.WriteLine(Convert.ToHexString(ndefBytes));\n"
+             "foreach (var f in NdefMessage.Describe(ndefBytes)) Console.WriteLine($\"{f.Name,-16} {f.Value}\");\n"
+             "var wifi = NdefRecord.WifiCredential(new WifiCredential(\"Plant-Commissioning\", \"example-only-key\"));\nConsole.WriteLine(wifi);   // the key is never shown"),
+        md("## Read a tag\nGET DATA returns the UID, READ BINARY four pages at a time; the data area starts at page 4 with TLVs.",
+           "## Membaca tag\nGET DATA mengembalikan UID, READ BINARY empat halaman sekaligus; area data dimulai di halaman 4 dengan TLV."),
+        code("var nfcReader = new VirtualNfcReader();\nvar pumpTag = new VirtualType2Tag(Type2TagKind.Ntag213, [0x04, 0x51, 0x7A, 0x22, 0x9C, 0x61, 0x80], ndef);\nnfcReader.Present(pumpTag);\n"
+             "await using var card = await nfcReader.WaitForTagAsync();\nvar tagClient = new Type2TagClient(card);\n"
+             "Console.WriteLine($\"UID {Convert.ToHexString(await tagClient.GetUidAsync())}\");\n"
+             "var (cc, dataArea) = await tagClient.ReadDataAreaAsync();\nConsole.WriteLine($\"CC {Convert.ToHexString(cc)}: {cc[2] * 8} bytes\");\n"
+             "Console.WriteLine(await tagClient.ReadNdefAsync());"),
+        md("## The memory, page by page", "## Memori, halaman demi halaman"),
+        code("var dump = await tagClient.DumpAsync();\nvar regions = Type2Tag.Map(dump, 144);\n"
+             "for (var page = 0; page < 12; page++) Console.WriteLine($\"{page,2}  {Convert.ToHexString(dump, page * 4, 4)}  {regions[page * 4]}\");"),
+        md("## Writing is opt-in\nWrites are refused until allowed; only changed pages are written, and the NDEF TLV header is written last.",
+           "## Menulis harus diizinkan\nPenulisan ditolak sampai diizinkan; hanya halaman yang berubah yang ditulis, dan header TLV NDEF ditulis terakhir."),
+        code("try { await tagClient.WriteNdefAsync(new NdefMessage([NdefRecord.Text(\"x\")])); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }\n"
+             "var tagWriter = new Type2TagClient(card, new NfcTagOptions().AllowWrites());\nvar before = pumpTag.PagesWritten;\n"
+             "await tagWriter.WriteNdefAsync(new NdefMessage([.. ndef.Records, NdefRecord.Text(\"Serviced 2026-10-09 · tech 14\")]));\n"
+             "Console.WriteLine($\"{pumpTag.PagesWritten - before} pages written\");\nConsole.WriteLine(await tagClient.ReadNdefAsync());"),
+        md("## Going further\n`iotcom nfc readers`, `iotcom nfc read --sim --dump`, `iotcom nfc write --uri https://example.com --sim --allow-write`, `iotcom nfc decode <hex>`, the Gallery's *NFC asset tags* and the NfcTagReader sample. "
+           "See `docs/en/protocols/nfc.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom nfc readers`, `iotcom nfc read --sim --dump`, `iotcom nfc write --uri https://example.com --sim --allow-write`, `iotcom nfc decode <hex>`, *Tag aset NFC* di Gallery, dan sampel NfcTagReader. "
+           "Lihat `docs/id/protocols/nfc.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

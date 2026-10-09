@@ -141,6 +141,13 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-nfc.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("nfc-asset-tags", seconds: 3);
+    Shot("gallery-nfc.png");
+}
+
 if (Want("gallery-ntp.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

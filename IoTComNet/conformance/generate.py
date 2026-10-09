@@ -1075,6 +1075,75 @@ def ntp_vectors():
     return out
 
 
+def ndef_vectors():
+    """NDEF messages and Type 2 tag data areas. Records are built from fields; the expected text lists them back."""
+    out = []
+
+    def record(tnf, rtype=b"", payload=b"", rid=b"", mb=True, me=True, cf=False, short=None):
+        short = len(payload) <= 255 if short is None else short
+        h = (0x80 if mb else 0) | (0x40 if me else 0) | (0x20 if cf else 0) | (0x10 if short else 0) | (0x08 if rid else 0) | tnf
+        b = bytes([h, len(rtype)]) + (bytes([len(payload)]) if short else len(payload).to_bytes(4, "big"))
+        if rid:
+            b += bytes([len(rid)])
+        return b + rtype + rid + payload
+
+    def text(t):
+        return f"{t[0]}|{t[1].decode('ascii')}|{t[2].decode('ascii')}|{t[3].hex().upper()}"
+
+    def message(name, records, canonical=True):
+        data = b""
+        for i, (tnf, rtype, payload, rid) in enumerate(records):
+            data += record(tnf, rtype, payload, rid, mb=i == 0, me=i == len(records) - 1)
+        out.append({"name": name, "kind": "ndef", "data": data.hex().upper(), "canonical": canonical,
+                    "fields": ";".join(text(r) for r in [(t, ty, i, p) for t, ty, p, i in records])})
+
+    lang = b"en"
+    message("URI https://www.nxp.com", [(1, b"U", b"\x02nxp.com", b"")])
+    message("Text Hello (en)", [(1, b"T", bytes([len(lang)]) + lang + b"Hello", b"")])
+    message("Text in Indonesian", [(1, b"T", b"\x02idSelamat datang", b"")])
+    message("URI tel:", [(1, b"U", b"\x05+62215550123", b"")])
+    message("URI without prefix", [(1, b"U", b"\x00geo:-6.2,106.8", b"")])
+    message("MIME vCard", [(2, b"text/vcard", b"BEGIN:VCARD\nVERSION:3.0\nFN:Site Office\nEND:VCARD", b"")])
+    message("external type with id", [(4, b"example.com:asset", b"P-0007", b"a1")])
+    message("Android application record", [(4, b"android.com:pkg", b"com.example.maintenance", b"")])
+    message("absolute URI type", [(3, b"https://example.com/schema/v1", b"", b"")])
+    inner = record(1, b"U", b"\x04docs.example.com/p7", mb=True, me=False) + record(1, b"T", b"\x02enPump 7", mb=False, me=True)
+    message("Smart Poster", [(1, b"Sp", inner, b"")])
+    wsc_cred = (b"\x10\x26\x00\x01\x01" + b"\x10\x45\x00\x05Plant" + b"\x10\x03\x00\x02\x00\x20" + b"\x10\x0F\x00\x02\x00\x08"
+                + b"\x10\x27\x00\x04abcd" + b"\x10\x20\x00\x06" + b"\xFF" * 6)
+    message("Wi-Fi credential", [(2, b"application/vnd.wfa.wsc", b"\x10\x0E" + len(wsc_cred).to_bytes(2, "big") + wsc_cred, b"")])
+    message("three records", [(1, b"T", b"\x02enA", b""), (1, b"U", b"\x03example.com", b""), (2, b"application/octet-stream", bytes(range(16)), b"")])
+    message("long record, 4-byte length", [(2, b"application/json", b"x" * 300, b"")])
+    message("unknown TNF payload", [(5, b"", b"\x01\x02\x03", b"")])
+    out.append({"name": "empty message", "kind": "ndef", "data": "D00000", "canonical": True, "fields": "0|||"})
+
+    # Not what our encoder writes, but valid: a short payload in a long record, and chunked records.
+    out.append({"name": "short payload in a long record", "kind": "ndef", "canonical": False,
+                "data": record(1, b"T", b"\x02enHi", short=False).hex().upper(), "fields": text((1, b"T", b"", b"\x02enHi"))})
+    chunks = record(2, b"text/plain", b"abc", mb=True, me=False, cf=True) + record(6, b"", b"def", mb=False, me=False, cf=True) + record(6, b"", b"gh", mb=False, me=True)
+    out.append({"name": "chunked record", "kind": "ndef", "canonical": False, "data": chunks.hex().upper(), "fields": text((2, b"text/plain", b"", b"abcdefgh"))})
+
+    for name, data in [("no MB", record(1, b"T", b"\x02en", mb=False)), ("no ME", record(1, b"T", b"\x02en", me=False)),
+                       ("TNF reserved", record(7)), ("unchanged outside a chunk", record(6, b"", b"x")),
+                       ("empty record with payload", record(0, b"", b"x")), ("truncated payload", record(1, b"U", b"\x02nxp.com")[:-3]),
+                       ("chunk with a type", record(2, b"a", b"1", mb=True, me=False, cf=True) + record(6, b"b", b"2", mb=False)), ("nothing", b"")]:
+        out.append({"name": name, "kind": "ndef", "data": data.hex().upper(), "fields": "error"})
+
+    def tlv_ndef(msg):
+        return (bytes([0x03, len(msg)]) if len(msg) < 0xFF else bytes([0x03, 0xFF]) + len(msg).to_bytes(2, "big")) + msg
+
+    uri = record(1, b"U", b"\x02nxp.com")
+    area = tlv_ndef(uri) + b"\xFE"
+    out.append({"name": "Type 2 data area", "kind": "type2", "data": (area + bytes(144 - len(area))).hex().upper(), "fields": text((1, b"U", b"", b"\x02nxp.com"))})
+    area = b"\x01\x03\xA0\x10\x44" + b"\x00\x00" + tlv_ndef(uri) + b"\xFE"
+    out.append({"name": "lock control TLV and NULL padding first", "kind": "type2", "data": area.hex().upper(), "fields": text((1, b"U", b"", b"\x02nxp.com"))})
+    big = record(1, b"T", b"\x02en" + b"z" * 400)
+    out.append({"name": "3-byte NDEF TLV length", "kind": "type2", "data": (tlv_ndef(big) + b"\xFE").hex().upper(), "fields": text((1, b"T", b"", b"\x02en" + b"z" * 400))})
+    out.append({"name": "blank tag", "kind": "type2", "data": "0300FE" + "00" * 13, "fields": ""})
+    out.append({"name": "TLV longer than the area", "kind": "type2", "data": "0340D10101", "fields": "error"})
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1091,6 +1160,7 @@ def main():
         "j1939.json": j1939_vectors(),
         "iec104.json": iec104_vectors(),
         "ntp.json": ntp_vectors(),
+        "ndef.json": ndef_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

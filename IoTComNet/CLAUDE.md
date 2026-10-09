@@ -75,6 +75,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Time**: `Protocols.Ntp` (`SntpClient` with a replaceable `Clock` — it never sets the OS clock — `NtpServer`, `NtpPacket`/`NtpTimestamp`
   era-aware, `DriftingClock`); Rust twin `iotcom-ntp`, `/conformance/ntp.json`. `InMemoryDatagramNetwork.Latency`/`Jitter` simulate delay.
   Keep `MinimumPollInterval` ≥ 15 s for public servers; tests set it to zero.
+- **NFC**: `Protocols.Nfc` is managed C# only (design: PC/SC is an OS API). `Pcsc` has three native signature sets (winscard: 32-bit
+  LONG/DWORD + UTF-16; pcsc-lite: 64-bit `long`; macOS: 32-bit) — keep them in step. `Type2TagClient` speaks PC/SC part 3 storage
+  commands (FF CA/B0/D6) to any `ISmartCardChannel`; `VirtualNfcReader`/`VirtualType2Tag` answer the same APDUs. Writes are off by
+  default, never touch pages 0–3, and never lock tags. `/conformance/ndef.json` (Python reference, C# only).
 - **LoRaWAN**: `Protocols.LoRaWan` is managed C# (`LoRaWanPacket` codec + `LoRaWanCrypto`, `SemtechPacket`/`SemtechPacketForwarder`,
   `LoRaWanNetworkServer`, sans-I/O `LoRaWanEndDevice`, `LoRaWanSimulator`); Rust `iotcom-lorawan` is the fuzzed twin kept in sync by
   `/conformance/lorawan.json` (Python reference with its own AES/CMAC). Tests use `InMemoryDatagramNetwork` and

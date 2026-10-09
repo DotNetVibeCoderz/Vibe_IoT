@@ -52,6 +52,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Messaging | Fleet clock sync over NTP — six field devices with drifting clocks and SNTP clients, error traces that snap back to GPS time at every sync, sync interval and network latency controls, the four timestamps of the last exchange, and a server that loses GPS | NTP, SNTP |
 | Protocol workbench | Frame & checksum workbench — decode Modbus frames field by field, 23 CRCs, SLIP/COBS/HDLC live | Modbus, CRC, framing |
 | Protocol workbench | USB bench — this computer's USB devices (listed, never opened), a USB HID relay board switched with feature reports behind a write guard, a loopback device over control and bulk transfers | USB, HID |
+| Protocol workbench | NFC asset tags — a maintenance round with NTAG213 tags on a pump, a valve and a locked switchboard: tap a tag to read its NDEF records and frame lane, see every page of its memory coloured by region, and log a service visit back onto the tag when writing is allowed | NFC Forum Type 2, NDEF, PC/SC |
 
 ![Vehicle diagnostics](../../images/gallery-can-uds.png)
 ![ICU bedside monitors](../../images/gallery-hl7-icu.png)
@@ -73,6 +74,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![Fleet clock sync over NTP](../../images/gallery-ntp.png)
 ![Nearby Bluetooth devices](../../images/gallery-ble.png)
 ![USB bench](../../images/gallery-usb.png)
+![NFC asset tags](../../images/gallery-nfc.png)
 ![Lighting](../../images/gallery-lighting.png)
 ![Workbench](../../images/gallery-workbench.png)
 

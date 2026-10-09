@@ -123,6 +123,14 @@ app.Configure(c =>
         n.AddCommand<NtpQueryCommand>("query").WithDescription("Query servers and show offset and delay (never changes the system clock).").WithExample("ntp", "query").WithExample("ntp", "query", "time.cloudflare.com", "pool.ntp.org").WithExample("ntp", "query", "--sim", "--frames");
         n.AddCommand<NtpServeCommand>("serve").WithDescription("Serve this computer's time over UDP.").WithExample("ntp", "serve", "--port", "1123", "--ref", "LOCL", "--stratum", "10");
     });
+    c.AddBranch("nfc", n =>
+    {
+        n.SetDescription("NFC tags through PC/SC readers (ACR122U, ACR1252U…): list readers, read NDEF, write NDEF, decode NDEF bytes.");
+        n.AddCommand<NfcReadersCommand>("readers").WithDescription("List PC/SC readers.");
+        n.AddCommand<NfcReadCommand>("read").WithDescription("Wait for a tag and read its NDEF message.").WithExample("nfc", "read", "--sim", "--dump").WithExample("nfc", "read", "--reader", "ACR122");
+        n.AddCommand<NfcWriteCommand>("write").WithDescription("Write a URI and/or text (requires --allow-write).").WithExample("nfc", "write", "--uri", "https://example.com/asset/42", "--text", "Asset 42", "--sim", "--allow-write");
+        n.AddCommand<NfcDecodeCommand>("decode").WithDescription("Decode NDEF bytes or a Type 2 data area.").WithExample("nfc", "decode", "D101085502 6E78702E636F6D");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");
