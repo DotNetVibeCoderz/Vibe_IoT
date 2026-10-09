@@ -16,6 +16,7 @@
     <ProjectReference Include="..\IoTCom.Net.Protocols.CanOpen\IoTCom.Net.Protocols.CanOpen.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.J1939\IoTCom.Net.Protocols.J1939.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Iec104\IoTCom.Net.Protocols.Iec104.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Ntp\IoTCom.Net.Protocols.Ntp.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Nmea\IoTCom.Net.Protocols.Nmea.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Dmx\IoTCom.Net.Protocols.Dmx.csproj" />

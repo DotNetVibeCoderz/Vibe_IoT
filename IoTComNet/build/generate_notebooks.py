@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.18.0-preview.1"
+VERSION = "0.19.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -685,6 +685,45 @@ NOTEBOOKS = {
            "See `docs/en/protocols/iec104.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom iec104 gi --sim`, `iotcom iec104 monitor --sim`, `iotcom iec104 command double 5001 off --sbo --sim --allow-write`, `iotcom iec104 serve`, *Kendali gardu lewat IEC 104* di Gallery, dan sampel Iec104Scada. "
            "Lihat `docs/id/protocols/iec104.md`.\n\n" + CREDIT[1]),
+    ],
+    "network/19-ntp": [
+        md("# NTP and SNTP — keeping device clocks honest\n\nA GPS-referenced NTP server and a device with a drifting clock share an in-memory network with 10 ms each way. "
+           "The same `SntpClient` measures your computer against `pool.ntp.org` with `UseServer(\"pool.ntp.org\")`; it never changes the system clock.",
+           "# NTP dan SNTP — menjaga jam perangkat tetap jujur\n\nServer NTP berreferensi GPS dan perangkat dengan jam yang melenceng berbagi jaringan dalam memori dengan 10 ms tiap arah. "
+           "`SntpClient` yang sama mengukur komputer Anda terhadap `pool.ntp.org` dengan `UseServer(\"pool.ntp.org\")`; ia tidak pernah mengubah jam sistem."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Timestamps and packets\nNTP counts seconds from 1900 in 32 bits plus a 32-bit fraction; the seconds wrap in 2036 and the era rule maps them back.",
+           "## Cap waktu dan paket\nNTP menghitung detik sejak 1900 dalam 32 bit ditambah pecahan 32 bit; detiknya berputar pada 2036 dan aturan era memetakannya kembali."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Ntp;\nusing IoTCom.Net.Transports;\nusing System.Net;\n\n"
+             "var unix = NtpTimestamp.FromDateTime(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));\nConsole.WriteLine($\"1970-01-01 = 0x{unix.Raw:X16}\");\n"
+             "Console.WriteLine($\"0x0000000100000000 = {new NtpTimestamp(1UL << 32)}  (era 1)\");\n"
+             "var request = new NtpPacket { Mode = NtpMode.Client, Transmit = NtpTimestamp.FromDateTime(DateTime.UtcNow) }.Encode();\n"
+             "foreach (var f in NtpPacket.Describe(request)) Console.WriteLine($\"{f.Name,-11} {f.Value}\");"),
+        md("## One exchange: offset and delay\nT1 leaves the device, T2 reaches the server, T3 leaves the server, T4 arrives back.",
+           "## Satu pertukaran: offset dan delay\nT1 meninggalkan perangkat, T2 tiba di server, T3 meninggalkan server, T4 tiba kembali."),
+        code("var ntpNet = new InMemoryDatagramNetwork { Latency = TimeSpan.FromMilliseconds(10) };\nvar ntpAddress = new IPEndPoint(IPAddress.Parse(\"10.0.0.1\"), 123);\n"
+             "var gpsServer = NtpServer.Create(o => o.UseInMemory(ntpNet, ntpAddress).WithReference(\"GPS\"));\nawait gpsServer.StartAsync();\n"
+             "var deviceClock = new DriftingClock(TimeSpan.FromSeconds(-3.2), driftPpm: 20_000);   // 2 %: exaggerated\n"
+             "var sntp = SntpClient.Create(o => { o.UseInMemory(ntpNet); o.UseServer(ntpAddress); o.Clock = () => deviceClock.UtcNow; o.MinimumPollInterval = TimeSpan.Zero; });\n"
+             "var first = await sntp.QueryAsync(ntpAddress);\nConsole.WriteLine($\"T1 {first.T1}\\nT2 {first.T2}\\nT3 {first.T3}\\nT4 {first.T4}\");\n"
+             "Console.WriteLine($\"offset {first.Offset.TotalMilliseconds:+0.0} ms, delay {first.RoundTripDelay.TotalMilliseconds:0.0} ms\");"),
+        md("## Discipline the clock\nStep the device clock by the measured offset and watch the error stay small between synchronisations.",
+           "## Mendisiplinkan jam\nGeser jam perangkat sebesar offset yang terukur dan lihat galatnya tetap kecil di antara sinkronisasi."),
+        code("deviceClock.Step(first.Offset);\nfor (var i = 0; i < 3; i++)\n{\n    await Task.Delay(500);\n    var before = deviceClock.Error;\n"
+             "    var r = await sntp.QueryAsync(ntpAddress);\n    deviceClock.Step(r.Offset);\n"
+             "    Console.WriteLine($\"drifted {before.TotalMilliseconds:+0.0} ms, corrected to {deviceClock.Error.TotalMilliseconds:+0.0} ms\");\n}"),
+        md("## When the server cannot be trusted\nA server that lost its reference advertises leap 3; a busy one answers kiss-o'-death RATE. Both are refused.",
+           "## Saat server tidak bisa dipercaya\nServer yang kehilangan referensinya mengiklankan leap 3; server yang sibuk menjawab kiss-o'-death RATE. Keduanya ditolak."),
+        code("gpsServer.Leap = NtpLeap.Unsynchronised;\ntry { await sntp.QueryAsync(ntpAddress); } catch (DeviceException e) { Console.WriteLine(e.Message); }\n"
+             "var busyAddress = new IPEndPoint(IPAddress.Parse(\"10.0.0.2\"), 123);\n"
+             "var busy = NtpServer.Create(o => { o.UseInMemory(ntpNet, busyAddress); o.RateLimit = TimeSpan.FromSeconds(10); });\nawait busy.StartAsync();\n"
+             "await sntp.QueryAsync(busyAddress);\ntry { await sntp.QueryAsync(busyAddress); } catch (NtpKissOfDeathException e) { Console.WriteLine($\"{e.Code}: {e.Message}\"); }\n"
+             "await sntp.DisposeAsync();\nawait busy.DisposeAsync();\nawait gpsServer.DisposeAsync();"),
+        md("## Going further\n`iotcom ntp query`, `iotcom ntp query --sim --frames`, `iotcom ntp serve`, the Gallery's *Fleet clock sync over NTP* and the NtpClock sample. "
+           "See `docs/en/protocols/ntp.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom ntp query`, `iotcom ntp query --sim --frames`, `iotcom ntp serve`, *Sinkronisasi jam armada lewat NTP* di Gallery, dan sampel NtpClock. "
+           "Lihat `docs/id/protocols/ntp.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

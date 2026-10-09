@@ -117,6 +117,12 @@ app.Configure(c =>
         i.AddCommand<Iec104CommandCommand>("command").WithDescription("Single/double/step command or set point (requires --allow-write).").WithExample("iec104", "command", "double", "5001", "off", "--sbo", "--sim", "--allow-write");
         i.AddCommand<Iec104ServeCommand>("serve").WithDescription("Run the 20 kV feeder bay RTU simulator on TCP.").WithExample("iec104", "serve", "--port", "2404");
     });
+    c.AddBranch("ntp", n =>
+    {
+        n.SetDescription("NTP/SNTP: measure this computer's clock against time servers, or serve time on the local network.");
+        n.AddCommand<NtpQueryCommand>("query").WithDescription("Query servers and show offset and delay (never changes the system clock).").WithExample("ntp", "query").WithExample("ntp", "query", "time.cloudflare.com", "pool.ntp.org").WithExample("ntp", "query", "--sim", "--frames");
+        n.AddCommand<NtpServeCommand>("serve").WithDescription("Serve this computer's time over UDP.").WithExample("ntp", "serve", "--port", "1123", "--ref", "LOCL", "--stratum", "10");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");

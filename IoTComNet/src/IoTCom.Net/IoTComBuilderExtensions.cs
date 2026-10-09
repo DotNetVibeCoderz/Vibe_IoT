@@ -4,6 +4,7 @@ using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Iec104;
+using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
 using IoTCom.Net.Protocols.Dlms;
@@ -90,6 +91,28 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Iec104");
+            configure(o);
+        }));
+
+    /// <summary>Registers an SNTP client (measures offsets; it never sets the system clock).</summary>
+    public static IoTComBuilder AddSntpClient(this IoTComBuilder builder, string name, Action<SntpClientOptions> configure)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        builder.Services.AddSingleton(sp => SntpClient.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Ntp");
+            configure(o);
+        }));
+        return builder;
+    }
+
+    /// <summary>Registers an NTP server.</summary>
+    public static IoTComBuilder AddNtpServer(this IoTComBuilder builder, string name, Action<NtpServerOptions> configure)
+        => builder.AddEndpoint(name, sp => NtpServer.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Ntp");
             configure(o);
         }));
 

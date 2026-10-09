@@ -1011,6 +1011,70 @@ def iec104_vectors():
     return out
 
 
+def ntp_vectors():
+    """NTP packets, timestamps and exchanges (RFC 5905). Expected values are computed from the inputs with integer math."""
+    import struct
+    import datetime
+    out = []
+    era0 = datetime.datetime(1900, 1, 1)
+    era1 = datetime.datetime(2036, 2, 7, 6, 28, 16)
+
+    def to_text(raw):
+        sec, frac = raw >> 32, raw & 0xFFFFFFFF
+        base = era1 if sec & 0x80000000 == 0 else era0
+        ticks = sec * 10_000_000 + ((frac * 10_000_000 + (1 << 31)) >> 32)
+        t = base + datetime.timedelta(microseconds=ticks // 10)
+        return t.strftime("%Y-%m-%dT%H:%M:%S") + f".{(ticks % 10_000_000):07d}"
+
+    def ascii_id(i):
+        b = i.to_bytes(4, "big").split(b"\0")[0]
+        return b.decode("ascii") if all(0x20 <= c <= 0x7E for c in b) else f"0x{i:08X}"
+
+    def packet(name, leap, version, mode, stratum, poll, precision, rdelay, rdisp, refid, ref, orig, recv, xmit, trailer=b""):
+        data = bytes([(leap << 6) | (version << 3) | mode, stratum, poll & 0xFF, precision & 0xFF])
+        data += struct.pack(">IIIQQQQ", rdelay, rdisp, refid, ref, orig, recv, xmit) + trailer
+        ref_text = ascii_id(refid) if stratum <= 1 else ".".join(str(x) for x in refid.to_bytes(4, "big"))
+        out.append({"name": name, "kind": "packet", "data": data.hex().upper(),
+                    "fields": f"{leap}|{version}|{mode}|{stratum}|{poll}|{precision}|{rdelay}|{rdisp}|{ref_text}|{ref:016X}|{orig:016X}|{recv:016X}|{xmit:016X}|{len(trailer)}"})
+
+    gps = int.from_bytes(b"GPS\0", "big")
+    packet("client request v4", 0, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x83AA7E8000000000)
+    packet("client request v3 poll 6", 0, 3, 3, 0, 6, -6, 0, 0, 0, 0, 0, 0, 0xE9A1B2C312345678)
+    packet("stratum 1 GPS answer", 0, 4, 4, 1, 6, -23, 0x3EB, 0x4000, gps, 0xE9A1B2BB00000000, 0xE9A1B2C312345678, 0xE9A1B2C380000000, 0xE9A1B2C380100000)
+    packet("stratum 2 relay", 0, 4, 4, 2, 10, -20, 0x00012000, 0x0000A000, 0xC0000211, 0xE9A1B2BB00000000, 1, 2, 3)
+    packet("kiss-o'-death RATE", 3, 4, 4, 0, 0, 0, 0, 0, int.from_bytes(b"RATE", "big"), 0, 0xE9A1B2C312345678, 0, 0)
+    packet("leap second pending", 1, 4, 4, 1, 4, -18, 0, 0x10, int.from_bytes(b"PPS\0", "big"), 0, 0, 0, 0xE9A1B2C300000000)
+    packet("unsynchronised stratum 16", 3, 4, 4, 16, 3, -20, 0, 0, 0x7F000001, 0, 0, 0, 0)
+    packet("broadcast", 0, 4, 5, 2, 6, -20, 0, 0, 0x0A000001, 0, 0, 0, 0xE9A1B2C300000000)
+    packet("with MAC (key id + 16-byte digest)", 0, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xE9A1B2C300000000, struct.pack(">I", 7) + bytes(range(16)))
+    packet("era 1 transmit time", 0, 4, 4, 1, 6, -20, 0, 0, gps, 0, 0, 0, 0x0000000180000000)
+    out.append({"name": "47 octets", "kind": "packet", "data": "23" + "00" * 46, "fields": "error"})
+    out.append({"name": "empty", "kind": "packet", "data": "", "fields": "error"})
+
+    for raw in (0x83AA7E8000000000, 0x83AA7E8080000000, 0xE9A1B2C312345678, 0xFFFFFFFFFFFFFFFF, 0x8000000000000000, 0x0000000000000000, 0x7FFFFFFF00000000, 0x0000000180000000):
+        out.append({"name": f"timestamp {raw:016X}", "kind": "timestamp", "raw": f"{raw:016X}", "fields": to_text(raw)})
+
+    def signed(x):
+        x &= (1 << 64) - 1
+        return x - (1 << 64) if x >> 63 else x
+
+    def exchange(name, t1, t2, t3, t4):
+        # Ticks of 100 ns, rounded like the C# double path within one tick.
+        off = (signed(t2 - t1) + signed(t3 - t4)) / 2
+        dly = max(0, signed(t4 - t1) - signed(t3 - t2))
+        out.append({"name": name, "kind": "exchange", "t1": f"{t1:016X}", "t2": f"{t2:016X}", "t3": f"{t3:016X}", "t4": f"{t4:016X}",
+                    "fields": f"{round(off * 10_000_000 / 2**32)}|{round(dly * 10_000_000 / 2**32)}"})
+
+    base = 0xE9A1B2C300000000
+    ms = lambda v: int(v * 2**32 / 1000)
+    exchange("server 100 ms ahead, 50 ms each way", base, base + ms(150), base + ms(151), base + ms(101))
+    exchange("client 2.5 s ahead", base, base - ms(2480), base - ms(2479), base + ms(42))
+    exchange("asymmetric path", base, base + ms(80), base + ms(81), base + ms(91))
+    exchange("across the 2036 era boundary", 0xFFFFFFFF80000000, 0x0000000000000000, 0x0000000000100000, 0x0000000080000000)
+    exchange("negative delay clamps to zero", base, base + ms(50), base + ms(90), base + ms(10))
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1026,6 +1090,7 @@ def main():
         "canopen.json": canopen_vectors(),
         "j1939.json": j1939_vectors(),
         "iec104.json": iec104_vectors(),
+        "ntp.json": ntp_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

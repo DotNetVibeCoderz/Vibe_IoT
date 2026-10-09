@@ -120,6 +120,12 @@ public sealed class InMemoryDatagramNetwork
     /// <summary>Probability (0–1) that a datagram is delivered twice.</summary>
     public double DuplicateRate { get; set; }
 
+    /// <summary>One-way delay added to every unicast datagram (default zero: delivered immediately).</summary>
+    public TimeSpan Latency { get; set; }
+
+    /// <summary>Random extra delay, uniformly 0 to this value, added on top of <see cref="Latency"/>.</summary>
+    public TimeSpan Jitter { get; set; }
+
     /// <summary>Datagrams dropped by <see cref="LossRate"/> or sent to nobody.</summary>
     public long Dropped => Interlocked.Read(ref _dropped);
 
@@ -177,9 +183,26 @@ public sealed class InMemoryDatagramNetwork
         }
         var copy = data.ToArray();
         Transmitted?.Invoke(from, to, copy, true);
-        dest.Enqueue(new Datagram(copy, from));
         Interlocked.Increment(ref _delivered);
-        if (Chance(DuplicateRate)) dest.Enqueue(new Datagram(copy, from));
+        var duplicate = Chance(DuplicateRate);
+        var delay = Latency;
+        if (Jitter > TimeSpan.Zero)
+            lock (_randomGate) delay += Jitter * _random.NextDouble();
+        if (delay <= TimeSpan.Zero)
+        {
+            dest.Enqueue(new Datagram(copy, from));
+            if (duplicate) dest.Enqueue(new Datagram(copy, from));
+            return;
+        }
+
+        _ = DeliverLaterAsync(dest, new Datagram(copy, from), delay, duplicate);
+    }
+
+    private static async Task DeliverLaterAsync(InMemoryDatagramTransport dest, Datagram datagram, TimeSpan delay, bool duplicate)
+    {
+        await Task.Delay(delay).ConfigureAwait(false);
+        dest.Enqueue(datagram);
+        if (duplicate) dest.Enqueue(datagram);
     }
 }
 

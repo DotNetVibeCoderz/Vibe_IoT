@@ -141,6 +141,13 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-ntp.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("ntp-clock-sync", seconds: 16);
+    Shot("gallery-ntp.png");
+}
+
 if (Want("gallery-iec104.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

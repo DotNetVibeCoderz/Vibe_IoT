@@ -43,6 +43,7 @@ perangkat keras.
 | [CANopen (CiA 301)](protocols/canopen.md) | master · perangkat · SDO · PDO · NMT · simulator modul I/O | `IoTCom.Net.Protocols.CanOpen` |
 | [SAE J1939](protocols/j1939.md) | truk · PGN/SPN · DM1 · transport protocol · klaim alamat · simulator mesin | `IoTCom.Net.Protocols.J1939` |
 | [IEC 60870-5-104](protocols/iec104.md) | master SCADA · RTU · interogasi · select-before-operate · simulator bay penyulang | `IoTCom.Net.Protocols.Iec104` |
+| [NTP / SNTP](protocols/ntp.md) | klien SNTP · server · jam melenceng · kiss-o'-death | `IoTCom.Net.Protocols.Ntp` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB dan HID](protocols/usb.md) | control · bulk · interrupt · report HID · papan relay · bus virtual (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |

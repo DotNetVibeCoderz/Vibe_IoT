@@ -14,6 +14,7 @@
     <Project Path="samples/console/CanOpenMaster/CanOpenMaster.csproj" />
     <Project Path="samples/console/Iec104Scada/Iec104Scada.csproj" />
     <Project Path="samples/console/J1939Monitor/J1939Monitor.csproj" />
+    <Project Path="samples/console/NtpClock/NtpClock.csproj" />
     <Project Path="samples/console/CoapObserve/CoapObserve.csproj" />
     <Project Path="samples/console/DlmsMeterReader/DlmsMeterReader.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
@@ -55,6 +56,7 @@
     <Project Path="src/IoTCom.Net.Protocols.IsoTp/IoTCom.Net.Protocols.IsoTp.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.J1939/IoTCom.Net.Protocols.J1939.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Iec104/IoTCom.Net.Protocols.Iec104.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Ntp/IoTCom.Net.Protocols.Ntp.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.LoRaWan/IoTCom.Net.Protocols.LoRaWan.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Mavlink/IoTCom.Net.Protocols.Mavlink.csproj" />

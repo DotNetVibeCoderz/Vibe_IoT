@@ -72,6 +72,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `Iec104Server` with `Define`/`Update`/`MapCommand`; internal `Iec104Link` owns APCI windows/timers and dispatches ASDUs off the
   read loop so handlers may send; `Iec104SubstationSimulator` feeder bay). Rust `iotcom-iec104` is the fuzzed codec twin
   (`/conformance/iec104.json`); pcapng maps it to TCP 2404.
+- **Time**: `Protocols.Ntp` (`SntpClient` with a replaceable `Clock` — it never sets the OS clock — `NtpServer`, `NtpPacket`/`NtpTimestamp`
+  era-aware, `DriftingClock`); Rust twin `iotcom-ntp`, `/conformance/ntp.json`. `InMemoryDatagramNetwork.Latency`/`Jitter` simulate delay.
+  Keep `MinimumPollInterval` ≥ 15 s for public servers; tests set it to zero.
 - **LoRaWAN**: `Protocols.LoRaWan` is managed C# (`LoRaWanPacket` codec + `LoRaWanCrypto`, `SemtechPacket`/`SemtechPacketForwarder`,
   `LoRaWanNetworkServer`, sans-I/O `LoRaWanEndDevice`, `LoRaWanSimulator`); Rust `iotcom-lorawan` is the fuzzed twin kept in sync by
   `/conformance/lorawan.json` (Python reference with its own AES/CMAC). Tests use `InMemoryDatagramNetwork` and

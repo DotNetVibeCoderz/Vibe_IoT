@@ -49,6 +49,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | LPWAN, metering & city | Smart meter reading — a household meter with rooftop solar on an LCD faceplate, two days of load profile, the supply relay behind a password, and the building's M-Bus heat, water and electricity meters | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
 | Messaging | Plant network · Sparkplug B — mDNS finds the devices on the segment; a Unified Namespace of a bottling line with birth/death lamps; pull the network cable to see the NDEATH will, write metrics with DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
+| Messaging | Fleet clock sync over NTP — six field devices with drifting clocks and SNTP clients, error traces that snap back to GPS time at every sync, sync interval and network latency controls, the four timestamps of the last exchange, and a server that loses GPS | NTP, SNTP |
 | Protocol workbench | Frame & checksum workbench — decode Modbus frames field by field, 23 CRCs, SLIP/COBS/HDLC live | Modbus, CRC, framing |
 | Protocol workbench | USB bench — this computer's USB devices (listed, never opened), a USB HID relay board switched with feature reports behind a write guard, a loopback device over control and bulk transfers | USB, HID |
 
@@ -69,6 +70,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![CANopen I/O modules](../../images/gallery-canopen.png)
 ![Truck cluster over J1939](../../images/gallery-j1939.png)
 ![Substation control over IEC 104](../../images/gallery-iec104.png)
+![Fleet clock sync over NTP](../../images/gallery-ntp.png)
 ![Nearby Bluetooth devices](../../images/gallery-ble.png)
 ![USB bench](../../images/gallery-usb.png)
 ![Lighting](../../images/gallery-lighting.png)

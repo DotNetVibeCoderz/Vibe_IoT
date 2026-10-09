@@ -176,6 +176,7 @@ dependencies = [
  "iotcom-mavlink",
  "iotcom-mbus",
  "iotcom-modbus",
+ "iotcom-ntp",
  "libfuzzer-sys",
 ]
 
@@ -216,6 +217,10 @@ version = "0.1.0"
 dependencies = [
  "iotcom-core",
 ]
+
+[[package]]
+name = "iotcom-ntp"
+version = "0.1.0"
 
 [[package]]
 name = "jobserver"

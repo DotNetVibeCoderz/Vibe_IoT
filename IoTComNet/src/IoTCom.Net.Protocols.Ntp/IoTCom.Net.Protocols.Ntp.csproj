@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Ntp</RootNamespace>
+    <Description>NTP/SNTP for IoTCom.Net: packet codec with era-aware timestamps and the frame lane, SNTP client with the RFC 4330 answer checks, kiss-o'-death handling and multi-server estimates, an NTP server for local networks with rate limiting, and a drifting clock for simulations. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);ntp;sntp;time;clock;synchronization;rfc5905;rfc4330</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

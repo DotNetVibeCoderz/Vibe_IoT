@@ -3,6 +3,25 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.19.0-preview.1 — 2026-10-09
+
+NTP / SNTP.
+
+- **New package `IoTCom.Net.Protocols.Ntp`** (also in the meta-package): `SntpClient` (RFC 4330 answer checks with a
+  random-nonce originate timestamp, kiss-o'-death, leap alarm, multi-server median estimate, 15 s minimum poll interval,
+  replaceable clock; never sets the system clock), `NtpServer` (stratum, reference, leap indicator, kiss-o'-death RATE
+  rate limiting), `NtpPacket` and era-aware `NtpTimestamp` (1968–2104 across 2036), `NtpMath`, the frame lane, and
+  `DriftingClock` for simulations.
+- **New Rust crate `iotcom-ntp`**: the codec twin, fuzz target `ntp` (6.7 M local runs, no findings) and 25 shared
+  vectors in `/conformance/ntp.json` from an independent Python reference.
+- `InMemoryDatagramNetwork` gains `Latency` and `Jitter` (default zero).
+- CLI `iotcom ntp query|serve`; RPC decoder `ntp`; pcapng on UDP 123; hosting `AddSntpClient`/`AddNtpServer`; Gallery
+  *Fleet clock sync over NTP*; sample `NtpClock`; notebook pair `network/19-ntp`; docs page *NTP / SNTP*.
+- Fix: the IEC 104 codecs reject CP56Time2a years above 99, which did not survive a round trip (found by fuzzing).
+
+*NTP/SNTP (klien dengan pemeriksaan RFC 4330, server dengan pembatasan laju, cap waktu sadar era) dengan kembaran Rust
+yang di-fuzz, CLI, demo Galeri, sampel, notebook, dan dokumentasi; perbaikan tahun CP56Time2a di IEC 104.*
+
 ## 0.18.0-preview.1 — 2026-10-09
 
 IEC 60870-5-104.

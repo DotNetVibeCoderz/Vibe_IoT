@@ -49,6 +49,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | LPWAN, metering & kota | Pembacaan smart meter — meter rumah tangga dengan panel surya atap pada faceplate LCD, dua hari load profile, relay suplai di balik password, serta meter panas, air, dan listrik M-Bus gedung | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Pesan | Jaringan pabrik · Sparkplug B — mDNS menemukan perangkat di segmen; Unified Namespace sebuah lini pembotolan dengan lampu birth/death; cabut kabel jaringan untuk melihat will NDEATH, tulis metrik dengan DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
+| Pesan | Sinkronisasi jam armada lewat NTP — enam perangkat lapangan dengan jam melenceng dan klien SNTP, jejak galat yang kembali ke waktu GPS di setiap sinkronisasi, kendali interval sinkronisasi dan latensi jaringan, empat cap waktu pertukaran terakhir, dan server yang kehilangan GPS | NTP, SNTP |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
 | Meja kerja protokol | Meja kerja USB — perangkat USB komputer ini (didaftar, tidak dibuka), papan relay USB HID yang dinyalakan dengan feature report di balik penjaga penulisan, perangkat loopback lewat transfer control dan bulk | USB, HID |
 
@@ -69,6 +70,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Modul I/O CANopen](../../images/gallery-canopen.png)
 ![Panel truk lewat J1939](../../images/gallery-j1939.png)
 ![Kendali gardu lewat IEC 104](../../images/gallery-iec104.png)
+![Sinkronisasi jam armada lewat NTP](../../images/gallery-ntp.png)
 ![Perangkat Bluetooth di sekitar](../../images/gallery-ble.png)
 ![Meja kerja USB](../../images/gallery-usb.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
