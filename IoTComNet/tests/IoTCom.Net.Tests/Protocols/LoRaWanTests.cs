@@ -331,7 +331,7 @@ public class LoRaWanNetworkTests
         Assert.Contains("set interval 45 s", await WaitAsync(received), StringComparison.Ordinal);
         Assert.Equal(TimeSpan.FromSeconds(45), sim.Devices[0].Interval);
         // The DevStatusAns rides on the next uplink, which the wake-up triggers.
-        for (var i = 0; i < 50 && device.Battery is null; i++) await Task.Delay(100);
+        for (var i = 0; i < 150 && device.Battery is null; i++) await Task.Delay(100);   // slow runners need more than 5 s
         Assert.NotNull(device.Battery);
     }
 

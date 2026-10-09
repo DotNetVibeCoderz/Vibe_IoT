@@ -249,8 +249,8 @@ public sealed class SntpClient : EndpointBase
     }
 
     /// <summary>
-    /// Queries every configured server and combines the answers: results whose delay is more than twice the best delay
-    /// (plus 10 ms) are dropped, and the median offset of the rest is the estimate.
+    /// Queries every configured server and combines the answers: results whose delay exceeds the best delay by more than
+    /// the best delay itself (and at least 50 ms) are dropped, and the median offset of the rest is the estimate.
     /// </summary>
     /// <exception cref="IoTComException">No server gave a usable answer.</exception>
     public async Task<NtpEstimate> SynchronizeAsync(CancellationToken ct = default)
@@ -270,8 +270,11 @@ public sealed class SntpClient : EndpointBase
         }
 
         if (results.Count == 0) throw new IoTComException("No NTP server gave a usable answer: " + string.Join("; ", failed.Select(f => f.Item2)));
+        // Keep answers whose delay is within twice the best one, but never cut closer than 50 ms above it: on a fast
+        // network scheduler jitter alone exceeds "twice the best" and would drop good servers.
         var best = results.Min(r => r.RoundTripDelay);
-        var accepted = results.Where(r => r.RoundTripDelay <= (best * 2) + TimeSpan.FromMilliseconds(10)).OrderBy(r => r.Offset).ToList();
+        var limit = best + TimeSpan.FromTicks(Math.Max(best.Ticks, TimeSpan.FromMilliseconds(50).Ticks));
+        var accepted = results.Where(r => r.RoundTripDelay <= limit).OrderBy(r => r.Offset).ToList();
         var mid = accepted.Count / 2;
         var offset = accepted.Count % 2 == 1 ? accepted[mid].Offset : (accepted[mid - 1].Offset + accepted[mid].Offset) / 2;
         return new NtpEstimate(offset, accepted, failed);

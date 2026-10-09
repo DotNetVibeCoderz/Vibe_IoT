@@ -130,10 +130,17 @@ public class SparkplugSessionTests
         await using var node = SparkplugEdgeNode.Create(o => { o.EdgeNode = "RO"; o.AcceptWrites = false; o.Mqtt = m => m.UseBroker("127.0.0.1", port); });
         node.Device("Pump").Metric("Enable", SparkplugDataType.Boolean, false, writable: true);
         var births = 0;
-        node.Published += (_, e) => { if (e.Topic.Type == SparkplugMessageType.NBirth) Interlocked.Increment(ref births); };
+        var deviceBirths = 0;
+        node.Published += (_, e) =>
+        {
+            if (e.Topic.Type == SparkplugMessageType.NBirth) Interlocked.Increment(ref births);
+            if (e.Topic.Type == SparkplugMessageType.DBirth) Interlocked.Increment(ref deviceBirths);
+        };
         await node.StartAsync();
-        // The first NBIRTH must be out before the host subscribes, or the host simply sees it and never asks for a rebirth.
-        await Until(() => Volatile.Read(ref births) >= 1, "first NBIRTH");
+        // The first NBIRTH and DBIRTH must have reached the broker before the host subscribes, or the host simply sees
+        // them and never asks for a rebirth (slow runners showed both orders).
+        await Until(() => Volatile.Read(ref births) >= 1 && Volatile.Read(ref deviceBirths) >= 1, "first NBIRTH and DBIRTH");
+        await Task.Delay(200);
 
         await using var host = SparkplugHost.Create(o => { o.HostId = "late"; o.Mqtt = m => m.UseBroker("127.0.0.1", port); });
         await host.StartAsync();
