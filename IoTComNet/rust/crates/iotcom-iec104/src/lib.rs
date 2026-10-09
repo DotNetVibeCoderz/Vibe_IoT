@@ -62,7 +62,8 @@ impl Cp56 {
             month: d[5] & 0x0F,
             year: 2000 + u16::from(d[6] & 0x7F),
         };
-        if t.millis > 59_999 || t.minute > 59 || t.hour > 23 || t.day == 0 || !(1..=12).contains(&t.month) || t.day > days_in_month(t.year, t.month) {
+        // The year is 0–99 (2000–2099); 100–127 would not survive a round trip.
+        if d[6] & 0x7F > 99 || t.millis > 59_999 || t.minute > 59 || t.hour > 23 || t.day == 0 || !(1..=12).contains(&t.month) || t.day > days_in_month(t.year, t.month) {
             return Err(Error::Time);
         }
         Ok(t)

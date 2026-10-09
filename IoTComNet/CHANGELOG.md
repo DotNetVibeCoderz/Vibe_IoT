@@ -13,7 +13,7 @@ IEC 60870-5-104.
   time-tagged changes, command handlers, mandatory SBO option, negative answers for unknown type/cause/address, end of
   initialisation), the APCI link (sequence checks, k/w windows, t1/t2/t3, TESTFR), the codec with CP56Time2a and the
   frame lane, and a 20 kV feeder bay simulator with interlocks, protection trip, tap changer and energy counter.
-- **New Rust crate `iotcom-iec104`**: the codec twin, fuzz target `iec104` (1.6 M local runs, no findings) and 52 shared
+- **New Rust crate `iotcom-iec104`**: the codec twin, fuzz target `iec104` (1.6 M local runs, no findings) and 53 shared
   vectors in `/conformance/iec104.json` from an independent Python reference.
 - CLI `iotcom iec104 gi|read|monitor|command|serve`; RPC decoder `iec104`; pcapng on TCP 2404; hosting
   `AddIec104Client`/`AddIec104Server`; Gallery *Substation control over IEC 104* in a new *Energy & grid* category; sample

@@ -192,7 +192,7 @@ public readonly record struct Cp56Time2a(DateTime Value, bool Invalid = false, b
     {
         var ms = BinaryPrimitives.ReadUInt16LittleEndian(d);
         int minute = d[2] & 0x3F, hour = d[3] & 0x1F, day = d[4] & 0x1F, month = d[5] & 0x0F, year = 2000 + (d[6] & 0x7F);
-        if (ms > 59_999 || minute > 59 || hour > 23 || day == 0 || month is 0 or > 12 || day > DateTime.DaysInMonth(year, month))
+        if ((d[6] & 0x7F) > 99 || ms > 59_999 || minute > 59 || hour > 23 || day == 0 || month is 0 or > 12 || day > DateTime.DaysInMonth(year, month))
             throw new ProtocolException("CP56Time2a out of range.");
         return new Cp56Time2a(new DateTime(year, month, day, hour, minute, ms / 1000, ms % 1000, DateTimeKind.Unspecified), (d[2] & 0x80) != 0, (d[3] & 0x80) != 0);
     }
