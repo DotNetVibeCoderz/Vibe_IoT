@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Nats</RootNamespace>
+    <Description>NATS for IoTCom.Net as an adapter over the official NATS.Net client (not a rewrite): IPublisher/ISubscriber with subject wildcards, queue groups, headers and request/reply, traffic tap and hosting. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);nats;pubsub;messaging;request-reply</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />
+    <PackageReference Include="NATS.Client.Core" />
+  </ItemGroup>
+</Project>

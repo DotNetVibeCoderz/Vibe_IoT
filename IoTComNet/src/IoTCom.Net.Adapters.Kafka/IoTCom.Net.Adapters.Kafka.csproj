@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Kafka</RootNamespace>
+    <Description>Apache Kafka for IoTCom.Net as an adapter over Confluent.Kafka (not a rewrite): IPublisher/ISubscriber with keys, headers, QoS mapped to acks and idempotence, consumer groups with commit-after-processing, topic or regex subscriptions, SASL/SSL and hosting. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);kafka;confluent;streaming;pubsub;messaging</PackageTags>
+    <!-- Confluent.Kafka wraps librdkafka via reflection-heavy serializers and native assets; not trimming/AOT safe. -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />
+    <PackageReference Include="Confluent.Kafka" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Amqp</RootNamespace>
+    <Description>AMQP 1.0 for IoTCom.Net as an adapter over AMQPNetLite (not a rewrite): IPublisher/ISubscriber to queues and topics of any AMQP 1.0 broker (Azure Service Bus, Event Hubs, ActiveMQ Artemis, RabbitMQ 4, Qpid), settled or confirmed delivery, plus a small in-process broker for tests and demos. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);amqp;amqp10;servicebus;artemis;pubsub;messaging</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />
+    <PackageReference Include="AMQPNetLite.Core" />
+  </ItemGroup>
+</Project>

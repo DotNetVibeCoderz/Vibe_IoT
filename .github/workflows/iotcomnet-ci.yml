@@ -120,6 +120,56 @@ jobs:
           name: test-results-${{ matrix.os }}
           path: IoTComNet/TestResults
 
+  brokers:
+    name: Messaging brokers (NATS, Kafka, AMQP)
+    runs-on: ubuntu-latest
+    services:
+      nats:
+        image: nats:2.10
+        ports:
+          - 4222:4222
+      kafka:
+        image: apache/kafka:3.9.0
+        ports:
+          - 9092:9092
+        env:
+          KAFKA_NODE_ID: 1
+          KAFKA_PROCESS_ROLES: broker,controller
+          KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+          KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+          KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+          KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+          KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+          KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    defaults:
+      run:
+        working-directory: IoTComNet
+    env:
+      IOTCOM_NATS_URL: nats://localhost:4222
+      IOTCOM_KAFKA_BOOTSTRAP: localhost:9092
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Wait for the brokers
+        shell: bash
+        run: |
+          for port in 4222 9092; do
+            for i in $(seq 1 60); do
+              (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null && break
+              sleep 2
+            done
+            (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null || { echo "::error::port $port did not open"; exit 1; }
+          done
+      - run: dotnet build tests/IoTCom.Net.Tests -c Release
+      - name: NATS, Kafka and AMQP tests (integration tests run because the broker env vars are set)
+        run: dotnet test tests/IoTCom.Net.Tests -c Release --no-build --filter "FullyQualifiedName~Messaging" --logger "console;verbosity=normal"
+
   alpine:
     name: .NET (Alpine / musl)
     runs-on: ubuntu-latest
