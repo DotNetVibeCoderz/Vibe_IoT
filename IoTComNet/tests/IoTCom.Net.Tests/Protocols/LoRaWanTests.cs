@@ -369,6 +369,13 @@ public class LoRaWanNetworkTests
         await Send(tampered);                                                                      // MIC
         await Send(abp.CreateUplink(1, [3]));
 
+        // Slow runners may still be processing the last frames after the 120 ms pauses.
+        for (var i = 0; i < 100 && (Volatile.Read(ref uplinks) < 2 || ReasonCount() < 4); i++) await Task.Delay(50);
+        int ReasonCount()
+        {
+            lock (reasons) return reasons.Count;
+        }
+
         Assert.Equal(2, uplinks);
         lock (reasons)
         {
