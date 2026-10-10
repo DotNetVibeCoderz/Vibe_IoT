@@ -250,7 +250,8 @@ public sealed class SntpClient : EndpointBase
 
     /// <summary>
     /// Queries every configured server and combines the answers: results whose delay exceeds the best delay by more than
-    /// the best delay itself (and at least 50 ms) are dropped, and the median offset of the rest is the estimate.
+    /// the best delay itself (and at least 50 ms) are dropped, and the median offset of the rest is the estimate. If that
+    /// would leave fewer than half of the answers, all of them are used, so the median stays a majority vote.
     /// </summary>
     /// <exception cref="IoTComException">No server gave a usable answer.</exception>
     public async Task<NtpEstimate> SynchronizeAsync(CancellationToken ct = default)
@@ -275,6 +276,9 @@ public sealed class SntpClient : EndpointBase
         var best = results.Min(r => r.RoundTripDelay);
         var limit = best + TimeSpan.FromTicks(Math.Max(best.Ticks, TimeSpan.FromMilliseconds(50).Ticks));
         var accepted = results.Where(r => r.RoundTripDelay <= limit).OrderBy(r => r.Offset).ToList();
+        // The delay filter must not hand the decision to a minority: if it kept fewer than half of the answers (one slow
+        // scheduling burst is enough), use them all, so the median is still a majority vote against a falseticker.
+        if (accepted.Count * 2 < results.Count) accepted = [.. results.OrderBy(r => r.Offset)];
         var mid = accepted.Count / 2;
         var offset = accepted.Count % 2 == 1 ? accepted[mid].Offset : (accepted[mid - 1].Offset + accepted[mid].Offset) / 2;
         return new NtpEstimate(offset, accepted, failed);
