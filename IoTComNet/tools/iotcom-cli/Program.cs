@@ -253,6 +253,16 @@ app.Configure(c =>
         u.AddCommand<OpcUaCallCommand>("call").WithDescription("Call a method (requires --allow-write).").WithExample("opcua", "call", "--sim", "Line1", "Line1/ResetCounter", "--allow-write");
         u.AddCommand<OpcUaSimulateCommand>("simulate").WithExample("opcua", "simulate", "--port", "4840");
     });
+    c.AddBranch("zenoh", z =>
+    {
+        z.SetDescription("Eclipse Zenoh (Rust zenoh crate): subscribe to key expressions, query, publish (requires --allow-write); --sim runs an in-process network.");
+        z.AddCommand<ZenohSubCommand>("sub").WithExample("zenoh", "sub", "plant/**", "--sim", "-n", "6")
+            .WithExample("zenoh", "sub", "plant/**", "--connect", "tcp/192.168.1.10:7447", "--no-scouting");
+        z.AddCommand<ZenohGetCommand>("get").WithExample("zenoh", "get", "plant/*/info", "--sim");
+        z.AddCommand<ZenohPubCommand>("pub").WithDescription("Put or delete a key (requires --allow-write).")
+            .WithExample("zenoh", "pub", "plant/line1/setpoint", "42", "--sim", "--allow-write")
+            .WithExample("zenoh", "pub", "plant/line1/setpoint", "x", "--delete", "--listen", "tcp/127.0.0.1:7447", "--allow-write");
+    });
     c.AddBranch("sparkplug", p =>
     {
         p.SetDescription("Sparkplug B over MQTT: watch as a host application, simulate an edge node, write metrics.");

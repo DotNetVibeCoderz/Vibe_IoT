@@ -44,6 +44,7 @@
     <Project Path="src/IoTCom.Net.Adapters.Dicom/IoTCom.Net.Adapters.Dicom.csproj" />
     <Project Path="src/IoTCom.Net.Adapters.Mqtt/IoTCom.Net.Adapters.Mqtt.csproj" />
     <Project Path="src/IoTCom.Net.Adapters.OpcUa/IoTCom.Net.Adapters.OpcUa.csproj" />
+    <Project Path="src/IoTCom.Net.Adapters.Zenoh/IoTCom.Net.Adapters.Zenoh.csproj" />
     <Project Path="src/IoTCom.Net.Core/IoTCom.Net.Core.csproj" />
     <Project Path="src/IoTCom.Net.Framing/IoTCom.Net.Framing.csproj" />
     <Project Path="src/IoTCom.Net.Hosting/IoTCom.Net.Hosting.csproj" />

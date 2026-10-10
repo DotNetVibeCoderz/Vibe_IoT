@@ -1,0 +1,23 @@
+[package]
+name = "iotcom-zenoh-native"
+description = "C ABI over the Eclipse Zenoh session (pub/sub/query), consumed by the IoTCom.Net.Adapters.Zenoh NuGet package."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+name = "iotcom_zenoh"
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[dependencies]
+iotcom-ffi-support.workspace = true
+# Zenoh is dual-licensed EPL-2.0 OR Apache-2.0; we use it under Apache-2.0. TLS/QUIC stay out (TCP and UDP only).
+zenoh = { version = "=1.10.1", default-features = false, features = ["transport_tcp", "transport_udp"] }
+tokio = { version = "1", features = ["rt-multi-thread", "time", "sync", "macros"] }
+
+[lints]
+workspace = true

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Zenoh</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Eclipse Zenoh for IoTCom.Net as an adapter over the Rust zenoh crate (T2-R, not a rewrite): a session endpoint with put, delete, subscriptions as events and IAsyncEnumerable, queryables and get, a read-only switch, traffic tap, the IPublisher/ISubscriber abstractions, pure C# key-expression matching and a virtual network for tests and demos. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);zenoh;pub-sub;query;edge;robotics;rust;native</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Native binaries: CI places one folder per RID under artifacts/native/{rid}/; a local cargo build is used in development. -->
+  <ItemGroup>
+    <NativeArtifact Include="$(RepoRoot)artifacts/native/**/*iotcom_zenoh*" />
+    <None Include="@(NativeArtifact)" Pack="true" PackagePath="runtimes/%(RecursiveDir)native/%(Filename)%(Extension)" Visible="false" />
+  </ItemGroup>
+</Project>

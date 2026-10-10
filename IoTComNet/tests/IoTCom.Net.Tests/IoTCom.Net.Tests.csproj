@@ -40,6 +40,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Mdns\IoTCom.Net.Protocols.Mdns.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Sparkplug\IoTCom.Net.Protocols.Sparkplug.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.OpcUa\IoTCom.Net.Adapters.OpcUa.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Zenoh\IoTCom.Net.Adapters.Zenoh.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Ble\IoTCom.Net.Transport.Ble.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Can.Adapters\IoTCom.Net.Transport.Can.Adapters.csproj" />

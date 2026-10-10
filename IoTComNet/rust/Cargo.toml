@@ -19,6 +19,7 @@ members = [
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",
     "crates/native/iotcom-usb-native",
+    "crates/native/iotcom-zenoh-native",
     "tools/iotcom-bindgen",
 ]
 
