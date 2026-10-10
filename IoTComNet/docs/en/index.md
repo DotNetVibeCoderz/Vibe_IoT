@@ -58,6 +58,8 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [M-Bus (wired)](protocols/mbus.md) | master · scan · secondary addressing · simulator | `IoTCom.Net.Protocols.MBus` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Sparkplug B](protocols/sparkplug.md) | edge node · host application · line simulator | `IoTCom.Net.Protocols.Sparkplug` |
+| [Zenoh](protocols/zenoh.md) | peer/client sessions · put · subscribe · queryables · `get` · virtual network (Rust zenoh) | `IoTCom.Net.Adapters.Zenoh` |
+| [NATS · AMQP 1.0 · Kafka](protocols/messaging-brokers.md) | publish · subscribe · request/reply · queue groups · consumer groups · in-process AMQP broker | `IoTCom.Net.Adapters.Nats`, `.Amqp`, `.Kafka` |
 | [mDNS / DNS-SD](protocols/mdns.md) | responder · browser · plant simulator | `IoTCom.Net.Protocols.Mdns` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |

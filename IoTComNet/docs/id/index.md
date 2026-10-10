@@ -59,6 +59,8 @@ perangkat keras.
 | [M-Bus (berkabel)](protocols/mbus.md) | master · pemindaian · alamat sekunder · simulator | `IoTCom.Net.Protocols.MBus` |
 | [MQTT 3.1.1 / 5.0](protocols/mqtt.md) | publish · subscribe · broker | `IoTCom.Net.Adapters.Mqtt` |
 | [Sparkplug B](protocols/sparkplug.md) | edge node · host application · simulator lini | `IoTCom.Net.Protocols.Sparkplug` |
+| [Zenoh](protocols/zenoh.md) | sesi peer/client · put · subscribe · queryable · `get` · jaringan virtual (Rust zenoh) | `IoTCom.Net.Adapters.Zenoh` |
+| [NATS · AMQP 1.0 · Kafka](protocols/messaging-brokers.md) | publish · subscribe · request/reply · queue group · consumer group · broker AMQP dalam proses | `IoTCom.Net.Adapters.Nats`, `.Amqp`, `.Kafka` |
 | [mDNS / DNS-SD](protocols/mdns.md) | responder · browser · simulator pabrik | `IoTCom.Net.Protocols.Mdns` |
 | [Framing & CRC](protocols/framing.md) | codec | `IoTCom.Net.Framing` |
 | [SenML](protocols/senml.md) | codec | `IoTCom.Net.Serialization.SenML` |

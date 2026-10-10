@@ -114,6 +114,13 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   The Gallery never opens real devices; `IOTCOM_GALLERY_SAMPLE_USB=1` (set by the screenshot tool) shows a fixed sample list.
 - **OPC UA**: `Adapters.OpcUa` wraps the OPC Foundation stack (1.5.378, pinned; not in the meta-package, not AOT). PKI per
   application under `%LOCALAPPDATA%/IoTCom.Net/opcua/pki*`; tests and notebooks use temp PKI paths and `AcceptUntrustedCertificates`.
+- **Zenoh**: `Adapters.Zenoh` wraps the Rust `zenoh` crate (`rust/crates/native/iotcom-zenoh-native` → `iotcom_zenoh`, TCP/UDP transports
+  only; events are drained by `iotcom_zenoh_poll_event`) behind `IZenohBackend`: `NativeZenohBackend` or the in-process
+  `VirtualZenohNetwork` (tests, notebooks, CLI `--sim`). `ZenohSession` is the endpoint (put/delete/subscribe/`WatchAsync`/queryables/`GetAsync`,
+  `ReadOnly` option); `ZenohKeyExpr` is pure C#. Not in the meta-package.
+- **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
+  notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
+  in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.
 - **Hosting**: `AddIoTCom(...)` (Hosting) + protocol helpers `AddModbusClient/AddMqtt/...` (meta-package `src/IoTCom.Net`).
 
 ## Conventions specific to this repo

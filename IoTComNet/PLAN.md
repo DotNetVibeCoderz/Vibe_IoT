@@ -53,8 +53,8 @@ the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (
 ## Phase 2 — Expansion → `1.0.0` (± 12 weeks)
 
 CANopen ✅ (`0.16.0-preview.1`), J1939 ✅ (`0.17.0-preview.1`), IEC 60870-5-104 ✅ (`0.18.0-preview.1`), EtherNet/IP (explicit), EtherCAT master, SWD/JTAG + DFU (probe-rs), Matter
-controller, KNXnet/IP, BACnet/IP, LwM2M ✅ (`0.21.0-preview.1`), Zenoh, DTLS 1.2/1.3, OCPP 1.6J/2.0.1, NTP/SNTP ✅ (`0.19.0-preview.1`), NFC/NDEF ✅ (`0.20.0-preview.1`), adapters for
-Kafka/NATS/AMQP; complete EN/ID documentation; Gallery with all 17 use cases; signed and notarised releases.
+controller, KNXnet/IP, BACnet/IP, LwM2M ✅ (`0.21.0-preview.1`), Zenoh ✅ (`0.22.0-preview.1`), DTLS 1.2/1.3, OCPP 1.6J/2.0.1, NTP/SNTP ✅ (`0.19.0-preview.1`), NFC/NDEF ✅ (`0.20.0-preview.1`), adapters for
+Kafka/NATS/AMQP ✅ (`0.22.0-preview.1`); complete EN/ID documentation; Gallery with all 17 use cases; signed and notarised releases.
 
 ## Phase 3 — Optional
 

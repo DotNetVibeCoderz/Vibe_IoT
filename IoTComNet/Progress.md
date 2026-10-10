@@ -3,20 +3,20 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.16.0-preview.1` · **Last update:** 2026-10-09
+**Current version:** `0.22.0-preview.1` · **Last update:** 2026-10-10
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 596 passing | `dotnet test tests/IoTCom.Net.Tests` |
-| Rust workspace | ✅ 43 tests passing, clippy `-D warnings` clean; 10 cargo-fuzz targets (≈ 22 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
+| .NET tests | ✅ 881 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or the native library) | `dotnet test tests/IoTCom.Net.Tests` |
+| Rust workspace | ✅ 51 tests passing, clippy `-D warnings` clean; 10 cargo-fuzz targets (≈ 22 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 50 + 50 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 23 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Docs EN/ID | ✅ 52 + 52 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 25 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 41 packages (+ symbol packages) per release (latest `0.20.0-preview.1` with Protocols.Nfc; `0.21.0-preview.1` adds Protocols.Lwm2m); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 45 packages (+ symbol packages) per release (latest `0.20.0-preview.1` with Protocols.Nfc; `0.21.0-preview.1` adds Protocols.Lwm2m; `0.22.0-preview.1` adds Adapters.Zenoh, Nats, Amqp and Kafka); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -43,6 +43,10 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Protocols.Ntp + Rust `iotcom-ntp` | ✅ | SNTP client (RFC 4330 checks, kiss-o'-death, median of servers, replaceable clock), NTP server (rate limiting), era-aware timestamps, drifting clock; fuzzed codec twin + 25 vectors; verified against public servers · NTS, symmetric/broadcast modes, clock filter ⏳ |
 | IoTCom.Net.Protocols.Nfc | ✅ | NDEF codec (Text, URI, Smart Poster, MIME, external, AAR, Wi-Fi, chunked), Type 2 tag memory and page map, guarded tear-safe writes, PC/SC on Windows/Linux/macOS (verified listing real readers on Windows), virtual reader; 30 vectors · MIFARE Classic, Type 4/5 tags, NTAG password, a real tag on real hardware ⏳ |
 | IoTCom.Net.Protocols.Lwm2m | ✅ | client (registration lifecycle, Read/Discover/Write/Execute/Observe with pmin/pmax) and server (registrations with expiry, device management, read-only default) on IoTCom CoAP; TLV, text, opaque, SenML JSON/CBOR; street light simulator; 19 TLV vectors · DTLS, bootstrap, Create/Delete, Send, block-wise ⏳ |
+| IoTCom.Net.Adapters.Zenoh + Rust `iotcom-zenoh-native` | ✅ | session (put, delete, subscribe, `WatchAsync`, queryables, `GetAsync`, peer/client, read-only switch) over zenoh 1.10.1 (TCP/UDP transports), pure C# key-expression matching, in-process virtual network, CLI `zenoh` · TLS/QUIC transports, storages, liveliness ⏳ |
+| IoTCom.Net.Adapters.Nats | ✅ | NATS.Client.Core 3.3.0 endpoint: wildcards, queue groups, headers, request/reply, user/token/creds auth · JetStream ⏳ · integration tests need a server |
+| IoTCom.Net.Adapters.Amqp | ✅ | AMQPNetLite 2.5.4 endpoint (confirmed and pre-settled sends, redelivery, credit) and the in-process `AmqpMiniBroker` for tests and demos · transactions, dynamic nodes ⏳ |
+| IoTCom.Net.Adapters.Kafka | ✅ | Confluent.Kafka 2.16.0 endpoint: keys, headers, QoS as acks, consumer groups, regex topics, TLS/SASL; not trimmable/AOT · integration tests need a broker · admin, transactions ⏳ |
 | IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
 | IoTCom.Net.Transport.Usb + Rust `iotcom-usb-native` | ✅ | control/bulk/interrupt (nusb), HID reports (hidapi), bulk byte-stream transport, HID relay boards, virtual bus; verified enumerating real devices on Windows · isochronous, hotplug, gadget role ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
@@ -78,6 +82,19 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
   test; generated bindings (csbindgen) arrive with the next native crate.
 - **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+
+## Decisions taken in 0.22
+
+- **Zenoh is a native adapter, not a rewrite.** The Rust `zenoh` crate is wrapped as `iotcom_zenoh` (TCP and UDP transports only) behind `IZenohBackend`, so `VirtualZenohNetwork` runs the same session code in tests, notebooks and `--sim`
+  without any native library. Key-expression matching stays in pure C#.
+- **Zenoh sessions write by default** (`ReadOnly = false`) because publishing is what a pub/sub adapter is for; `ReadOnly` refuses put, delete and
+  replies, and the CLI is read-only for `sub`/`get` and needs `--allow-write` for `pub`.
+- **Licences from zenoh.** `rust/deny.toml` has crate-scoped exceptions for `option-ext` (MPL-2.0) and `webpki-roots` (CDLA-Permissive-2.0), both pulled
+  in by zenoh. The native Zenoh library ships them; MPL-2.0 is file-level copyleft and `option-ext` is used unmodified.
+- **Broker adapters wrap the mature clients** (NATS.Client.Core, AMQPNetLite, Confluent.Kafka) as `EndpointBase` endpoints; none is in the meta-package,
+  and the Kafka adapter is not trimmable or AOT-compatible, like OPC UA.
+- **AMQP gets an in-process mini broker** so its tests, notebook and demos run everywhere; NATS and Kafka tests skip unless `IOTCOM_NATS_URL` /
+  `IOTCOM_KAFKA_BOOTSTRAP` are set, and the CI job `brokers` runs them against service containers.
 
 ## Decisions taken in 0.21
 
@@ -286,6 +303,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-10-10 | Zenoh, NATS, AMQP 1.0, Kafka (`0.22.0-preview.1`): four adapter packages (Zenoh over a native Rust library with a virtual network, AMQP with an in-process mini broker), CLI `zenoh`, CI job `brokers`, notebook pairs `messaging/22-zenoh` and `23-brokers`, docs pages *Zenoh* and *Messaging brokers*. mDNS `BrowseAsync` overflow and NTP multi-server filter fixed. |
 | 2026-10-10 | OMA LwM2M (`0.21.0-preview.1`): client and server on IoTCom CoAP, TLV/SenML, observe with pmin/pmax, street light simulator, 19 TLV vectors, CLI `lwm2m`, Gallery street lights, sample, notebook pair, docs. Three timing-dependent CI tests fixed. |
 | 2026-10-09 | NFC/NDEF (`0.20.0-preview.1`): NDEF codec, Type 2 tags, PC/SC on three OSes, virtual reader, 30 conformance vectors, CLI `nfc`, Gallery asset tags, sample, notebook pair, docs. Sparkplug test made deterministic. |
 | 2026-10-09 | NTP/SNTP (`0.19.0-preview.1`): SNTP client, server, era-aware timestamps, drifting clock, in-memory latency, fuzzed Rust twin, 25 conformance vectors, CLI `ntp`, Gallery fleet clock sync, sample, notebook pair, docs. IEC 104 CP56 year fix. EtherNet/IP deferred. |

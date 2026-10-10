@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.21.0-preview.1"
+VERSION = "0.22.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -801,6 +801,154 @@ NOTEBOOKS = {
            "See `docs/en/protocols/lwm2m.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom lwm2m demo`, `iotcom lwm2m serve --observe /3303/0/5700`, `iotcom lwm2m client --server <host>`, `iotcom lwm2m decode 3/0 <hex>`, *Lampu jalan lewat LwM2M* di Gallery, dan sampel Lwm2mClient. "
            "Lihat `docs/id/protocols/lwm2m.md`.\n\n" + CREDIT[1]),
+    ],
+    "messaging/22-zenoh": [
+        md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "
+           "To talk to real peers, drop `UseVirtual(net)` and use `Connect(\"tcp/host:7447\")` or `Listen(\"tcp/0.0.0.0:7447\")`; the native `iotcom_zenoh` library ships with the package.",
+           "# Zenoh — key expression, subscription, dan kueri\n\nDua sesi berbagi `VirtualZenohNetwork` dalam proses, jadi tidak ada yang membutuhkan pustaka native atau jaringan di sini. "
+           "Untuk berbicara dengan peer sungguhan, hapus `UseVirtual(net)` dan pakai `Connect(\"tcp/host:7447\")` atau `Listen(\"tcp/0.0.0.0:7447\")`; pustaka native `iotcom_zenoh` ikut dalam paket."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Adapters.Zenoh, {VERSION}"'),
+        md("## Key expressions\nKeys are slash-separated chunks. `*` matches one chunk, `**` any number of chunks (including none), `$*` any part of a chunk.",
+           "## Key expression\nKey adalah chunk yang dipisah garis miring. `*` cocok dengan satu chunk, `**` dengan sejumlah chunk (termasuk nol), `$*` dengan bagian mana pun dari satu chunk."),
+        code("""using IoTCom.Net;
+using IoTCom.Net.Adapters.Zenoh;
+
+foreach (var (pattern, key) in new[] { ("plant/*/temp", "plant/line1/temp"), ("plant/*/temp", "plant/a/b/temp"), ("plant/**", "plant/a/b/c"), ("sensor$*/temp", "sensor42/temp") })
+    Console.WriteLine($"{pattern,-14} {(ZenohKeyExpr.Includes(pattern, key) ? "matches    " : "no match   ")} {key}");
+Console.WriteLine($"plant/*/temp and plant/line1/** can both match one key: {ZenohKeyExpr.Intersects("plant/*/temp", "plant/line1/**")}");
+Console.WriteLine($"valid \\"plant//x\\": {ZenohKeyExpr.IsValid("plant//x")}");"""),
+        md("## Put, subscribe and delete\nA subscription gets every put and delete whose key matches its expression, from other sessions.",
+           "## Put, subscribe, dan delete\nSubscription menerima setiap put dan delete yang key-nya cocok dengan ekspresinya, dari sesi lain."),
+        code("""var net = new VirtualZenohNetwork();
+var gateway = ZenohSession.Create(o => o.UseVirtual(net));
+var sensor = ZenohSession.Create(o => o.UseVirtual(net));
+await gateway.ConnectAsync();
+await sensor.ConnectAsync();
+
+var seen = new List<string>();
+var subscription = gateway.Subscribe("plant/*/temp", s => { lock (seen) seen.Add($"{s.Kind} {s.Key} {s.Text}".TrimEnd()); });
+await sensor.PutAsync("plant/line1/temp", "21.5");
+await sensor.PutAsync("plant/line2/temp", "22.1");
+await sensor.PutAsync("plant/line1/pressure", "1.8");   // other key: not delivered
+await sensor.DeleteAsync("plant/line1/temp");
+await Task.Delay(200);
+lock (seen) foreach (var line in seen) Console.WriteLine(line);
+subscription.Dispose();"""),
+        md("## Watching as a stream\n`WatchAsync` turns a key expression into an `IAsyncEnumerable`.",
+           "## Memantau sebagai aliran\n`WatchAsync` mengubah key expression menjadi `IAsyncEnumerable`."),
+        code("""var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+var watcher = Task.Run(async () =>
+{
+    var keys = new List<string>();
+    await foreach (var s in gateway.WatchAsync("plant/**", cts.Token))
+    {
+        keys.Add(s.Key);
+        if (keys.Count == 3) break;
+    }
+    return keys;
+});
+// The subscription is declared when enumeration starts, so keep publishing until the watcher has three samples.
+for (var i = 0; i < 200 && !watcher.IsCompleted; i++) { await sensor.PutAsync("plant/line1/temp", $"v{i}"); await Task.Delay(10); }
+Console.WriteLine(string.Join(", ", await watcher));"""),
+        md("## Queryables and get\nA queryable answers `get` requests; `GetAsync` collects the replies of every matching queryable, including error replies.",
+           "## Queryable dan get\nQueryable menjawab permintaan `get`; `GetAsync` mengumpulkan jawaban dari setiap queryable yang cocok, termasuk jawaban error."),
+        code("""var info = sensor.DeclareQueryable("plant/*/info", async q =>
+{
+    await q.ReplyAsync("plant/line1/info", $"state=running query={q.Parameters}");
+    await q.ReplyErrorAsync("line2 offline");
+});
+foreach (var reply in await gateway.GetAsync("plant/*/info?detail=1"))
+    Console.WriteLine(reply.IsError ? $"error: {reply.ErrorText}" : $"{reply.Sample!.Key}: {reply.Sample.Text}");
+info.Dispose();"""),
+        md("## Read-only sessions\nPut, delete and replies change what other nodes see. A session with `ReadOnly = true` refuses them but still subscribes and queries.",
+           "## Sesi hanya-baca\nPut, delete, dan reply mengubah apa yang dilihat node lain. Sesi dengan `ReadOnly = true` menolaknya tetapi tetap bisa subscribe dan query."),
+        code("""var viewer = ZenohSession.Create(o => { o.UseVirtual(net); o.ReadOnly = true; });
+await viewer.ConnectAsync();
+try { await viewer.PutAsync("plant/line1/setpoint", "99"); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }
+Console.WriteLine($"get still works: {(await viewer.GetAsync("plant/*/info", timeout: TimeSpan.FromMilliseconds(500))).Count} replies");
+await viewer.DisposeAsync();
+await sensor.DisposeAsync();
+await gateway.DisposeAsync();"""),
+        md("## Going further\n`iotcom zenoh sub \"plant/**\" --sim`, `iotcom zenoh get \"plant/*/info\" --sim`, `iotcom zenoh pub plant/line1/setpoint 42 --sim --allow-write`. "
+           "See `docs/en/protocols/zenoh.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom zenoh sub \"plant/**\" --sim`, `iotcom zenoh get \"plant/*/info\" --sim`, `iotcom zenoh pub plant/line1/setpoint 42 --sim --allow-write`. "
+           "Lihat `docs/id/protocols/zenoh.md`.\n\n" + CREDIT[1]),
+    ],
+    "messaging/23-brokers": [
+        md("# Message brokers — AMQP 1.0 in-process, NATS and Kafka by description\n\nNATS and Kafka need a real broker, so this notebook runs the AMQP 1.0 adapter against `AmqpMiniBroker`, a small in-process broker "
+           "for tests and demos (not for production). The NATS and Kafka adapters follow the same endpoint model; their usage is shown in text below.",
+           "# Broker pesan — AMQP 1.0 dalam proses, NATS dan Kafka lewat uraian\n\nNATS dan Kafka butuh broker sungguhan, jadi notebook ini menjalankan adapter AMQP 1.0 terhadap `AmqpMiniBroker`, broker kecil dalam proses "
+           "untuk pengujian dan demo (bukan untuk produksi). Adapter NATS dan Kafka mengikuti model endpoint yang sama; cara pakainya ditunjukkan dalam teks di bawah."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Adapters.Amqp, {VERSION}"'),
+        md("## A broker and a gateway\nThe mini broker keeps an in-memory queue per address and checks SASL PLAIN credentials when you give it some. Credentials are secrets: the ones here are demo values.",
+           "## Broker dan gateway\nMini broker menyimpan satu antrean dalam memori per address dan memeriksa kredensial SASL PLAIN bila Anda memberikannya. Kredensial adalah rahasia: yang di sini hanya nilai demo."),
+        code("""using IoTCom.Net;
+using IoTCom.Net.Adapters.Amqp;
+using System.Text;
+
+var broker = AmqpMiniBroker.Create(userName: "plant", password: "demo-only");
+await broker.StartAsync();
+var gateway = AmqpEndpoint.Create(o => o.UseBroker(broker.Address).WithCredentials("plant", "demo-only"));
+await gateway.ConnectAsync();
+Console.WriteLine($"connected: {gateway.IsConnected}");
+
+for (var i = 0; i < 3; i++)
+    await gateway.PublishAsync("plant.temp", Encoding.UTF8.GetBytes($"2{i}.5"), new PublishOptions { QualityOfService = QualityOfService.AtLeastOnce, ContentType = "text/plain" });
+Console.WriteLine($"waiting on plant.temp: {broker.QueueLength("plant.temp")}");"""),
+        md("## Subscribe\nA subscription is a receiver link. Each message is accepted when the loop asks for the next one.",
+           "## Subscribe\nSubscription adalah receiver link. Setiap pesan diterima (accepted) ketika loop meminta pesan berikutnya."),
+        code("""var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+var got = new List<string>();
+await foreach (var m in gateway.SubscribeAsync("plant.temp", cts.Token))
+{
+    got.Add(Encoding.UTF8.GetString(m.Payload.Span));
+    if (got.Count == 3) break;
+}
+Console.WriteLine(string.Join(", ", got));"""),
+        md("## Redelivery and rejection\nA message the consumer never finished with goes back to the queue. A broker that rejects a message makes a confirmed publish throw; a pre-settled publish does not wait for the outcome.",
+           "## Pengiriman ulang dan penolakan\nPesan yang belum selesai diproses konsumen kembali ke antrean. Broker yang menolak pesan membuat publish terkonfirmasi melempar exception; publish pre-settled tidak menunggu hasilnya."),
+        code("""await gateway.PublishAsync("plant.alarm", "overheat"u8.ToArray(), new PublishOptions { QualityOfService = QualityOfService.AtLeastOnce });
+await foreach (var m in gateway.SubscribeAsync("plant.alarm", cts.Token))
+{
+    Console.WriteLine($"took {Encoding.UTF8.GetString(m.Payload.Span)} and stopped without finishing");
+    break;
+}
+await foreach (var m in gateway.SubscribeAsync("plant.alarm", cts.Token))
+{
+    Console.WriteLine($"delivered again: {Encoding.UTF8.GetString(m.Payload.Span)}");
+    break;
+}
+
+broker.RejectedAddresses.Add("plant.closed");
+try { await gateway.PublishAsync("plant.closed", "x"u8.ToArray(), new PublishOptions { QualityOfService = QualityOfService.AtLeastOnce }); }
+catch (DeviceException e) { Console.WriteLine("confirmed publish failed: " + e.Message); }
+await gateway.PublishAsync("plant.closed", "x"u8.ToArray());   // pre-settled: no outcome awaited
+Console.WriteLine($"messages accepted by consumers so far: {broker.MessagesDelivered}");"""),
+        md("## Wrong credentials\nThe broker checks them, and the failure is a `TransportException`.",
+           "## Kredensial salah\nBroker memeriksanya, dan kegagalannya berupa `TransportException`."),
+        code("""var intruder = AmqpEndpoint.Create(o => o.UseBroker(broker.Address).WithCredentials("plant", "wrong"));
+try { await intruder.ConnectAsync(); } catch (TransportException e) { Console.WriteLine("refused: " + e.GetType().Name); }
+await intruder.DisposeAsync();
+await gateway.DisposeAsync();
+await broker.DisposeAsync();"""),
+        md("## NATS and Kafka\nThese need a real broker, so they are shown as text. Both are endpoints like the one above (`ConnectAsync`, `PublishAsync`, `SubscribeAsync`, traffic tap, hosting helpers `AddNats` and `AddKafka`).\n\n"
+           "```csharp\n// NATS: wildcards, queue groups and request/reply\nusing IoTCom.Net.Adapters.Nats;\n\nawait using var nats = NatsEndpoint.Create(o => o.UseServer(\"nats://localhost:4222\"));\nawait nats.ConnectAsync();\n"
+           "await nats.PublishAsync(\"plant.line1.temp\", \"21.5\"u8.ToArray());\nawait foreach (var m in nats.ReceiveAsync(\"plant.>\", queueGroup: \"loggers\")) { /* each message goes to one group member */ }\n"
+           "var reply = await nats.RequestAsync(\"plant.line1.info\", ReadOnlyMemory<byte>.Empty);\n```\n\n"
+           "```csharp\n// Kafka: keys, headers, consumer groups, regular-expression topics (filters starting with ^)\nusing IoTCom.Net.Adapters.Kafka;\n\nawait using var kafka = KafkaEndpoint.Create(o => o.UseBootstrap(\"localhost:9092\").WithGroup(\"gateway\"));\nawait kafka.ConnectAsync();\n"
+           "await kafka.PublishAsync(\"plant-temp\", key: \"line1\"u8.ToArray(), value: \"21.5\"u8.ToArray());\nawait foreach (var r in kafka.ReceiveAsync(\"^plant-.*\")) Console.WriteLine($\"{r.Topic}[{r.Partition}]@{r.Offset}\");\n```\n\n"
+           "Their integration tests run when `IOTCOM_NATS_URL` and `IOTCOM_KAFKA_BOOTSTRAP` are set.",
+           "## NATS dan Kafka\nKeduanya butuh broker sungguhan, jadi hanya ditampilkan sebagai teks. Keduanya adalah endpoint seperti di atas (`ConnectAsync`, `PublishAsync`, `SubscribeAsync`, traffic tap, helper hosting `AddNats` dan `AddKafka`).\n\n"
+           "```csharp\n// NATS: wildcard, queue group, dan request/reply\nusing IoTCom.Net.Adapters.Nats;\n\nawait using var nats = NatsEndpoint.Create(o => o.UseServer(\"nats://localhost:4222\"));\nawait nats.ConnectAsync();\n"
+           "await nats.PublishAsync(\"plant.line1.temp\", \"21.5\"u8.ToArray());\nawait foreach (var m in nats.ReceiveAsync(\"plant.>\", queueGroup: \"loggers\")) { /* setiap pesan sampai ke satu anggota grup */ }\n"
+           "var reply = await nats.RequestAsync(\"plant.line1.info\", ReadOnlyMemory<byte>.Empty);\n```\n\n"
+           "```csharp\n// Kafka: key, header, consumer group, topic ekspresi reguler (filter yang diawali ^)\nusing IoTCom.Net.Adapters.Kafka;\n\nawait using var kafka = KafkaEndpoint.Create(o => o.UseBootstrap(\"localhost:9092\").WithGroup(\"gateway\"));\nawait kafka.ConnectAsync();\n"
+           "await kafka.PublishAsync(\"plant-temp\", key: \"line1\"u8.ToArray(), value: \"21.5\"u8.ToArray());\nawait foreach (var r in kafka.ReceiveAsync(\"^plant-.*\")) Console.WriteLine($\"{r.Topic}[{r.Partition}]@{r.Offset}\");\n```\n\n"
+           "Pengujian integrasinya berjalan bila `IOTCOM_NATS_URL` dan `IOTCOM_KAFKA_BOOTSTRAP` disetel."),
+        md("## Going further\nSee `docs/en/protocols/messaging-brokers.md` and `docs/en/protocols/zenoh.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\nLihat `docs/id/protocols/messaging-brokers.md` dan `docs/id/protocols/zenoh.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "
