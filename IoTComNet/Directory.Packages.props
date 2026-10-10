@@ -12,7 +12,10 @@
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.12" />
     <PackageVersion Include="System.IO.Ports" Version="10.0.12" />
     <PackageVersion Include="System.Formats.Cbor" Version="10.0.12" />
+    <PackageVersion Include="AMQPNetLite.Core" Version="2.5.4" />
+    <PackageVersion Include="Confluent.Kafka" Version="2.16.0" />
     <PackageVersion Include="MQTTnet" Version="5.2.0.1603" />
+    <PackageVersion Include="NATS.Client.Core" Version="3.3.0" />
     <PackageVersion Include="MQTTnet.Server" Version="5.2.0.1603" />
     <PackageVersion Include="fo-dicom" Version="5.2.6" />
     <PackageVersion Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.378.182" />
