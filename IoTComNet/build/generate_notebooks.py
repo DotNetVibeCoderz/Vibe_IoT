@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.20.0-preview.1"
+VERSION = "0.21.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -759,6 +759,48 @@ NOTEBOOKS = {
            "See `docs/en/protocols/nfc.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom nfc readers`, `iotcom nfc read --sim --dump`, `iotcom nfc write --uri https://example.com --sim --allow-write`, `iotcom nfc decode <hex>`, *Tag aset NFC* di Gallery, dan sampel NfcTagReader. "
            "Lihat `docs/id/protocols/nfc.md`.\n\n" + CREDIT[1]),
+    ],
+    "messaging/21-lwm2m": [
+        md("# LwM2M — device management over CoAP\n\nAn LwM2M server and a simulated street light share an in-memory UDP network. The light is an `Lwm2mClient` with "
+           "Device (3), Location (6), Temperature (3303) and Light Control (3311); point it at a real server with `UseServer(\"host\")`.",
+           "# LwM2M — manajemen perangkat di atas CoAP\n\nServer LwM2M dan lampu jalan simulasi berbagi jaringan UDP dalam memori. Lampunya adalah `Lwm2mClient` dengan "
+           "Device (3), Location (6), Temperature (3303), dan Light Control (3311); arahkan ke server sungguhan dengan `UseServer(\"host\")`."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Paths and TLV\nEvery value has a path: object / instance / resource / resource instance. TLV packs them compactly.",
+           "## Path dan TLV\nSetiap nilai punya path: objek / instance / resource / instance resource. TLV mengemasnya dengan ringkas."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Lwm2m;\nusing IoTCom.Net.Transports;\nusing System.Net;\n\n"
+             "var tlv = Convert.FromHexString(\"C800144F70656E204D6F62696C6520416C6C69616E63658606410001410105\");   // from the LwM2M specification\n"
+             "foreach (var v in Lwm2mContent.DecodeTlv(Lwm2mPath.Parse(\"/3/0\"), tlv)) Console.WriteLine(v);\n"
+             "foreach (var f in Lwm2mContent.DescribeTlv(tlv)) Console.WriteLine($\"{f.Name,-18} {f.Value}\");"),
+        md("## Register and read\nThe light registers with POST /rd; the server reads the Device object as TLV and Light Control as SenML JSON.",
+           "## Mendaftar dan membaca\nLampu mendaftar dengan POST /rd; server membaca objek Device sebagai TLV dan Light Control sebagai SenML JSON."),
+        code("var lwNet = new InMemoryDatagramNetwork();\nvar lwServerAddress = new IPEndPoint(IPAddress.Loopback, 5683);\n"
+             "var lwServer = Lwm2mServer.Create(o => o.UseInMemory(lwNet, lwServerAddress));\nawait lwServer.StartAsync();\n"
+             "var light = Lwm2mStreetLightSimulator.Create(o => { o.UseInMemory(lwNet); o.UseServer(lwServerAddress); });\nawait light.StartAsync();\n"
+             "var reg = lwServer.Registrations.Single();\nConsole.WriteLine(reg);\n"
+             "foreach (var v in await lwServer.ReadAsync(reg.Endpoint, Lwm2mPath.Parse(\"/3/0\"))) Console.WriteLine(v);\n"
+             "foreach (var v in await lwServer.ReadAsync(reg.Endpoint, Lwm2mPath.Parse(\"/3311/0\"), Lwm2mFormat.SenMLJson)) Console.WriteLine(v);"),
+        md("## Observe with pmin and pmax\nWrite-Attributes sets how often notifications may come; Observe streams them.",
+           "## Observe dengan pmin dan pmax\nWrite-Attributes mengatur seberapa sering notifikasi boleh datang; Observe mengalirkannya."),
+        code("var tempPath = Lwm2mPath.Parse(\"/3303/0/5700\");\nawait lwServer.WriteAttributesAsync(reg.Endpoint, tempPath, pmin: 0, pmax: 5);\n"
+             "var temps = new List<object>();\nvar observation = await lwServer.ObserveAsync(reg.Endpoint, tempPath, values => temps.Add(values[0].Value));\n"
+             "light.Light.Set(5850, true);\nfor (var i = 0; i < 3; i++) { light.Step(60); await Task.Delay(300); }\n"
+             "await observation.DisposeAsync();\nConsole.WriteLine($\"initial {observation.Initial[0].Value}, then {string.Join(\", \", temps)}\");"),
+        md("## Writes and Execute are opt-in\nThis server is read-only; a second one with AllowWrites() can dim the light and reboot it.",
+           "## Write dan Execute harus diizinkan\nServer ini hanya-baca; server kedua dengan AllowWrites() dapat meredupkan lampu dan me-reboot-nya."),
+        code("try { await lwServer.WriteAsync(reg.Endpoint, Lwm2mPath.Parse(\"/3311/0/5851\"), 40L); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }\n"
+             "await light.DisposeAsync();\nawait lwServer.DisposeAsync();\n"
+             "var lwAdmin = Lwm2mServer.Create(o => o.UseInMemory(lwNet, lwServerAddress).AllowWrites());\nawait lwAdmin.StartAsync();\n"
+             "var light2 = Lwm2mStreetLightSimulator.Create(o => { o.UseInMemory(lwNet); o.UseServer(lwServerAddress); });\nawait light2.StartAsync();\n"
+             "var ep = lwAdmin.Registrations.Single().Endpoint;\nawait lwAdmin.WriteAsync(ep, Lwm2mPath.Parse(\"/3311/0/5851\"), 40L);\n"
+             "try { await lwAdmin.WriteAsync(ep, Lwm2mPath.Parse(\"/3311/0/5851\"), 150L); } catch (Lwm2mException e) { Console.WriteLine($\"150 %: {e.Status}\"); }\n"
+             "await lwAdmin.ExecuteAsync(ep, Lwm2mPath.Parse(\"/3/0/4\"));\nConsole.WriteLine($\"dimmer {light2.Dimmer} %, reboots {light2.Reboots}\");\n"
+             "await light2.DisposeAsync();\nawait lwAdmin.DisposeAsync();"),
+        md("## Going further\n`iotcom lwm2m demo`, `iotcom lwm2m serve --observe /3303/0/5700`, `iotcom lwm2m client --server <host>`, `iotcom lwm2m decode 3/0 <hex>`, the Gallery's *Street lights over LwM2M* and the Lwm2mClient sample. "
+           "See `docs/en/protocols/lwm2m.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom lwm2m demo`, `iotcom lwm2m serve --observe /3303/0/5700`, `iotcom lwm2m client --server <host>`, `iotcom lwm2m decode 3/0 <hex>`, *Lampu jalan lewat LwM2M* di Gallery, dan sampel Lwm2mClient. "
+           "Lihat `docs/id/protocols/lwm2m.md`.\n\n" + CREDIT[1]),
     ],
     "automotive/06-can-uds": [
         md("# Automotive: CAN, ISO-TP, UDS and OBD-II\n\nA scan tool and a simulated engine ECU share a virtual CAN bus. Swap the URI for "

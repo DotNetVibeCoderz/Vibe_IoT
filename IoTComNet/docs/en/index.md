@@ -44,6 +44,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [IEC 60870-5-104](protocols/iec104.md) | SCADA master · RTU · interrogation · select-before-operate · feeder bay simulator | `IoTCom.Net.Protocols.Iec104` |
 | [NTP / SNTP](protocols/ntp.md) | SNTP client · server · drifting clock · kiss-o'-death | `IoTCom.Net.Protocols.Ntp` |
 | [NFC / NDEF](protocols/nfc.md) | PC/SC reader · NTAG21x tags · NDEF records · virtual reader | `IoTCom.Net.Protocols.Nfc` |
+| [LwM2M](protocols/lwm2m.md) | client · server · TLV/SenML · observe · street light simulator | `IoTCom.Net.Protocols.Lwm2m` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · virtual radio (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB and HID](protocols/usb.md) | control · bulk · interrupt · HID reports · relay boards · virtual bus (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |

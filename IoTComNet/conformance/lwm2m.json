@@ -1,0 +1,116 @@
+[
+  {
+    "name": "specification Device example",
+    "path": "/3/0",
+    "data": "C800144F70656E204D6F62696C6520416C6C69616E6365C801164C69676874776569676874204D324D20436C69656E74C80209333435303030313233C303312E308606410001410105C10964",
+    "fields": "/3/0/0=String:Open Mobile Alliance;/3/0/1=String:Lightweight M2M Client;/3/0/2=String:345000123;/3/0/3=String:1.0;/3/0/6/0=Integer:1;/3/0/6/1=Integer:5;/3/0/9=Integer:100"
+  },
+  {
+    "name": "16-bit resource ids (Light Control)",
+    "path": "/3311/0",
+    "data": "E5164A333030304BE416AD41440000E116DA01E116DB3C",
+    "fields": "/3311/0/5706=String:3000K;/3311/0/5805=Float:12.25;/3311/0/5850=Boolean:true;/3311/0/5851=Integer:60"
+  },
+  {
+    "name": "two object instances",
+    "path": "/3303",
+    "data": "08000DE4164441AC0000E3164543656C08010DE41644C0700000E3164543656C",
+    "fields": "/3303/0/5700=Float:21.5;/3303/0/5701=String:Cel;/3303/1/5700=Float:-3.75;/3303/1/5701=String:Cel"
+  },
+  {
+    "name": "single resource",
+    "path": "/3/0/0",
+    "data": "C600496F54436F6D",
+    "fields": "/3/0/0=String:IoTCom"
+  },
+  {
+    "name": "multiple resource",
+    "path": "/3/0/11",
+    "data": "880B0A4100004101024202FED4",
+    "fields": "/3/0/11/0=Integer:0;/3/0/11/1=Integer:2;/3/0/11/2=Integer:-300"
+  },
+  {
+    "name": "resource instance",
+    "path": "/3/0/6/1",
+    "data": "410105",
+    "fields": "/3/0/6/1=Integer:5"
+  },
+  {
+    "name": "time",
+    "path": "/3/0/13",
+    "data": "C40D68E77800",
+    "fields": "/3/0/13=Time:2025-10-09T08:53:20Z"
+  },
+  {
+    "name": "64-bit integer",
+    "path": "/1/0/1",
+    "data": "C801080000010000000000",
+    "fields": "/1/0/1=Integer:1099511627776"
+  },
+  {
+    "name": "negative 8-bit integer",
+    "path": "/3/0/9",
+    "data": "C109FF",
+    "fields": "/3/0/9=Integer:-1"
+  },
+  {
+    "name": "double precision float",
+    "path": "/6/0/0",
+    "data": "C80008C01BA8A71DE69AD4",
+    "fields": "/6/0/0=Float:-6.9147"
+  },
+  {
+    "name": "16-bit length",
+    "path": "/3/0/0",
+    "data": "D000012C616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+    "fields": "/3/0/0=String:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  {
+    "name": "unknown object as opaque",
+    "path": "/9999/0",
+    "data": "C3010102FF",
+    "fields": "/9999/0/1=Opaque:0102FF"
+  },
+  {
+    "name": "empty string",
+    "path": "/3/0/14",
+    "data": "C00E",
+    "fields": "/3/0/14=String:"
+  },
+  {
+    "name": "value past the end",
+    "path": "/3/0",
+    "data": "C8001400",
+    "fields": "error"
+  },
+  {
+    "name": "resource instance outside a resource",
+    "path": "/3/0",
+    "data": "410001",
+    "fields": "error"
+  },
+  {
+    "name": "object instance below an instance",
+    "path": "/3/0",
+    "data": "0300C10078",
+    "fields": "error"
+  },
+  {
+    "name": "3-byte integer",
+    "path": "/3/0/9",
+    "data": "C309000001",
+    "fields": "error"
+  },
+  {
+    "name": "boolean 2",
+    "path": "/3311/0/5850",
+    "data": "E116DA02",
+    "fields": "error"
+  },
+  {
+    "name": "truncated header",
+    "path": "/3/0",
+    "data": "E816",
+    "fields": "error"
+  }
+]

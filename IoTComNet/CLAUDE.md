@@ -79,6 +79,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   LONG/DWORD + UTF-16; pcsc-lite: 64-bit `long`; macOS: 32-bit) — keep them in step. `Type2TagClient` speaks PC/SC part 3 storage
   commands (FF CA/B0/D6) to any `ISmartCardChannel`; `VirtualNfcReader`/`VirtualType2Tag` answer the same APDUs. Writes are off by
   default, never touch pages 0–3, and never lock tags. `/conformance/ndef.json` (Python reference, C# only).
+- **LwM2M**: `Protocols.Lwm2m` is C# on IoTCom's CoAP (`InternalsVisibleTo` gives it `CoapStack`). `CoapStack.RequestHandler` runs inside
+  the receive loop, so handlers only reply; notifications and requests go out from other tasks. Observations route their token
+  themselves (`Lwm2mExchange.SendAsync(..., routeSeparate: false)`), or the exchange would remove the handler. Server is read-only
+  until `AllowWrites()`; `Lwm2mClient.AbortAsync` simulates a device that disappears. `/conformance/lwm2m.json` (TLV, C# only).
 - **LoRaWAN**: `Protocols.LoRaWan` is managed C# (`LoRaWanPacket` codec + `LoRaWanCrypto`, `SemtechPacket`/`SemtechPacketForwarder`,
   `LoRaWanNetworkServer`, sans-I/O `LoRaWanEndDevice`, `LoRaWanSimulator`); Rust `iotcom-lorawan` is the fuzzed twin kept in sync by
   `/conformance/lorawan.json` (Python reference with its own AES/CMAC). Tests use `InMemoryDatagramNetwork` and

@@ -47,6 +47,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Smart building & stage | Nearby Bluetooth devices — a proximity radar by RSSI, a heart-rate strap and a greenhouse sensor over notifications, a smart plug switched only when writes are allowed | Bluetooth LE, GATT, iBeacon |
 | LPWAN & smart city | LoRaWAN network monitor — two gateways and four sensors on a radio map with spreading-factor reach; drag a sensor and watch its SF, SNR and airtime change; downlinks in RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & city | Smart meter reading — a household meter with rooftop solar on an LCD faceplate, two days of load profile, the supply relay behind a password, and the building's M-Bus heat, water and electricity meters | DLMS/COSEM, HDLC, OBIS, M-Bus |
+| LPWAN, metering & city | Street lights over LwM2M — four smart street lights on Jalan Asia Afrika register with one server; their glow follows the dimmer, an operator reads, switches, dims and reboots them behind a write lock, driver temperature arrives as notifications, and a power cut lets a registration expire | OMA LwM2M, CoAP, TLV, SenML |
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
 | Messaging | Plant network · Sparkplug B — mDNS finds the devices on the segment; a Unified Namespace of a bottling line with birth/death lamps; pull the network cable to see the NDEATH will, write metrics with DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Messaging | Fleet clock sync over NTP — six field devices with drifting clocks and SNTP clients, error traces that snap back to GPS time at every sync, sync interval and network latency controls, the four timestamps of the last exchange, and a server that loses GPS | NTP, SNTP |
@@ -66,6 +67,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![CoAP greenhouse](../../images/gallery-coap.png)
 ![LoRaWAN network monitor](../../images/gallery-lorawan.png)
 ![Smart meter reading](../../images/gallery-metering.png)
+![Street lights over LwM2M](../../images/gallery-lwm2m.png)
 ![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![OPC UA tag browser](../../images/gallery-opcua.png)
 ![CANopen I/O modules](../../images/gallery-canopen.png)

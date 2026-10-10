@@ -20,6 +20,7 @@
     <Project Path="samples/console/DlmsMeterReader/DlmsMeterReader.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
     <Project Path="samples/console/LoRaWanGatewayMonitor/LoRaWanGatewayMonitor.csproj" />
+    <Project Path="samples/console/Lwm2mClient/Lwm2mClient.csproj" />
     <Project Path="samples/console/MavlinkTelemetry/MavlinkTelemetry.csproj" />
     <Project Path="samples/console/MBusScanner/MBusScanner.csproj" />
     <Project Path="samples/console/MdnsDiscovery/MdnsDiscovery.csproj" />
@@ -58,6 +59,7 @@
     <Project Path="src/IoTCom.Net.Protocols.J1939/IoTCom.Net.Protocols.J1939.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Iec104/IoTCom.Net.Protocols.Iec104.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Ntp/IoTCom.Net.Protocols.Ntp.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Lwm2m/IoTCom.Net.Protocols.Lwm2m.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Nfc/IoTCom.Net.Protocols.Nfc.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.LoRaWan/IoTCom.Net.Protocols.LoRaWan.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" />

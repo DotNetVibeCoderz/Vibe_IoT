@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Deterministic>true</Deterministic>
-    <IoTComVersion>0.20.0-preview.1</IoTComVersion>
+    <IoTComVersion>0.21.0-preview.1</IoTComVersion>
     <Version>$(IoTComVersion)</Version>
     <Authors>Gravicode Studios</Authors>
     <Company>Gravicode Studios</Company>

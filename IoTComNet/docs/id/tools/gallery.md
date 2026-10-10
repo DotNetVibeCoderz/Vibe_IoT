@@ -47,6 +47,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Gedung pintar & panggung | Perangkat Bluetooth di sekitar — radar kedekatan dari RSSI, tali detak jantung dan sensor rumah kaca lewat notifikasi, smart plug yang dinyalakan hanya saat penulisan diizinkan | Bluetooth LE, GATT, iBeacon |
 | LPWAN & kota pintar | Monitor jaringan LoRaWAN — dua gateway dan empat sensor di peta radio dengan jangkauan per spreading factor; seret sensor dan lihat SF, SNR, serta airtime-nya berubah; downlink di RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & kota | Pembacaan smart meter — meter rumah tangga dengan panel surya atap pada faceplate LCD, dua hari load profile, relay suplai di balik password, serta meter panas, air, dan listrik M-Bus gedung | DLMS/COSEM, HDLC, OBIS, M-Bus |
+| LPWAN, metering & kota | Lampu jalan lewat LwM2M — empat lampu jalan pintar di Jalan Asia Afrika mendaftar ke satu server; cahayanya mengikuti dimmer, operator membaca, menyalakan, meredupkan, dan me-reboot-nya di balik kunci tulis, suhu driver tiba sebagai notifikasi, dan pemutusan listrik membuat registrasi kedaluwarsa | OMA LwM2M, CoAP, TLV, SenML |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
 | Pesan | Jaringan pabrik · Sparkplug B — mDNS menemukan perangkat di segmen; Unified Namespace sebuah lini pembotolan dengan lampu birth/death; cabut kabel jaringan untuk melihat will NDEATH, tulis metrik dengan DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Pesan | Sinkronisasi jam armada lewat NTP — enam perangkat lapangan dengan jam melenceng dan klien SNTP, jejak galat yang kembali ke waktu GPS di setiap sinkronisasi, kendali interval sinkronisasi dan latensi jaringan, empat cap waktu pertukaran terakhir, dan server yang kehilangan GPS | NTP, SNTP |
@@ -66,6 +67,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Rumah kaca CoAP](../../images/gallery-coap.png)
 ![Monitor jaringan LoRaWAN](../../images/gallery-lorawan.png)
 ![Pembacaan smart meter](../../images/gallery-metering.png)
+![Lampu jalan lewat LwM2M](../../images/gallery-lwm2m.png)
 ![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Penjelajah tag OPC UA](../../images/gallery-opcua.png)
 ![Modul I/O CANopen](../../images/gallery-canopen.png)

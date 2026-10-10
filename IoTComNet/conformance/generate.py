@@ -1144,6 +1144,70 @@ def ndef_vectors():
     return out
 
 
+def lwm2m_vectors():
+    """LwM2M TLV payloads (OMA-TS-LightweightM2M-Core, 7.4.3). The expected text lists every resource value with its type."""
+    import struct
+    import datetime
+    out = []
+
+    def tlv(kind, ident, value):
+        n = len(value)
+        length_type = 0 if n < 8 else 1 if n <= 0xFF else 2 if n <= 0xFFFF else 3
+        h = (kind << 6) | (0x20 if ident > 0xFF else 0) | (length_type << 3) | (n if length_type == 0 else 0)
+        b = bytes([h]) + (ident.to_bytes(2, "big") if ident > 0xFF else bytes([ident]))
+        if length_type:
+            b += n.to_bytes(length_type, "big")
+        return b + value
+
+    def integer(v):
+        for size in (1, 2, 4, 8):
+            if -(1 << (8 * size - 1)) <= v < (1 << (8 * size - 1)):
+                return v.to_bytes(size, "big", signed=True)
+
+    def num(v):
+        return str(int(v)) if float(v).is_integer() else repr(float(v))
+
+    def vector(name, path, data, fields):
+        out.append({"name": name, "path": path, "data": data.hex().upper(), "fields": fields})
+
+    res = lambda ident, value: tlv(3, ident, value)
+    multi = lambda ident, items: tlv(2, ident, b"".join(tlv(1, i, v) for i, v in items))
+
+    device = (res(0, b"Open Mobile Alliance") + res(1, b"Lightweight M2M Client") + res(2, b"345000123") + res(3, b"1.0")
+              + multi(6, [(0, integer(1)), (1, integer(5))]) + res(9, integer(100)))
+    vector("specification Device example", "/3/0", device,
+           "/3/0/0=String:Open Mobile Alliance;/3/0/1=String:Lightweight M2M Client;/3/0/2=String:345000123;/3/0/3=String:1.0;"
+           "/3/0/6/0=Integer:1;/3/0/6/1=Integer:5;/3/0/9=Integer:100")
+    light = res(5706, b"3000K") + res(5805, struct.pack(">f", 12.25)) + res(5850, b"\x01") + res(5851, integer(60))
+    vector("16-bit resource ids (Light Control)", "/3311/0", light,
+           "/3311/0/5706=String:3000K;/3311/0/5805=Float:12.25;/3311/0/5850=Boolean:true;/3311/0/5851=Integer:60")
+    t1 = res(5700, struct.pack(">f", 21.5)) + res(5701, b"Cel")
+    t2 = res(5700, struct.pack(">f", -3.75)) + res(5701, b"Cel")
+    vector("two object instances", "/3303", tlv(0, 0, t1) + tlv(0, 1, t2),
+           "/3303/0/5700=Float:21.5;/3303/0/5701=String:Cel;/3303/1/5700=Float:-3.75;/3303/1/5701=String:Cel")
+    vector("single resource", "/3/0/0", res(0, b"IoTCom"), "/3/0/0=String:IoTCom")
+    vector("multiple resource", "/3/0/11", multi(11, [(0, integer(0)), (1, integer(2)), (2, integer(-300))]),
+           "/3/0/11/0=Integer:0;/3/0/11/1=Integer:2;/3/0/11/2=Integer:-300")
+    vector("resource instance", "/3/0/6/1", tlv(1, 1, integer(5)), "/3/0/6/1=Integer:5")
+    stamp = 1_760_000_000
+    when = datetime.datetime.fromtimestamp(stamp, datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    vector("time", "/3/0/13", res(13, integer(stamp)), f"/3/0/13=Time:{when}")
+    vector("64-bit integer", "/1/0/1", res(1, integer(1 << 40)), f"/1/0/1=Integer:{1 << 40}")
+    vector("negative 8-bit integer", "/3/0/9", res(9, integer(-1)), "/3/0/9=Integer:-1")
+    vector("double precision float", "/6/0/0", res(0, struct.pack(">d", -6.9147)), f"/6/0/0=Float:{num(-6.9147)}")
+    vector("16-bit length", "/3/0/0", res(0, b"a" * 300), "/3/0/0=String:" + "a" * 300)
+    vector("unknown object as opaque", "/9999/0", res(1, b"\x01\x02\xFF"), "/9999/0/1=Opaque:0102FF")
+    vector("empty string", "/3/0/14", res(14, b""), "/3/0/14=String:")
+    for name, path, data in [("value past the end", "/3/0", bytes.fromhex("C8001400")),
+                             ("resource instance outside a resource", "/3/0", tlv(1, 0, integer(1))),
+                             ("object instance below an instance", "/3/0", tlv(0, 0, res(0, b"x"))),
+                             ("3-byte integer", "/3/0/9", res(9, b"\x00\x00\x01")),
+                             ("boolean 2", "/3311/0/5850", res(5850, b"\x02")),
+                             ("truncated header", "/3/0", b"\xE8\x16")]:
+        vector(name, path, data, "error")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1161,6 +1225,7 @@ def main():
         "iec104.json": iec104_vectors(),
         "ntp.json": ntp_vectors(),
         "ndef.json": ndef_vectors(),
+        "lwm2m.json": lwm2m_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

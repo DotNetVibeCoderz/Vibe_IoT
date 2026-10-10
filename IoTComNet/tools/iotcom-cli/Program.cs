@@ -131,6 +131,14 @@ app.Configure(c =>
         n.AddCommand<NfcWriteCommand>("write").WithDescription("Write a URI and/or text (requires --allow-write).").WithExample("nfc", "write", "--uri", "https://example.com/asset/42", "--text", "Asset 42", "--sim", "--allow-write");
         n.AddCommand<NfcDecodeCommand>("decode").WithDescription("Decode NDEF bytes or a Type 2 data area.").WithExample("nfc", "decode", "D101085502 6E78702E636F6D");
     });
+    c.AddBranch("lwm2m", l =>
+    {
+        l.SetDescription("OMA LwM2M device management over CoAP: run a server, run a simulated street light against any server, or watch the whole exchange in-process.");
+        l.AddCommand<Lwm2mServeCommand>("serve").WithDescription("Run a read-only LwM2M server and read every device that registers.").WithExample("lwm2m", "serve", "--observe", "/3303/0/5700");
+        l.AddCommand<Lwm2mClientCommand>("client").WithDescription("Run the simulated street light against an LwM2M server.").WithExample("lwm2m", "client", "--server", "127.0.0.1");
+        l.AddCommand<Lwm2mDemoCommand>("demo").WithDescription("Server and street light in-process: register, read, observe, write.").WithExample("lwm2m", "demo").WithExample("lwm2m", "demo", "--allow-write");
+        l.AddCommand<Lwm2mDecodeCommand>("decode").WithDescription("Decode an LwM2M TLV payload.").WithExample("lwm2m", "decode", "3/0/6", "8606410001410105");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");

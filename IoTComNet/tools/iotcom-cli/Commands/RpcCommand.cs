@@ -135,6 +135,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("iec104", "IEC 60870-5-104", "IoTCom.Net.Protocols.Iec104", "controlling station · controlled station · feeder bay simulator", "protocols/iec104.md", "industrial/18-iec104", "Iec104Scada", ["iec104"]),
         ("ntp", "NTP / SNTP", "IoTCom.Net.Protocols.Ntp", "SNTP client · server · drifting clock", "protocols/ntp.md", "network/19-ntp", "NtpClock", ["ntp"]),
         ("nfc", "NFC / NDEF", "IoTCom.Net.Protocols.Nfc", "PC/SC reader · Type 2 tags · NDEF · virtual reader", "protocols/nfc.md", "devices/20-nfc", "NfcTagReader", ["ndef"]),
+        ("lwm2m", "OMA LwM2M", "IoTCom.Net.Protocols.Lwm2m", "client · server · TLV/SenML · street light simulator", "protocols/lwm2m.md", "messaging/21-lwm2m", "Lwm2mClient", ["lwm2m-tlv"]),
         ("uds", "ISO-TP · UDS · OBD-II", "IoTCom.Net.Protocols.Uds", "tester · scan tool · ECU simulator", "protocols/uds.md", "automotive/06-can-uds", "UdsTester", ["uds"]),
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
         ("mavlink", "MAVLink v1 / v2", "IoTCom.Net.Protocols.Mavlink", "link · ground station · simulator · generator", "protocols/mavlink.md", "navigation/08-mavlink", "MavlinkTelemetry", ["mavlink"]),
@@ -262,6 +263,10 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 fields = IoTCom.Net.Protocols.Iec104.Iec104Apdu.Describe(bytes);
                 summary = TrySummary(() => IoTCom.Net.Protocols.Iec104.Iec104Apdu.Parse(bytes).ToString());
                 break;
+            case "lwm2m-tlv":
+                fields = IoTCom.Net.Protocols.Lwm2m.Lwm2mContent.DescribeTlv(bytes);
+                summary = $"{fields.Count(f => f.Name.StartsWith("resource", StringComparison.Ordinal) || f.Name.StartsWith("res. instance", StringComparison.Ordinal))} value(s)";
+                break;
             case "ndef":
                 fields = IoTCom.Net.Protocols.Nfc.NdefMessage.Describe(bytes);
                 summary = TrySummary(() => IoTCom.Net.Protocols.Nfc.NdefMessage.Parse(bytes).ToString());
@@ -275,7 +280,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, j1939, iec104, ntp, ndef, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, j1939, iec104, ntp, ndef, lwm2m-tlv, uds)");
         }
         return Result(bytes, fields, summary);
     }

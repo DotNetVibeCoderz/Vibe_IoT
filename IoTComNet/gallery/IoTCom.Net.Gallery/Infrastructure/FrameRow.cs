@@ -26,7 +26,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "artnet" => ArtNetFields(data),
             "nmea0183" => NmeaFields(data),
             "can" or "can-slcan" => CanFields(data),
-            "coap" => Protocols.Coap.CoapAnatomy.Describe(data),
+            "coap" or "lwm2m" => Protocols.Coap.CoapAnatomy.Describe(data),
             "mavlink" => Protocols.Mavlink.MavlinkAnatomy.Describe(data, Protocols.Mavlink.Common.CommonDialect.Instance),
             "uds" or "uds-ecu" or "obd2" => Protocols.Uds.UdsAnatomy.Describe(data),
             "lorawan" or "semtech-udp" => Protocols.LoRaWan.LoRaWanAnatomy.Describe(data),

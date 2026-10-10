@@ -3,6 +3,25 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.21.0-preview.1 — 2026-10-10
+
+OMA LwM2M.
+
+- **New package `IoTCom.Net.Protocols.Lwm2m`** (also in the meta-package), C# on IoTCom.Net's CoAP: `Lwm2mClient`
+  (registration, updates at 80 % of the lifetime with re-registration, deregistration; Read, Discover, Write, Execute,
+  Observe with pmin/pmax, observation cancel; `Lwm2mInstance` with write validators and execute handlers; `AbortAsync`),
+  `Lwm2mServer` (registrations with expiry and events; Read, Discover, Write, Execute, Write-Attributes, Observe;
+  read-only until `AllowWrites()`), `Lwm2mContent` (TLV, plain text, opaque, SenML JSON and CBOR, TLV frame lane),
+  `Lwm2mRegistry` with Server, Device, Location, Temperature and Light Control, and `Lwm2mStreetLightSimulator`.
+- 19 shared TLV vectors in `/conformance/lwm2m.json` from an independent Python reference.
+- CLI `iotcom lwm2m serve|client|demo|decode`; RPC decoder `lwm2m-tlv`; hosting `AddLwm2mServer`/`AddLwm2mClient`; Gallery
+  *Street lights over LwM2M*; sample `Lwm2mClient`; notebook pair `messaging/21-lwm2m`; docs page *LwM2M*.
+- Fixes: three timing-dependent tests (Sparkplug late host, NTP server selection, LoRaWAN downlink) and a sturdier NTP
+  multi-server filter.
+
+*OMA LwM2M (klien dan server di atas CoAP, TLV/SenML, observe, server hanya-baca secara bawaan) dengan CLI, demo Galeri,
+sampel, notebook, dan dokumentasi.*
+
 ## 0.20.0-preview.1 — 2026-10-09
 
 NFC / NDEF.

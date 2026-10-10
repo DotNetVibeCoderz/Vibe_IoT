@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Lwm2m</RootNamespace>
+    <Description>OMA LwM2M 1.1 over IoTCom.Net's CoAP: client (registration, update, deregister; Read, Discover, Write, Execute, Observe with pmin/pmax) and server (registrations with expiry, device management with a read-only default), TLV, plain text, opaque and SenML JSON/CBOR content, standard objects and a smart street light simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);lwm2m;oma;coap;device-management;tlv;senml;observe;nbiot</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Coap\IoTCom.Net.Protocols.Coap.csproj" />
+  </ItemGroup>
+</Project>

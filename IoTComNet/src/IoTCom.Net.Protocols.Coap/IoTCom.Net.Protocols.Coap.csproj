@@ -7,5 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Serialization.SenML\IoTCom.Net.Serialization.SenML.csproj" />
+    <InternalsVisibleTo Include="IoTCom.Net.Protocols.Lwm2m" />
   </ItemGroup>
 </Project>

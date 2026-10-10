@@ -4,6 +4,7 @@ using IoTCom.Net.Protocols.Coap;
 using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Iec104;
+using IoTCom.Net.Protocols.Lwm2m;
 using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
@@ -91,6 +92,24 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Iec104");
+            configure(o);
+        }));
+
+    /// <summary>Registers an LwM2M server (read-only unless <c>AllowWrites()</c>).</summary>
+    public static IoTComBuilder AddLwm2mServer(this IoTComBuilder builder, string name, Action<Lwm2mServerOptions> configure)
+        => builder.AddEndpoint(name, sp => Lwm2mServer.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Lwm2m");
+            configure(o);
+        }));
+
+    /// <summary>Registers an LwM2M client; add object instances to the resolved client before the host starts it.</summary>
+    public static IoTComBuilder AddLwm2mClient(this IoTComBuilder builder, string name, Action<Lwm2mClientOptions> configure)
+        => builder.AddEndpoint(name, sp => Lwm2mClient.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Lwm2m");
             configure(o);
         }));
 
