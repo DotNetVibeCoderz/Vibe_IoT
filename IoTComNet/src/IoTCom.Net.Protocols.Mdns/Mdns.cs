@@ -391,12 +391,14 @@ public sealed class MdnsBrowser : EndpointBase, IClientEndpoint
         // Records may already be cached (announcements, other browses); known-answer suppression then keeps
         // responders quiet, so resolve from the cache as well as from new responses.
         await ResolveAsync(ct).ConfigureAwait(false);
-        while (DateTimeOffset.UtcNow < end)
+        // Stop once less than a millisecond is left: Task.Delay rounds that to zero and the loop would spin. The
+        // interval doubles up to RFC 6762's one-hour cap, which also keeps the TimeSpan from overflowing.
+        while (end - DateTimeOffset.UtcNow >= TimeSpan.FromMilliseconds(1))
         {
             await QueryAsync(type, DnsType.Ptr, ct).ConfigureAwait(false);
             await Task.Delay(Min(delay, end - DateTimeOffset.UtcNow), ct).ConfigureAwait(false);
             await ResolveAsync(ct).ConfigureAwait(false);
-            delay *= 2;
+            delay = TimeSpan.FromTicks(Math.Min(delay.Ticks * 2, TimeSpan.FromHours(1).Ticks));
         }
 
         _browsing.TryRemove(type, out _);
