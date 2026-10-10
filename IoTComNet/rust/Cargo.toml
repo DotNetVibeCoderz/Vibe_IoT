@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
-exclude = ["fuzz"]
+# iotcom-zenoh-native is kept on disk but out of the workspace and every build: zenoh 1.10.1 compiles in lz4_flex 0.10,
+# which has RUSTSEC-2026-0041 with no semver-compatible fix. Re-add it to `members` once zenoh moves to a fixed lz4_flex.
+exclude = ["fuzz", "crates/native/iotcom-zenoh-native"]
 members = [
     "crates/iotcom-core",
     "crates/iotcom-ffi-support",
@@ -19,7 +21,6 @@ members = [
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",
     "crates/native/iotcom-usb-native",
-    "crates/native/iotcom-zenoh-native",
     "tools/iotcom-bindgen",
 ]
 

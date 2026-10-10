@@ -16,7 +16,6 @@ public class BindingDriftTests
         { "IoTCom.Net.Protocols.IsoTp", "IoTCom.Net.Protocols.IsoTp.Interop.NativeMethods", "IsoTpNative" },
         { "IoTCom.Net.Transport.Ble", "IoTCom.Net.Transport.Ble.BleNativeMethods", "BleNative" },
         { "IoTCom.Net.Transport.Usb", "IoTCom.Net.Transport.Usb.UsbNativeMethods", "UsbNative" },
-        { "IoTCom.Net.Adapters.Zenoh", "IoTCom.Net.Adapters.Zenoh.ZenohNativeMethods", "ZenohNative" },
     };
 
     private const BindingFlags All = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;

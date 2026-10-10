@@ -114,10 +114,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   The Gallery never opens real devices; `IOTCOM_GALLERY_SAMPLE_USB=1` (set by the screenshot tool) shows a fixed sample list.
 - **OPC UA**: `Adapters.OpcUa` wraps the OPC Foundation stack (1.5.378, pinned; not in the meta-package, not AOT). PKI per
   application under `%LOCALAPPDATA%/IoTCom.Net/opcua/pki*`; tests and notebooks use temp PKI paths and `AcceptUntrustedCertificates`.
-- **Zenoh**: `Adapters.Zenoh` wraps the Rust `zenoh` crate (`rust/crates/native/iotcom-zenoh-native` → `iotcom_zenoh`, TCP/UDP transports
-  only; events are drained by `iotcom_zenoh_poll_event`) behind `IZenohBackend`: `NativeZenohBackend` or the in-process
-  `VirtualZenohNetwork` (tests, notebooks, CLI `--sim`). `ZenohSession` is the endpoint (put/delete/subscribe/`WatchAsync`/queryables/`GetAsync`,
-  `ReadOnly` option); `ZenohKeyExpr` is pure C#. Not in the meta-package.
+- **Zenoh**: `Adapters.Zenoh` (`ZenohSession`, `ZenohKeyExpr`, `VirtualZenohNetwork`) behind `IZenohBackend`. The native binding
+  `rust/crates/native/iotcom-zenoh-native` (`iotcom_zenoh`) is **excluded from the workspace and not shipped**: zenoh 1.10.1 pulls in
+  lz4_flex 0.10 (RUSTSEC-2026-0041). Re-add it to the workspace, bindgen, `BindingDriftTests` and the native workflow only after zenoh
+  moves to a fixed lz4_flex and `cargo deny check` passes.
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

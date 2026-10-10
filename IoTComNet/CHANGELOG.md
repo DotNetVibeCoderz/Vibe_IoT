@@ -8,7 +8,8 @@ All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI versio
 Zenoh, NATS, AMQP 1.0 and Kafka.
 
 - **New package `IoTCom.Net.Adapters.Zenoh`** (not in the meta-package) over the Rust `zenoh` crate 1.10.1 (TCP and UDP
-  transports only; new native library `iotcom_zenoh` built from `rust/crates/native/iotcom-zenoh-native`): `ZenohSession`
+  transports only; native library `iotcom_zenoh` from `rust/crates/native/iotcom-zenoh-native`, **not shipped in this release**:
+  zenoh 1.10.1 compiles in `lz4_flex` 0.10 with RUSTSEC-2026-0041 and no compatible fix, so the crate stays out of the workspace): `ZenohSession`
   (put, delete, `Subscribe`, `SampleReceived`, `WatchAsync`, queryables, `GetAsync`, peer or client mode, `ReadOnly` option,
   traffic tap, `IPublisher`/`ISubscriber`), `ZenohKeyExpr` (pure C# `*`, `**`, `$*` matching), `VirtualZenohNetwork` (in-process,
   no native library needed) and `NativeZenohBackend`.
@@ -19,7 +20,6 @@ Zenoh, NATS, AMQP 1.0 and Kafka.
   `AddAmqp`, `AddKafka` live in each package. None is in the meta-package.
 - CLI `iotcom zenoh sub|get|pub` (`pub` needs `--allow-write`; `--sim` runs an in-process plant). CI job `brokers` runs the NATS and
   Kafka integration tests against service containers (`IOTCOM_NATS_URL`, `IOTCOM_KAFKA_BOOTSTRAP`; they skip without them).
-- `rust/deny.toml`: crate-scoped licence exceptions for `option-ext` (MPL-2.0) and `webpki-roots` (CDLA-Permissive-2.0), pulled in by zenoh.
 - Notebook pairs `messaging/22-zenoh` and `messaging/23-brokers`; docs pages *Zenoh* and *Messaging brokers*.
 - Fixes: `MdnsBrowser.BrowseAsync` TimeSpan overflow; sturdier NTP multi-server delay filter (`SntpClient.SynchronizeAsync`);
   timing-dependent Sparkplug, NTP and LoRaWAN tests made deterministic.

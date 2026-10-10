@@ -9,7 +9,8 @@ translation-status: synced
 gateway, dan cloud. Data berada di bawah key expression hierarkis seperti `plant/line1/temp`; subscriber meminta
 `plant/*/temp` atau `plant/**`, queryable menjawab permintaan `get`, dan peer saling menemukan lewat multicast scouting
 atau lewat router. `IoTCom.Net.Adapters.Zenoh` adalah adapter di atas crate Rust `zenoh` (bukan tulis ulang), dimuat lewat
-pustaka native `iotcom_zenoh`; ia menyediakan:
+pustaka native `iotcom_zenoh`; pada rilis ini hanya jaringan dalam prosesnya yang dikirim (lihat *Pustaka native* di bawah).
+Ia menyediakan:
 
 - `ZenohSession`:
   - `PutAsync` dan `DeleteAsync` pada key konkret (teks atau byte, dengan encoding opsional)
@@ -23,7 +24,8 @@ pustaka native `iotcom_zenoh`; ia menyediakan:
 - `ZenohKeyExpr`: validasi dan pencocokan C# murni (`IsValid`, `Includes`, `Intersects`, `IsWild`) mengikuti aturan Zenoh
   untuk `*`, `**`, dan chunk kosong.
 - `VirtualZenohNetwork`: jaringan dalam proses untuk pengujian, notebook, dan `--sim`; tidak butuh pustaka native.
-- `NativeZenohBackend`: mesin bawaan, zenoh 1.10.1 yang dibangun hanya dengan transport TCP dan UDP.
+- `NativeZenohBackend`: binding ke zenoh 1.10.1 (hanya transport TCP dan UDP); membutuhkan `iotcom_zenoh`, yang belum
+  dikirim pada rilis ini.
 
 ## Kapan dipakai
 
@@ -38,8 +40,14 @@ pustaka native `iotcom_zenoh`; ia menyediakan:
 dotnet add package IoTCom.Net.Adapters.Zenoh --prerelease    # bukan bagian dari meta-package IoTCom.Net
 ```
 
-Paket ini membawa pustaka native `iotcom_zenoh` untuk platform yang didukung. Jika hanya memakai `VirtualZenohNetwork`,
-pustaka native tidak diperlukan.
+### Pustaka native
+
+Paket ini **belum** membawa `iotcom_zenoh`. zenoh 1.10.1 menyertakan `lz4_flex` 0.10, yang terkena advisori keamanan
+RUSTSEC-2026-0041 (mengurai data LZ4 yang tidak valid dapat membocorkan memori yang belum diinisialisasi) dan belum punya
+perbaikan yang kompatibel. Binding ini kembali setelah zenoh beralih ke `lz4_flex` yang sudah diperbaiki. Sementara itu,
+`UseVirtual(...)` bekerja di mana saja; untuk terhubung ke jaringan Zenoh sungguhan Anda dapat membangun sendiri
+`rust/crates/native/iotcom-zenoh-native` (berada di luar workspace Rust) dan mengarahkan `IOTCOM_NATIVE_PATH` ke sana,
+dengan menerima advisori tersebut.
 
 ## Mulai cepat
 

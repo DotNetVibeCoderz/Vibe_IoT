@@ -10,7 +10,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 881 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or the native library) | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 880 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or a locally built native library) | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 51 tests passing, clippy `-D warnings` clean; 10 cargo-fuzz targets (≈ 22 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
 | Docs EN/ID | ✅ 52 + 52 pages, parity and links verified | `python build/check_docs_parity.py` |
@@ -89,8 +89,10 @@ Built by Gravicode Studios, led by Kang Fadhil.
   without any native library. Key-expression matching stays in pure C#.
 - **Zenoh sessions write by default** (`ReadOnly = false`) because publishing is what a pub/sub adapter is for; `ReadOnly` refuses put, delete and
   replies, and the CLI is read-only for `sub`/`get` and needs `--allow-write` for `pub`.
-- **Licences from zenoh.** `rust/deny.toml` has crate-scoped exceptions for `option-ext` (MPL-2.0) and `webpki-roots` (CDLA-Permissive-2.0), both pulled
-  in by zenoh. The native Zenoh library ships them; MPL-2.0 is file-level copyleft and `option-ext` is used unmodified.
+- **The Zenoh native library is not shipped.** cargo-deny found that zenoh 1.10.1 compiles in `lz4_flex` 0.10 (RUSTSEC-2026-0041,
+  no compatible fix), plus QUIC/TLS code, unmaintained crates and two licences outside our allow-list. The crate stays on disk
+  but out of the Rust workspace, bindgen and the native workflow; the package ships the managed adapter and the virtual network.
+  It returns when zenoh moves to a fixed `lz4_flex` (then review the licences again).
 - **Broker adapters wrap the mature clients** (NATS.Client.Core, AMQPNetLite, Confluent.Kafka) as `EndpointBase` endpoints; none is in the meta-package,
   and the Kafka adapter is not trimmable or AOT-compatible, like OPC UA.
 - **AMQP gets an in-process mini broker** so its tests, notebook and demos run everywhere; NATS and Kafka tests skip unless `IOTCOM_NATS_URL` /

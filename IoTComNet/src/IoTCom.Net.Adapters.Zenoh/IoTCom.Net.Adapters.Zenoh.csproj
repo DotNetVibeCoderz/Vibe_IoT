@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RootNamespace>IoTCom.Net.Adapters.Zenoh</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Description>Eclipse Zenoh for IoTCom.Net as an adapter over the Rust zenoh crate (T2-R, not a rewrite): a session endpoint with put, delete, subscriptions as events and IAsyncEnumerable, queryables and get, a read-only switch, traffic tap, the IPublisher/ISubscriber abstractions, pure C# key-expression matching and a virtual network for tests and demos. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <Description>Eclipse Zenoh for IoTCom.Net: a session endpoint with put, delete, subscriptions as events and IAsyncEnumerable, queryables and get, a read-only switch, traffic tap, the IPublisher/ISubscriber abstractions, pure C# key-expression matching and an in-process virtual network. The native binding to the Rust zenoh crate is not shipped in this release (a security advisory in a zenoh dependency); build iotcom_zenoh from source to use it. Built by Gravicode Studios, led by Kang Fadhil.</Description>
     <PackageTags>$(PackageTags);zenoh;pub-sub;query;edge;robotics;rust;native</PackageTags>
   </PropertyGroup>
   <ItemGroup>

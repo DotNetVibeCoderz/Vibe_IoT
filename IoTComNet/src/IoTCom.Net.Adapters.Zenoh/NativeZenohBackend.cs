@@ -156,7 +156,7 @@ public sealed class NativeZenohBackend : IZenohBackend
         catch (DllNotFoundException ex)
         {
             throw new PlatformNotSupportedException(
-                $"Native library '{ZenohNativeMethods.Library}' for {NativeLibraryLoader.RuntimeIdentifier} was not found. Set {NativeLibraryLoader.OverrideVariable} or use a supported RID.", ex);
+                $"Native library '{ZenohNativeMethods.Library}' for {NativeLibraryLoader.RuntimeIdentifier} was not found. IoTCom.Net does not ship it yet (RUSTSEC-2026-0041 in the lz4_flex that zenoh 1.10.1 compiles in): use UseVirtual(...), or build it from rust/crates/native/iotcom-zenoh-native and set {NativeLibraryLoader.OverrideVariable}.", ex);
         }
 
         if (abi != ZenohNativeMethods.ExpectedAbiVersion)

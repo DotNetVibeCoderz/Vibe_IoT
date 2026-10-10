@@ -4,13 +4,7 @@ allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-3.
 confidence-threshold = 0.9
 # cbindgen (MPL-2.0) is used only by tools/iotcom-bindgen, an unpublished generator that runs at development time;
 # it is never linked into a shipped native library.
-# Zenoh (iotcom-zenoh-native) brings two crates outside the allow-list: option-ext (MPL-2.0, file-level copyleft, used unmodified via dirs)
-# and webpki-roots (CDLA-Permissive-2.0, a permissive data licence for the Mozilla root list, pulled in by zenoh-link-commons).
-exceptions = [
-    { name = "cbindgen", allow = ["MPL-2.0"] },
-    { name = "option-ext", allow = ["MPL-2.0"] },
-    { name = "webpki-roots", allow = ["CDLA-Permissive-2.0"] },
-]
+exceptions = [{ name = "cbindgen", allow = ["MPL-2.0"] }]
 
 [bans]
 multiple-versions = "warn"

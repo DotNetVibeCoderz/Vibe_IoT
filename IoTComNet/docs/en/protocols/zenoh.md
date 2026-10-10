@@ -8,8 +8,8 @@ translation-status: synced
 **Summary.** Eclipse Zenoh joins publish/subscribe, storage-style queries and computation across devices, gateways and
 the cloud. Data lives under hierarchical key expressions such as `plant/line1/temp`; a subscriber asks for
 `plant/*/temp` or `plant/**`, a queryable answers `get` requests, and peers find each other by multicast scouting or
-through a router. `IoTCom.Net.Adapters.Zenoh` is an adapter over the Rust `zenoh` crate (not a rewrite), loaded through the
-native library `iotcom_zenoh`; it provides:
+through a router. `IoTCom.Net.Adapters.Zenoh` is an adapter over the Rust `zenoh` crate (not a rewrite), through the native library
+`iotcom_zenoh`; in this release only its in-process network ships (see *Native library* below). It provides:
 
 - `ZenohSession`:
   - `PutAsync` and `DeleteAsync` on concrete keys (text or bytes, with an optional encoding)
@@ -23,7 +23,8 @@ native library `iotcom_zenoh`; it provides:
 - `ZenohKeyExpr`: pure C# validation and matching (`IsValid`, `Includes`, `Intersects`, `IsWild`) following the Zenoh
   rules for `*`, `**` and the empty chunk.
 - `VirtualZenohNetwork`: an in-process network for tests, notebooks and `--sim`; it needs no native library.
-- `NativeZenohBackend`: the default engine, zenoh 1.10.1 built with the TCP and UDP transports only.
+- `NativeZenohBackend`: the binding to zenoh 1.10.1 (TCP and UDP transports only); it needs `iotcom_zenoh`, which this
+  release does not ship.
 
 ## When to use it
 
@@ -38,8 +39,13 @@ native library `iotcom_zenoh`; it provides:
 dotnet add package IoTCom.Net.Adapters.Zenoh --prerelease    # not part of the IoTCom.Net meta-package
 ```
 
-The package carries the native `iotcom_zenoh` library for the supported platforms. Using only `VirtualZenohNetwork`
-needs no native library.
+### Native library
+
+The package does **not** ship `iotcom_zenoh` yet. zenoh 1.10.1 compiles in `lz4_flex` 0.10, which has security advisory
+RUSTSEC-2026-0041 (decompressing invalid LZ4 data can leak uninitialised memory) and no compatible fix. The binding
+returns once zenoh moves to a fixed `lz4_flex`. Until then, `UseVirtual(...)` works everywhere; to talk to a real Zenoh
+network you can build `rust/crates/native/iotcom-zenoh-native` yourself (it is outside the Rust workspace) and point
+`IOTCOM_NATIVE_PATH` at it, accepting that advisory.
 
 ## Quickstart
 

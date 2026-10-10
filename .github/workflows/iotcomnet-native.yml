@@ -1,8 +1,8 @@
 name: IoTCom.Net native libraries
 
-# Builds iotcom_modbus, iotcom_isotp, iotcom_ble, iotcom_usb and iotcom_zenoh for every supported RID. The release workflow packs them into
+# Builds iotcom_modbus, iotcom_isotp, iotcom_ble and iotcom_usb for every supported RID. The release workflow packs them into
 # IoTCom.Net.Native.Modbus, IoTCom.Net.Protocols.IsoTp, IoTCom.Net.Transport.Ble and IoTCom.Net.Transport.Usb under runtimes/{rid}/native/.
-# The BLE (btleplug, vendored libdbus), USB (nusb, hidapi) and Zenoh (zenoh crate, TCP/UDP) libraries are best effort: a RID where one fails still ships the others.
+# The BLE (btleplug, vendored libdbus) and USB (nusb, hidapi) libraries are best effort: a RID where one fails still ships the others.
 on:
   workflow_dispatch:
   workflow_call:
@@ -68,12 +68,6 @@ jobs:
         env:
           RUSTFLAGS: ${{ contains(matrix.target, 'musl') && '-C target-feature=-crt-static' || '' }}
         run: cargo zigbuild --release -p iotcom-usb-native --target ${{ matrix.target }}${{ !contains(matrix.target, 'musl') && '.2.17' || '' }}
-      - name: Build Zenoh (zigbuild)
-        if: matrix.tool == 'zigbuild'
-        continue-on-error: true
-        env:
-          RUSTFLAGS: ${{ contains(matrix.target, 'musl') && '-C target-feature=-crt-static' || '' }}
-        run: cargo zigbuild --release -p iotcom-zenoh-native --target ${{ matrix.target }}${{ !contains(matrix.target, 'musl') && '.2.17' || '' }}
       - name: Build BLE
         if: matrix.tool == 'cargo'
         continue-on-error: true
@@ -82,15 +76,11 @@ jobs:
         if: matrix.tool == 'cargo'
         continue-on-error: true
         run: cargo build --release -p iotcom-usb-native --target ${{ matrix.target }}
-      - name: Build Zenoh
-        if: matrix.tool == 'cargo'
-        continue-on-error: true
-        run: cargo build --release -p iotcom-zenoh-native --target ${{ matrix.target }}
       - name: Collect
         shell: bash
         run: |
           mkdir -p ../artifacts/native/${{ matrix.rid }}
-          cp target/${{ matrix.target }}/release/*iotcom_{modbus,isotp,ble,usb,zenoh}.{dll,so,dylib} ../artifacts/native/${{ matrix.rid }}/ 2>/dev/null || true
+          cp target/${{ matrix.target }}/release/*iotcom_{modbus,isotp,ble,usb}.{dll,so,dylib} ../artifacts/native/${{ matrix.rid }}/ 2>/dev/null || true
           ls -la ../artifacts/native/${{ matrix.rid }}
       - uses: actions/upload-artifact@v4
         with:
