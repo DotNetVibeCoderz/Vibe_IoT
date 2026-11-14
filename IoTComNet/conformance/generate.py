@@ -1208,6 +1208,95 @@ def lwm2m_vectors():
     return out
 
 
+def ocpp_vectors():
+    """OCPP-J RPC frames (OCPP-J 1.6 section 4, OCPP 2.0.1 part 4 section 4) and typed payloads.
+
+    Frame vectors give the text of one WebSocket message and what a receiver must make of it: the message type, id and
+    action, or the error code it answers with ("null" id when no answer is possible because the id is unreadable).
+    Payload vectors are schema-valid examples; a receiver must accept them and re-serialise them unchanged.
+    """
+    out = []
+
+    def compact(obj):
+        return json.dumps(obj, separators=(",", ":"))
+
+    def frame(name, version, text, expected, canonical=True):
+        out.append({"kind": "frame", "name": name, "version": version, "json": text, "expected": expected, "canonical": canonical})
+
+    def payload(name, version, action, response, body):
+        out.append({"kind": "payload", "name": name, "version": version, "action": action, "response": response, "json": compact(body)})
+
+    # Examples printed in the specifications.
+    frame("1.6 spec BootNotification CALL", "1.6",
+          compact([2, "19223201", "BootNotification", {"chargePointVendor": "VendorX", "chargePointModel": "SingleSocketCharger"}]),
+          "call:19223201:BootNotification")
+    frame("1.6 spec BootNotification CALLRESULT", "1.6",
+          compact([3, "19223201", {"status": "Accepted", "currentTime": "2013-02-01T20:53:32.486Z", "interval": 300}]), "result:19223201")
+    frame("2.0.1 spec CALLERROR", "2.0.1", compact([4, "162376037", "NotSupported", "SetDisplayMessageRequest not implemented", {}]),
+          "error-frame:162376037:NotSupported")
+    frame("CALLERROR without details", "1.6", compact([4, "7", "GenericError", "x"]), "error-frame:7:GenericError", canonical=False)
+    frame("36-character id", "2.0.1", compact([2, "a" * 36, "Heartbeat", {}]), "call:" + "a" * 36 + ":Heartbeat")
+    frame("whitespace is allowed", "2.0.1", '[ 2 , "1" , "Heartbeat" , { } ]', "call:1:Heartbeat", canonical=False)
+
+    # What a receiver answers with.
+    frame("not JSON (1.6)", "1.6", '[2, "1", ', "answer:null:FormationViolation", canonical=False)
+    frame("not JSON (2.0.1)", "2.0.1", "hello", "answer:null:RpcFrameworkError", canonical=False)
+    frame("object instead of array", "2.0.1", compact({"a": 1}), "answer:null:RpcFrameworkError", canonical=False)
+    frame("37-character id", "2.0.1", compact([2, "a" * 37, "Heartbeat", {}]), "answer:null:RpcFrameworkError", canonical=False)
+    frame("numeric id", "1.6", compact([2, 5, "Heartbeat", {}]), "answer:null:FormationViolation", canonical=False)
+    frame("empty id", "2.0.1", compact([2, "", "Heartbeat", {}]), "answer:null:RpcFrameworkError", canonical=False)
+    frame("unknown message type (2.0.1)", "2.0.1", compact([5, "9", "Heartbeat", {}]), "answer:9:MessageTypeNotSupported", canonical=False)
+    frame("unknown message type (1.6)", "1.6", compact([7, "9", {}]), "answer:9:FormationViolation", canonical=False)
+    frame("CALL without payload", "2.0.1", compact([2, "3", "Heartbeat"]), "answer:3:RpcFrameworkError", canonical=False)
+    frame("CALL payload is an array", "1.6", compact([2, "4", "Heartbeat", []]), "answer:4:FormationViolation", canonical=False)
+    frame("CALL payload is an array (2.0.1)", "2.0.1", compact([2, "4", "Heartbeat", []]), "answer:4:FormatViolation", canonical=False)
+    frame("CALLRESULT payload is a string", "2.0.1", compact([3, "5", "ok"]), "answer:5:FormatViolation", canonical=False)
+    frame("CALLERROR code is a number", "1.6", compact([4, "6", 500, "x", {}]), "answer:6:FormationViolation", canonical=False)
+
+    # Schema-valid payloads (OCPP 1.6 JSON schemas / OCPP 2.0.1 JSON schemas).
+    payload("1.6 StatusNotification", "1.6", "StatusNotification", False,
+            {"connectorId": 1, "errorCode": "NoError", "status": "Charging", "timestamp": "2026-11-15T08:00:00+00:00"})
+    payload("1.6 StartTransaction", "1.6", "StartTransaction", False,
+            {"connectorId": 2, "idTag": "04A1B2C3", "meterStart": 1250000, "timestamp": "2026-11-15T08:00:00+00:00"})
+    payload("1.6 StartTransaction.conf", "1.6", "StartTransaction", True, {"idTagInfo": {"status": "Accepted"}, "transactionId": 1001})
+    payload("1.6 MeterValues with contexts", "1.6", "MeterValues", False,
+            {"connectorId": 1, "transactionId": 1001, "meterValue": [{"timestamp": "2026-11-15T08:01:00+00:00", "sampledValue": [
+                {"value": "1250367", "context": "Sample.Periodic", "measurand": "Energy.Active.Import.Register", "unit": "Wh"},
+                {"value": "22000", "context": "Sample.Periodic", "measurand": "Power.Active.Import", "unit": "W"},
+                {"value": "41.5", "context": "Transaction.Begin", "measurand": "SoC", "location": "EV", "unit": "Percent"}]}]})
+    payload("1.6 StopTransaction", "1.6", "StopTransaction", False,
+            {"idTag": "04A1B2C3", "meterStop": 1262000, "timestamp": "2026-11-15T09:00:00+00:00", "transactionId": 1001, "reason": "EVDisconnected"})
+    payload("1.6 SetChargingProfile", "1.6", "SetChargingProfile", False,
+            {"connectorId": 1, "csChargingProfiles": {"chargingProfileId": 7, "stackLevel": 0, "chargingProfilePurpose": "TxDefaultProfile",
+                                                      "chargingProfileKind": "Relative", "chargingSchedule": {"chargingRateUnit": "W",
+                                                      "chargingSchedulePeriod": [{"startPeriod": 0, "limit": 11000}]}}})
+    payload("1.6 GetConfiguration.conf", "1.6", "GetConfiguration", True,
+            {"configurationKey": [{"key": "HeartbeatInterval", "readonly": False, "value": "300"}], "unknownKey": ["Foo"]})
+    payload("1.6 RemoteStartTransaction", "1.6", "RemoteStartTransaction", False, {"connectorId": 1, "idTag": "APP-7731"})
+    payload("2.0.1 BootNotification", "2.0.1", "BootNotification", False,
+            {"chargingStation": {"serialNumber": "GVC-DC-0001", "model": "IoTCom DC-60", "vendorName": "Gravicode", "firmwareVersion": "2.1.0"}, "reason": "PowerUp"})
+    payload("2.0.1 TransactionEvent Started", "2.0.1", "TransactionEvent", False,
+            {"eventType": "Started", "timestamp": "2026-11-15T08:00:00+00:00", "triggerReason": "Authorized", "seqNo": 0,
+             "transactionInfo": {"transactionId": "TX-01-00001", "chargingState": "Charging"},
+             "idToken": {"idToken": "04A1B2C3", "type": "ISO14443"}, "evse": {"id": 1, "connectorId": 1},
+             "meterValue": [{"timestamp": "2026-11-15T08:00:00+00:00", "sampledValue": [
+                 {"value": 1250000, "context": "Transaction.Begin", "measurand": "Energy.Active.Import.Register", "unitOfMeasure": {"unit": "Wh"}}]}]})
+    payload("2.0.1 TransactionEvent Ended", "2.0.1", "TransactionEvent", False,
+            {"eventType": "Ended", "timestamp": "2026-11-15T09:00:00+00:00", "triggerReason": "EVCommunicationLost", "seqNo": 7,
+             "transactionInfo": {"transactionId": "TX-01-00001", "chargingState": "Idle", "stoppedReason": "EVDisconnected"}})
+    payload("2.0.1 GetVariables", "2.0.1", "GetVariables", False,
+            {"getVariableData": [{"component": {"name": "OCPPCommCtrlr"}, "variable": {"name": "HeartbeatInterval"}}]})
+    payload("2.0.1 GetVariables.conf", "2.0.1", "GetVariables", True,
+            {"getVariableResult": [{"attributeStatus": "Accepted", "attributeValue": "300", "component": {"name": "OCPPCommCtrlr"}, "variable": {"name": "HeartbeatInterval"}}]})
+    payload("2.0.1 RequestStartTransaction", "2.0.1", "RequestStartTransaction", False,
+            {"evseId": 1, "remoteStartId": 42, "idToken": {"idToken": "APP-7731", "type": "Central"}})
+    payload("2.0.1 SetChargingProfile", "2.0.1", "SetChargingProfile", False,
+            {"evseId": 1, "chargingProfile": {"id": 9, "stackLevel": 0, "chargingProfilePurpose": "TxDefaultProfile", "chargingProfileKind": "Relative",
+                                              "chargingSchedule": [{"id": 9, "chargingRateUnit": "A", "chargingSchedulePeriod": [{"startPeriod": 0, "limit": 16, "numberPhases": 3}]}]}})
+    payload("2.0.1 Reset.conf", "2.0.1", "Reset", True, {"status": "Scheduled"})
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1226,6 +1315,7 @@ def main():
         "ntp.json": ntp_vectors(),
         "ndef.json": ndef_vectors(),
         "lwm2m.json": lwm2m_vectors(),
+        "ocpp.json": ocpp_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

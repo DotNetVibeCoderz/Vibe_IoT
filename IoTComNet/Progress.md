@@ -3,9 +3,9 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.22.0-preview.1` (published) · **Last update:** 2026-11-15
+**Current version:** `0.23.0-preview.1` · **Last update:** 2026-11-15
 
-**Phase:** 0 and 1 complete · Phase 2 in progress (7 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
+**Phase:** 0 and 1 complete · Phase 2 in progress (8 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
 
 ## Snapshot
 
@@ -14,11 +14,11 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
 | .NET tests | ✅ 880 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or a locally built native library) | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 51 tests passing, clippy `-D warnings` clean; 10 cargo-fuzz targets (≈ 22 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
-| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 52 + 52 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 25 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only), OCPP frames and payloads (35, C# only) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
+| Docs EN/ID | ✅ 53 + 53 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 26 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 45 packages (+ symbol packages) in `0.22.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 46 packages (+ symbol packages) in `0.23.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -57,6 +57,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 
 | Component | Status | Notes |
 |---|---|---|
+| IoTCom.Net.Protocols.Ocpp | ✅ | OCPP 1.6J and 2.0.1: RPC codec and session over WebSocket (ws/wss, Basic auth, subprotocol negotiation), typed core/smart charging/remote trigger messages with source-generated JSON, charge point, CSMS (live station model, version-independent commands, read-only default, ASP.NET Core hand-over), charger simulator with an EV model; 35 vectors · firmware, local lists, reservations, 2.0.1 reports, offline queue ⏳ |
 | IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
 | IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
 | IoTCom.Net.Protocols.J1939 + Rust `iotcom-j1939` | ✅ | node (address claim with NAME arbitration, BAM + RTS/CTS up to 1785 bytes, requests/responders, listen-only, read-only), SPN decode/encode for common engine PGNs, DM1/DM2, engine ECU simulator; fuzzed codec twin + 28 vectors · ETP, DM3/DM11, NMEA 2000 fast packet ⏳ |
@@ -115,16 +116,29 @@ Built by Gravicode Studios, led by Kang Fadhil.
 |---|---|---|
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | |
-| Gallery (Avalonia) | ✅ | 23 demos (LPWAN & city: street lights over LwM2M; Workbench: NFC asset tags; Messaging: fleet clock sync over NTP; Energy & grid: substation control over IEC 104; Automotive: truck cluster over J1939; Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 24 demos (Energy & grid: EV charging hub over OCPP; LPWAN & city: street lights over LwM2M; Workbench: NFC asset tags; Messaging: fleet clock sync over NTP; Energy & grid: substation control over IEC 104; Automotive: truck cluster over J1939; Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient |
-| Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt) |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient, OcppCharger |
+| Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt); OCPP parse + typed bind per message (`OcppBenchmarks`) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 
 ## Decisions
 
 Newest first. Each entry records why something was built the way it was.
+
+### 0.23
+
+- **OCPP is managed C# with no extra dependency.** The CSMS performs its own RFC 6455 upgrade over IoTCom transports, so
+  tests, notebooks and the Gallery run in memory and the package needs no ASP.NET Core; `AcceptWebSocketAsync` takes
+  sockets accepted by ASP.NET Core instead. The charger uses `ClientWebSocket` for real `ws://`/`wss://` URLs.
+- **Typed messages use System.Text.Json source generation**, one context per version, so the package stays trimmable and
+  AOT-compatible; the action name, version and command flag are explicit interface members and never reach the JSON.
+  Actions without typed classes use the raw JSON API.
+- **The CSMS is read-only by default**, like the other masters; reads (configuration, triggers) stay allowed.
+- **The close handshake is answered.** The first version left the peer waiting two seconds for a close frame on every
+  disconnect; the session now answers the peer's close, which cut the OCPP tests from 27 s to 1 s.
+- **Servicing packages move together** to 10.0.15 when an advisory hits one of them (System.Formats.Cbor).
 
 ### 0.22
 
@@ -362,6 +376,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | OCPP 1.6J / 2.0.1 (`0.23.0-preview.1`): package with RPC codec, session, typed messages, charge point, CSMS and charger simulator, 35 conformance vectors, CLI `ocpp`, Gallery EV charging hub with load management (design use case 11), OcppCharger sample, notebook pair, docs, benchmarks. .NET servicing packages 10.0.15 (Cbor advisory). Zenoh re-checked: 1.10.2 still needs lz4_flex 0.10. |
 | 2026-11-15 | Open questions answered: Matter covers controller and device/bridge; BACnet gets an adapter and our own server API. |
 | 2026-11-15 | PLAN.md and Progress.md tidied: Phase 2 as a status table, remaining work and follow-ups collected in PLAN.md, open questions marked answered/open, components grouped by area, decisions in one newest-first section. |
 | 2026-10-10 | Published 0.22.0-preview.1 (Zenoh shipped without its native library; NTP delay filter keeps a majority). |

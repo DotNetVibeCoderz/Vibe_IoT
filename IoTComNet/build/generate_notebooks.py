@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.22.0-preview.1"
+VERSION = "0.23.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -802,11 +802,58 @@ NOTEBOOKS = {
            "## Lebih lanjut\n`iotcom lwm2m demo`, `iotcom lwm2m serve --observe /3303/0/5700`, `iotcom lwm2m client --server <host>`, `iotcom lwm2m decode 3/0 <hex>`, *Lampu jalan lewat LwM2M* di Gallery, dan sampel Lwm2mClient. "
            "Lihat `docs/id/protocols/lwm2m.md`.\n\n" + CREDIT[1]),
     ],
+    "automotive/24-ocpp": [
+        md("# OCPP — EV chargers and their CSMS\n\nA small CSMS and simulated chargers share an in-memory listener, so everything runs here without a network. "
+           "Point a charger at a real CSMS with `UseCsms(\"wss://host/ocpp/\")`, or serve real chargers with `OcppCsms` and `UseTcp(IPAddress.Any, 8887)`.",
+           "# OCPP — pengisi daya EV dan CSMS-nya\n\nCSMS kecil dan pengisi simulasi berbagi listener dalam memori, jadi semuanya berjalan di sini tanpa jaringan. "
+           "Arahkan pengisi ke CSMS sungguhan dengan `UseCsms(\"wss://host/ocpp/\")`, atau layani pengisi sungguhan dengan `OcppCsms` dan `UseTcp(IPAddress.Any, 8887)`."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## The RPC frames\nEvery OCPP message is a JSON array. A receiver that cannot read one answers with a version-specific error code.",
+           "## Frame RPC\nSetiap pesan OCPP adalah array JSON. Penerima yang tidak dapat membacanya menjawab dengan kode galat khusus versi."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Ocpp;\nusing IoTCom.Net.Transports;\n\n"
+             "var call = OcppFrame.Parse(\"[2,\\\"19223201\\\",\\\"BootNotification\\\",{\\\"chargePointVendor\\\":\\\"VendorX\\\",\\\"chargePointModel\\\":\\\"SingleSocketCharger\\\"}]\");\n"
+             "Console.WriteLine(call.Describe());\n"
+             "foreach (var f in OcppFrame.DescribeFields(call.ToJson())) Console.WriteLine($\"{f.Name,-14} {f.Value}\");\n"
+             "foreach (var bad in new[] { \"[2,5,\\\"Heartbeat\\\",{}]\", \"[2,\\\"4\\\",\\\"Heartbeat\\\",[]]\" })\n"
+             "    foreach (var v in new[] { OcppVersion.Ocpp16, OcppVersion.Ocpp201 })\n"
+             "        if (!OcppFrame.TryParse(bad, v, out _, out var e)) Console.WriteLine($\"{v}: {bad} -> {e.ErrorCode}\");"),
+        md("## A charging session on OCPP 1.6J\nThe charger boots, a car is plugged in, a card is tapped, and half an hour of charging produces meter values.",
+           "## Sesi pengisian di OCPP 1.6J\nPengisi melakukan boot, mobil dicolokkan, kartu ditempelkan, dan setengah jam pengisian menghasilkan meter value."),
+        code("var csmsListener = new InMemoryTransportListener(\"csms\");\n"
+             "var csms = OcppCsms.Create(o => { o.ListenInMemory(csmsListener); o.AuthorizedTags = new HashSet<string> { \"04A1B2C3\", \"APP-7731\" }; });\n"
+             "csms.TransactionStopped += (st, tx) => Console.WriteLine($\"stopped: {tx}\");\nawait csms.StartAsync();\n"
+             "var ac = OcppChargePointSimulator.Create(o => { o.Identity = \"AC-01\"; o.UseTransport(csmsListener.Connect); });\nawait ac.StartAsync();\n"
+             "Console.WriteLine(csms.Stations[\"AC-01\"]);\n"
+             "await ac.PlugInAsync(1, socPercent: 30, batteryKWh: 60, evMaxKW: 11);\n"
+             "Console.WriteLine($\"card 04A1B2C3: {await ac.PresentCardAsync(1, \"04A1B2C3\")}, card DEADBEEF: {await ac.PresentCardAsync(2, \"DEADBEEF\")}\");\n"
+             "await ac.StepAsync(TimeSpan.FromMinutes(30));\nawait Task.Delay(100);\n"
+             "var bay = csms.Stations[\"AC-01\"].Connectors[1];\n"
+             "Console.WriteLine($\"{bay.Status}: {bay.PowerW / 1000:0.0} kW, {bay.Transaction!.EnergyWh / 1000:0.00} kWh, SoC {bay.SoC:0} %\");\n"
+             "await ac.UnplugAsync(1);\nawait Task.Delay(100);"),
+        md("## Commands on OCPP 2.0.1 are opt-in\nThe CSMS refuses commands until they are allowed; then it starts a session remotely, caps the power with a charging profile and stops it.",
+           "## Perintah di OCPP 2.0.1 harus diizinkan\nCSMS menolak perintah sampai diizinkan; lalu CSMS memulai sesi dari jauh, membatasi daya dengan charging profile, dan menghentikannya."),
+        code("var dc = OcppChargePointSimulator.Create(o => { o.Identity = \"DC-01\"; o.Version = OcppVersion.Ocpp201; o.Connectors = 1; o.MaxPowerW = 60_000; o.UseTransport(csmsListener.Connect); });\n"
+             "await dc.StartAsync();\nawait dc.PlugInAsync(1, socPercent: 18, batteryKWh: 77, evMaxKW: 150);\n"
+             "try { await csms.RemoteStartAsync(\"DC-01\", 1, \"APP-7731\"); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }\n"
+             "csms.ReadOnly = false;\n"
+             "Console.WriteLine($\"remote start: {await csms.RemoteStartAsync(\"DC-01\", 1, \"APP-7731\")}\");\nawait Task.Delay(200);\n"
+             "Console.WriteLine($\"limit 30 kW: {await csms.SetPowerLimitAsync(\"DC-01\", 1, 30_000)}\");\n"
+             "await dc.StepAsync(TimeSpan.FromMinutes(10));\nConsole.WriteLine($\"charging at {dc.Connectors[0].PowerW / 1000:0.0} kW, SoC {dc.Connectors[0].SoC:0} %\");\n"
+             "foreach (var c in await csms.ReadConfigurationAsync(\"DC-01\")) Console.WriteLine($\"  {c.Key} = {c.Value}\");\n"
+             "var tx = csms.Stations[\"DC-01\"].Connectors[1].Transaction!;\n"
+             "Console.WriteLine($\"remote stop {tx.Id}: {await csms.RemoteStopAsync(\"DC-01\", tx.Id)}\");\nawait Task.Delay(200);\n"
+             "await dc.DisposeAsync();\nawait ac.DisposeAsync();\nawait csms.DisposeAsync();"),
+        md("## Going further\n`iotcom ocpp demo`, `iotcom ocpp csms --frames`, `iotcom ocpp charger --csms ws://127.0.0.1:8887/ocpp/ --tag 04A1B2C3`, `iotcom ocpp decode '<json>'`, the Gallery's *EV charging hub over OCPP* and the OcppCharger sample. "
+           "See `docs/en/protocols/ocpp.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom ocpp demo`, `iotcom ocpp csms --frames`, `iotcom ocpp charger --csms ws://127.0.0.1:8887/ocpp/ --tag 04A1B2C3`, `iotcom ocpp decode '<json>'`, *Hub pengisian EV lewat OCPP* di Gallery, dan sampel OcppCharger. "
+           "Lihat `docs/id/protocols/ocpp.md`.\n\n" + CREDIT[1]),
+    ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "
-           "To talk to real peers, drop `UseVirtual(net)` and use `Connect(\"tcp/host:7447\")` or `Listen(\"tcp/0.0.0.0:7447\")`; the native `iotcom_zenoh` library ships with the package.",
+           "To talk to real peers, drop `UseVirtual(net)` and use `Connect(\"tcp/host:7447\")` or `Listen(\"tcp/0.0.0.0:7447\")`; that needs the native `iotcom_zenoh` library, which is not shipped yet (see the Zenoh docs page).",
            "# Zenoh — key expression, subscription, dan kueri\n\nDua sesi berbagi `VirtualZenohNetwork` dalam proses, jadi tidak ada yang membutuhkan pustaka native atau jaringan di sini. "
-           "Untuk berbicara dengan peer sungguhan, hapus `UseVirtual(net)` dan pakai `Connect(\"tcp/host:7447\")` atau `Listen(\"tcp/0.0.0.0:7447\")`; pustaka native `iotcom_zenoh` ikut dalam paket."),
+           "Untuk berbicara dengan peer sungguhan, hapus `UseVirtual(net)` dan pakai `Connect(\"tcp/host:7447\")` atau `Listen(\"tcp/0.0.0.0:7447\")`; itu membutuhkan pustaka native `iotcom_zenoh`, yang belum dikirim dalam paket (lihat halaman dokumentasi Zenoh)."),
         md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
         code(SETUP + f'\n#r "nuget: IoTCom.Net.Adapters.Zenoh, {VERSION}"'),
         md("## Key expressions\nKeys are slash-separated chunks. `*` matches one chunk, `**` any number of chunks (including none), `$*` any part of a chunk.",

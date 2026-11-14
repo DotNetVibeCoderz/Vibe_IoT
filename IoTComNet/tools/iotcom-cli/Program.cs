@@ -139,6 +139,14 @@ app.Configure(c =>
         l.AddCommand<Lwm2mDemoCommand>("demo").WithDescription("Server and street light in-process: register, read, observe, write.").WithExample("lwm2m", "demo").WithExample("lwm2m", "demo", "--allow-write");
         l.AddCommand<Lwm2mDecodeCommand>("decode").WithDescription("Decode an LwM2M TLV payload.").WithExample("lwm2m", "decode", "3/0/6", "8606410001410105");
     });
+    c.AddBranch("ocpp", o =>
+    {
+        o.SetDescription("OCPP 1.6J / 2.0.1 for EV charging: run a CSMS, run a simulated charger against any CSMS, watch both in-process, or decode a message.");
+        o.AddCommand<OcppCsmsCommand>("csms").WithDescription("Run a read-only CSMS on ws://0.0.0.0:8887/ocpp/{identity}.").WithExample("ocpp", "csms", "--tags", "04A1B2C3,APP-7731", "--frames");
+        o.AddCommand<OcppChargerCommand>("charger").WithDescription("Run the simulated charger against a CSMS.").WithExample("ocpp", "charger", "--csms", "ws://127.0.0.1:8887/ocpp/", "--tag", "04A1B2C3").WithExample("ocpp", "charger", "--version", "2.0.1", "--csms", "wss://csms.example.com/ocpp/", "--password", "secret");
+        o.AddCommand<OcppDemoCommand>("demo").WithDescription("A CSMS with an AC (1.6J) and a DC (2.0.1) charger in-process.").WithExample("ocpp", "demo").WithExample("ocpp", "demo", "--allow-write", "--frames");
+        o.AddCommand<OcppDecodeCommand>("decode").WithDescription("Decode one OCPP-J message and check its payload schema.").WithExample("ocpp", "decode", "[2,\"1\",\"Heartbeat\",{}]");
+    });
     c.AddBranch("uds", u =>
     {
         u.SetDescription("UDS (ISO 14229) diagnostics over ISO-TP: identification, DTCs, raw requests.");

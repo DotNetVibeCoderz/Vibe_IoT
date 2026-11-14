@@ -139,3 +139,23 @@ public class LoRaWanBenchmarks
         return p.VerifyMic(_keys.NwkSKey, 42) ? p.DecryptPayload(_keys, 42).Length : -1;
     }
 }
+
+[MemoryDiagnoser]
+public class OcppBenchmarks
+{
+    private const string MeterValues = """[2,"1042","MeterValues",{"connectorId":1,"transactionId":1001,"meterValue":[{"timestamp":"2026-11-15T08:01:00+00:00","sampledValue":[{"value":"1250367","context":"Sample.Periodic","measurand":"Energy.Active.Import.Register","unit":"Wh"},{"value":"22000","context":"Sample.Periodic","measurand":"Power.Active.Import","unit":"W"}]}]}]""";
+
+    /// <summary>Parse the RPC frame and bind the payload to the typed 1.6 MeterValues request: what a CSMS does per message.</summary>
+    [Benchmark]
+    public object ParseAndBindMeterValues()
+    {
+        var frame = IoTCom.Net.Protocols.Ocpp.OcppFrame.Parse(MeterValues, IoTCom.Net.Protocols.Ocpp.OcppVersion.Ocpp16);
+        return IoTCom.Net.Protocols.Ocpp.OcppSession.Deserialize(frame.Payload!, typeof(IoTCom.Net.Protocols.Ocpp.V16.MeterValuesRequest), IoTCom.Net.Protocols.Ocpp.OcppVersion.Ocpp16);
+    }
+
+    /// <summary>Serialize a typed request into a CALL frame.</summary>
+    [Benchmark]
+    public string FormatStatusCall() => IoTCom.Net.Protocols.Ocpp.OcppFrame.Call("1043", "StatusNotification",
+        IoTCom.Net.Protocols.Ocpp.OcppSession.Serialize(new IoTCom.Net.Protocols.Ocpp.V16.StatusNotificationRequest { ConnectorId = 1, Status = IoTCom.Net.Protocols.Ocpp.V16.ChargePointStatus.Charging },
+            typeof(IoTCom.Net.Protocols.Ocpp.V16.StatusNotificationRequest), IoTCom.Net.Protocols.Ocpp.OcppVersion.Ocpp16)).ToJson();
+}

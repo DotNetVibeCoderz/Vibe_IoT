@@ -118,6 +118,11 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `rust/crates/native/iotcom-zenoh-native` (`iotcom_zenoh`) is **excluded from the workspace and not shipped**: zenoh 1.10.1 pulls in
   lz4_flex 0.10 (RUSTSEC-2026-0041). Re-add it to the workspace, bindgen, `BindingDriftTests` and the native workflow only after zenoh
   moves to a fixed lz4_flex and `cargo deny check` passes.
+- **OCPP**: `Protocols.Ocpp` is managed C# (`OcppFrame` codec, `OcppSession` RPC over any `WebSocket`, typed `V16`/`V201` messages with one
+  source-generated `JsonSerializerContext` per version — add new message classes to `OcppCatalog` and the context, `OcppChargePoint`,
+  `OcppCsms` read-only until `AllowCommands()`, `OcppChargePointSimulator`). The CSMS does its own WebSocket upgrade over IoTCom
+  listeners (`OcppWebSocketHandshake`, `DuplexPipeStream`); never handle a request by disposing the session from inside a handler.
+  `/conformance/ocpp.json` (C# only). Wire JSON goes through `OcppFrame.Format` (relaxed escaping keeps '+' in timestamps).
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

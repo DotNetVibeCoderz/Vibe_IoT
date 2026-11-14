@@ -35,6 +35,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Industrial | OPC UA tag browser — the plant simulator's address space over a Basic256Sha256 session, every tag in one subscription, a live trend, guarded writes and a method call | OPC UA |
 | Industrial | CANopen I/O modules — two CiA 401-style modules on a DIN rail with input/output LEDs and analog values from PDOs, NMT start/stop, a pump output switched over SDO behind a write guard, an SDO console | CANopen |
 | Energy & grid | Substation control over IEC 104 — a 20 kV feeder bay on a single-line diagram (live, dead and earthed sections), breaker, disconnector and earthing switch operated with select-before-operate behind interlocks and a control lock, tap changer and Q set point, a short circuit that trips the feeder, and the RTU-time-tagged sequence of events | IEC 60870-5-104 |
+| Energy & grid | EV charging hub over OCPP — a rest-area forecourt with two AC wallboxes on OCPP 1.6J and a DC fast charger on OCPP 2.0.1: plug cars in and tap cards, watch each battery fill and the cable glow while power flows, start, stop, cap and reset behind a write lock, inject a ground fault or a lost cellular link, and let load management keep the site under its grid connection | OCPP 1.6J, OCPP 2.0.1, WebSocket |
 | Automotive | Vehicle diagnostics — scan tool and engine ECU simulator on a virtual CAN bus: tachometer and tell-tales, OBD-II live data, VIN, DTCs, security access and a guarded write | CAN, ISO-TP (Rust), UDS, OBD-II |
 | Automotive | Truck cluster over J1939 — a heavy-duty engine ECU on a virtual 250 kbit/s bus: tachometer and speedometer from SPNs, coolant, oil pressure, fuel rate and battery, an accelerator pedal, the VIN over RTS/CTS, and an oil leak that lights the amber lamp through DM1 | SAE J1939, DM1 |
 | Medical & healthcare | ICU bedside monitors — 4 synthetic beds send ORU^R01 over MLLP; ward board, live traces, NEWS2, trends and an LLM SBAR note | HL7 v2, MLLP |
@@ -68,6 +69,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![LoRaWAN network monitor](../../images/gallery-lorawan.png)
 ![Smart meter reading](../../images/gallery-metering.png)
 ![Street lights over LwM2M](../../images/gallery-lwm2m.png)
+![EV charging hub over OCPP](../../images/gallery-ocpp.png)
 ![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![OPC UA tag browser](../../images/gallery-opcua.png)
 ![CANopen I/O modules](../../images/gallery-canopen.png)

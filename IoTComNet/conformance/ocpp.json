@@ -1,0 +1,282 @@
+[
+  {
+    "kind": "frame",
+    "name": "1.6 spec BootNotification CALL",
+    "version": "1.6",
+    "json": "[2,\"19223201\",\"BootNotification\",{\"chargePointVendor\":\"VendorX\",\"chargePointModel\":\"SingleSocketCharger\"}]",
+    "expected": "call:19223201:BootNotification",
+    "canonical": true
+  },
+  {
+    "kind": "frame",
+    "name": "1.6 spec BootNotification CALLRESULT",
+    "version": "1.6",
+    "json": "[3,\"19223201\",{\"status\":\"Accepted\",\"currentTime\":\"2013-02-01T20:53:32.486Z\",\"interval\":300}]",
+    "expected": "result:19223201",
+    "canonical": true
+  },
+  {
+    "kind": "frame",
+    "name": "2.0.1 spec CALLERROR",
+    "version": "2.0.1",
+    "json": "[4,\"162376037\",\"NotSupported\",\"SetDisplayMessageRequest not implemented\",{}]",
+    "expected": "error-frame:162376037:NotSupported",
+    "canonical": true
+  },
+  {
+    "kind": "frame",
+    "name": "CALLERROR without details",
+    "version": "1.6",
+    "json": "[4,\"7\",\"GenericError\",\"x\"]",
+    "expected": "error-frame:7:GenericError",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "36-character id",
+    "version": "2.0.1",
+    "json": "[2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"Heartbeat\",{}]",
+    "expected": "call:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:Heartbeat",
+    "canonical": true
+  },
+  {
+    "kind": "frame",
+    "name": "whitespace is allowed",
+    "version": "2.0.1",
+    "json": "[ 2 , \"1\" , \"Heartbeat\" , { } ]",
+    "expected": "call:1:Heartbeat",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "not JSON (1.6)",
+    "version": "1.6",
+    "json": "[2, \"1\", ",
+    "expected": "answer:null:FormationViolation",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "not JSON (2.0.1)",
+    "version": "2.0.1",
+    "json": "hello",
+    "expected": "answer:null:RpcFrameworkError",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "object instead of array",
+    "version": "2.0.1",
+    "json": "{\"a\":1}",
+    "expected": "answer:null:RpcFrameworkError",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "37-character id",
+    "version": "2.0.1",
+    "json": "[2,\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"Heartbeat\",{}]",
+    "expected": "answer:null:RpcFrameworkError",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "numeric id",
+    "version": "1.6",
+    "json": "[2,5,\"Heartbeat\",{}]",
+    "expected": "answer:null:FormationViolation",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "empty id",
+    "version": "2.0.1",
+    "json": "[2,\"\",\"Heartbeat\",{}]",
+    "expected": "answer:null:RpcFrameworkError",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "unknown message type (2.0.1)",
+    "version": "2.0.1",
+    "json": "[5,\"9\",\"Heartbeat\",{}]",
+    "expected": "answer:9:MessageTypeNotSupported",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "unknown message type (1.6)",
+    "version": "1.6",
+    "json": "[7,\"9\",{}]",
+    "expected": "answer:9:FormationViolation",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "CALL without payload",
+    "version": "2.0.1",
+    "json": "[2,\"3\",\"Heartbeat\"]",
+    "expected": "answer:3:RpcFrameworkError",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "CALL payload is an array",
+    "version": "1.6",
+    "json": "[2,\"4\",\"Heartbeat\",[]]",
+    "expected": "answer:4:FormationViolation",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "CALL payload is an array (2.0.1)",
+    "version": "2.0.1",
+    "json": "[2,\"4\",\"Heartbeat\",[]]",
+    "expected": "answer:4:FormatViolation",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "CALLRESULT payload is a string",
+    "version": "2.0.1",
+    "json": "[3,\"5\",\"ok\"]",
+    "expected": "answer:5:FormatViolation",
+    "canonical": false
+  },
+  {
+    "kind": "frame",
+    "name": "CALLERROR code is a number",
+    "version": "1.6",
+    "json": "[4,\"6\",500,\"x\",{}]",
+    "expected": "answer:6:FormationViolation",
+    "canonical": false
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 StatusNotification",
+    "version": "1.6",
+    "action": "StatusNotification",
+    "response": false,
+    "json": "{\"connectorId\":1,\"errorCode\":\"NoError\",\"status\":\"Charging\",\"timestamp\":\"2026-11-15T08:00:00+00:00\"}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 StartTransaction",
+    "version": "1.6",
+    "action": "StartTransaction",
+    "response": false,
+    "json": "{\"connectorId\":2,\"idTag\":\"04A1B2C3\",\"meterStart\":1250000,\"timestamp\":\"2026-11-15T08:00:00+00:00\"}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 StartTransaction.conf",
+    "version": "1.6",
+    "action": "StartTransaction",
+    "response": true,
+    "json": "{\"idTagInfo\":{\"status\":\"Accepted\"},\"transactionId\":1001}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 MeterValues with contexts",
+    "version": "1.6",
+    "action": "MeterValues",
+    "response": false,
+    "json": "{\"connectorId\":1,\"transactionId\":1001,\"meterValue\":[{\"timestamp\":\"2026-11-15T08:01:00+00:00\",\"sampledValue\":[{\"value\":\"1250367\",\"context\":\"Sample.Periodic\",\"measurand\":\"Energy.Active.Import.Register\",\"unit\":\"Wh\"},{\"value\":\"22000\",\"context\":\"Sample.Periodic\",\"measurand\":\"Power.Active.Import\",\"unit\":\"W\"},{\"value\":\"41.5\",\"context\":\"Transaction.Begin\",\"measurand\":\"SoC\",\"location\":\"EV\",\"unit\":\"Percent\"}]}]}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 StopTransaction",
+    "version": "1.6",
+    "action": "StopTransaction",
+    "response": false,
+    "json": "{\"idTag\":\"04A1B2C3\",\"meterStop\":1262000,\"timestamp\":\"2026-11-15T09:00:00+00:00\",\"transactionId\":1001,\"reason\":\"EVDisconnected\"}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 SetChargingProfile",
+    "version": "1.6",
+    "action": "SetChargingProfile",
+    "response": false,
+    "json": "{\"connectorId\":1,\"csChargingProfiles\":{\"chargingProfileId\":7,\"stackLevel\":0,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Relative\",\"chargingSchedule\":{\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":0,\"limit\":11000}]}}}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 GetConfiguration.conf",
+    "version": "1.6",
+    "action": "GetConfiguration",
+    "response": true,
+    "json": "{\"configurationKey\":[{\"key\":\"HeartbeatInterval\",\"readonly\":false,\"value\":\"300\"}],\"unknownKey\":[\"Foo\"]}"
+  },
+  {
+    "kind": "payload",
+    "name": "1.6 RemoteStartTransaction",
+    "version": "1.6",
+    "action": "RemoteStartTransaction",
+    "response": false,
+    "json": "{\"connectorId\":1,\"idTag\":\"APP-7731\"}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 BootNotification",
+    "version": "2.0.1",
+    "action": "BootNotification",
+    "response": false,
+    "json": "{\"chargingStation\":{\"serialNumber\":\"GVC-DC-0001\",\"model\":\"IoTCom DC-60\",\"vendorName\":\"Gravicode\",\"firmwareVersion\":\"2.1.0\"},\"reason\":\"PowerUp\"}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 TransactionEvent Started",
+    "version": "2.0.1",
+    "action": "TransactionEvent",
+    "response": false,
+    "json": "{\"eventType\":\"Started\",\"timestamp\":\"2026-11-15T08:00:00+00:00\",\"triggerReason\":\"Authorized\",\"seqNo\":0,\"transactionInfo\":{\"transactionId\":\"TX-01-00001\",\"chargingState\":\"Charging\"},\"idToken\":{\"idToken\":\"04A1B2C3\",\"type\":\"ISO14443\"},\"evse\":{\"id\":1,\"connectorId\":1},\"meterValue\":[{\"timestamp\":\"2026-11-15T08:00:00+00:00\",\"sampledValue\":[{\"value\":1250000,\"context\":\"Transaction.Begin\",\"measurand\":\"Energy.Active.Import.Register\",\"unitOfMeasure\":{\"unit\":\"Wh\"}}]}]}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 TransactionEvent Ended",
+    "version": "2.0.1",
+    "action": "TransactionEvent",
+    "response": false,
+    "json": "{\"eventType\":\"Ended\",\"timestamp\":\"2026-11-15T09:00:00+00:00\",\"triggerReason\":\"EVCommunicationLost\",\"seqNo\":7,\"transactionInfo\":{\"transactionId\":\"TX-01-00001\",\"chargingState\":\"Idle\",\"stoppedReason\":\"EVDisconnected\"}}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 GetVariables",
+    "version": "2.0.1",
+    "action": "GetVariables",
+    "response": false,
+    "json": "{\"getVariableData\":[{\"component\":{\"name\":\"OCPPCommCtrlr\"},\"variable\":{\"name\":\"HeartbeatInterval\"}}]}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 GetVariables.conf",
+    "version": "2.0.1",
+    "action": "GetVariables",
+    "response": true,
+    "json": "{\"getVariableResult\":[{\"attributeStatus\":\"Accepted\",\"attributeValue\":\"300\",\"component\":{\"name\":\"OCPPCommCtrlr\"},\"variable\":{\"name\":\"HeartbeatInterval\"}}]}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 RequestStartTransaction",
+    "version": "2.0.1",
+    "action": "RequestStartTransaction",
+    "response": false,
+    "json": "{\"evseId\":1,\"remoteStartId\":42,\"idToken\":{\"idToken\":\"APP-7731\",\"type\":\"Central\"}}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 SetChargingProfile",
+    "version": "2.0.1",
+    "action": "SetChargingProfile",
+    "response": false,
+    "json": "{\"evseId\":1,\"chargingProfile\":{\"id\":9,\"stackLevel\":0,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Relative\",\"chargingSchedule\":[{\"id\":9,\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"startPeriod\":0,\"limit\":16,\"numberPhases\":3}]}]}}"
+  },
+  {
+    "kind": "payload",
+    "name": "2.0.1 Reset.conf",
+    "version": "2.0.1",
+    "action": "Reset",
+    "response": true,
+    "json": "{\"status\":\"Scheduled\"}"
+  }
+]

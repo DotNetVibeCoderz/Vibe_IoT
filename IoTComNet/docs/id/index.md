@@ -46,6 +46,7 @@ perangkat keras.
 | [NTP / SNTP](protocols/ntp.md) | klien SNTP · server · jam melenceng · kiss-o'-death | `IoTCom.Net.Protocols.Ntp` |
 | [NFC / NDEF](protocols/nfc.md) | pembaca PC/SC · tag NTAG21x · record NDEF · pembaca virtual | `IoTCom.Net.Protocols.Nfc` |
 | [LwM2M](protocols/lwm2m.md) | klien · server · TLV/SenML · observe · simulator lampu jalan | `IoTCom.Net.Protocols.Lwm2m` |
+| [OCPP](protocols/ocpp.md) | charge point · CSMS · 1.6J dan 2.0.1 · simulator pengisi dengan model EV | `IoTCom.Net.Protocols.Ocpp` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB dan HID](protocols/usb.md) | control · bulk · interrupt · report HID · papan relay · bus virtual (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |

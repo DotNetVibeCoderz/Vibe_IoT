@@ -3,6 +3,31 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.23.0-preview.1 — 2026-11-15
+
+OCPP 1.6J and 2.0.1 for EV charging.
+
+- **New package `IoTCom.Net.Protocols.Ocpp`** (in the meta-package): `OcppFrame` (sans-I/O OCPP-J codec with the error
+  code each version answers with, frame lane), `OcppSession` (RPC framework over WebSocket: one outstanding CALL per side,
+  timeouts, typed and raw handlers, automatic NotImplemented/format errors), typed messages for the core, smart charging and
+  remote trigger profiles in `V16` and `V201` with source-generated JSON (trimmable, NativeAOT), `OcppCatalog`,
+  `OcppChargePoint` (ws/wss via `ClientWebSocket` with Basic auth and client certificates, or any IoTCom transport),
+  `OcppCsms` (own WebSocket upgrade over TCP or in-memory with optional TLS and password check, `AcceptWebSocketAsync` for
+  ASP.NET Core, live station model, version-independent commands, **read-only by default**) and
+  `OcppChargePointSimulator` (EV model with taper and power limits, meter values, heartbeats, reconnects, every command).
+- `/conformance/ocpp.json`: 35 vectors (specification examples, 13 malformed frames with the per-version error code, 16
+  schema-valid payloads) from the Python reference.
+- CLI `iotcom ocpp csms|charger|demo|decode` (commands need `--allow-write`), VS Code decoder `ocpp`, Gallery *EV charging
+  hub over OCPP* (Energy & grid, design use case 11) with load management, OcppCharger sample, notebook pair
+  `automotive/24-ocpp`, docs page *OCPP*, `AddOcppCsms`/`AddOcppChargePoint` hosting helpers, OCPP benchmarks.
+- Security: the .NET servicing packages move from 10.0.12 to 10.0.15 (System.Formats.Cbor CVE-2026-118747,
+  GHSA-vmv3-wvjp-wqpj).
+- Docs: the Zenoh notebook no longer says the native library ships.
+
+*OCPP 1.6J dan 2.0.1 untuk pengisian EV: codec RPC, sesi WebSocket, pesan bertipe, charge point, CSMS kecil (hanya-baca
+secara bawaan), dan simulator pengisi dengan model EV; CLI, Gallery hub pengisian dengan manajemen beban, sampel, notebook,
+dan dokumentasi. Paket servicing .NET naik ke 10.0.15 karena advisori keamanan System.Formats.Cbor.*
+
 ## 0.22.0-preview.1 — 2026-10-10
 
 Zenoh, NATS, AMQP 1.0 and Kafka.

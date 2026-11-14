@@ -5,6 +5,7 @@ using IoTCom.Net.Protocols.Dmx;
 using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Iec104;
 using IoTCom.Net.Protocols.Lwm2m;
+using IoTCom.Net.Protocols.Ocpp;
 using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
@@ -110,6 +111,24 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Lwm2m");
+            configure(o);
+        }));
+
+    /// <summary>Registers an OCPP CSMS (read-only unless <c>AllowCommands()</c>).</summary>
+    public static IoTComBuilder AddOcppCsms(this IoTComBuilder builder, string name, Action<OcppCsmsOptions> configure)
+        => builder.AddEndpoint(name, sp => OcppCsms.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Ocpp");
+            configure(o);
+        }));
+
+    /// <summary>Registers an OCPP charge point; register handlers on the resolved endpoint before the host connects it.</summary>
+    public static IoTComBuilder AddOcppChargePoint(this IoTComBuilder builder, string name, Action<OcppChargePointOptions> configure)
+        => builder.AddEndpoint(name, sp => OcppChargePoint.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Ocpp");
             configure(o);
         }));
 

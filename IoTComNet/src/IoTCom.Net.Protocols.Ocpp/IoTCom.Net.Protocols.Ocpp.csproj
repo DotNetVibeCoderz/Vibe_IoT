@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Ocpp</RootNamespace>
+    <Description>OCPP 1.6J and 2.0.1 for EV charging: the OCPP-J RPC framework over WebSocket (ws/wss, Basic auth, subprotocol negotiation), typed messages for the core, smart charging and remote trigger profiles with source-generated JSON, a charge point client, a small CSMS with a live station model and version-independent commands (read-only by default), and a charge point simulator with an EV model. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);ocpp;ocpp16;ocpp201;ev-charging;csms;charge-point;websocket;emobility</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

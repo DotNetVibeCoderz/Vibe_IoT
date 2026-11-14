@@ -35,12 +35,13 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "iec104" => Protocols.Iec104.Iec104Apdu.Describe(data),
             "ntp" => Protocols.Ntp.NtpPacket.Describe(data),
             "ndef" => Protocols.Nfc.NdefMessage.Describe(data),
+            "ocpp" => Protocols.Ocpp.OcppFrame.DescribeFields(System.Text.Encoding.UTF8.GetString(data)),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],
         };
         return new FrameRow(
             f.Timestamp.ToLocalTime().ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture),
             outbound ? "TX" : "RX", outbound, f.Protocol, f.Summary ?? f.Protocol,
-            Tiles(data, fields, ascii: f.Protocol == "nmea0183"),
+            Tiles(data, fields, ascii: f.Protocol is "nmea0183" or "ocpp"),
             IoTCom.Net.HexDump.Format(data));
     }
 

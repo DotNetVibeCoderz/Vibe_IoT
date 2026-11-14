@@ -18,6 +18,7 @@
     <ProjectReference Include="..\IoTCom.Net.Protocols.Iec104\IoTCom.Net.Protocols.Iec104.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Ntp\IoTCom.Net.Protocols.Ntp.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Lwm2m\IoTCom.Net.Protocols.Lwm2m.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Ocpp\IoTCom.Net.Protocols.Ocpp.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Nfc\IoTCom.Net.Protocols.Nfc.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Nmea\IoTCom.Net.Protocols.Nmea.csproj" />
