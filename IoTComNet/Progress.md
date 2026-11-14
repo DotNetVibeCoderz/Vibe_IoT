@@ -3,7 +3,9 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.22.0-preview.1` · **Last update:** 2026-10-10
+**Current version:** `0.22.0-preview.1` (published) · **Last update:** 2026-11-15
+
+**Phase:** 0 and 1 complete · Phase 2 in progress (7 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
 
 ## Snapshot
 
@@ -16,74 +18,115 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Docs EN/ID | ✅ 52 + 52 pages, parity and links verified | `python build/check_docs_parity.py` |
 | Notebooks | ✅ 25 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 45 packages (+ symbol packages) per release (latest `0.20.0-preview.1` with Protocols.Nfc; `0.21.0-preview.1` adds Protocols.Lwm2m; `0.22.0-preview.1` adds Adapters.Zenoh, Nats, Amqp and Kafka); Native.Modbus carries 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 45 packages (+ symbol packages) in `0.22.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
+
+### Foundation
 
 | Component | Status | Notes |
 |---|---|---|
 | IoTCom.Net.Abstractions | ✅ | endpoints, pub/sub, transport, traffic tap, frame anatomy, exceptions, product info |
 | IoTCom.Net.Core | ✅ | pcapng writer + tap (Wireshark-native encapsulation), TCP + in-memory transports, UDP + in-memory datagram network (loss/duplication), StreamTransport, EndpointBase, RecordingTap, HexDump, diagnostics, ReconnectPolicy, NativeLibraryLoader |
 | IoTCom.Net.Framing | ✅ | 23 CRC presets (all pass check values), Crc16.Modbus fast path, LRC, SLIP, COBS, HDLC+FCS, LineFraming, pipe helpers |
+| IoTCom.Net.Hosting | ✅ | AddIoTCom, IoTComEndpoints, keyed services, shared tap, health checks |
+| IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
+
+### Transports and hardware
+
+| Component | Status | Notes |
+|---|---|---|
 | IoTCom.Net.Transport.Serial | ✅ | `UseSerial` / `ServeSerial`; hardware test pending (no RS-485 rig in CI) |
-| IoTCom.Net.Protocols.Modbus | ✅ | TCP/RTU/ASCII, FC 1–6, 15, 16, 22, 23, 43/14; pipelining; read-only; simulator; anatomy |
-| IoTCom.Net.Native.Modbus + Rust `iotcom-modbus` | ✅ win-x64 · ⏳ other RIDs | arm64/Linux/macOS binaries come from the CI native workflow |
-| IoTCom.Net.Protocols.Nmea | ✅ | GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GnssState, reader, server, simulator, AIS decoder/encoder/tracker/simulator |
-| IoTCom.Net.Protocols.Dmx | ✅ | Art-Net ArtDmx/ArtPoll/ArtPollReply/ArtSync, sACN data + sequence rules, DmxUniverse · RDM ⏳ |
-| IoTCom.Net.Adapters.Mqtt | ✅ | MQTTnet 5 adapter, reconnect + resubscribe, JSON/SenML helpers, embedded broker, binary retained will + `AbortAsync` |
-| IoTCom.Net.Serialization.SenML | ✅ | JSON + CBOR, resolution (RFC 8428 §4.6), builder, `SenMLPayloadCodec` |
-| IoTCom.Net.Serialization.Protobuf / .MessagePack / .Tlv | ✅ | `IPayloadCodec<T>` adapters over Google.Protobuf and MessagePack-CSharp with schema-less views; simple TLV and BER-TLV |
-| IoTCom.Net.Protocols.Mdns | ✅ | DNS codec, responder (known-answer suppression, goodbyes), browser (TTL cache, type enumeration), plant simulator · probing, IPv6 ⏳ |
-| IoTCom.Net.Protocols.Sparkplug | ✅ | payload codec + topics, edge node (NDEATH will, aliases, rebirth, guarded writes), host application (STATE, gaps, late join), line simulator · data sets, templates, offline buffering ⏳ |
 | IoTCom.Net.Transport.Can | ✅ | ICanBus, SocketCAN (libc P/Invoke, CAN FD), slcan over serial/TCP (+ adapter emulator), virtual bus; `gsusb:`/`pcan:` via Transport.Can.Adapters · Kvaser/Vector ⏳ |
 | IoTCom.Net.Transport.Can.Adapters | ✅ | gs_usb/candleLight over Transport.Usb (host protocol, bit timing, TX echo, FD when supported), PEAK PCAN-USB via PCANBasic (classic), virtual candleLight · hardware-in-the-loop run on real adapters ⏳ |
-| IoTCom.Net.Protocols.CanOpen + Rust `iotcom-canopen` | ✅ | master (NMT, heartbeat consumer, SDO client, SYNC, PDO/EMCY, scan, read-only), device (SDO server, TPDO/RPDO, heartbeat, EMCY), object dictionary, I/O module simulator; fuzzed codec twin + 71 vectors · SDO block, LSS, EDS import ⏳ |
-| IoTCom.Net.Protocols.J1939 + Rust `iotcom-j1939` | ✅ | node (address claim with NAME arbitration, BAM + RTS/CTS up to 1785 bytes, requests/responders, listen-only, read-only), SPN decode/encode for common engine PGNs, DM1/DM2, engine ECU simulator; fuzzed codec twin + 28 vectors · ETP, DM3/DM11, NMEA 2000 fast packet ⏳ |
-| IoTCom.Net.Protocols.Iec104 + Rust `iotcom-iec104` | ✅ | controlling station (interrogations, read, commands/set points with SBO, clock sync, read-only default), controlled station (point table, spontaneous time-tagged data, command handlers, negative answers), APCI windows and timers, feeder bay simulator; fuzzed codec twin + 53 vectors · file transfer, IEC 62351, 101 serial ⏳ |
-| IoTCom.Net.Protocols.Ntp + Rust `iotcom-ntp` | ✅ | SNTP client (RFC 4330 checks, kiss-o'-death, median of servers, replaceable clock), NTP server (rate limiting), era-aware timestamps, drifting clock; fuzzed codec twin + 25 vectors; verified against public servers · NTS, symmetric/broadcast modes, clock filter ⏳ |
+| IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
+| IoTCom.Net.Transport.Usb + Rust `iotcom-usb-native` | ✅ | control/bulk/interrupt (nusb), HID reports (hidapi), bulk byte-stream transport, HID relay boards, virtual bus; verified enumerating real devices on Windows · isochronous, hotplug, gadget role ⏳ |
 | IoTCom.Net.Protocols.Nfc | ✅ | NDEF codec (Text, URI, Smart Poster, MIME, external, AAR, Wi-Fi, chunked), Type 2 tag memory and page map, guarded tear-safe writes, PC/SC on Windows/Linux/macOS (verified listing real readers on Windows), virtual reader; 30 vectors · MIFARE Classic, Type 4/5 tags, NTAG password, a real tag on real hardware ⏳ |
+
+### Industrial and telecontrol
+
+| Component | Status | Notes |
+|---|---|---|
+| IoTCom.Net.Protocols.Modbus | ✅ | TCP/RTU/ASCII, FC 1–6, 15, 16, 22, 23, 43/14; pipelining; read-only; simulator; anatomy |
+| IoTCom.Net.Native.Modbus + Rust `iotcom-modbus` | ✅ win-x64 · ⏳ other RIDs | arm64/Linux/macOS binaries come from the CI native workflow |
+| IoTCom.Net.Adapters.OpcUa | ✅ | OPC Foundation stack 1.5.378: client (security, user name, browse/read/write/call, subscriptions, read-only) + plant simulator server (None, Basic256Sha256) · events/A&C, history, complex types ⏳ |
+| IoTCom.Net.Protocols.CanOpen + Rust `iotcom-canopen` | ✅ | master (NMT, heartbeat consumer, SDO client, SYNC, PDO/EMCY, scan, read-only), device (SDO server, TPDO/RPDO, heartbeat, EMCY), object dictionary, I/O module simulator; fuzzed codec twin + 71 vectors · SDO block, LSS, EDS import ⏳ |
+| IoTCom.Net.Protocols.Iec104 + Rust `iotcom-iec104` | ✅ | controlling station (interrogations, read, commands/set points with SBO, clock sync, read-only default), controlled station (point table, spontaneous time-tagged data, command handlers, negative answers), APCI windows and timers, feeder bay simulator; fuzzed codec twin + 53 vectors · file transfer, IEC 62351, 101 serial ⏳ |
+
+### Automotive
+
+| Component | Status | Notes |
+|---|---|---|
+| IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
+| IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
+| IoTCom.Net.Protocols.J1939 + Rust `iotcom-j1939` | ✅ | node (address claim with NAME arbitration, BAM + RTS/CTS up to 1785 bytes, requests/responders, listen-only, read-only), SPN decode/encode for common engine PGNs, DM1/DM2, engine ECU simulator; fuzzed codec twin + 28 vectors · ETP, DM3/DM11, NMEA 2000 fast packet ⏳ |
+
+### Energy and metering
+
+| Component | Status | Notes |
+|---|---|---|
+| IoTCom.Net.Protocols.Dlms + Rust `iotcom-dlms` | ✅ | HDLC + wrapper, A-XDR, OBIS, LLS/HLS-GMAC + suite 0 ciphering, GET blocks + selective access, SET/ACTION, client (read-only default), server + COSEM classes, meter simulator · suites 1/2, push ⏳ |
+| IoTCom.Net.Protocols.MBus + Rust `iotcom-mbus` | ✅ | frames, variable data records (DIF/VIF, BCD, dates), master (scan, secondary addressing), slave simulator · wireless M-Bus/OMS ⏳ |
+
+### IoT, LPWAN and device management
+
+| Component | Status | Notes |
+|---|---|---|
+| IoTCom.Net.Protocols.Coap + Rust `iotcom-coap` | ✅ | client/server, CON/NON reliability, dedup, separate responses, Observe, Block1/Block2, link-format, SenML, greenhouse simulator · DTLS/OSCORE/TCP ⏳ |
 | IoTCom.Net.Protocols.Lwm2m | ✅ | client (registration lifecycle, Read/Discover/Write/Execute/Observe with pmin/pmax) and server (registrations with expiry, device management, read-only default) on IoTCom CoAP; TLV, text, opaque, SenML JSON/CBOR; street light simulator; 19 TLV vectors · DTLS, bootstrap, Create/Delete, Send, block-wise ⏳ |
+| IoTCom.Net.Protocols.LoRaWan + Rust `iotcom-lorawan` | ✅ | 1.0.x codec + crypto, OTAA/ABP, MAC commands, EU868/US915/AS923-2 + airtime, Semtech UDP (forwarder + server), light network server, Class A device MAC, Cayenne LPP, simulator · Class B/C, ADR, Basics Station ⏳ |
+| IoTCom.Net.Protocols.AtCommand | ✅ | URC-aware parser, modem client (SMS, info, read-only), LTE-M simulator · PDU SMS, CMUX ⏳ |
+
+### Messaging, discovery and payloads
+
+| Component | Status | Notes |
+|---|---|---|
+| IoTCom.Net.Adapters.Mqtt | ✅ | MQTTnet 5 adapter, reconnect + resubscribe, JSON/SenML helpers, embedded broker, binary retained will + `AbortAsync` |
+| IoTCom.Net.Protocols.Sparkplug | ✅ | payload codec + topics, edge node (NDEATH will, aliases, rebirth, guarded writes), host application (STATE, gaps, late join), line simulator · data sets, templates, offline buffering ⏳ |
+| IoTCom.Net.Protocols.Mdns | ✅ | DNS codec, responder (known-answer suppression, goodbyes), browser (TTL cache, type enumeration), plant simulator · probing, IPv6 ⏳ |
 | IoTCom.Net.Adapters.Zenoh + Rust `iotcom-zenoh-native` | ✅ | session (put, delete, subscribe, `WatchAsync`, queryables, `GetAsync`, peer/client, read-only switch) over zenoh 1.10.1 (TCP/UDP transports), pure C# key-expression matching, in-process virtual network, CLI `zenoh` · TLS/QUIC transports, storages, liveliness ⏳ |
 | IoTCom.Net.Adapters.Nats | ✅ | NATS.Client.Core 3.3.0 endpoint: wildcards, queue groups, headers, request/reply, user/token/creds auth · JetStream ⏳ · integration tests need a server |
 | IoTCom.Net.Adapters.Amqp | ✅ | AMQPNetLite 2.5.4 endpoint (confirmed and pre-settled sends, redelivery, credit) and the in-process `AmqpMiniBroker` for tests and demos · transactions, dynamic nodes ⏳ |
 | IoTCom.Net.Adapters.Kafka | ✅ | Confluent.Kafka 2.16.0 endpoint: keys, headers, QoS as acks, consumer groups, regex topics, TLS/SASL; not trimmable/AOT · integration tests need a broker · admin, transactions ⏳ |
-| IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
-| IoTCom.Net.Transport.Usb + Rust `iotcom-usb-native` | ✅ | control/bulk/interrupt (nusb), HID reports (hidapi), bulk byte-stream transport, HID relay boards, virtual bus; verified enumerating real devices on Windows · isochronous, hotplug, gadget role ⏳ |
-| IoTCom.Net.Protocols.IsoTp + Rust `iotcom-isotp` | ✅ | ISO 15765-2 classic + FD, fuzzed; native `iotcom_isotp` (ABI 1) |
-| IoTCom.Net.Protocols.Uds | ✅ | UDS tester (read-only mode), OBD-II scan tool, ECU simulator with vehicle model · flashing helpers, DoIP, J1939 ⏳ |
+| IoTCom.Net.Serialization.SenML | ✅ | JSON + CBOR, resolution (RFC 8428 §4.6), builder, `SenMLPayloadCodec` |
+| IoTCom.Net.Serialization.Protobuf / .MessagePack / .Tlv | ✅ | `IPayloadCodec<T>` adapters over Google.Protobuf and MessagePack-CSharp with schema-less views; simple TLV and BER-TLV |
+
+### Navigation, drones, lighting and time
+
+| Component | Status | Notes |
+|---|---|---|
+| IoTCom.Net.Protocols.Nmea | ✅ | GGA/RMC/GSA/GSV/VTG/GLL/ZDA, GnssState, reader, server, simulator, AIS decoder/encoder/tracker/simulator |
 | IoTCom.Net.Protocols.Mavlink + generator + Rust `iotcom-mavlink` | ✅ | common dialect (235 msgs) via Roslyn generator, custom dialects, v1/v2 + signing, UDP/TCP/serial links, GCS helper, quadcopter simulator · mission protocol, FTP, routing ⏳ |
-| IoTCom.Net.Protocols.Coap + Rust `iotcom-coap` | ✅ | client/server, CON/NON reliability, dedup, separate responses, Observe, Block1/Block2, link-format, SenML, greenhouse simulator · DTLS/OSCORE/TCP ⏳ |
-| IoTCom.Net.Protocols.LoRaWan + Rust `iotcom-lorawan` | ✅ | 1.0.x codec + crypto, OTAA/ABP, MAC commands, EU868/US915/AS923-2 + airtime, Semtech UDP (forwarder + server), light network server, Class A device MAC, Cayenne LPP, simulator · Class B/C, ADR, Basics Station ⏳ |
-| IoTCom.Net.Protocols.Dlms + Rust `iotcom-dlms` | ✅ | HDLC + wrapper, A-XDR, OBIS, LLS/HLS-GMAC + suite 0 ciphering, GET blocks + selective access, SET/ACTION, client (read-only default), server + COSEM classes, meter simulator · suites 1/2, push ⏳ |
-| IoTCom.Net.Protocols.MBus + Rust `iotcom-mbus` | ✅ | frames, variable data records (DIF/VIF, BCD, dates), master (scan, secondary addressing), slave simulator · wireless M-Bus/OMS ⏳ |
-| IoTCom.Net.Protocols.AtCommand | ✅ | URC-aware parser, modem client (SMS, info, read-only), LTE-M simulator · PDU SMS, CMUX ⏳ |
-| IoTCom.Net.Protocols.Astm | ✅ | E1394 records, E1381 link (NAK retransmission), receiver/sender, analyzer simulator, HL7 bridge · host query ⏳ |
+| IoTCom.Net.Protocols.Dmx | ✅ | Art-Net ArtDmx/ArtPoll/ArtPollReply/ArtSync, sACN data + sequence rules, DmxUniverse · RDM ⏳ |
+| IoTCom.Net.Protocols.Ntp + Rust `iotcom-ntp` | ✅ | SNTP client (RFC 4330 checks, kiss-o'-death, median of servers, replaceable clock), NTP server (rate limiting), era-aware timestamps, drifting clock; fuzzed codec twin + 25 vectors; verified against public servers · NTS, symmetric/broadcast modes, clock filter ⏳ |
+
+### Healthcare
+
+| Component | Status | Notes |
+|---|---|---|
 | IoTCom.Net.Protocols.Hl7 | ✅ | ER7 codec + escaping, MLLP server/client with ACK matching, LOINC vitals, PatientMonitorSimulator (ASTM in its own package) |
+| IoTCom.Net.Protocols.Astm | ✅ | E1394 records, E1381 link (NAK retransmission), receiver/sender, analyzer simulator, HL7 bridge · host query ⏳ |
 | IoTCom.Net.Adapters.Dicom | ✅ | fo-dicom 5.2.6 Storage SCP/SCU, C-ECHO, windowed renderer → PNG, synthetic CT/MR/X-ray with planted findings (not trimmable/AOT) |
-| IoTCom.Net.Adapters.OpcUa | ✅ | OPC Foundation stack 1.5.378: client (security, user name, browse/read/write/call, subscriptions, read-only) + plant simulator server (None, Basic256Sha256) · events/A&C, history, complex types ⏳ |
 | IoTCom.Samples.Medical (sample, not packed) | ✅ | NEWS2 (RCP 2017), trends, anomalies, OpenAI-compatible AI client, SBAR + imaging pre-read with ground-truth scoring |
-| IoTCom.Net.Hosting | ✅ | AddIoTCom, IoTComEndpoints, keyed services, shared tap, health checks |
-| IoTCom.Net (meta) | ✅ | protocol-specific hosting extensions |
+
+### Tools, apps and samples
+
+| Component | Status | Notes |
+|---|---|---|
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
-| Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
+| VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | |
 | Gallery (Avalonia) | ✅ | 23 demos (LPWAN & city: street lights over LwM2M; Workbench: NFC asset tags; Messaging: fleet clock sync over NTP; Energy & grid: substation control over IEC 104; Automotive: truck cluster over J1939; Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
+| Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
 | Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
-| VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | Phase 1 |
 
-## Decisions taken during Phase 0
+## Decisions
 
-- **Modbus has two engines.** The managed `ModbusClient` is the default (works on every RID, AOT); the Rust engine
-  (`NativeModbusClient`) is a drop-in `IModbusClient`. This answers open question 6 (managed fallback) for Modbus.
-- **One DMX package.** Art-Net and sACN share the universe model and node plumbing, so they live in
-  `IoTCom.Net.Protocols.Dmx` rather than two packages.
-- **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
-  test; generated bindings (csbindgen) arrive with the next native crate.
-- **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
+Newest first. Each entry records why something was built the way it was.
 
-## Decisions taken in 0.22
+### 0.22
 
 - **Zenoh is a native adapter, not a rewrite.** The Rust `zenoh` crate is wrapped as `iotcom_zenoh` (TCP and UDP transports only) behind `IZenohBackend`, so `VirtualZenohNetwork` runs the same session code in tests, notebooks and `--sim`
   without any native library. Key-expression matching stays in pure C#.
@@ -98,7 +141,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **AMQP gets an in-process mini broker** so its tests, notebook and demos run everywhere; NATS and Kafka tests skip unless `IOTCOM_NATS_URL` /
   `IOTCOM_KAFKA_BOOTSTRAP` are set, and the CI job `brokers` runs them against service containers.
 
-## Decisions taken in 0.21
+### 0.21
 
 - **LwM2M sits on IoTCom.Net's own CoAP stack** through `InternalsVisibleTo`, so a client registers and answers the
   server's requests on the same socket (what NAT traversal needs) without a second public CoAP API.
@@ -106,7 +149,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
   and remove it when the exchange ended, which silently dropped every notification; the session test caught it.
 - **The LwM2M server is read-only by default**, like the other masters; the Gallery puts a write lock in front.
 
-## Decisions taken in 0.20
+### 0.20
 
 - **NFC is C# only**, as the design table says: PC/SC is an operating-system API wrapped with `LibraryImport`
   (three signature sets, because pcsc-lite uses 64-bit `long` on Linux), and NDEF is a small codec checked by Python
@@ -116,7 +159,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **`PcscNfcReader.Open()` skips contact readers and virtual smart cards** (this machine lists a Broadcom contact reader
   and a Windows Hello card); a name match is required to use anything else.
 
-## Decisions taken in 0.19
+### 0.19
 
 - **EtherNet/IP was deferred.** Work on it was interrupted twice, so the next items that do not operate equipment came
   first: NTP/SNTP.
@@ -125,7 +168,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **The in-memory network can now be slow** (`Latency`, `Jitter`), because offset and delay only mean something when
   packets take time; the defaults keep every existing test unchanged.
 
-## Decisions taken in 0.18
+### 0.18
 
 - **IEC 104 is managed C# with a Rust codec twin**, like CANopen and J1939: the link layer is mostly timers and windows
   that belong next to the TCP pipe, while the binary codec is what benefits from fuzzing.
@@ -134,7 +177,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **The client is read-only by default** (commands, set points, clock sync), like the DLMS and CANopen masters; the
   Gallery opens a second, command-capable connection only when the operator unlocks control.
 
-## Decisions taken in 0.17
+### 0.17
 
 - **J1939 also follows the codec-twin pattern.** The transport protocol is a small per-connection state machine whose
   timeouts sit next to the address claim, so it stays managed with the node; the Rust crate mirrors the codec for
@@ -144,7 +187,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **Read-only nodes may only request.** `SendAsync` is refused, so tools built on the node cannot send commands
   (TSC1 and similar).
 
-## Decisions taken in 0.16
+### 0.16
 
 - **CANopen follows the codec-twin pattern** (managed C# runtime, fuzzed Rust codec, shared vectors from Python) rather
   than a native state machine like ISO-TP: SDO and NMT are simple request/response flows whose timing lives in the
@@ -154,7 +197,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **The reference caught its own mistake**: 0x7FF was first written as node 127's heartbeat; heartbeats end at 0x77F,
   and the C# and Rust codecs both classified it correctly, so the vector was fixed.
 
-## Decisions taken after 0.15 (tooling)
+### After 0.15 (tooling)
 
 - **Generated bindings are the reference, not the runtime code.** csbindgen emits `DllImport` with raw pointers; the
   packages keep `LibraryImport` with SafeHandles and `out` parameters, which are safer and AOT-friendly. A reflection
@@ -163,7 +206,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - Headers are generated with cbindgen from the crate sources (`rust/include`) and compiled as C99 and C++ in CI;
   `iotcom_common.h` declares the two functions the `export_common!` macro adds, which neither generator expands.
 
-## Decisions taken in 0.15
+### 0.15
 
 - **gs_usb is managed C# on top of Transport.Usb** rather than another Rust crate: the protocol is a handful of control
   requests and fixed little-endian frames, so the USB library already in Rust is enough (design §4: no duplicate
@@ -175,7 +218,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - Neither adapter has been run against physical hardware in this release; the gs_usb path is verified against the
   Linux driver's frame layout and a protocol-level simulator.
 
-## Decisions taken in 0.14
+### 0.14
 
 - **USB in Rust with nusb, HID with hidapi**: nusb is pure Rust (no libusb to ship) on WinUSB, usbfs and IOKit; hidapi
   uses its pure-Rust backends on Windows and Linux (no libudev), so the zig cross builds need no target sysroots.
@@ -187,7 +230,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **The Gallery never opens real USB devices** and shows a fixed sample list in screenshots, so docs images do not
   publish the rendering machine's hardware and serial numbers.
 
-## Decisions taken in 0.13
+### 0.13
 
 - **BLE goes through Rust** (design: hardware access in Rust): btleplug covers WinRT, BlueZ and CoreBluetooth with one
   API. The C ABI stays small and stable by passing asynchronous events as one-line JSON drained by a poll call; GATT
@@ -197,7 +240,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **Advertisements without properties are still reported**: WinRT can announce a device before its properties are
   readable; dropping those hid weak, rarely advertising devices.
 
-## Decisions taken in 0.12
+### 0.12
 
 - **OPC UA stays an adapter** (design §4, ADR-005, open question 3): the OPC Foundation stack is MIT-licensed in
   1.5.378, so wrapping it raises no licence issue. 2.0.0 had been out for two days, so the mature 1.5.378 line is pinned.
@@ -207,7 +250,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **The traffic tap shows service calls**, not bytes: the stack owns the secure channel, so frames carry the service
   and its arguments as text.
 
-## Decisions taken in 0.11
+### 0.11
 
 - **Sparkplug B is managed C# over the MQTT adapter** (design §4: MQTT is wrapped, not rebuilt). The payload is
   encoded with Google.Protobuf's `CodedOutputStream` and Tahu field numbers instead of generated classes, keeping the
@@ -221,7 +264,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **Protobuf and MessagePack are optional packages**, outside the meta-package, so their dependencies stay opt-in; TLV
   has none and ships in the meta-package.
 
-## Decisions taken in 0.10
+### 0.10
 
 - **AIS lives in the NMEA package**: it arrives as NMEA sentences, so the decoder takes `NmeaSentence`s and the same
   readers and servers carry it. Expected values in tests come from published examples cross-checked by an
@@ -233,7 +276,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **Portable GCM for DLMS.** macOS supports only 16-byte AES-GCM tags; DLMS needs 12. Full tags truncated to 12 bytes
   are standard GCM truncation and are checked byte for byte against native 12-byte GCM on Windows and Linux.
 
-## Decisions taken in 0.9
+### 0.9
 
 - **DLMS and M-Bus run in managed C#; the Rust crates are fuzzed codec twins** (HDLC + A-XDR, M-Bus frames +
   records). Meters answer at 2400–9600 baud, so native code would buy nothing; the binary parsers are where fuzzing
@@ -245,7 +288,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **Anchors from the field.** The classic SNRM frame, a published public-client AARQ and the M-Bus documentation's
   water-meter telegram (checksum 0x18) are pinned in the tests and the Python reference.
 
-## Decisions taken in 0.8
+### 0.8
 
 - **LoRaWAN runs in managed C#; the Rust crate is a fuzzed twin** (as for CoAP and MAVLink). Uplinks are rare and
   the BCL's AES is AOT-friendly, so a native library would add packaging cost without a speed-up that matters.
@@ -258,7 +301,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
   which `iotcom lorawan simulate` can drive.
 - **AS923-2 is a first-class region** (Indonesia), alongside EU868 and US915.
 
-## Decisions taken in 0.5
+### 0.5
 
 - **The dialect is generated, not hand-written.** A Roslyn source generator turns the official MAVLink XML into
   classes at compile time. The library ships the common dialect, and the same generator, inside the package, compiles
@@ -267,7 +310,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **The runtime is managed and the Rust crate is a fuzzed twin** (same reasoning as CoAP): a per-frame FFI call would
   cost more than the framing. `iotcom-mavlink` gives the Rust side a verified frame codec for embedded companions.
 
-## Decisions taken in 0.4
+### 0.4
 
 - **CoAP runs in managed C#; the Rust crate is a fuzzed twin of the codec.** The design names CoAP as "Rust codec + C#
   I/O". Calling across the FFI for every datagram would cost more than the codec itself, so the runtime path stays
@@ -276,7 +319,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 - **Datagram transports are shared.** `IDatagramTransport` (UDP plus the lossy in-memory network) is in Core, so
   MAVLink, LwM2M and future UDP protocols reuse it, along with the loss simulation used in tests and the Gallery.
 
-## Decisions taken in 0.3
+### 0.3
 
 - **SocketCAN in C#, not Rust.** The design proposed the `socketcan` crate (pattern B). Opening a `CAN_RAW` socket is
   six libc calls, so a `LibraryImport` binding avoids shipping a second native library for one OS. It stays
@@ -285,6 +328,16 @@ Built by Gravicode Studios, led by Kang Fadhil.
   where C# async timeouts (P2/P2*) are the natural fit.
 - **slcan first** as the USB adapter (open question 1): it is driver-free on every OS, cheap (CANable), and fully
   testable via the adapter emulator. PCAN/Kvaser/gs_usb follow.
+
+### Phase 0
+
+- **Modbus has two engines.** The managed `ModbusClient` is the default (works on every RID, AOT); the Rust engine
+  (`NativeModbusClient`) is a drop-in `IModbusClient`. This answers open question 6 (managed fallback) for Modbus.
+- **One DMX package.** Art-Net and sACN share the universe model and node plumbing, so they live in
+  `IoTCom.Net.Protocols.Dmx` rather than two packages.
+- **C# bindings are hand-written for ABI v1** (5 exported functions + 2 structs) and checked by the cross-language
+  test; generated bindings (csbindgen) arrive with the next native crate.
+- **Gallery screenshots are rendered headlessly** from the real window, so docs images stay reproducible in CI.
 
 ## AI evaluation (medical demos, real models)
 
@@ -299,12 +352,19 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 - Native binaries for Linux, macOS and Windows ARM64 are not built on this machine (the MSVC ARM64 tools and cross
   toolchains are not installed). The workflow `iotcomnet-native.yml` builds them.
-- Serial and Art-Net broadcast paths are verified on loopback/in-memory only; no hardware-in-the-loop rig yet.
+- No hardware-in-the-loop rig yet: serial/RS-485 and Art-Net broadcast are verified on loopback/in-memory only, the
+  gs_usb and PCAN adapters against simulators, NFC writes against the virtual tag.
+- The Zenoh native library (`iotcom_zenoh`) is not shipped until zenoh moves to a fixed `lz4_flex` (RUSTSEC-2026-0041);
+  the package works with `VirtualZenohNetwork` only.
+- NATS and Kafka integration tests run only in the CI `brokers` job (or with `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` set).
 
 ## Log
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | Open questions answered: Matter covers controller and device/bridge; BACnet gets an adapter and our own server API. |
+| 2026-11-15 | PLAN.md and Progress.md tidied: Phase 2 as a status table, remaining work and follow-ups collected in PLAN.md, open questions marked answered/open, components grouped by area, decisions in one newest-first section. |
+| 2026-10-10 | Published 0.22.0-preview.1 (Zenoh shipped without its native library; NTP delay filter keeps a majority). |
 | 2026-10-10 | Zenoh, NATS, AMQP 1.0, Kafka (`0.22.0-preview.1`): four adapter packages (Zenoh over a native Rust library with a virtual network, AMQP with an in-process mini broker), CLI `zenoh`, CI job `brokers`, notebook pairs `messaging/22-zenoh` and `23-brokers`, docs pages *Zenoh* and *Messaging brokers*. mDNS `BrowseAsync` overflow and NTP multi-server filter fixed. |
 | 2026-10-10 | OMA LwM2M (`0.21.0-preview.1`): client and server on IoTCom CoAP, TLV/SenML, observe with pmin/pmax, street light simulator, 19 TLV vectors, CLI `lwm2m`, Gallery street lights, sample, notebook pair, docs. Three timing-dependent CI tests fixed. |
 | 2026-10-09 | NFC/NDEF (`0.20.0-preview.1`): NDEF codec, Type 2 tags, PC/SC on three OSes, virtual reader, 30 conformance vectors, CLI `nfc`, Gallery asset tags, sample, notebook pair, docs. Sparkplug test made deterministic. |

@@ -4,9 +4,12 @@ Built by Gravicode Studios, led by Kang Fadhil. The design behind this plan is i
 day-to-day status is tracked in [Progress.md](Progress.md).
 
 Priorities follow the design: **P0** foundation · **P1** first release · **P2** expansion · **P3** optional / community.
-Each protocol is "done" only when it meets the Definition of Done (bottom of this page).
+Each protocol is "done" only when it meets the [Definition of Done](#definition-of-done-per-protocol).
 
-## Phase 0 — Foundation → `0.1.0-preview` (released)
+**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 is about half done (7 of 15 protocol items);
+the latest release is `0.22.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
+
+## Phase 0 — Foundation → `0.1.0-preview` ✅ complete
 
 | Item | Status |
 |---|---|
@@ -20,57 +23,116 @@ Each protocol is "done" only when it meets the Definition of Done (bottom of thi
 | Serial transport | ✅ |
 | Hosting: `AddIoTCom()`, hosted lifecycle, health checks | ✅ |
 | CLI `iotcom` (info, ports, crc, frame, modbus, nmea, artnet, mqtt) | ✅ |
-| Docs skeleton EN/ID → full first edition (25 pages each) + parity/link gate | ✅ |
+| Docs EN/ID first edition (25 pages each) + parity/link gate | ✅ |
 | Templates `iotcom-console`, `iotcom-worker` | ✅ |
-| CI matrix (Windows, Ubuntu, macOS, Alpine) + native cross-build workflow | ✅ defined — first run pending a hosted repository |
+| CI matrix (Windows, Ubuntu, macOS, Alpine) + native cross-build workflow | ✅ green since `0.1.0-preview.1` |
 
 Pulled forward from Phase 1 because they make the foundation demonstrable: **NMEA 0183**, **Art-Net / sACN**, **SenML**,
 the **Gallery** (5 demos), the **IoTCom.Gateway** web sample and **notebooks** (6 EN/ID pairs).
 
-## Phase 1 — First release → `0.5.0-beta` (± 8–12 weeks)
+## Phase 1 — First release → `0.5.0-beta` ✅ complete (`0.2.0` – `0.15.0-preview.1`)
 
-| Item | Priority | Notes |
+Open follow-ups per protocol are collected under [Remaining work](#remaining-work) → *Follow-ups*.
+
+| Item | Priority | Delivered in |
 |---|---|---|
-| CAN / CAN FD transport (`ICanBus`): SocketCAN + one USB adapter (gs_usb / candleLight or PCAN) | P0 | ✅ `0.3.0-preview.1`: SocketCAN + slcan adapters + virtual bus · ✅ gs_usb/candleLight and PCAN-USB in `0.15.0-preview.1` · Kvaser/Vector ⏳ |
-| ISO-TP, UDS, OBD-II (tester + ECU simulator) | P1 | ✅ `0.3.0-preview.1`: ISO-TP in Rust; UDS/OBD-II/ECU simulator in C# · flashing helpers, DoIP ⏳ |
-| CoAP (Observe, Block-wise) | P1 | ✅ `0.4.0-preview.1`: C# client/server + Rust codec twin (conformance + fuzz) · DTLS, OSCORE, CoAP-over-TCP ⏳ |
-| MAVLink v1/v2 + dialect source generator | P1 | ✅ `0.5.0-preview.1`: C# runtime + Roslyn generator (common dialect, custom dialects) + Rust frame codec twin · mission protocol, FTP, routing ⏳ |
-| LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | ✅ `0.8.0-preview.1`: managed C# runtime (server, forwarder, device MAC, simulator) + fuzzed Rust codec twin · Class B/C, ADR decisions, Basics Station ⏳ |
-| DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | ✅ `0.9.0-preview.1`: managed C# client/server/simulators + fuzzed Rust codec twins · suites 1/2, push, wireless M-Bus ⏳ |
-| NMEA: AIS decoding | P1 | ✅ `0.10.0-preview.1`: types 1–5, 18, 19, 21, 24, 27, tracker, simulator, Gallery harbour demo |
-| mDNS / DNS-SD (discovery for Gallery and CLI) | P1 | ✅ `0.11.0-preview.1`: responder, browser, simulator, CLI, Gallery · probing/conflicts, IPv6 ⏳ |
-| AT command engine (cellular modules, URC parser) | P1 | ✅ `0.10.0-preview.1`: parser, modem client, LTE-M simulator · PDU SMS, CMUX ⏳ |
-| HL7 v2 MLLP + ASTM E1394 (lab analyzers) | P1 | ✅ HL7 v2 + MLLP + simulator in `0.2.0-preview.1` · ASTM E1394/E1381 + HL7 bridge in `0.10.0-preview.1` |
-| DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies | P1 | ✅ `0.2.0-preview.1` (added on request: medical use cases) |
-| Sparkplug B, OPC UA adapter (OPCFoundation.NetStandard), BLE central, USB transport | P1 | ✅ Sparkplug B in `0.11.0-preview.1` (edge node, host, simulator) · ✅ OPC UA adapter in `0.12.0-preview.1` (client, plant simulator server) · ✅ BLE central in `0.13.0-preview.1` (Rust btleplug, virtual radio) · ✅ USB + HID transport in `0.14.0-preview.1` (Rust nusb/hidapi, virtual bus) |
-| Protobuf / MessagePack adapters, TLV helpers | P1 | ✅ `0.11.0-preview.1`: `IPayloadCodec<T>`, Protobuf + MessagePack adapters with schema-less views, TLV + BER-TLV |
-| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | ✅ 10 demos (incl. MAVLink drone, CoAP greenhouse, vehicle diagnostics, ICU monitors, imaging AI pre-read) |
-| VS Code extension v0.1 (Protocol Explorer, frame/hex viewer, traffic monitor via the CLI over JSON-RPC) | P1 | ✅ 0.7.0-preview.1 |
-| `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | ✅ 6 targets (Modbus decode/master/PDU, ISO-TP, CoAP, MAVLink); smoke run per change + nightly 10 min |
-| Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen header | P1 | ✅ `rust/tools/iotcom-bindgen`: headers for all four libraries + csbindgen reference; `BindingDriftTests` compares the hand-written `LibraryImport`s; CI fails on drift and compiles the headers |
-| `iotcom sniff` (Modbus TCP proxy sniffer) and pcapng export from the traffic tap | P1 | ✅ `0.6.0-preview.1`: TCP/UDP relays + CAN capture, Wireshark-native pcapng (tshark-checked in CI), Gallery export |
+| CAN / CAN FD transport (`ICanBus`): SocketCAN, slcan, virtual bus · gs_usb/candleLight, PCAN-USB | P0 | `0.3.0` · `0.15.0` |
+| ISO-TP (Rust), UDS, OBD-II (tester + ECU simulator) | P1 | `0.3.0` |
+| CoAP (Observe, Block-wise) + Rust codec twin | P1 | `0.4.0` |
+| MAVLink v1/v2 + dialect source generator + Rust frame twin | P1 | `0.5.0` |
+| LoRaWAN MAC (device simulator, light network server) + Semtech UDP forwarder | P1 | `0.8.0` |
+| DLMS/COSEM (HDLC + APDU) and wired M-Bus | P1 | `0.9.0` |
+| NMEA: AIS decoding (types 1–5, 18, 19, 21, 24, 27) | P1 | `0.10.0` |
+| mDNS / DNS-SD | P1 | `0.11.0` |
+| AT command engine (cellular modules, URC parser) | P1 | `0.10.0` |
+| HL7 v2 MLLP · ASTM E1394/E1381 + HL7 bridge | P1 | `0.2.0` · `0.10.0` |
+| DICOM adapter (fo-dicom): Storage SCP/SCU, renderer, synthetic studies (added on request) | P1 | `0.2.0` |
+| Sparkplug B · OPC UA adapter · BLE central · USB + HID transport | P1 | `0.11.0` · `0.12.0` · `0.13.0` · `0.14.0` |
+| Protobuf / MessagePack adapters, TLV helpers (`IPayloadCodec<T>`) | P1 | `0.11.0` |
+| Gallery ≥ 10 demos, Blazor live dashboard, templates complete | P1 | 10 demos by `0.5.0` (23 today) |
+| VS Code extension v0.1 (frame viewer, traffic monitor, `iotcom rpc`) | P1 | `0.7.0` |
+| `cargo-fuzz` targets for every Rust `handle_input`, scheduled in CI | P0 | 6 targets in Phase 1 (10 today) |
+| Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen headers | P1 | after `0.15.0` |
+| `iotcom sniff` (TCP/UDP relays, CAN capture) + pcapng export | P1 | `0.6.0` |
 
-## Phase 2 — Expansion → `1.0.0` (± 12 weeks)
+## Phase 2 — Expansion → `1.0.0` 🚧 in progress
 
-CANopen ✅ (`0.16.0-preview.1`), J1939 ✅ (`0.17.0-preview.1`), IEC 60870-5-104 ✅ (`0.18.0-preview.1`), EtherNet/IP (explicit), EtherCAT master, SWD/JTAG + DFU (probe-rs), Matter
-controller, KNXnet/IP, BACnet/IP, LwM2M ✅ (`0.21.0-preview.1`), Zenoh ✅ (`0.22.0-preview.1`), DTLS 1.2/1.3, OCPP 1.6J/2.0.1, NTP/SNTP ✅ (`0.19.0-preview.1`), NFC/NDEF ✅ (`0.20.0-preview.1`), adapters for
-Kafka/NATS/AMQP ✅ (`0.22.0-preview.1`); complete EN/ID documentation; Gallery with all 17 use cases; signed and notarised releases.
+| Item | Status |
+|---|---|
+| CANopen | ✅ `0.16.0-preview.1` |
+| SAE J1939 | ✅ `0.17.0-preview.1` |
+| IEC 60870-5-104 | ✅ `0.18.0-preview.1` |
+| NTP / SNTP | ✅ `0.19.0-preview.1` |
+| NFC / NDEF | ✅ `0.20.0-preview.1` |
+| OMA LwM2M | ✅ `0.21.0-preview.1` |
+| Zenoh + Kafka / NATS / AMQP adapters | ✅ `0.22.0-preview.1` (Zenoh native library not shipped yet, see Progress) |
+| EtherNet/IP (explicit messaging) | ⏳ deferred twice in 0.19 |
+| EtherCAT master | ⏳ |
+| SWD/JTAG + DFU (probe-rs) | ⏳ |
+| Matter controller + device/bridge | ⏳ (scope decided 2026-11-15: open question 2) |
+| KNXnet/IP | ⏳ |
+| BACnet/IP: adapter + own server API | ⏳ (scope decided 2026-11-15: open question 3) |
+| DTLS 1.2/1.3 (also unlocks CoAP/LwM2M security) | ⏳ |
+| OCPP 1.6J / 2.0.1 | ⏳ |
+| Complete EN/ID documentation | 🚧 52 + 52 pages; grows with every item above |
+| Gallery with all 17 design use cases | 🚧 23 demos, 12 of 17 use cases covered |
+| Signed and notarised releases | ⏳ |
 
 ## Phase 3 — Optional
 
 PROFINET (DCP), DNP3 / IEC 61850 (only if licensing allows), SOME/IP, XCP/CCP, SUIT/MCUboot, OSCORE/EDHOC, PTP,
 ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 
+## Remaining work
+
+### To reach `1.0.0` (Phase 2)
+
+1. **Protocols:** EtherNet/IP, EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), KNXnet/IP, BACnet/IP (adapter and our own server API), DTLS, OCPP.
+2. **Gallery use cases still missing** (design §8 catalogue):
+   - #6 smart home & building — Matter, KNX, BACnet (only mDNS/BLE today);
+   - #11 EV charging — OCPP charge point + CSMS simulator;
+   - #12 probe & flash firmware — SWD/JTAG, DFU, RTT;
+   - #14 cellular module — AT terminal, URC parser, modem status (the package exists, the demo does not);
+   - #17 multi-broker pub/sub — MQTT/NATS/Zenoh/Kafka latency and bridging (the adapters exist, the demo does not).
+3. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
+4. **Releases:** code signing and macOS notarisation; a `1.0.0` API review (public surface, naming, obsolete members).
+
+### Follow-ups on delivered protocols
+
+| Area | Open items |
+|---|---|
+| CAN adapters | Kvaser, Vector; hardware-in-the-loop run of gs_usb and PCAN |
+| Automotive | UDS flashing helpers, DoIP; J1939 ETP, DM3/DM11, NMEA 2000 fast packet; CANopen SDO block, LSS, EDS import |
+| CoAP / LwM2M | DTLS, OSCORE, CoAP over TCP; LwM2M bootstrap, Create/Delete, Send, block-wise |
+| MAVLink | mission protocol, FTP, routing |
+| LoRaWAN | Class B/C, ADR decisions, Basics Station |
+| Metering | DLMS suites 1/2, push; wireless M-Bus / OMS |
+| Telecontrol | IEC 104 file transfer, IEC 62351, IEC 101 serial |
+| Time | NTS, symmetric/broadcast modes, clock filter |
+| NFC | MIFARE Classic, Type 4/5 tags, NTAG password, test with a real tag |
+| Discovery / plant | mDNS probing/conflicts, IPv6; Sparkplug data sets, templates, offline buffering |
+| Field devices | AT PDU SMS, CMUX; ASTM host query; DMX RDM |
+| Connectivity | BLE peripheral role, pairing, L2CAP; USB isochronous, hotplug, gadget role |
+| Industrial adapters | OPC UA events/A&C, history, complex types |
+| Messaging | Zenoh TLS/QUIC, storages, liveliness, **native library (blocked on zenoh moving to a fixed `lz4_flex`)**; NATS JetStream; AMQP transactions, dynamic nodes; Kafka admin, transactions |
+
+### Infrastructure and verification
+
+- Hardware-in-the-loop rig (serial/RS-485, CAN adapters, NFC tags, Art-Net broadcast) — open question 8.
+- Native binaries for Linux, macOS and Windows ARM64 come only from CI; nothing is built locally for those RIDs.
+
 ## Open questions (from the design)
 
-1. First CAN adapters (PCAN, Kvaser, slcan, gs_usb/candleLight, Vector)?
-2. Matter: controller only, or device/bridge too?
-3. BACnet and OPC UA: adapters only, or our own server API?
-4. Final licence policy for industrial modules (Apache-2.0 today).
-5. Android/iOS as official targets?
-6. Managed fallbacks for platforms without native support — Modbus already has one (the managed client).
-7. Gallery distribution: installer, portable, Store/Flatpak/Homebrew?
-8. Reference hardware for hardware-in-the-loop tests.
+| # | Question | Status |
+|---|---|---|
+| 1 | First CAN adapters (PCAN, Kvaser, slcan, gs_usb/candleLight, Vector)? | Answered: slcan (0.3), gs_usb + PCAN (0.15); Kvaser/Vector open |
+| 2 | Matter: controller only, or device/bridge too? | Answered 2026-11-15: both — controller and device/bridge |
+| 3 | BACnet and OPC UA: adapters only, or our own server API? | Answered: OPC UA adapter + simulator server (0.12); BACnet 2026-11-15: adapter **and** our own server API |
+| 4 | Final licence policy for industrial modules (Apache-2.0 today) | Open |
+| 5 | Android/iOS as official targets? | Open (Phase 3) |
+| 6 | Managed fallbacks for platforms without native support | Answered: Modbus has a managed engine; later protocols are managed C# with Rust codec twins |
+| 7 | Gallery distribution: installer, portable, Store/Flatpak/Homebrew? | Open |
+| 8 | Reference hardware for hardware-in-the-loop tests | Open |
 
 ## Definition of Done (per protocol)
 
