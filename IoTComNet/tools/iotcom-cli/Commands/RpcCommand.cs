@@ -139,6 +139,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("ocpp", "OCPP 1.6J / 2.0.1", "IoTCom.Net.Protocols.Ocpp", "charge point · CSMS · charger simulator", "protocols/ocpp.md", "automotive/24-ocpp", "OcppCharger", ["ocpp"]),
         ("knx", "KNXnet/IP", "IoTCom.Net.Protocols.Knx", "tunnelling client · routing · IP router · office floor simulator", "protocols/knx.md", "building/25-knx", "KnxMonitor", ["knxip", "cemi"]),
         ("bacnet", "BACnet/IP", "IoTCom.Net.Protocols.Bacnet", "device server · client adapter · air handling unit simulator", "protocols/bacnet.md", "building/26-bacnet", "BacnetBms", ["bacnet"]),
+        ("matter", "Matter", "IoTCom.Net.Protocols.Matter", "controller · device · bridge · PASE/CASE · onboarding codes", "protocols/matter.md", "building/31-matter", "MatterHome", ["matter", "matter-tlv"]),
         ("debug", "SWD/JTAG · RTT · DFU", "IoTCom.Net.Debug", "probe-rs probes · flashing · RTT logs · DFU/DfuSe · simulated MCU", "protocols/debug.md", "devices/30-probe-flash", "ProbeFlash", ["ihex", "dfu-suffix", "rtt"]),
         ("ethercat", "EtherCAT", "IoTCom.Net.Protocols.EtherCat", "master · CoE · process image · I/O rack simulator", "protocols/ethercat.md", "industrial/29-ethercat", "EthercatRack", ["ethercat"]),
         ("dtls", "DTLS 1.2", "IoTCom.Net.Transport.Dtls", "client · server · PSK · certificates · coaps://", "protocols/dtls.md", "network/28-dtls", "CoapsSecure", []),
@@ -273,6 +274,14 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
             case "lwm2m-tlv":
                 fields = IoTCom.Net.Protocols.Lwm2m.Lwm2mContent.DescribeTlv(bytes);
                 summary = $"{fields.Count(f => f.Name.StartsWith("resource", StringComparison.Ordinal) || f.Name.StartsWith("res. instance", StringComparison.Ordinal))} value(s)";
+                break;
+            case "matter":
+                fields = IoTCom.Net.Protocols.Matter.MatterMessage.DescribeFields(bytes);
+                summary = TrySummary(() => IoTCom.Net.Protocols.Matter.MatterMessage.Decode(bytes).Describe());
+                break;
+            case "matter-tlv":
+                fields = [new FrameField("TLV", 0, bytes.Length, FrameFieldKind.Data)];
+                summary = TrySummary(() => IoTCom.Net.Protocols.Matter.Tlv.Decode(bytes).ToString());
                 break;
             case "ihex":
                 var hexText = System.Text.Encoding.ASCII.GetString(bytes);

@@ -151,6 +151,19 @@ app.Configure(c =>
         e.AddCommand<EnipDemoCommand>("demo").WithDescription("Session, identity and tags in-process.").WithExample("enip", "demo").WithExample("enip", "demo", "--allow-write");
         e.AddCommand<EnipDecodeCommand>("decode").WithDescription("Decode an encapsulation packet or a CIP message.").WithExample("enip", "decode", "4C 06 91 0A 4C 69 6E 65 5F 53 70 65 65 64 01 00");
     });
+    c.AddBranch("matter", m =>
+    {
+        m.SetDescription("Matter: onboarding codes, a simulated device or bridge on UDP 5540, DNS-SD discovery, commissioning (PASE, attestation, NOC, CASE), read, on/off and subscribe. The fabric lives in a file with private keys.");
+        m.AddCommand<MatterCodeCommand>("code").WithDescription("Decode an MT: QR payload or manual code, or encode one.").WithExample("matter", "code", "MT:Y.K9042C00KA0648G00").WithExample("matter", "code", "--discriminator", "1234", "--passcode", "12345679");
+        m.AddCommand<MatterDeviceCommand>("device").WithDescription("Run a simulated light or smart-home bridge (test attestation).").WithExample("matter", "device").WithExample("matter", "device", "--bridge", "--mdns");
+        m.AddCommand<MatterDiscoverCommand>("discover").WithDescription("Browse _matterc._udp and _matter._tcp over DNS-SD.").WithExample("matter", "discover");
+        m.AddCommand<MatterCommissionCommand>("commission").WithDescription("Commission a device onto this controller's fabric (requires --allow-write).").WithExample("matter", "commission", "192.168.1.40", "34970112332", "--node", "1", "--allow-write");
+        m.AddCommand<MatterReadCommand>("read").WithDescription("Read attributes (wildcards allowed).").WithExample("matter", "read", "192.168.1.40", "1", "0/0x0028/*");
+        m.AddCommand<MatterOnOffCommand>("onoff").WithDescription("On, off or toggle (requires --allow-write).").WithExample("matter", "onoff", "192.168.1.40", "1", "1", "toggle", "--allow-write");
+        m.AddCommand<MatterSubscribeCommand>("subscribe").WithDescription("Subscribe and print reports.").WithExample("matter", "subscribe", "192.168.1.40", "1", "*/0x0006/0");
+        m.AddCommand<MatterDemoCommand>("demo").WithDescription("Bridge and controller in-process; --allow-write commissions and switches a light.").WithExample("matter", "demo", "--allow-write");
+        m.AddCommand<MatterDecodeCommand>("decode").WithDescription("Decode an unsecured message or a TLV element.").WithExample("matter", "decode", "1534000118");
+    });
     c.AddBranch("probe", p =>
     {
         p.SetDescription("SWD/JTAG debug probes through probe-rs: list probes, read memory, flash firmware, stream RTT logs, halt/run/reset. Writes need --allow-write; --sim uses a simulated STM32F411.");

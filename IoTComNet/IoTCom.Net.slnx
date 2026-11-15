@@ -27,6 +27,7 @@
     <Project Path="samples/console/BacnetBms/BacnetBms.csproj" />
     <Project Path="samples/console/EnipTags/EnipTags.csproj" />
     <Project Path="samples/console/EthercatRack/EthercatRack.csproj" />
+    <Project Path="samples/console/MatterHome/MatterHome.csproj" />
     <Project Path="samples/console/MavlinkTelemetry/MavlinkTelemetry.csproj" />
     <Project Path="samples/console/MBusScanner/MBusScanner.csproj" />
     <Project Path="samples/console/MdnsDiscovery/MdnsDiscovery.csproj" />
@@ -83,6 +84,7 @@
     <Project Path="src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Mavlink/IoTCom.Net.Protocols.Mavlink.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.MBus/IoTCom.Net.Protocols.MBus.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.Matter/IoTCom.Net.Protocols.Matter.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Mdns/IoTCom.Net.Protocols.Mdns.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Sparkplug/IoTCom.Net.Protocols.Sparkplug.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Modbus/IoTCom.Net.Protocols.Modbus.csproj" />

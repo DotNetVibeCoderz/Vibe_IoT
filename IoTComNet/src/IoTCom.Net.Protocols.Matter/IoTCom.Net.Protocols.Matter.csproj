@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Matter</RootNamespace>
+    <Description>Matter for IoTCom.Net: TLV, onboarding payloads (QR and manual codes), the message layer with MRP, PASE (SPAKE2+) and CASE secure sessions, the Interaction Model, a controller (commissioning, read/write/invoke/subscribe; read-only by default), a device with endpoints and clusters, and a bridge. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);matter;chip;csa;smart-home;commissioning;spake2;tlv;bridge</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Mdns\IoTCom.Net.Protocols.Mdns.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />
+    <PackageReference Include="BouncyCastle.Cryptography" />
+  </ItemGroup>
+</Project>

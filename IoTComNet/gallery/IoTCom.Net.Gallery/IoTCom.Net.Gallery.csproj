@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Ble\IoTCom.Net.Transport.Ble.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Debug\IoTCom.Net.Debug.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Matter\IoTCom.Net.Protocols.Matter.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Bacnet\IoTCom.Net.Adapters.Bacnet.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Amqp\IoTCom.Net.Adapters.Amqp.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Adapters.Zenoh\IoTCom.Net.Adapters.Zenoh.csproj" />

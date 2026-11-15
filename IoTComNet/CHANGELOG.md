@@ -3,6 +3,30 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.30.0-preview.1 — 2026-11-15
+
+Matter: controller, device and bridge. This completes the protocol list of Phase 2.
+
+- **New package `IoTCom.Net.Protocols.Matter`** (separate from the meta-package, like DTLS: it uses BouncyCastle for P-256 and AES-CCM):
+  TLV, onboarding payloads (QR and manual codes), message and protocol headers, Interaction Model messages, operational certificates with
+  the exact X.509 DER they sign; SPAKE2+ (PASE), CASE, MRP, message counters and session keys; `MatterController` (commissioning with
+  fail-safe, attestation, CSR, root and NOC, CASE and step progress; read with wildcards, write, invoke, subscribe; **read-only by default**;
+  `FabricFile` persistence), `MatterDevice` (root node clusters, fabric table, PASE/CASE responders, Interaction Model server with
+  subscriptions, fail-safe roll-back, admin-only access), `MatterBridge` and `MatterBridgeSimulator`, `MatterDiscovery` (DNS-SD over
+  IoTCom's mDNS), `MatterAttestation` with a published test PAA, `AddMatterController`/`AddMatterDevice`.
+- **New Rust crate `iotcom-matter`**: fuzzed twin of TLV, onboarding payloads and message headers (17th fuzz target `matter`, about 4 M local
+  runs, no findings); `/conformance/matter.json` (41 vectors) from an independent Python reference that reproduces the CHIP SDK's published
+  onboarding example and the spec's compressed-fabric-id example and computes two complete SPAKE2+ exchanges.
+- Interoperability: verified against those references and between IoTCom's controller and device across processes over UDP; not yet against
+  other Matter stacks (see the docs page).
+- CLI `iotcom matter code|device|discover|commission|read|onoff|subscribe|demo|decode`, VS Code decoders `matter` and `matter-tlv`, pcapng on
+  UDP 5540, Gallery *Smart home over Matter*, MatterHome sample, notebook pair `building/31-matter`, docs page *Matter*, benchmark
+  (`MatterBenchmarks`).
+
+*Matter: controller, perangkat, dan bridge dengan PASE/CASE, atestasi, sertifikat operasional, Interaction Model dengan subscription, dan
+DNS-SD; kembaran codec Rust yang di-fuzz dan referensi Python independen; CLI, Gallery, sampel, notebook, dan dokumentasi. Daftar protokol
+Fase 2 selesai.*
+
 ## 0.29.0-preview.1 — 2026-11-15
 
 Probe and flash microcontrollers: SWD/JTAG, RTT and USB DFU.

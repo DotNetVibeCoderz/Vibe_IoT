@@ -6,8 +6,8 @@ day-to-day status is tracked in [Progress.md](Progress.md).
 Priorities follow the design: **P0** foundation · **P1** first release · **P2** expansion · **P3** optional / community.
 Each protocol is "done" only when it meets the [Definition of Done](#definition-of-done-per-protocol).
 
-**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 is well past half (11 of 15 protocol items);
-the latest release is `0.26.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
+**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 has delivered all 15 protocol items and
+the Gallery covers all 17 design use cases; the latest release is `0.30.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
 
 ## Phase 0 — Foundation → `0.1.0-preview` ✅ complete
 
@@ -55,7 +55,7 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | Generated C# bindings (csbindgen) checked for drift in CI; committed cbindgen headers | P1 | after `0.15.0` |
 | `iotcom sniff` (TCP/UDP relays, CAN capture) + pcapng export | P1 | `0.6.0` |
 
-## Phase 2 — Expansion → `1.0.0` 🚧 in progress
+## Phase 2 — Expansion → `1.0.0` 🚧 protocols delivered; release work left
 
 | Item | Status |
 |---|---|
@@ -69,12 +69,12 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | EtherNet/IP (explicit messaging) | ✅ `0.26.0-preview.1` |
 | EtherCAT master | ✅ `0.28.0-preview.1` |
 | SWD/JTAG + DFU (probe-rs) | ✅ `0.29.0-preview.1` |
-| Matter controller + device/bridge | ⏳ (scope decided 2026-11-15: open question 2) |
+| Matter controller + device/bridge | ✅ `0.30.0-preview.1` (interop with other stacks still to verify) |
 | KNXnet/IP | ✅ `0.24.0-preview.1` |
 | BACnet/IP: adapter + own server API | ✅ `0.25.0-preview.1` |
 | DTLS 1.2 (also unlocks CoAP/LwM2M security) | ✅ `0.27.0-preview.1` (DTLS 1.3 is a follow-up) |
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
-| Complete EN/ID documentation | 🚧 60 + 60 pages; grows with every item above |
+| Complete EN/ID documentation | 🚧 61 + 61 pages; grows with every item above |
 | Gallery with all 17 design use cases | ✅ 31 demos, all 17 use cases covered (`0.29.0-preview.1`) |
 | Signed and notarised releases | ✅ wired 2026-11-15 (Authenticode, NuGet author signing, Developer ID + notarisation; active once the signing secrets are added) |
 
@@ -87,8 +87,8 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 
 ### To reach `1.0.0` (Phase 2)
 
-1. **Protocols:** Matter (controller and device/bridge).
-2. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
+1. **Interoperability:** run Matter against chip-tool and a commercial ecosystem; run EtherCAT, SWD/DFU and the CAN adapters on real hardware.
+2. **Documentation:** a complete support matrix, EN/ID parity kept.
 3. **Releases:** add the signing secrets (see *Releasing and signing*); a `1.0.0` API review (public surface, naming, obsolete members).
 
 ### Follow-ups on delivered protocols
@@ -111,6 +111,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 | EtherNet/IP | Forward_Open connected messaging, Logix UDTs/STRING, Read Tag Fragmented, tag browsing, CIP Security (implicit I/O is Phase 3) |
 | EtherCAT | Distributed clocks, EoE/FoE/SoE, segmented SDO and SDO information, PDO remapping, cable redundancy, hot connect, images larger than one frame; a run on real terminals |
 | SWD/JTAG, RTT, DFU | GDB server, breakpoints and stepping, defmt decoding, SWO, RTT on 64-bit cores, DfuSe option bytes and read-unprotect; a run on a physical probe |
+| Matter | Interop with chip-tool and commercial ecosystems; BLE/Wi-Fi/Thread commissioning; groups and group keys; events; ICD; OTA; ACL editing; timed and chunked interactions; session resumption; more clusters (thermostat, window covering, door lock) |
 | Industrial adapters | OPC UA events/A&C, history, complex types |
 | Building automation | BACnet segmentation, BBMD/foreign devices, alarms/events, schedules, trend logs, BACnet/SC, MS/TP; KNX Secure, KNXnet/IP over TCP, device management, busmonitor mode |
 | EV charging | OCPP firmware management, local authorization lists, reservations, 2.0.1 device-model reports, offline transaction queue, OCPP 2.1 |

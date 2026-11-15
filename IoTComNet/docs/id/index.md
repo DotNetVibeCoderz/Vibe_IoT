@@ -49,6 +49,7 @@ perangkat keras.
 | [OCPP](protocols/ocpp.md) | charge point · CSMS · 1.6J dan 2.0.1 · simulator pengisi dengan model EV | `IoTCom.Net.Protocols.Ocpp` |
 | [KNX](protocols/knx.md) | klien tunnelling · routing · router KNX IP · DPT · simulator lantai kantor | `IoTCom.Net.Protocols.Knx` |
 | [BACnet](protocols/bacnet.md) | server device · adapter klien · priority array · COV · simulator AHU | `IoTCom.Net.Protocols.Bacnet`, `IoTCom.Net.Adapters.Bacnet` |
+| [Matter](protocols/matter.md) | controller · perangkat · bridge · PASE/CASE · kode onboarding · DNS-SD · simulator bridge rumah pintar | `IoTCom.Net.Protocols.Matter` |
 | [EtherNet/IP](protocols/ethernetip.md) | klien explicit · adapter · tag Logix · ListIdentity · simulator PLC | `IoTCom.Net.Protocols.EtherNetIp` |
 | [EtherCAT](protocols/ethercat.md) | master · pindai jalur · SII · state AL · process image · CoE · Ethernet mentah · simulator rak I/O | `IoTCom.Net.Protocols.EtherCat` |
 | [SWD/JTAG, RTT, DFU](protocols/debug.md) | probe probe-rs · flash · log RTT · USB DFU/DfuSe · Intel HEX/DFU/ELF · MCU simulasi | `IoTCom.Net.Debug` |

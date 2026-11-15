@@ -322,3 +322,28 @@ public class FirmwareBenchmarks
         return (await _rtt.ReadAsync()).Length;
     }
 }
+
+[MemoryDiagnoser]
+public class MatterBenchmarks
+{
+    private static readonly byte[] Report = IoTCom.Net.Protocols.Matter.InteractionModel.ReportData(Enumerable.Range(0, 8).Select(i =>
+        new IoTCom.Net.Protocols.Matter.AttributeReport(new IoTCom.Net.Protocols.Matter.AttributePath((ushort)i, 6, 0), 1, IoTCom.Net.Protocols.Matter.TlvElement.Bool(IoTCom.Net.Protocols.Matter.TlvTag.Anonymous, true))));
+    private static readonly byte[] Salt = new byte[16];
+    private static readonly byte[] Context = new byte[32];
+    private static readonly byte[] Verifier = IoTCom.Net.Protocols.Matter.Spake2Plus.ComputeVerifier(20202021, Salt, 1000);
+    private static readonly (byte[] W0, byte[] W1) W = IoTCom.Net.Protocols.Matter.Spake2Plus.ComputeW(20202021, Salt, 1000);
+
+    /// <summary>Decode a ReportData message with eight attribute reports.</summary>
+    [Benchmark]
+    public int DecodeReport() => IoTCom.Net.Protocols.Matter.InteractionModel.DecodeReportData(Report).Reports.Count;
+
+    /// <summary>The SPAKE2+ computation of a PASE handshake, both sides (PBKDF2 excluded).</summary>
+    [Benchmark]
+    public byte[] Spake2Plus()
+    {
+        var prover = new IoTCom.Net.Protocols.Matter.Spake2PlusProver(Context, W.W0, W.W1);
+        var verifier = new IoTCom.Net.Protocols.Matter.Spake2PlusVerifier(Context, Verifier);
+        var cB = verifier.Respond(prover.X);
+        return verifier.Confirm(prover.Finish(verifier.Y, cB));
+    }
+}

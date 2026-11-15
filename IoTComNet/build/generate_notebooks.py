@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.29.0-preview.1"
+VERSION = "0.30.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `industrial/29-ethercat` | EtherCAT: frames, line scan, SAFE-OP inputs, CoE, OP and working counters |\n| `devices/30-probe-flash` | SWD flashing, RTT logs and commands, DfuSe updates, firmware files |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `industrial/29-ethercat` | EtherCAT: frames, line scan, SAFE-OP inputs, CoE, OP and working counters |\n| `devices/30-probe-flash` | SWD flashing, RTT logs and commands, DfuSe updates, firmware files |\n| `building/31-matter` | Matter: onboarding codes, TLV, commissioning, reads, commands, subscriptions |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `industrial/29-ethercat` | EtherCAT: frame, pindai jalur, input SAFE-OP, CoE, OP, dan working counter |\n| `devices/30-probe-flash` | Flash lewat SWD, log dan perintah RTT, pembaruan DfuSe, file firmware |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `industrial/29-ethercat` | EtherCAT: frame, pindai jalur, input SAFE-OP, CoE, OP, dan working counter |\n| `devices/30-probe-flash` | Flash lewat SWD, log dan perintah RTT, pembaruan DfuSe, file firmware |\n| `building/31-matter` | Matter: kode onboarding, TLV, commissioning, pembacaan, perintah, subscription |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -1149,6 +1149,52 @@ await dfu.DisposeAsync();"""),
            "See `docs/en/protocols/debug.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom probe list`, `iotcom probe flash <file> --target <chip> --allow-write`, `iotcom probe rtt --sim`, `iotcom dfu download --sim --leave --allow-write`, *Probe dan flash firmware* di Gallery, dan sampel ProbeFlash. "
            "Lihat `docs/id/protocols/debug.md`.\n\n" + CREDIT[1]),
+    ],
+    "building/31-matter": [
+        md("# Matter — commission a bridge, read and switch it\n\nA smart-home bridge (`MatterDevice` + `MatterBridgeSimulator`) and a controller (`MatterController`) share an in-memory network. "
+           "With real devices use `UseUdp()` and the device's address on UDP 5540; the controller stays read-only until `AllowWrites()`.",
+           "# Matter — commission bridge, baca, dan kendalikan\n\nBridge rumah pintar (`MatterDevice` + `MatterBridgeSimulator`) dan controller (`MatterController`) berbagi jaringan dalam memori. "
+           "Dengan perangkat sungguhan pakai `UseUdp()` dan alamat perangkat di UDP 5540; controller tetap hanya-baca sampai `AllowWrites()`."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Protocols.Matter, {VERSION}"'),
+        md("## Onboarding codes and TLV\nThe QR payload and the manual code carry the discriminator and passcode; Matter messages carry TLV.",
+           "## Kode onboarding dan TLV\nPayload QR dan kode manual membawa discriminator dan passcode; pesan Matter membawa TLV."),
+        code("""using System.Net;
+using IoTCom.Net;
+using IoTCom.Net.Protocols.Matter;
+using IoTCom.Net.Transports;
+
+var payload = MatterSetupPayload.FromQrCode("MT:Y.K9042C00KA0648G00");
+Console.WriteLine($"{payload.Describe()} -> manual code {payload.ToManualCode()}");
+var tlv = Tlv.Encode(TlvElement.Structure(TlvTag.Anonymous, TlvElement.UInt(TlvTag.Context(0), 42), TlvElement.String(TlvTag.Context(1), "Lampu")));
+Console.WriteLine($"{Convert.ToHexString(tlv)} = {Tlv.Decode(tlv)}");"""),
+        md("## Commission\nPASE with the passcode, fail-safe, attestation, CSR, root and NOC, then CASE — each step reported.",
+           "## Commission\nPASE dengan passcode, fail-safe, atestasi, CSR, root dan NOC, lalu CASE — setiap langkah dilaporkan."),
+        code("""var net = new InMemoryDatagramNetwork();
+var at = new IPEndPoint(IPAddress.Parse("10.0.0.70"), 5540);
+var bridge = MatterDevice.Create(o => { o.UseInMemory(net, at); o.ProductName = "IoTCom smart home bridge"; });
+var house = new MatterBridgeSimulator(bridge);
+await bridge.StartAsync();
+var controller = MatterController.Create(o => o.UseInMemory(net).AllowWrites().TrustTestDevices());
+var node = await controller.CommissionAsync(at, bridge.SetupPayload, 0x42, new Progress<MatterCommissioningStep>(s => Console.WriteLine($"  {s}")));
+Console.WriteLine($"node 0x{node.NodeId:X} on fabric 0x{controller.FabricId:X} ({controller.CompressedFabricId})");"""),
+        md("## Read, invoke, subscribe\nWildcard reads over the bridged endpoints, a subscription, and an On command.",
+           "## Baca, invoke, subscribe\nPembacaan wildcard atas endpoint yang dijembatani, sebuah subscription, dan perintah On."),
+        code("""foreach (var r in await node.ReadAsync([new AttributePath(null, MatterIds.BridgedDeviceBasicInformation, 5)]))
+    Console.WriteLine($"endpoint {r.Path.Endpoint}: {r.Value!.AsString()}");
+await node.SubscribeAsync([new AttributePath(null, MatterIds.OnOff, 0)], 0, 60, r => Console.WriteLine($"report {r.Path} = {r.Value}"));
+await node.InvokeAsync(4, MatterIds.OnOff, 1);
+await Task.Delay(300);
+Console.WriteLine($"terrace light on: {house.Lights[2].OnOff.On}");
+var readOnly = MatterController.Create(o => o.UseInMemory(net));
+try { await readOnly.CommissionAsync(at, bridge.SetupPayload, 9); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }
+await readOnly.DisposeAsync();
+await controller.DisposeAsync();
+await bridge.DisposeAsync();"""),
+        md("## Going further\n`iotcom matter code`, `iotcom matter device --bridge`, `iotcom matter commission <host> <code> --allow-write`, `iotcom matter demo --allow-write`, the Gallery's *Smart home over Matter* and the MatterHome sample. "
+           "See `docs/en/protocols/matter.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom matter code`, `iotcom matter device --bridge`, `iotcom matter commission <host> <code> --allow-write`, `iotcom matter demo --allow-write`, *Rumah pintar lewat Matter* di Gallery, dan sampel MatterHome. "
+           "Lihat `docs/id/protocols/matter.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "

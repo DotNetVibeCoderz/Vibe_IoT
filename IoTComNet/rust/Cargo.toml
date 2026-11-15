@@ -20,6 +20,7 @@ members = [
     "crates/iotcom-enip",
     "crates/iotcom-ethercat",
     "crates/iotcom-firmware",
+    "crates/iotcom-matter",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",

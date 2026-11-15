@@ -1843,6 +1843,284 @@ def firmware_vectors():
     return out
 
 
+def matter_vectors():
+    """Matter: TLV (appendix A), onboarding payloads (QR base38 and manual codes with the Verhoeff check digit, §5.1),
+    message and protocol headers (§4.4), the compressed fabric id (§4.3.2.2, the spec's own example) and a complete
+    SPAKE2+ exchange as PASE uses it (§3.10) with fixed scalars, computed with pure-Python P-256 arithmetic.
+
+    Each vector gives its input and a normalised description that the C# codec (and, for the codecs, the Rust twin)
+    must produce, or "error".
+    """
+    import hashlib
+    import hmac
+    import struct
+    out = []
+
+    def vector(kind, name, data, expected, **extra):
+        v = {"kind": kind, "name": name, "hex": data.hex().upper() if isinstance(data, bytes) else data.encode().hex().upper(), "expected": expected}
+        v.update(extra)
+        out.append(v)
+
+    # ---- TLV
+    def tag_bytes(tag):
+        if tag is None:
+            return 0, b"", ""
+        kind = tag[0]
+        if kind == "ctx":
+            return 1, bytes([tag[1]]), f"{tag[1]}="
+        if kind == "common":
+            return (2, struct.pack("<H", tag[1]), f"common:{tag[1]}=") if tag[1] <= 0xFFFF else (3, struct.pack("<I", tag[1]), f"common:{tag[1]}=")
+        if kind == "implicit":
+            return (4, struct.pack("<H", tag[1]), f"implicit:{tag[1]}=") if tag[1] <= 0xFFFF else (5, struct.pack("<I", tag[1]), f"implicit:{tag[1]}=")
+        vendor, profile, number = tag[1], tag[2], tag[3]
+        if number <= 0xFFFF:
+            return 6, struct.pack("<HHH", vendor, profile, number), f"{vendor:04X}:{profile:04X}:{number}="
+        return 7, struct.pack("<HHI", vendor, profile, number), f"{vendor:04X}:{profile:04X}:{number}="
+
+    def el(tag, type_code, body):
+        control, tb, _ = tag_bytes(tag)
+        return bytes([(control << 5) | type_code]) + tb + body
+
+    def uint(tag, v, size=None):
+        size = size or (1 if v <= 0xFF else 2 if v <= 0xFFFF else 4 if v <= 0xFFFFFFFF else 8)
+        code = {1: 4, 2: 5, 4: 6, 8: 7}[size]
+        return el(tag, code, v.to_bytes(size, "little"))
+
+    def sint(tag, v, size):
+        code = {1: 0, 2: 1, 4: 2, 8: 3}[size]
+        return el(tag, code, v.to_bytes(size, "little", signed=True))
+
+    def utf8(tag, text):
+        b = text.encode()
+        return el(tag, 0x0C, bytes([len(b)]) + b)
+
+    def octets(tag, b):
+        return el(tag, 0x10, bytes([len(b)]) + b)
+
+    def container(tag, code, *members):
+        return el(tag, code, b"".join(members) + b"\x18")
+
+    def d(tag):
+        return tag_bytes(tag)[2]
+
+    vector("tlv", "unsigned 8, 16, 32 and 64-bit", container(None, 0x16, uint(None, 42), uint(None, 70000), uint(None, 0x1_0000_0000), uint(None, 300, size=2)),
+           "[42u,70000u,4294967296u,300u]")
+    vector("tlv", "signed and booleans, null", container(None, 0x15, sint(("ctx", 0), -17, 1), sint(("ctx", 1), -40000, 4), el(("ctx", 2), 0x09, b""), el(("ctx", 3), 0x08, b""), el(("ctx", 4), 0x14, b"")),
+           "{0=-17,1=-40000,2=true,3=false,4=null}")
+    vector("tlv", "strings and octets", container(None, 0x15, utf8(("ctx", 1), "Lampu teras"), octets(("ctx", 2), b"\xDE\xAD\xBE\xEF")),
+           '{1="Lampu teras",2=h\'DEADBEEF\'}')
+    vector("tlv", "floats", container(None, 0x16, el(None, 0x0A, struct.pack("<f", 1.5)), el(None, 0x0B, struct.pack("<d", -0.25))), "[1.5f,-0.25d]")
+    vector("tlv", "nested list with profile tags", container(("common", 7), 0x17, uint(("implicit", 0x12345), 1), container(("fq", 0xFFF1, 0xDEED, 3), 0x15, uint(("ctx", 9), 9))),
+           "common:7=(implicit:74565=1u,FFF1:DEED:3={9=9u})")
+    vector("tlv", "empty structure", container(None, 0x15), "{}")
+    vector("tlv", "two-byte string length", el(None, 0x0D, struct.pack("<H", 3) + b"abc"), '"abc"')
+    vector("tlv", "truncated integer", bytes([0x05, 0x01]), "error")
+    vector("tlv", "string past the end", bytes([0x0C, 0x05]) + b"ab", "error")
+    vector("tlv", "tagged member in an array", container(None, 0x16, uint(("ctx", 0), 1)), "error")
+    vector("tlv", "anonymous member in a structure", container(None, 0x15, uint(None, 1)), "error")
+    vector("tlv", "reserved element type", bytes([0x19]), "error")
+    vector("tlv", "end of container at top level", bytes([0x18]), "error")
+    vector("tlv", "missing end of container", bytes([0x15, 0x24, 0x00, 0x01]), "error")
+    vector("tlv", "trailing bytes", uint(None, 1) + b"\x00", "error")
+    vector("tlv", "invalid UTF-8", bytes([0x0C, 0x02, 0xC3, 0x28]), "error")
+
+    # ---- onboarding payloads
+    alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-."
+
+    def base38(data):
+        text = ""
+        for i in range(0, len(data), 3):
+            chunk = data[i:i + 3]
+            v = int.from_bytes(chunk, "little")
+            for _ in range({3: 5, 2: 4, 1: 2}[len(chunk)]):
+                text += alphabet[v % 38]
+                v //= 38
+        return text
+
+    def qr(vid, pid, flow, disc_caps, discriminator, passcode):
+        bits, at = 0, 0
+        for value, count in ((0, 3), (vid, 16), (pid, 16), (flow, 2), (disc_caps, 8), (discriminator, 12), (passcode, 27), (0, 4)):
+            bits |= value << at
+            at += count
+        return "MT:" + base38(bits.to_bytes(11, "little"))
+
+    def qr_desc(vid, pid, flow, caps, discriminator, passcode):
+        return f"vid={vid:04X} pid={pid:04X} flow={flow} disc={caps} discriminator={discriminator} passcode={passcode}"
+
+    example = qr(0xFFF1, 0x8000, 0, 2, 3840, 20202021)
+    assert example == "MT:Y.K9042C00KA0648G00", example   # the CHIP SDK's published example
+    vector("qr", "SDK example device", example, qr_desc(0xFFF1, 0x8000, 0, 2, 3840, 20202021))
+    vector("qr", "on-network, user intent", qr(0x1234, 0x0042, 1, 4, 0x0ABC, 12345679), qr_desc(0x1234, 0x0042, 1, 4, 0x0ABC, 12345679))
+    vector("qr", "custom flow, every capability", qr(0xFFF4, 0xFFFF, 2, 0x0F, 0xFFF, 99999998), qr_desc(0xFFF4, 0xFFFF, 2, 0x0F, 0xFFF, 99999998))
+    vector("qr", "wrong prefix", "XX:Y.K9042C00KA0648G00", "error")
+    vector("qr", "character outside base38", "MT:Y.K9042C00KA0648G0!", "error")
+    vector("qr", "trivial passcode 11111111", qr(0xFFF1, 0x8000, 0, 2, 3840, 11111111), "error")
+    vector("qr", "truncated", "MT:Y.K9042C0", "error")
+
+    D5 = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 0, 6, 7, 8, 9, 5], [2, 3, 4, 0, 1, 7, 8, 9, 5, 6], [3, 4, 0, 1, 2, 8, 9, 5, 6, 7], [4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+          [5, 9, 8, 7, 6, 0, 4, 3, 2, 1], [6, 5, 9, 8, 7, 1, 0, 4, 3, 2], [7, 6, 5, 9, 8, 2, 1, 0, 4, 3], [8, 7, 6, 5, 9, 3, 2, 1, 0, 4], [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    P8 = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 5, 7, 6, 2, 8, 3, 0, 9, 4], [5, 8, 0, 3, 7, 9, 6, 1, 4, 2], [8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+          [9, 4, 5, 3, 1, 2, 6, 8, 7, 0], [4, 2, 8, 6, 5, 7, 3, 9, 0, 1], [2, 7, 9, 3, 8, 0, 6, 4, 1, 5], [7, 0, 4, 6, 9, 1, 3, 2, 5, 8]]
+    INV = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9]
+
+    def verhoeff(digits):
+        c = 0
+        for i, ch in enumerate(reversed(digits)):
+            c = D5[c][P8[(i + 1) % 8][int(ch)]]
+        return str(INV[c])
+
+    def manual(vid, pid, flow, discriminator, passcode):
+        vp = flow != 0
+        short = discriminator >> 8
+        digits = f"{(int(vp) << 2) | (short >> 2)}{((short & 3) << 14) | (passcode & 0x3FFF):05d}{passcode >> 14:04d}"
+        if vp:
+            digits += f"{vid:05d}{pid:05d}"
+        return digits + verhoeff(digits)
+
+    m = manual(0xFFF1, 0x8000, 0, 3840, 20202021)
+    assert m == "34970112332", m   # the SDK's published manual code
+    vector("manual", "SDK example (11 digits)", m, qr_desc(0, 0, 0, 0, 3840, 20202021))
+    m21 = manual(0xFFF1, 0x8001, 1, 0x0A00, 87654320)
+    vector("manual", "with vendor and product (21 digits)", m21, qr_desc(0xFFF1, 0x8001, 1, 0, 0x0A00, 87654320))
+    vector("manual", "dashes are ignored", m[:4] + "-" + m[4:7] + "-" + m[7:], qr_desc(0, 0, 0, 0, 3840, 20202021))
+    vector("manual", "wrong check digit", m[:-1] + str((int(m[-1]) + 1) % 10), "error")
+    vector("manual", "wrong length", m[:-2], "error")
+    vector("manual", "21 digits without the vendor flag", m[:-1] + "0000000000" + verhoeff(m[:-1] + "0000000000"), "error")
+
+    # ---- messages (unsecured)
+    def message(session=0, counter=1, src=None, dst=None, group=None, exchange=1, initiator=True, reliable=True, ack=None, protocol=1, vendor=0, opcode=2, payload=b"", flags_extra=0, security=0):
+        flags = (0x04 if src is not None else 0) | (0x01 if dst is not None else 0x02 if group is not None else 0) | flags_extra
+        h = bytes([flags]) + struct.pack("<H", session) + bytes([security]) + struct.pack("<I", counter)
+        if src is not None:
+            h += struct.pack("<Q", src)
+        if dst is not None:
+            h += struct.pack("<Q", dst)
+        elif group is not None:
+            h += struct.pack("<H", group)
+        ex = (0x01 if initiator else 0) | (0x02 if ack is not None else 0) | (0x04 if reliable else 0) | (0x10 if vendor else 0)
+        p = bytes([ex, opcode]) + struct.pack("<H", exchange)
+        if vendor:
+            p += struct.pack("<H", vendor)
+        p += struct.pack("<H", protocol)
+        if ack is not None:
+            p += struct.pack("<I", ack)
+        return h + p + payload
+
+    def mdesc(session=0, counter=1, src=None, dst=None, group=None, exchange=1, initiator=True, reliable=True, ack=None, protocol=1, vendor=0, opcode=2, payload=b""):
+        flags = ("I" if initiator else "") + ("R" if reliable else "") + ("A" if ack is not None else "")
+        return (f"session={session} counter={counter} src={src:016X} " if src is not None else f"session={session} counter={counter} src=- ") + \
+            (f"dst={dst:016X} " if dst is not None else f"dst=g{group:04X} " if group is not None else "dst=- ") + \
+            f"exchange={exchange} {flags} ack={ack if ack is not None else '-'} protocol={vendor:04X}:{protocol:04X} opcode=0x{opcode:02X} payload={payload.hex().upper()}"
+
+    pbkdf = bytes.fromhex("15300120") + bytes(32) + bytes.fromhex("25020100240300280418")
+    cases = [
+        ("PBKDFParamRequest from an ephemeral node", dict(src=0xFFFFFFFE12345678, exchange=0x1234, protocol=0, opcode=0x20, payload=pbkdf)),
+        ("response with acknowledgement and destination", dict(counter=7, dst=0xFFFFFFFE12345678, exchange=0x1234, initiator=False, ack=0x01020304, protocol=0, opcode=0x21)),
+        ("standalone acknowledgement", dict(counter=9, exchange=77, initiator=False, reliable=False, ack=8, protocol=0, opcode=0x10)),
+        ("group destination and vendor protocol", dict(counter=0xFFFFFFFF, src=1, group=0x0101, exchange=2, vendor=0xFFF1, protocol=0x0042, opcode=0x99, payload=b"\x01")),
+    ]
+    for name, kw in cases:
+        vector("message", name, message(**kw), mdesc(**kw))
+    vector("message", "message version 1", message(flags_extra=0x10), "error")
+    vector("message", "reserved destination size", message(flags_extra=0x03), "error")
+    vector("message", "privacy flag", message(security=0x80), "error")
+    vector("message", "truncated source node id", message(src=1)[:12], "error")
+    vector("message", "truncated protocol header", message()[:11], "error")
+
+    # ---- compressed fabric id (the spec's example)
+    def hkdf(ikm, salt, info, length):
+        prk = hmac.new(salt if salt else b"\x00" * 32, ikm, hashlib.sha256).digest()
+        okm, t, i = b"", b"", 1
+        while len(okm) < length:
+            t = hmac.new(prk, t + info + bytes([i]), hashlib.sha256).digest()
+            okm += t
+            i += 1
+        return okm[:length]
+
+    root = bytes.fromhex("044A9F42B1CA4840D37292BBC7F6A7E11E22200C976FC900DBC98A7A383A641CB8254A2E56D4E295A847943B4E3897C4A773E930277B4D9FBEDE8A052686BFACFA")
+    cfid = hkdf(root[1:], (0x2906C908D115D362).to_bytes(8, "big"), b"CompressedFabric", 8)
+    assert cfid.hex().upper() == "87E1B004E235A130"
+    vector("cfid", "core spec example", root, cfid.hex().upper(), fabricId="2906C908D115D362")
+
+    # ---- SPAKE2+ (P-256) with fixed scalars
+    P = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF
+    A = P - 3
+    B = 0x5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B
+    N = 0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551
+    G = (0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296, 0x4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5)
+
+    def add(p1, p2):
+        if p1 is None:
+            return p2
+        if p2 is None:
+            return p1
+        if p1[0] == p2[0] and (p1[1] + p2[1]) % P == 0:
+            return None
+        if p1 == p2:
+            l = (3 * p1[0] * p1[0] + A) * pow(2 * p1[1], P - 2, P) % P
+        else:
+            l = (p2[1] - p1[1]) * pow(p2[0] - p1[0], P - 2, P) % P
+        x = (l * l - p1[0] - p2[0]) % P
+        return (x, (l * (p1[0] - x) - p1[1]) % P)
+
+    def mul(k, pt):
+        r = None
+        while k:
+            if k & 1:
+                r = add(r, pt)
+            pt = add(pt, pt)
+            k >>= 1
+        return r
+
+    def neg(pt):
+        return (pt[0], (-pt[1]) % P)
+
+    def decompress(b):
+        x = int.from_bytes(b[1:], "big")
+        y = pow((x * x * x + A * x + B) % P, (P + 1) // 4, P)
+        if y % 2 != b[0] % 2:
+            y = P - y
+        return (x, y)
+
+    def enc(pt):
+        return b"\x04" + pt[0].to_bytes(32, "big") + pt[1].to_bytes(32, "big")
+
+    M = decompress(bytes.fromhex("02886E2F97ACE46E55BA9DD7242579F2993B64E16EF3DCAB95AFD497333D8FA12F"))
+    Np = decompress(bytes.fromhex("03D8BBD6C639C62937B04D997F38C3770719C629D7014D49A24B4F98BAA1292B49"))
+
+    def spake(passcode, salt, iterations, context, x, y):
+        ws = hashlib.pbkdf2_hmac("sha256", struct.pack("<I", passcode), salt, iterations, 80)
+        w0 = int.from_bytes(ws[:40], "big") % N
+        w1 = int.from_bytes(ws[40:], "big") % N
+        L = mul(w1, G)
+        X = add(mul(x, G), mul(w0, M))
+        Y = add(mul(y, G), mul(w0, Np))
+        Zp = mul(x, add(Y, neg(mul(w0, Np))))
+        Vp = mul(w1, add(Y, neg(mul(w0, Np))))
+        Zv = mul(y, add(X, neg(mul(w0, M))))
+        Vv = mul(y, L)
+        assert Zp == Zv and Vp == Vv
+        tt = b""
+        for item in (context, b"", b"", enc(M), enc(Np), enc(X), enc(Y), enc(Zp), enc(Vp), w0.to_bytes(32, "big")):
+            tt += struct.pack("<Q", len(item)) + item
+        k = hashlib.sha256(tt).digest()
+        ka, ke = k[:16], k[16:]
+        kc = hkdf(ka, b"", b"ConfirmationKeys", 32)
+        ca = hmac.new(kc[:16], enc(Y), hashlib.sha256).digest()
+        cb = hmac.new(kc[16:], enc(X), hashlib.sha256).digest()
+        keys = hkdf(ke, b"", b"SessionKeys", 48)
+        return (f"w0={w0:064X} L={enc(L).hex().upper()} X={enc(X).hex().upper()} Y={enc(Y).hex().upper()} cA={ca.hex().upper()} cB={cb.hex().upper()} "
+                f"Ke={ke.hex().upper()} I2R={keys[:16].hex().upper()} R2I={keys[16:32].hex().upper()} challenge={keys[32:].hex().upper()}")
+
+    context = hashlib.sha256(b"CHIP PAKE V1 Commissioning" + b"request" + b"response").digest()
+    salt = bytes(range(0x10, 0x30))
+    for name, passcode, iterations, x, y in (("SDK passcode, 1000 iterations", 20202021, 1000, 0x1234567890ABCDEF << 64, 0xFEDCBA0987654321 << 32),
+                                              ("another passcode, 2000 iterations", 12345679, 2000, N - 5, 0x42)):
+        vector("spake2p", name, context, spake(passcode, salt, iterations, context, x, y),
+               passcode=passcode, salt=salt.hex().upper(), iterations=iterations, x=f"{x:064X}", y=f"{y:064X}")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1867,6 +2145,7 @@ def main():
         "enip.json": enip_vectors(),
         "ethercat.json": ethercat_vectors(),
         "firmware.json": firmware_vectors(),
+        "matter.json": matter_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

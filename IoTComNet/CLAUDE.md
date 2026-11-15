@@ -147,6 +147,12 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `RttClient` runs over any `ITargetMemory`; `DfuClient` (DfuSe) over Transport.Usb; `VirtualDfuDevice` shares the `VirtualMcu` flash.
   Read-only = reads, core state, RTT reads, DFU uploads. Firmware/RTT codecs have the Rust twin `iotcom-firmware` (fuzz target `firmware`,
   `/conformance/firmware.json`). probe-rs needs `serialport` (MPL-2.0): the only shipped MPL exception in `deny.toml`, named in NOTICE.
+- **Matter**: `Protocols.Matter` is managed C# (BouncyCastle for P-256 and AES-CCM; not in the meta-package): codecs (`Tlv`, `MatterSetupPayload`,
+  `MatterMessage`, `InteractionModel`, `MatterCertificate` with exact X.509 TBS DER), `MatterTransport` (sessions, exchanges, MRP), PASE
+  (`Spake2Plus`), CASE, `MatterController` (read-only = no commissioning/writes/commands; `FabricFile` holds the root key), `MatterDevice`,
+  `MatterBridge`/`MatterBridgeSimulator`, `MatterDiscovery` (DNS-SD via Protocols.Mdns). `MatterAttestation.TestPaa` is a published test key.
+  Rust twin `iotcom-matter` (fuzz target `matter`); `/conformance/matter.json` from an independent Python reference (SDK onboarding example,
+  spec CFID example, SPAKE2+). Interop with other Matter stacks is not verified yet — say so in docs.
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

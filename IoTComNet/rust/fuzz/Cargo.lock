@@ -188,6 +188,7 @@ dependencies = [
  "iotcom-isotp",
  "iotcom-j1939",
  "iotcom-lorawan",
+ "iotcom-matter",
  "iotcom-mavlink",
  "iotcom-mbus",
  "iotcom-modbus",
@@ -217,6 +218,10 @@ dependencies = [
  "aes",
  "cmac",
 ]
+
+[[package]]
+name = "iotcom-matter"
+version = "0.1.0"
 
 [[package]]
 name = "iotcom-mavlink"

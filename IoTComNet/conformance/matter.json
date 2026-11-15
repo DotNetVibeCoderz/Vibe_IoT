@@ -1,0 +1,259 @@
+[
+  {
+    "kind": "tlv",
+    "name": "unsigned 8, 16, 32 and 64-bit",
+    "hex": "16042A0670110100070000000001000000052C0118",
+    "expected": "[42u,70000u,4294967296u,300u]"
+  },
+  {
+    "kind": "tlv",
+    "name": "signed and booleans, null",
+    "hex": "152000EF2201C063FFFF29022803340418",
+    "expected": "{0=-17,1=-40000,2=true,3=false,4=null}"
+  },
+  {
+    "kind": "tlv",
+    "name": "strings and octets",
+    "hex": "152C010B4C616D7075207465726173300204DEADBEEF18",
+    "expected": "{1=\"Lampu teras\",2=h'DEADBEEF'}"
+  },
+  {
+    "kind": "tlv",
+    "name": "floats",
+    "hex": "160A0000C03F0B000000000000D0BF18",
+    "expected": "[1.5f,-0.25d]"
+  },
+  {
+    "kind": "tlv",
+    "name": "nested list with profile tags",
+    "hex": "570700A44523010001D5F1FFEDDE03002409091818",
+    "expected": "common:7=(implicit:74565=1u,FFF1:DEED:3={9=9u})"
+  },
+  {
+    "kind": "tlv",
+    "name": "empty structure",
+    "hex": "1518",
+    "expected": "{}"
+  },
+  {
+    "kind": "tlv",
+    "name": "two-byte string length",
+    "hex": "0D0300616263",
+    "expected": "\"abc\""
+  },
+  {
+    "kind": "tlv",
+    "name": "truncated integer",
+    "hex": "0501",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "string past the end",
+    "hex": "0C056162",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "tagged member in an array",
+    "hex": "1624000118",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "anonymous member in a structure",
+    "hex": "15040118",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "reserved element type",
+    "hex": "19",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "end of container at top level",
+    "hex": "18",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "missing end of container",
+    "hex": "15240001",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "trailing bytes",
+    "hex": "040100",
+    "expected": "error"
+  },
+  {
+    "kind": "tlv",
+    "name": "invalid UTF-8",
+    "hex": "0C02C328",
+    "expected": "error"
+  },
+  {
+    "kind": "qr",
+    "name": "SDK example device",
+    "hex": "4D543A592E4B393034324330304B4130363438473030",
+    "expected": "vid=FFF1 pid=8000 flow=0 disc=2 discriminator=3840 passcode=20202021"
+  },
+  {
+    "kind": "qr",
+    "name": "on-network, user intent",
+    "hex": "4D543A362E544A3034464A31342E5A47343659393030",
+    "expected": "vid=1234 pid=0042 flow=1 disc=4 discriminator=2748 passcode=12345679"
+  },
+  {
+    "kind": "qr",
+    "name": "custom flow, every capability",
+    "hex": "4D543A364A533138564D583337314451333642343230",
+    "expected": "vid=FFF4 pid=FFFF flow=2 disc=15 discriminator=4095 passcode=99999998"
+  },
+  {
+    "kind": "qr",
+    "name": "wrong prefix",
+    "hex": "58583A592E4B393034324330304B4130363438473030",
+    "expected": "error"
+  },
+  {
+    "kind": "qr",
+    "name": "character outside base38",
+    "hex": "4D543A592E4B393034324330304B4130363438473021",
+    "expected": "error"
+  },
+  {
+    "kind": "qr",
+    "name": "trivial passcode 11111111",
+    "hex": "4D543A592E4B393034324330304B4D5350305A383030",
+    "expected": "error"
+  },
+  {
+    "kind": "qr",
+    "name": "truncated",
+    "hex": "4D543A592E4B393034324330",
+    "expected": "error"
+  },
+  {
+    "kind": "manual",
+    "name": "SDK example (11 digits)",
+    "hex": "3334393730313132333332",
+    "expected": "vid=0000 pid=0000 flow=0 disc=0 discriminator=3840 passcode=20202021"
+  },
+  {
+    "kind": "manual",
+    "name": "with vendor and product (21 digits)",
+    "hex": "363439303732353334393635353231333237363934",
+    "expected": "vid=FFF1 pid=8001 flow=1 disc=0 discriminator=2560 passcode=87654320"
+  },
+  {
+    "kind": "manual",
+    "name": "dashes are ignored",
+    "hex": "333439372D3031312D32333332",
+    "expected": "vid=0000 pid=0000 flow=0 disc=0 discriminator=3840 passcode=20202021"
+  },
+  {
+    "kind": "manual",
+    "name": "wrong check digit",
+    "hex": "3334393730313132333333",
+    "expected": "error"
+  },
+  {
+    "kind": "manual",
+    "name": "wrong length",
+    "hex": "333439373031313233",
+    "expected": "error"
+  },
+  {
+    "kind": "manual",
+    "name": "21 digits without the vendor flag",
+    "hex": "333439373031313233333030303030303030303032",
+    "expected": "error"
+  },
+  {
+    "kind": "message",
+    "name": "PBKDFParamRequest from an ephemeral node",
+    "hex": "040000000100000078563412FEFFFFFF05203412000015300120000000000000000000000000000000000000000000000000000000000000000025020100240300280418",
+    "expected": "session=0 counter=1 src=FFFFFFFE12345678 dst=- exchange=4660 IR ack=- protocol=0000:0000 opcode=0x20 payload=15300120000000000000000000000000000000000000000000000000000000000000000025020100240300280418"
+  },
+  {
+    "kind": "message",
+    "name": "response with acknowledgement and destination",
+    "hex": "010000000700000078563412FEFFFFFF06213412000004030201",
+    "expected": "session=0 counter=7 src=- dst=FFFFFFFE12345678 exchange=4660 RA ack=16909060 protocol=0000:0000 opcode=0x21 payload="
+  },
+  {
+    "kind": "message",
+    "name": "standalone acknowledgement",
+    "hex": "000000000900000002104D00000008000000",
+    "expected": "session=0 counter=9 src=- dst=- exchange=77 A ack=8 protocol=0000:0000 opcode=0x10 payload="
+  },
+  {
+    "kind": "message",
+    "name": "group destination and vendor protocol",
+    "hex": "06000000FFFFFFFF0100000000000000010115990200F1FF420001",
+    "expected": "session=0 counter=4294967295 src=0000000000000001 dst=g0101 exchange=2 IR ack=- protocol=FFF1:0042 opcode=0x99 payload=01"
+  },
+  {
+    "kind": "message",
+    "name": "message version 1",
+    "hex": "1000000001000000050201000100",
+    "expected": "error"
+  },
+  {
+    "kind": "message",
+    "name": "reserved destination size",
+    "hex": "0300000001000000050201000100",
+    "expected": "error"
+  },
+  {
+    "kind": "message",
+    "name": "privacy flag",
+    "hex": "0000008001000000050201000100",
+    "expected": "error"
+  },
+  {
+    "kind": "message",
+    "name": "truncated source node id",
+    "hex": "040000000100000001000000",
+    "expected": "error"
+  },
+  {
+    "kind": "message",
+    "name": "truncated protocol header",
+    "hex": "0000000001000000050201",
+    "expected": "error"
+  },
+  {
+    "kind": "cfid",
+    "name": "core spec example",
+    "hex": "044A9F42B1CA4840D37292BBC7F6A7E11E22200C976FC900DBC98A7A383A641CB8254A2E56D4E295A847943B4E3897C4A773E930277B4D9FBEDE8A052686BFACFA",
+    "expected": "87E1B004E235A130",
+    "fabricId": "2906C908D115D362"
+  },
+  {
+    "kind": "spake2p",
+    "name": "SDK passcode, 1000 iterations",
+    "hex": "49841B20F800217E642ED05290D48616266F02D7D39D4AC0A73EA50F8EEA893D",
+    "expected": "w0=9148CE0DCD322A6520A6B947EA93EED1867AF7FE823F14BC467CA1CF0B3E13F4 L=04ADA20DF4FEDDC40643B3F0469BC20E7BD2250DB491E021F3DA95F432316C8C3DEDDF00E9E8E89CEC4DDF4DAE093F4D18F0EF8F3AB6CE0797301F167E940E2E6F X=04697289F226F37BE150D66D55255D096C0FFB8215E796E8FEAD8EA32FE35F43BF28B4938E3E573873DD3B258DE131164C5DF8A9367564BBE74FFD3907B583201A Y=04EC762CE1D9E5F0FBCA92D9ED4E8166B4CD0AB3CD6632D44D95519870199E6657CF745B3E47979940F2516EBED9068BE1FC5E2F80B848580026D91D2F50DDA932 cA=7E192003CDA92CDED81A67FA591436BBD0C4E4B07EBF42C80C984D488EC93682 cB=3B875D62A7DDCBC64C97D2CFED593B425213F37B4C8C8AD9419F8C3EBAF55995 Ke=062C66F7E5F99E6BAFEE717B79AC6F09 I2R=A5FE413B81F513CE8549889B236DE0E2 R2I=023B230291B531B12D8F577278E6E5CC challenge=E6E3D73768C7FF3CD4E7584ACA990090",
+    "passcode": 20202021,
+    "salt": "101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F",
+    "iterations": 1000,
+    "x": "000000000000000000000000000000001234567890ABCDEF0000000000000000",
+    "y": "0000000000000000000000000000000000000000FEDCBA098765432100000000"
+  },
+  {
+    "kind": "spake2p",
+    "name": "another passcode, 2000 iterations",
+    "hex": "49841B20F800217E642ED05290D48616266F02D7D39D4AC0A73EA50F8EEA893D",
+    "expected": "w0=7187A5FDF77AE8103582CECAB0D2072585AC0971A389E0CF19594A8E61C2CE07 L=046C602B7F2C1299DBB5E8398947C2C8AC05C9ED72D404D78D92E1EC78C1324F543C3D730A1E1DBDE470FC950A0D0EBCA019B2423F38F0ECFD895CFA3D969A6C1A X=049B25A0700A90C120DB6E879761A91B539AFFF549A852D6921C7B87AB86830B1D1E6BAF036A5F794F5ACC8C0542C752D60C1066B8FABB614561A6B3403C3B5DCE Y=041C1D206800E641C22B57480EA82BCE851FA0C724128F5E715F09F7AE6C3CB12208F50C2BF0FC90A8C48C2A18EB4B30E8B3C62EB684900FA6822705C241F76411 cA=393E6B361379D89807342CC45378E925A995C4A2D537AA58A41D55A5C83D77E3 cB=AEAA57BD78CDCE21362756D2DEFCED9F97ABACAED1F823B87047E0A1E55C8103 Ke=19FEDA9F3E3ECBEDE6534CB36561630F I2R=7847479ACBC54FC5CF4EE8A0935853DD R2I=3ACD160865F46B081B11CDD9A7F6D51C challenge=A17B0BCA71F49F1A56E64B916C0FCCB7",
+    "passcode": 12345679,
+    "salt": "101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F",
+    "iterations": 2000,
+    "x": "FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC63254C",
+    "y": "0000000000000000000000000000000000000000000000000000000000000042"
+  }
+]
