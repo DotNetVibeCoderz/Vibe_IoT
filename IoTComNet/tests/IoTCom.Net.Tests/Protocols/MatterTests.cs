@@ -341,6 +341,19 @@ public sealed class MatterCommissioningTests
     }
 
     [Fact]
+    public async Task Commissioning_survives_duplicated_and_lost_datagrams()
+    {
+        var (device, onOff, _, net) = await LightAsync();
+        await using var _d = device;
+        net.DuplicateRate = 0.3;
+        net.LossRate = 0.1;
+        await using var controller = Controller(net);
+        var node = await controller.CommissionAsync(LightAt, device.SetupPayload, nodeId: 0x77);
+        for (var i = 0; i < 5; i++) await node.InvokeAsync(1, MatterIds.OnOff, 2);
+        Assert.True(onOff.On);   // five toggles, each executed once despite duplicates
+    }
+
+    [Fact]
     public async Task Bridge_exposes_bridged_devices()
     {
         var net = new InMemoryDatagramNetwork(seed: 4);

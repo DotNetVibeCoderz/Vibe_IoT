@@ -68,6 +68,18 @@ internal sealed class Exchange(ushort id, bool localInitiator, SecureSession? se
     public uint? PendingAck { get; set; }
     public (uint Counter, TaskCompletionSource Acked)? Outstanding { get; set; }
     public readonly Lock Gate = new();
+    private readonly HashSet<uint> _received = [];
+
+    /// <summary>Unsecured messages have no session-wide counter check: duplicates are caught per exchange.</summary>
+    public bool IsDuplicate(uint counter)
+    {
+        lock (_received)
+        {
+            if (!_received.Add(counter)) return true;
+            if (_received.Count > 64) _received.Clear();
+            return false;
+        }
+    }
 }
 
 /// <summary>
@@ -257,6 +269,18 @@ internal sealed class MatterTransport : IAsyncDisposable
         }
 
         ex.Peer = d.Remote;
+        if (session is null && !isNew && ex.IsDuplicate(m.Counter))
+        {
+            if (m.Reliable)
+            {
+                lock (ex.Gate) ex.PendingAck = m.Counter;
+                _ = FlushAckAsync(ex);
+            }
+
+            return;
+        }
+
+        if (session is null && isNew) ex.IsDuplicate(m.Counter);
         if (m.AckCounter is { } acked)
         {
             lock (ex.Gate)

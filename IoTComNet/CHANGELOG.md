@@ -8,7 +8,10 @@ All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI versio
 - Matter: DER integers (certificate serials, signature r/s) are written in minimal form, so a value with leading zero bytes no longer
   throws (`ToX509Der` failed for about 1 in 128 signatures; `TbsDer` for about 1 in 65 536 serials).
 
-*Matter: integer DER kini selalu dalam bentuk minimal.*
+- Matter: unsecured handshake messages (PASE/CASE) are de-duplicated per exchange, so a retransmitted handshake message is no
+  longer taken for the next step (commissioning could stall when a datagram was duplicated or an acknowledgement was late).
+
+*Matter: integer DER kini selalu dalam bentuk minimal; pesan handshake PASE/CASE yang dikirim ulang tidak lagi dianggap langkah berikutnya.*
 
 ## 0.30.0-preview.1 — 2026-11-15
 
