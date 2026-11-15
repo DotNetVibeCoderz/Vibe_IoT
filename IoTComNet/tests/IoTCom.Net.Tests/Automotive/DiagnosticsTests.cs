@@ -58,7 +58,9 @@ public sealed class IsoTpChannelTests
 
         await using var small = IsoTpChannel.Create(net.CreateNode(), o => { o.TxId = 0x708; o.RxId = 0x700; o.MaxMessageLength = 20; });
         await small.ConnectAsync();
-        ex = await Assert.ThrowsAsync<IsoTpException>(() => a.SendAsync(new byte[50]));
+        await using var sender = IsoTpChannel.Create(net.CreateNode(), o => { o.TxId = 0x700; o.RxId = 0x708; o.FlowControlTimeout = TimeSpan.FromSeconds(3); });   // 100 ms raced the overflow reply on CI
+        await sender.ConnectAsync();
+        ex = await Assert.ThrowsAsync<IsoTpException>(() => sender.SendAsync(new byte[50]));
         Assert.Equal(IsoTpError.Overflow, ex.Error);
     }
 }
