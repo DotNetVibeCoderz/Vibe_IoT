@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Transport.Dtls</RootNamespace>
+    <Description>DTLS 1.2 for IoTCom.Net datagram transports as an adapter over BouncyCastle (MIT): client and server transports with PSK (TLS_PSK_WITH_AES_128_CCM_8 and GCM) and ECDHE_ECDSA certificates (pinning or custom roots), HelloVerifyRequest cookies and per-peer sessions, so CoAP and LwM2M run over coaps:// unchanged. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);dtls;coaps;psk;tls;security;bouncycastle;rfc6347;rfc7925</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <PackageReference Include="BouncyCastle.Cryptography" />
+  </ItemGroup>
+</Project>

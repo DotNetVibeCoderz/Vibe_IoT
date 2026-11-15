@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Net;
 using System.Text;
 using IoTCom.Net.Protocols.Coap;
+using IoTCom.Net.Transport.Dtls;
 using IoTCom.Net.Transports;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -11,7 +12,7 @@ namespace IoTCom.Net.Cli.Commands;
 
 internal class CoapSettings : CommandSettings
 {
-    [CommandArgument(0, "<uri>"), Description("coap://host[:port]/path[?query]")]
+    [CommandArgument(0, "<uri>"), Description("coap://host[:port]/path[?query], or coaps:// for DTLS (port 5684)")]
     public string Uri { get; init; } = "";
 
     [CommandOption("--non"), Description("Send non-confirmable requests.")]
@@ -23,11 +24,31 @@ internal class CoapSettings : CommandSettings
     [CommandOption("--frames"), Description("Print every datagram as a frame lane.")]
     public bool Frames { get; init; }
 
+    [CommandOption("--psk"), Description("coaps: pre-shared key as identity:hex (prefer the IOTCOM_DTLS_PSK environment variable; keys in shell history leak).")]
+    public string? Psk { get; init; }
+
+    [CommandOption("--pin"), Description("coaps: accept the server certificate with this SHA-256 fingerprint (hex).")]
+    public string? Pin { get; init; }
+
+    public bool Secure => System.Uri.TryCreate(Uri, UriKind.Absolute, out var u) && u.Scheme == "coaps";
+
     public (string Host, int Port, string Path) Parse()
     {
-        if (!System.Uri.TryCreate(Uri, UriKind.Absolute, out var u) || u.Scheme is not ("coap" or "coap+udp"))
-            throw new ArgumentException("Expected coap://host[:port]/path, e.g. coap://127.0.0.1/sensors/temperature");
-        return (u.Host.Trim('[', ']'), u.IsDefaultPort || u.Port < 0 ? 5683 : u.Port, u.PathAndQuery);
+        if (!System.Uri.TryCreate(Uri, UriKind.Absolute, out var u) || u.Scheme is not ("coap" or "coap+udp" or "coaps"))
+            throw new ArgumentException("Expected coap://host[:port]/path or coaps://host[:port]/path, e.g. coap://127.0.0.1/sensors/temperature");
+        return (u.Host.Trim('[', ']'), u.IsDefaultPort || u.Port < 0 ? (u.Scheme == "coaps" ? 5684 : 5683) : u.Port, u.PathAndQuery);
+    }
+
+    /// <summary>DTLS client options from --psk / IOTCOM_DTLS_PSK / --pin.</summary>
+    public DtlsClientOptions DtlsOptions()
+    {
+        var options = new DtlsClientOptions();
+        var psk = Psk ?? Environment.GetEnvironmentVariable("IOTCOM_DTLS_PSK");
+        if (!string.IsNullOrEmpty(psk)) options.Psk = DtlsCli.ParsePsk(psk);
+        if (!string.IsNullOrEmpty(Pin)) options.PinnedFingerprints.Add(Pin.Replace(":", "", StringComparison.Ordinal));
+        if (options.Psk is null && options.PinnedFingerprints.Count == 0)
+            throw new ArgumentException("coaps:// needs --psk identity:hex (or IOTCOM_DTLS_PSK) or --pin <sha256>.");
+        return options;
     }
 
     public ushort? AcceptFormat => Accept?.ToLowerInvariant() switch
@@ -46,7 +67,13 @@ internal class CoapSettings : CommandSettings
         var (host, port, _) = Parse();
         var client = CoapClient.Create(o =>
         {
-            o.UseServer(host, port);
+            if (Secure)
+            {
+                var server = DtlsCli.Resolve(host, port);
+                o.UseDtlsClient(() => new UdpDatagramTransport(new IPEndPoint(server.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 ? IPAddress.IPv6Any : IPAddress.Any, 0)), server, DtlsOptions());
+                o.UseServer(server);
+            }
+            else o.UseServer(host, port);
             o.Confirmable = !NonConfirmable;
             o.ReadOnly = !allowWrite;
         });
@@ -189,22 +216,45 @@ internal sealed class CoapServeCommand : AsyncCommand<CoapServeCommand.Settings>
 {
     public sealed class Settings : CommandSettings
     {
-        [CommandOption("-p|--port"), Description("UDP port (default 5683).")]
-        public int Port { get; init; } = 5683;
+        [CommandOption("-p|--port"), Description("UDP port (default 5683, or 5684 with DTLS).")]
+        public int? Port { get; init; }
 
         [CommandOption("--frames"), Description("Print every datagram as a frame lane.")]
         public bool Frames { get; init; }
+
+        [CommandOption("--psk"), Description("Serve coaps:// with this pre-shared key (identity:hex; or set IOTCOM_DTLS_PSK).")]
+        public string? Psk { get; init; }
+
+        [CommandOption("--cert"), Description("Serve coaps:// with a fresh self-signed ECDSA certificate (its fingerprint is printed for --pin).")]
+        public bool Certificate { get; init; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings s, CancellationToken ct)
     {
-        await using var server = CoapServer.Create(o => o.UseUdp(s.Port));
+        var pskText = s.Psk ?? Environment.GetEnvironmentVariable("IOTCOM_DTLS_PSK");
+        DtlsServerOptions? dtls = null;
+        if (!string.IsNullOrEmpty(pskText) || s.Certificate)
+        {
+            dtls = new DtlsServerOptions();
+            if (!string.IsNullOrEmpty(pskText)) dtls.UsePsk(DtlsCli.ParsePsk(pskText));
+            if (s.Certificate) dtls.Certificate = DtlsCertificates.CreateSelfSigned("iotcom-coap-demo");
+        }
+
+        var port = s.Port ?? (dtls is null ? 5683 : 5684);
+        await using var server = CoapServer.Create(o =>
+        {
+            if (dtls is null) o.UseUdp(port);
+            else o.UseDtlsServer(() => new UdpDatagramTransport(new IPEndPoint(IPAddress.Any, port)), dtls);
+        });
         if (s.Frames) server.AddTap(new CoapFramePrinter());
         await using var device = new CoapDeviceSimulator(server);
         await server.StartAsync(ct);
         device.Start();
-        Ui.Success($"Greenhouse node (simulated) on coap://0.0.0.0:{s.Port} — {server.Resources.Count} resources. Ctrl+C to stop.");
-        Ui.Warn($"Try: iotcom coap discover coap://127.0.0.1:{s.Port}/   ·   iotcom coap observe coap://127.0.0.1:{s.Port}/sensors/temperature");
+        var scheme = dtls is null ? "coap" : "coaps";
+        Ui.Success($"Greenhouse node (simulated) on {scheme}://0.0.0.0:{port} — {server.Resources.Count} resources. Ctrl+C to stop.");
+        if (dtls?.Certificate is { } cert) Ui.Warn($"Certificate fingerprint (SHA-256): {DtlsCertificates.Fingerprint(cert)}");
+        var auth = dtls is null ? "" : dtls.Certificate is { } c2 ? $" --pin {DtlsCertificates.Fingerprint(c2)}" : " --psk <identity:hex>";
+        Ui.Warn($"Try: iotcom coap discover {scheme}://127.0.0.1:{port}/{auth}   ·   iotcom coap observe {scheme}://127.0.0.1:{port}/sensors/temperature{auth}");
         try
         {
             await Task.Delay(Timeout.Infinite, ct);
@@ -212,5 +262,27 @@ internal sealed class CoapServeCommand : AsyncCommand<CoapServeCommand.Settings>
         catch (OperationCanceledException) { }
         Ui.Warn($"Stopped after {server.RequestCount} requests ({server.Statistics.RetransmissionCount} retransmissions, {server.Statistics.DuplicateCount} duplicates).");
         return 0;
+    }
+}
+
+/// <summary>DTLS helpers shared by the CoAP and LwM2M commands.</summary>
+internal static class DtlsCli
+{
+    /// <summary>Parses identity:hex.</summary>
+    public static DtlsPsk ParsePsk(string text)
+    {
+        var colon = text.LastIndexOf(':');
+        if (colon <= 0 || colon == text.Length - 1) throw new ArgumentException("A PSK is identity:hex, e.g. node-01:000102030405060708090A0B0C0D0E0F.");
+        return DtlsPsk.FromHex(text[..colon], text[(colon + 1)..]);
+    }
+
+    /// <summary>Resolves a host name to an endpoint (DTLS needs a concrete peer address).</summary>
+    public static IPEndPoint Resolve(string host, int port)
+    {
+        if (IPAddress.TryParse(host, out var ip)) return new IPEndPoint(ip, port);
+        var addresses = Dns.GetHostAddresses(host);
+        var pick = addresses.FirstOrDefault(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) ?? addresses.FirstOrDefault()
+            ?? throw new ArgumentException($"Cannot resolve {host}.");
+        return new IPEndPoint(pick, port);
     }
 }

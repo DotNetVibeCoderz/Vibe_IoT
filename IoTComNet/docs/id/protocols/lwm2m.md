@@ -74,9 +74,9 @@ await using var watch = await server.ObserveAsync("urn:dev:sensor:42", Lwm2mPath
 
 Write dan Execute mengubah apa yang dilakukan perangkat; resource Reboot dan firmware membuatnya offline. Server
 menolaknya sampai `Lwm2mServerOptions.AllowWrites()`. Di sisi perangkat, validator `OnWrite` menolak nilai yang tidak
-boleh diterima resource (dimmer simulator menolak 150 %), dan resource tanpa akses Write menjawab 4.05. Paket ini
-berjalan di atas CoAP biasa di UDP 5683: penerapan produksi memakai DTLS (port 5684) dengan pre-shared key atau
-sertifikat, yang merupakan item terpisah di roadmap. Jangan membuka server tanpa perlindungan ke internet.
+boleh diterima resource (dimmer simulator menolak 150 %), dan resource tanpa akses Write menjawab 4.05. CoAP biasa di
+UDP 5683 tidak terlindungi: penerapan produksi memakai DTLS (port 5684) dengan pre-shared key atau sertifikat — tambahkan
+`IoTCom.Net.Transport.Dtls` lalu panggil `UseDtlsClient`/`UseDtlsServer` pada opsi (lihat [DTLS](dtls.md)). Jangan membuka server tanpa perlindungan ke internet.
 
 ## Alat
 
@@ -115,7 +115,7 @@ Ke-19 vektor TLV bersama (termasuk enam payload rusak) dijalankan di suite C# da
 
 ## Keterbatasan
 
-Belum ada DTLS, server bootstrap (`/bs`), Create atau Delete instance objek, operasi Send, mode antrean atau binding
+Belum ada server bootstrap (`/bs`), Create atau Delete instance objek, operasi Send, mode antrean atau binding
 SMS, maupun format LwM2M JSON (11543). Nilai besar tidak dipecah dengan transfer block-wise CoAP oleh lapisan ini.
 Notifikasi memakai atribut `pmin` dan `pmax`; `gt`, `lt`, dan `st` belum dievaluasi.
 

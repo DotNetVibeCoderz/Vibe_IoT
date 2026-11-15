@@ -197,6 +197,9 @@ jobs:
       - name: Publish a sample with NativeAOT (trim/AOT analyzers must stay clean)
         run: dotnet publish samples/console/ModbusMaster -c Release -r linux-x64 -p:PublishAot=true -p:TreatWarningsAsErrors=true
       - run: timeout 5 samples/console/ModbusMaster/bin/Release/net10.0/linux-x64/publish/ModbusMaster --simulate || [ $? -eq 124 ]
+      - name: Publish the DTLS sample with NativeAOT (BouncyCastle must stay trim-clean)
+        run: dotnet publish samples/console/CoapsSecure -c Release -r linux-x64 -p:PublishAot=true -p:TreatWarningsAsErrors=true
+      - run: timeout 60 samples/console/CoapsSecure/bin/Release/net10.0/linux-x64/publish/CoapsSecure
 
   vscode:
     name: VS Code extension

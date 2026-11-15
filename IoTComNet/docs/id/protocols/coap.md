@@ -37,8 +37,8 @@ Tersedia juga node rumah kaca simulasi.
 ## Transport
 
 CoAP berjalan di atas datagram: `UseUdp(port)` (bawaan 5683) atau `UseInMemory(network)` pada `InMemoryDatagramNetwork`.
-Jaringan di memori punya pengaturan `LossRate` dan `DuplicateRate` untuk menguji keandalan. DTLS (coaps, port 5684)
-direncanakan (Fase 2).
+Jaringan di memori punya pengaturan `LossRate` dan `DuplicateRate` untuk menguji keandalan. Untuk DTLS (coaps, port 5684)
+tambahkan `IoTCom.Net.Transport.Dtls` dan pakai `UseDtlsClient`/`UseDtlsServer` — lihat [DTLS](dtls.md).
 
 ## Instalasi
 
@@ -146,12 +146,12 @@ dotnet run --project samples/console/CoapObserve
 
 ## Keamanan
 
-CoAP polos tidak diautentikasi dan tidak dienkripsi. Gunakan di jaringan terisolasi atau di balik VPN sampai dukungan
-DTLS/OSCORE tersedia. Perlakukan request sebagai masukan tak tepercaya, dan buat client read-only bila hanya memantau.
+CoAP polos tidak diautentikasi dan tidak dienkripsi. Gunakan di jaringan terisolasi atau di balik VPN, atau jalankan lewat
+[DTLS](dtls.md) (`coaps://`). Perlakukan request sebagai masukan tak tepercaya, dan buat client read-only bila hanya memantau.
 
 ## Keterbatasan
 
-Belum tersedia: DTLS (coaps), OSCORE, CoAP lewat TCP/WebSocket (RFC 8323), request multicast, proxy, validasi ETag dan
+Belum tersedia: OSCORE, CoAP lewat TCP/WebSocket (RFC 8323), request multicast, proxy, validasi ETag dan
 penanganan If-Match di server, serta FETCH/PATCH (RFC 8132). LwM2M di atas tumpukan ini direncanakan untuk Fase 2.
 
 ## Pelajari lebih lanjut

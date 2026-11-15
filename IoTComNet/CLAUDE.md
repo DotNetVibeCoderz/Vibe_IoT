@@ -57,6 +57,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **Datagrams & CoAP**: `IDatagramTransport` (Core: `UdpDatagramTransport`, `InMemoryDatagramNetwork` with `LossRate`/`DuplicateRate`)
   serves datagram protocols. `Protocols.Coap` is managed C# (`CoapStack` = message layer shared by `CoapClient`/`CoapServer`);
   Rust `iotcom-coap` is a fuzzed codec twin kept in sync by `/conformance/coap.json`.
+- **DTLS**: `Transport.Dtls` wraps BouncyCastle (`BouncyCastle.Cryptography`, MIT): `DtlsClientTransport`/`DtlsServerTransport` are
+  `IDatagramTransport`s (`UseDtlsClient`/`UseDtlsServer` on any datagram builder), DTLS 1.2 only, PSK + ECDHE_ECDSA, certificates pinned or
+  chained to supplied roots (never the OS store). BC's `DatagramTransport` is blocking: each peer gets a `PeerDatagramTransport` fed by a pump.
+  Bad-MAC records are dropped silently, so wrong keys surface as timeouts. Not in the meta-package; CI AOT-publishes `samples/console/CoapsSecure`.
 - **MAVLink**: `Protocols.Mavlink` messages are generated at build time by `src/IoTCom.Net.Protocols.Mavlink.Generator` (Roslyn,
   netstandard2.0) from `Dialects/*.xml` (official, MIT). Never edit generated code; update the XML and run `python conformance/generate.py`
   (the Python reference checks CRC_EXTRA against published constants). The generator ships in the nupkg under `analyzers/dotnet/cs`.

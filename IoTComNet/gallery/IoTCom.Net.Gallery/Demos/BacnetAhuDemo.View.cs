@@ -107,7 +107,7 @@ internal sealed class AhuSchematic : Control
     private static FormattedText T(string s, double size, IBrush brush, string face = "JetBrains Mono", FontWeight weight = FontWeight.Normal) =>
         new(s, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, new Typeface(face, FontStyle.Normal, weight), size, brush);
 
-    private static void Tag(DrawingContext ctx, Point at, string label, string value, bool alarm = false)
+    private static void DrawTag(DrawingContext ctx, Point at, string label, string value, bool alarm = false)
     {
         var v = T(value, 12, alarm ? Palette.Red : Brushes.White, "JetBrains Mono", FontWeight.SemiBold);
         var l = T(label, 9, Muted, "Barlow Condensed", FontWeight.SemiBold);
@@ -186,15 +186,15 @@ internal sealed class AhuSchematic : Control
         }
 
         // Sensor and actuator tags.
-        Tag(ctx, new Point(w * 0.10, duct.Bottom + 12), "AI3 OUTDOOR", $"{a.OutdoorTemp.Value:0.0}°C");
-        Tag(ctx, new Point(w * 0.15, duct.Top - 44), "AO2 OA DAMPER", $"{a.Damper.Value:0}%");
-        Tag(ctx, new Point(ret.Center.X + 62, 40), "AI2 RETURN", $"{a.ReturnTemp.Value:0.0}°C");
-        Tag(ctx, new Point(ret.Center.X + 62, 82), "AI4 CO2", $"{a.Co2.Value:0} ppm", a.Co2.Value > a.Co2Setpoint.Value + 200);
-        Tag(ctx, new Point(fx + 4, duct.Bottom + 12), "BI2 FILTER", a.FilterAlarm.FormatValue(), a.FilterAlarm.Value == 1);
-        Tag(ctx, new Point(cx + 13, duct.Top - 44), "AO1 CHW VALVE", $"{a.CoolingValve.Value:0}%" + (a.CoolingValve.ActivePriority is { } p ? $" @{p}" : ""), a.CoolingValve.ActivePriority is not null);
-        Tag(ctx, new Point(fan.X, duct.Bottom + 12), "BI1 FAN", a.FanStatus.FormatValue() + (a.FanCommand.ActivePriority is { } fp ? $" @{fp}" : ""), a.FanCommand.ActivePriority is not null);
-        Tag(ctx, new Point(w * 0.82, duct.Top - 44), "AI1 SUPPLY", $"{a.SupplyTemp.Value:0.0}°C");
-        Tag(ctx, new Point(w * 0.82, duct.Bottom + 12), "AI5 STATIC", $"{a.StaticPressure.Value:0} Pa");
+        DrawTag(ctx, new Point(w * 0.10, duct.Bottom + 12), "AI3 OUTDOOR", $"{a.OutdoorTemp.Value:0.0}°C");
+        DrawTag(ctx, new Point(w * 0.15, duct.Top - 44), "AO2 OA DAMPER", $"{a.Damper.Value:0}%");
+        DrawTag(ctx, new Point(ret.Center.X + 62, 40), "AI2 RETURN", $"{a.ReturnTemp.Value:0.0}°C");
+        DrawTag(ctx, new Point(ret.Center.X + 62, 82), "AI4 CO2", $"{a.Co2.Value:0} ppm", a.Co2.Value > a.Co2Setpoint.Value + 200);
+        DrawTag(ctx, new Point(fx + 4, duct.Bottom + 12), "BI2 FILTER", a.FilterAlarm.FormatValue(), a.FilterAlarm.Value == 1);
+        DrawTag(ctx, new Point(cx + 13, duct.Top - 44), "AO1 CHW VALVE", $"{a.CoolingValve.Value:0}%" + (a.CoolingValve.ActivePriority is { } p ? $" @{p}" : ""), a.CoolingValve.ActivePriority is not null);
+        DrawTag(ctx, new Point(fan.X, duct.Bottom + 12), "BI1 FAN", a.FanStatus.FormatValue() + (a.FanCommand.ActivePriority is { } fp ? $" @{fp}" : ""), a.FanCommand.ActivePriority is not null);
+        DrawTag(ctx, new Point(w * 0.82, duct.Top - 44), "AI1 SUPPLY", $"{a.SupplyTemp.Value:0.0}°C");
+        DrawTag(ctx, new Point(w * 0.82, duct.Bottom + 12), "AI5 STATIC", $"{a.StaticPressure.Value:0} Pa");
         ctx.DrawText(T($"AV1 SET {a.SupplySetpoint.Value:0.0}°C  ·  MSV1 {a.Occupancy.FormatValue().ToUpperInvariant()}  ·  DEVICE 2604 AHU-1 LANTAI 3", 10, Muted, "Barlow Condensed", FontWeight.SemiBold), new Point(14, h - 20));
     }
 }

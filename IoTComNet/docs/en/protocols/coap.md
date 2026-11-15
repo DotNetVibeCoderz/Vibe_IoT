@@ -37,8 +37,8 @@ It also includes a simulated greenhouse node.
 ## Transports
 
 CoAP runs on datagrams: `UseUdp(port)` (default 5683) or `UseInMemory(network)` on an `InMemoryDatagramNetwork`. The
-in-memory network has `LossRate` and `DuplicateRate` settings for testing reliability. DTLS (coaps, port 5684) is
-planned (Phase 2).
+in-memory network has `LossRate` and `DuplicateRate` settings for testing reliability. For DTLS (coaps, port 5684) add
+`IoTCom.Net.Transport.Dtls` and use `UseDtlsClient`/`UseDtlsServer` — see [DTLS](dtls.md).
 
 ## Installation
 
@@ -146,12 +146,12 @@ dotnet run --project samples/console/CoapObserve
 
 ## Security
 
-Plain CoAP is unauthenticated and unencrypted. Use it on isolated networks or behind a VPN until DTLS/OSCORE support
-arrives. Treat requests as untrusted input, and keep the client read-only when you only monitor.
+Plain CoAP is unauthenticated and unencrypted. Use it on isolated networks or behind a VPN, or run it over
+[DTLS](dtls.md) (`coaps://`). Treat requests as untrusted input, and keep the client read-only when you only monitor.
 
 ## Limitations
 
-Not yet included: DTLS (coaps), OSCORE, CoAP over TCP/WebSockets (RFC 8323), multicast requests, proxying, ETag
+Not yet included: OSCORE, CoAP over TCP/WebSockets (RFC 8323), multicast requests, proxying, ETag
 validation and If-Match handling in the server, and FETCH/PATCH (RFC 8132). LwM2M on top of this stack is planned for
 Phase 2.
 

@@ -3,22 +3,22 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.26.0-preview.1` · **Last update:** 2026-11-15
+**Current version:** `0.27.0-preview.1` · **Last update:** 2026-11-15
 
-**Phase:** 0 and 1 complete · Phase 2 in progress (11 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
+**Phase:** 0 and 1 complete · Phase 2 in progress (12 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
 
 ## Snapshot
 
 | Area | Status | Evidence |
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
-| .NET tests | ✅ 880 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or a locally built native library) | `dotnet test tests/IoTCom.Net.Tests` |
+| .NET tests | ✅ 1100 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or a locally built native library) | `dotnet test tests/IoTCom.Net.Tests` |
 | Rust workspace | ✅ 51 tests passing, clippy `-D warnings` clean; 14 cargo-fuzz targets (≈ 22 M local runs, no findings; `enip` added in 0.26) | `cargo test --workspace`, `cargo clippy` |
 | Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only), OCPP frames and payloads (35, C# only), KNX DPT/cEMI/KNXnet/IP (56, C# only), BACnet tags and BACnet/IP datagrams (45, C# only), EtherNet/IP encapsulation/CIP/identity (28, C# and Rust) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 56 + 56 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 29 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Docs EN/ID | ✅ 58 + 58 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 30 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 50 packages (+ symbol packages) in `0.26.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 51 packages (+ symbol packages) in `0.27.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -41,6 +41,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Net.Transport.Can.Adapters | ✅ | gs_usb/candleLight over Transport.Usb (host protocol, bit timing, TX echo, FD when supported), PEAK PCAN-USB via PCANBasic (classic), virtual candleLight · hardware-in-the-loop run on real adapters ⏳ |
 | IoTCom.Net.Transport.Ble + Rust `iotcom-ble-native` | ✅ | central (scan, GATT read/write/notify, read-only), advertising/iBeacon/Eddystone/GATT codecs, virtual radio; native on btleplug (verified with real WinRT advertisements) · peripheral role, pairing, L2CAP ⏳ |
 | IoTCom.Net.Transport.Usb + Rust `iotcom-usb-native` | ✅ | control/bulk/interrupt (nusb), HID reports (hidapi), bulk byte-stream transport, HID relay boards, virtual bus; verified enumerating real devices on Windows · isochronous, hotplug, gadget role ⏳ |
+| IoTCom.Net.Transport.Dtls | ✅ | DTLS 1.2 client/server datagram transports over BouncyCastle 2.7.0: PSK (AES-128-CCM-8, GCM), ECDHE_ECDSA with pinning or custom roots, cookies, per-peer sessions, idle expiry; CoAP and LwM2M over coaps://, CLI `--psk`/`--pin`; NativeAOT-clean · DTLS 1.3, connection IDs, client certificates, raw public keys, resumption ⏳ |
 | IoTCom.Net.Protocols.Nfc | ✅ | NDEF codec (Text, URI, Smart Poster, MIME, external, AAR, Wi-Fi, chunked), Type 2 tag memory and page map, guarded tear-safe writes, PC/SC on Windows/Linux/macOS (verified listing real readers on Windows), virtual reader; 30 vectors · MIFARE Classic, Type 4/5 tags, NTAG password, a real tag on real hardware ⏳ |
 
 ### Industrial and telecontrol
@@ -82,8 +83,8 @@ Built by Gravicode Studios, led by Kang Fadhil.
 
 | Component | Status | Notes |
 |---|---|---|
-| IoTCom.Net.Protocols.Coap + Rust `iotcom-coap` | ✅ | client/server, CON/NON reliability, dedup, separate responses, Observe, Block1/Block2, link-format, SenML, greenhouse simulator · DTLS/OSCORE/TCP ⏳ |
-| IoTCom.Net.Protocols.Lwm2m | ✅ | client (registration lifecycle, Read/Discover/Write/Execute/Observe with pmin/pmax) and server (registrations with expiry, device management, read-only default) on IoTCom CoAP; TLV, text, opaque, SenML JSON/CBOR; street light simulator; 19 TLV vectors · DTLS, bootstrap, Create/Delete, Send, block-wise ⏳ |
+| IoTCom.Net.Protocols.Coap + Rust `iotcom-coap` | ✅ | client/server, CON/NON reliability, dedup, separate responses, Observe, Block1/Block2, link-format, SenML, greenhouse simulator · coaps:// via Transport.Dtls ✅ · OSCORE/TCP ⏳ |
+| IoTCom.Net.Protocols.Lwm2m | ✅ | client (registration lifecycle, Read/Discover/Write/Execute/Observe with pmin/pmax) and server (registrations with expiry, device management, read-only default) on IoTCom CoAP; TLV, text, opaque, SenML JSON/CBOR; street light simulator; 19 TLV vectors; DTLS via Transport.Dtls · bootstrap, Create/Delete, Send, block-wise ⏳ |
 | IoTCom.Net.Protocols.LoRaWan + Rust `iotcom-lorawan` | ✅ | 1.0.x codec + crypto, OTAA/ABP, MAC commands, EU868/US915/AS923-2 + airtime, Semtech UDP (forwarder + server), light network server, Class A device MAC, Cayenne LPP, simulator · Class B/C, ADR, Basics Station ⏳ |
 | IoTCom.Net.Protocols.AtCommand | ✅ | URC-aware parser, modem client (SMS, info, read-only), LTE-M simulator · PDU SMS, CMUX ⏳ |
 
@@ -129,7 +130,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
 | Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient, OcppCharger, KnxMonitor, BacnetBms, EnipTags |
-| Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt); OCPP parse + typed bind per message (`OcppBenchmarks`); KNX tunnelling frame + cEMI + DPT decode (`KnxBenchmarks`); BACnet ReadProperty-ACK decode (`BacnetBenchmarks`); EtherNet/IP Read Tag served end to end (`EnipBenchmarks`) |
+| Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt); OCPP parse + typed bind per message (`OcppBenchmarks`); KNX tunnelling frame + cEMI + DPT decode (`KnxBenchmarks`); BACnet ReadProperty-ACK decode (`BacnetBenchmarks`); EtherNet/IP Read Tag served end to end (`EnipBenchmarks`); DTLS PSK handshake ≈ 0.87 ms and a secured 64-byte round trip ≈ 76 µs in memory (`DtlsBenchmarks`) |
 | CI | ✅ green | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 
 ## Decisions
@@ -143,6 +144,17 @@ Newest first. Each entry records why something was built the way it was.
   hardened runtime and `notarytool`.
 - **The Gallery and the CLI ship as portable, single-file archives** attached to each GitHub release (open question 7);
   installers and stores can follow.
+
+### 0.27
+
+- **DTLS is wrapped, not rebuilt** (curation tier 2): BouncyCastle 2.7.0 (MIT) carries the handshake and record layer;
+  IoTCom adds `IDatagramTransport` client/server transports, per-peer demultiplexing, cookies and diagnostics. The package is
+  separate from the meta-package (BouncyCastle is large) but trimmable: ILC reports no trim/AOT warnings, and CI publishes the
+  CoapsSecure sample with NativeAOT.
+- **DTLS 1.2 only.** BouncyCastle's managed DTLS 1.3 is not complete, and the alternative (OpenSSL) means a native build per RID;
+  1.3 is a follow-up.
+- **Certificates are pinned or chained to supplied roots**, never to the OS store, and there is no "accept anything" switch.
+- **A failed handshake stays failed**: CoAP's receive loop would otherwise start a second handshake that hides the real cause.
 
 ### 0.26
 
@@ -425,6 +437,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | DTLS 1.2 (`0.27.0-preview.1`): `Transport.Dtls` over BouncyCastle (PSK and ECDSA certificates, cookies, per-peer sessions), CoAP/LwM2M over coaps://, CLI `--psk`/`--pin`, CoapsSecure sample in the AOT gate, notebook pair, docs, benchmark; folded the Gallery #14/#17 and signing changes into this release. |
 | 2026-11-15 | Gallery use cases 14 (cellular module over AT commands) and 17 (pub/sub across MQTT, AMQP 1.0 and Zenoh with a bridge mode); AT simulator coverage controls. |
 | 2026-11-15 | Release pipeline: optional Authenticode, NuGet author signing, Developer ID signing and notarisation; portable CLI and Gallery archives on a GitHub release; docs page *Releasing and signing*. |
 | 2026-11-15 | EtherNet/IP (`0.26.0-preview.1`): explicit-messaging client, ListIdentity discovery, adapter with tags, PLC simulator, fuzzed Rust twin `iotcom-enip`, 28 conformance vectors, CLI `enip`, Gallery packaging line, EnipTags sample, notebook pair, docs, benchmark. |

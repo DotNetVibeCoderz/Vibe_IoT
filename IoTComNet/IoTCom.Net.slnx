@@ -17,6 +17,7 @@
     <Project Path="samples/console/NfcTagReader/NfcTagReader.csproj" />
     <Project Path="samples/console/NtpClock/NtpClock.csproj" />
     <Project Path="samples/console/CoapObserve/CoapObserve.csproj" />
+    <Project Path="samples/console/CoapsSecure/CoapsSecure.csproj" />
     <Project Path="samples/console/DlmsMeterReader/DlmsMeterReader.csproj" />
     <Project Path="samples/console/Hl7MllpListener/Hl7MllpListener.csproj" />
     <Project Path="samples/console/LoRaWanGatewayMonitor/LoRaWanGatewayMonitor.csproj" />
@@ -88,6 +89,7 @@
     <Project Path="src/IoTCom.Net.Serialization.SenML/IoTCom.Net.Serialization.SenML.csproj" />
     <Project Path="src/IoTCom.Net.Serialization.Tlv/IoTCom.Net.Serialization.Tlv.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Ble/IoTCom.Net.Transport.Ble.csproj" />
+    <Project Path="src/IoTCom.Net.Transport.Dtls/IoTCom.Net.Transport.Dtls.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Can/IoTCom.Net.Transport.Can.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Can.Adapters/IoTCom.Net.Transport.Can.Adapters.csproj" />
     <Project Path="src/IoTCom.Net.Transport.Usb/IoTCom.Net.Transport.Usb.csproj" />

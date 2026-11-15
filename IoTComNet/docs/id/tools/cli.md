@@ -35,8 +35,8 @@ iotcom --help
 | `iotcom can simulate` | simulator ECU mesin di balik adapter slcan tiruan lewat TCP |
 | `iotcom uds read` / `dtc` / `raw` | identifikasi UDS, DTC (`--clear --allow-write`), request mentah dengan frame lane |
 | `iotcom obd live` / `vin` / `dtc` | data langsung OBD-II (`--watch`), VIN, DTC tersimpan dan tertunda |
-| `iotcom coap get` / `put` / `observe` / `discover` / `ping` | client CoAP dengan URI `coap://host/path` (`--accept senml`, `--frames`; penulisan butuh `--allow-write`) |
-| `iotcom coap serve` | node rumah kaca simulasi di UDP 5683 |
+| `iotcom coap get` / `put` / `observe` / `discover` / `ping` | client CoAP dengan URI `coap://host/path` (`--accept senml`, `--frames`; penulisan butuh `--allow-write`); `coaps://` berjalan lewat DTLS 1.2 dengan `--psk identitas:hex` (atau `IOTCOM_DTLS_PSK`) atau `--pin <sha256>` |
+| `iotcom coap serve` | node rumah kaca simulasi di UDP 5683; `--psk identitas:hex` atau `--cert` (self-signed, mencetak sidik jarinya) melayani `coaps://` di 5684 |
 | `iotcom lorawan server` | network server LoRaWAN ringan untuk gateway Semtech UDP (`--devices`, `--sim` untuk gateway dan sensor simulasi, `--frames`, `--pcap`) |
 | `iotcom lorawan simulate` | gateway dan sensor simulasi terhadap network server mana pun (`--server host:1700`; key disimpan ke file perangkat) |
 | `iotcom dlms read` / `objects` / `profile` | meter DLMS/COSEM lewat HDLC (`--serial`), wrapper (`-h`, TCP 4059), atau `--sim`; `--password` atau `--hls` untuk management client |

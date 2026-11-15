@@ -214,3 +214,60 @@ public class EnipBenchmarks
     [Benchmark]
     public byte[] ServeReadTag() => Adapter.Dispatch(IoTCom.Net.Protocols.EtherNetIp.CipRequest.Decode(Request)).Encode();
 }
+
+[MemoryDiagnoser]
+public class DtlsBenchmarks
+{
+    private static readonly System.Net.IPEndPoint At = new(System.Net.IPAddress.Parse("10.0.0.50"), 5684);
+    private static readonly IoTCom.Net.Transport.Dtls.DtlsPsk Psk = IoTCom.Net.Transport.Dtls.DtlsPsk.FromHex("bench", "000102030405060708090A0B0C0D0E0F");
+    private IoTCom.Net.Transports.InMemoryDatagramNetwork _net = null!;
+    private IoTCom.Net.Transport.Dtls.DtlsServerTransport _server = null!;
+    private IoTCom.Net.Transport.Dtls.DtlsClientTransport _session = null!;
+    private Task _echo = null!;
+    private readonly byte[] _payload = new byte[64];
+
+    [GlobalSetup]
+    public async Task Setup()
+    {
+        _net = new IoTCom.Net.Transports.InMemoryDatagramNetwork();
+        _server = new IoTCom.Net.Transport.Dtls.DtlsServerTransport(_net.Bind(At), new IoTCom.Net.Transport.Dtls.DtlsServerOptions().UsePsk(Psk));
+        _echo = Task.Run(async () =>
+        {
+            try
+            {
+                while (true)
+                {
+                    var d = await _server.ReceiveAsync();
+                    await _server.SendAsync(d.Data, d.Remote);
+                }
+            }
+            catch (Exception ex) when (ex is OperationCanceledException or System.Threading.Channels.ChannelClosedException or ObjectDisposedException) { }
+        });
+        _session = new IoTCom.Net.Transport.Dtls.DtlsClientTransport(_net.Bind(), At, new IoTCom.Net.Transport.Dtls.DtlsClientOptions { Psk = Psk });
+        await _session.HandshakeAsync();
+    }
+
+    [GlobalCleanup]
+    public async Task Cleanup()
+    {
+        await _session.DisposeAsync();
+        await _server.DisposeAsync();
+    }
+
+    /// <summary>A full PSK handshake (HelloVerifyRequest cookie, AES-128-CCM-8) over the in-memory network.</summary>
+    [Benchmark]
+    public async Task<string?> PskHandshake()
+    {
+        await using var client = new IoTCom.Net.Transport.Dtls.DtlsClientTransport(_net.Bind(), At, new IoTCom.Net.Transport.Dtls.DtlsClientOptions { Psk = Psk });
+        await client.HandshakeAsync();
+        return client.CipherSuite;
+    }
+
+    /// <summary>A 64-byte datagram encrypted, echoed by the server and decrypted again on an established session.</summary>
+    [Benchmark]
+    public async Task<int> SecuredRoundTrip()
+    {
+        await _session.SendAsync(_payload, At);
+        return (await _session.ReceiveAsync()).Data.Length;
+    }
+}

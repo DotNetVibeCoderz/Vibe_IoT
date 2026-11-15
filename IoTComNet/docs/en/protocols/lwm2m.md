@@ -73,9 +73,9 @@ await using var watch = await server.ObserveAsync("urn:dev:sensor:42", Lwm2mPath
 
 Writes and Execute change what devices do; Reboot and firmware resources take them offline. The server refuses them
 until `Lwm2mServerOptions.AllowWrites()`. On the device side, `OnWrite` validators reject values a resource must not
-take (the simulator's dimmer refuses 150 %), and resources without Write access answer 4.05. This package runs over
-plain CoAP on UDP 5683: production deployments use DTLS (port 5684) with pre-shared keys or certificates, which is a
-separate item on the roadmap. Do not expose an unprotected server to the internet.
+take (the simulator's dimmer refuses 150 %), and resources without Write access answer 4.05. Plain CoAP on UDP 5683 is
+unprotected: production deployments use DTLS (port 5684) with pre-shared keys or certificates — add
+`IoTCom.Net.Transport.Dtls` and call `UseDtlsClient`/`UseDtlsServer` on the options (see [DTLS](dtls.md)). Do not expose an unprotected server to the internet.
 
 ## Tools
 
@@ -113,7 +113,7 @@ The 19 shared TLV vectors (including six malformed payloads) run in the C# suite
 
 ## Limitations
 
-There is no DTLS yet, no bootstrap server (`/bs`), no Create or Delete of object instances, no Send operation, no
+There is no bootstrap server (`/bs`), no Create or Delete of object instances, no Send operation, no
 queue mode or SMS binding, and no LwM2M JSON (11543) format. Large values are not split with CoAP block-wise
 transfers by this layer. Notifications use the attributes `pmin` and `pmax`; `gt`, `lt` and `st` are not evaluated.
 

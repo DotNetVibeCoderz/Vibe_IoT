@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.26.0-preview.1"
+VERSION = "0.27.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -973,6 +973,70 @@ NOTEBOOKS = {
            "See `docs/en/protocols/ethernetip.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom enip demo`, `iotcom enip discover`, `iotcom enip read <tag> --host <plc> --slot 0`, `iotcom enip serve`, `iotcom enip decode <hex>`, *Lini pengemasan lewat EtherNet/IP* di Gallery, dan sampel EnipTags. "
            "Lihat `docs/id/protocols/ethernetip.md`.\n\n" + CREDIT[1]),
+    ],
+    "network/28-dtls": [
+        md("# DTLS — CoAP over coaps://\n\nA greenhouse node (`CoapServer`) and a client talk CoAP through DTLS 1.2 on an in-memory datagram network: first with a pre-shared key, then with a pinned certificate. "
+           "For a real device replace `net.Bind(...)` with `new UdpDatagramTransport(...)` and use port 5684.",
+           "# DTLS — CoAP lewat coaps://\n\nNode rumah kaca (`CoapServer`) dan klien berbicara CoAP lewat DTLS 1.2 di jaringan datagram dalam memori: pertama dengan pre-shared key, lalu dengan sertifikat ber-pin. "
+           "Untuk perangkat sungguhan, ganti `net.Bind(...)` dengan `new UdpDatagramTransport(...)` dan pakai port 5684."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Transport.Dtls, {VERSION}"'),
+        md("## Pre-shared key\nThe RFC 7925 profile for constrained devices: TLS_PSK_WITH_AES_128_CCM_8. The server looks keys up by identity; keys never appear in logs or `ToString()`.",
+           "## Pre-shared key\nProfil RFC 7925 untuk perangkat terbatas: TLS_PSK_WITH_AES_128_CCM_8. Server mencari kunci berdasarkan identitas; kunci tidak pernah muncul di log atau `ToString()`."),
+        code("""using System.Net;
+using IoTCom.Net;
+using IoTCom.Net.Protocols.Coap;
+using IoTCom.Net.Transport.Dtls;
+using IoTCom.Net.Transports;
+
+var net = new InMemoryDatagramNetwork();
+var at = new IPEndPoint(IPAddress.Parse("10.0.0.50"), 5684);
+var psk = DtlsPsk.FromHex("greenhouse-node-01", "6A2F0C9B1D4E7F3A8B5C2D1E0F9A8B7C");
+var dtlsServer = new DtlsServerTransport(net.Bind(at), new DtlsServerOptions().UsePsk(psk));
+dtlsServer.SessionEstablished += s => Console.WriteLine($"server: session with {s.Remote}, {s.CipherSuite}, identity {s.PskIdentity}");
+var node = CoapServer.Create(o => o.UseDatagramTransport(() => dtlsServer));
+var device = new CoapDeviceSimulator(node);
+await node.StartAsync();
+
+var client = CoapClient.Create(o => o.UseDtlsClient(() => net.Bind(), at, new DtlsClientOptions { Psk = psk }).UseServer(at));
+await client.ConnectAsync();
+Console.WriteLine($"temperature {(await client.GetAsync("/sensors/temperature")).PayloadText} °C  (key: {psk})");"""),
+        md("## A wrong key\nRecords with a bad MAC are dropped silently (RFC 6347), so a wrong key ends in a handshake timeout with a hint.",
+           "## Kunci yang salah\nRecord dengan MAC salah dibuang diam-diam (RFC 6347), jadi kunci yang salah berakhir dengan timeout handshake beserta petunjuk."),
+        code("""var wrong = new DtlsClientTransport(net.Bind(), at, new DtlsClientOptions { Psk = DtlsPsk.FromHex("greenhouse-node-01", "00112233445566778899AABBCCDDEEFF"), HandshakeTimeout = TimeSpan.FromSeconds(2) });
+try { await wrong.HandshakeAsync(); } catch (IoTComException e) { Console.WriteLine(e.Message); }
+await wrong.DisposeAsync();
+await client.DisposeAsync();
+await device.DisposeAsync();
+await node.DisposeAsync();"""),
+        md("## Certificates and pinning\nECDHE_ECDSA with a self-signed P-256 certificate; the client accepts exactly the fingerprint it pins.",
+           "## Sertifikat dan pinning\nECDHE_ECDSA dengan sertifikat P-256 self-signed; klien hanya menerima sidik jari yang di-pin."),
+        code("""var cert = DtlsCertificates.CreateSelfSigned("greenhouse-gw.local");
+var gw = CoapServer.Create(o => o.UseDtlsServer(() => net.Bind(new IPEndPoint(IPAddress.Parse("10.0.0.51"), 5684)), new DtlsServerOptions { Certificate = cert }));
+var gwDevice = new CoapDeviceSimulator(gw);
+await gw.StartAsync();
+var gwAt = new IPEndPoint(IPAddress.Parse("10.0.0.51"), 5684);
+var pinned = new DtlsClientOptions();
+pinned.PinnedFingerprints.Add(DtlsCertificates.Fingerprint(cert));
+var secure = new DtlsClientTransport(net.Bind(), gwAt, pinned);
+await secure.HandshakeAsync();
+Console.WriteLine($"suite {secure.CipherSuite}, pin {DtlsCertificates.Fingerprint(cert)[..16]}…");
+var gwClient = CoapClient.Create(o => o.UseDatagramTransport(() => secure).UseServer(gwAt));
+await gwClient.ConnectAsync();
+Console.WriteLine($"soil {(await gwClient.GetAsync("/sensors/soil")).PayloadText} %");
+
+var other = new DtlsClientOptions();
+other.PinnedFingerprints.Add(new string('0', 64));
+var intruder = new DtlsClientTransport(net.Bind(), gwAt, other);
+try { await intruder.HandshakeAsync(); } catch (IoTComException e) { Console.WriteLine(e.Message); }
+await intruder.DisposeAsync();
+await gwClient.DisposeAsync();
+await gwDevice.DisposeAsync();
+await gw.DisposeAsync();"""),
+        md("## Going further\n`iotcom coap serve --psk id:hex` or `--cert`, `iotcom coap get coaps://host/path --psk id:hex` (or `IOTCOM_DTLS_PSK`), `--pin <sha256>`, and the CoapsSecure sample. LwM2M uses the same `UseDtlsClient`/`UseDtlsServer`. "
+           "See `docs/en/protocols/dtls.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom coap serve --psk id:hex` atau `--cert`, `iotcom coap get coaps://host/path --psk id:hex` (atau `IOTCOM_DTLS_PSK`), `--pin <sha256>`, dan sampel CoapsSecure. LwM2M memakai `UseDtlsClient`/`UseDtlsServer` yang sama. "
+           "Lihat `docs/id/protocols/dtls.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "

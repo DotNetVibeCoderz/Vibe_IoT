@@ -3,16 +3,26 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
-## Unreleased
+## 0.27.0-preview.1 — 2026-11-15
 
+DTLS 1.2: CoAP and LwM2M over `coaps://`.
+
+- **New package `IoTCom.Net.Transport.Dtls`** (adapter over BouncyCastle 2.7.0, MIT; trimmable and NativeAOT-clean, not in the
+  meta-package): `DtlsClientTransport` and `DtlsServerTransport` as `IDatagramTransport`s, PSK (`TLS_PSK_WITH_AES_128_CCM_8`, GCM) and
+  ECDHE_ECDSA certificates (pinned SHA-256 fingerprints or custom roots), HelloVerifyRequest cookies, per-peer sessions with idle expiry,
+  `SessionEstablished`/`HandshakeFailed`, `UseDtlsClient`/`UseDtlsServer` for every datagram builder, `DtlsCertificates.CreateSelfSigned`.
+  A failed handshake stays failed and keeps reporting its real cause.
+- CLI: every `iotcom coap` command accepts `coaps://` with `--psk identity:hex` (or `IOTCOM_DTLS_PSK`) or `--pin`; `iotcom coap serve --psk|--cert`.
+- CoapsSecure sample (also in the CI NativeAOT gate), notebook pair `network/28-dtls`, docs page *DTLS*, benchmark (`DtlsBenchmarks`).
 - Gallery: *Cellular module over AT commands* (design use case 14) and *Pub/sub across brokers* (use case 17: MQTT, AMQP 1.0 and Zenoh
   side by side, with a bridge mode).
 - `AtModemSimulator.Rssi` and `ChangeRegistration` let tests and demos drive coverage (tunnels, roaming); the simulator accepts `AT+CNMI`.
 - Release pipeline: optional Authenticode, NuGet author signing, Developer ID signing and notarisation; portable CLI and Gallery
   archives attached to each GitHub release; docs page *Releasing and signing*.
 
-*Gallery: modul seluler lewat perintah AT dan pub/sub lintas broker; simulator modem dapat mengatur cakupan; pipeline rilis dengan
-penandatanganan opsional dan arsip aplikasi portabel.*
+*DTLS 1.2 untuk CoAP dan LwM2M (coaps://): transport klien dan server dengan PSK dan sertifikat ECDSA ber-pin, cookie, sesi per peer;
+CLI, sampel, notebook, dan dokumentasi. Juga: Gallery modul seluler lewat perintah AT dan pub/sub lintas broker; simulator modem dapat
+mengatur cakupan; pipeline rilis dengan penandatanganan opsional dan arsip aplikasi portabel.*
 
 ## 0.26.0-preview.1 — 2026-11-15
 

@@ -35,8 +35,8 @@ iotcom --help
 | `iotcom can simulate` | engine ECU simulator behind an emulated slcan adapter on TCP |
 | `iotcom uds read` / `dtc` / `raw` | UDS identification, DTCs (`--clear --allow-write`), raw requests with the frame lane |
 | `iotcom obd live` / `vin` / `dtc` | OBD-II live data (`--watch`), VIN, stored and pending DTCs |
-| `iotcom coap get` / `put` / `observe` / `discover` / `ping` | CoAP client on `coap://host/path` URIs (`--accept senml`, `--frames`; writes need `--allow-write`) |
-| `iotcom coap serve` | simulated greenhouse node on UDP 5683 |
+| `iotcom coap get` / `put` / `observe` / `discover` / `ping` | CoAP client on `coap://host/path` URIs (`--accept senml`, `--frames`; writes need `--allow-write`); `coaps://` runs over DTLS 1.2 with `--psk identity:hex` (or `IOTCOM_DTLS_PSK`) or `--pin <sha256>` |
+| `iotcom coap serve` | simulated greenhouse node on UDP 5683; `--psk identity:hex` or `--cert` (self-signed, prints its fingerprint) serves `coaps://` on 5684 |
 | `iotcom lorawan server` | light LoRaWAN network server for Semtech UDP gateways (`--devices`, `--sim` for simulated gateways and sensors, `--frames`, `--pcap`) |
 | `iotcom lorawan simulate` | simulated gateways and sensors against any network server (`--server host:1700`; keys saved to a device file) |
 | `iotcom dlms read` / `objects` / `profile` | DLMS/COSEM meter over HDLC (`--serial`), the wrapper (`-h`, TCP 4059) or `--sim`; `--password` or `--hls` for the management client |

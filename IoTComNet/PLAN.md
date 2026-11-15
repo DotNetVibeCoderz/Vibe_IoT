@@ -72,9 +72,9 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | Matter controller + device/bridge | ⏳ (scope decided 2026-11-15: open question 2) |
 | KNXnet/IP | ✅ `0.24.0-preview.1` |
 | BACnet/IP: adapter + own server API | ✅ `0.25.0-preview.1` |
-| DTLS 1.2/1.3 (also unlocks CoAP/LwM2M security) | ⏳ |
+| DTLS 1.2 (also unlocks CoAP/LwM2M security) | ✅ `0.27.0-preview.1` (DTLS 1.3 is a follow-up) |
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
-| Complete EN/ID documentation | 🚧 56 + 56 pages; grows with every item above |
+| Complete EN/ID documentation | 🚧 58 + 58 pages; grows with every item above |
 | Gallery with all 17 design use cases | 🚧 29 demos, 16 of 17 use cases covered (#12 firmware probing waits for SWD/DFU) |
 | Signed and notarised releases | ✅ wired 2026-11-15 (Authenticode, NuGet author signing, Developer ID + notarisation; active once the signing secrets are added) |
 
@@ -87,7 +87,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 
 ### To reach `1.0.0` (Phase 2)
 
-1. **Protocols:** EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), DTLS.
+1. **Protocols:** EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge).
 2. **Gallery use cases still missing** (design §8 catalogue):
    - #12 probe & flash firmware — SWD/JTAG, DFU, RTT;
 3. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
@@ -99,7 +99,8 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 |---|---|
 | CAN adapters | Kvaser, Vector; hardware-in-the-loop run of gs_usb and PCAN |
 | Automotive | UDS flashing helpers, DoIP; J1939 ETP, DM3/DM11, NMEA 2000 fast packet; CANopen SDO block, LSS, EDS import |
-| CoAP / LwM2M | DTLS, OSCORE, CoAP over TCP; LwM2M bootstrap, Create/Delete, Send, block-wise |
+| CoAP / LwM2M | OSCORE, CoAP over TCP; LwM2M bootstrap, Create/Delete, Send, block-wise |
+| DTLS | DTLS 1.3 (RFC 9147), connection IDs (RFC 9146), client certificates, raw public keys (RFC 7250), session resumption; a coaps mode in the Gallery greenhouse |
 | MAVLink | mission protocol, FTP, routing |
 | LoRaWAN | Class B/C, ADR decisions, Basics Station |
 | Metering | DLMS suites 1/2, push; wireless M-Bus / OMS |

@@ -50,6 +50,7 @@ perangkat keras.
 | [KNX](protocols/knx.md) | klien tunnelling · routing · router KNX IP · DPT · simulator lantai kantor | `IoTCom.Net.Protocols.Knx` |
 | [BACnet](protocols/bacnet.md) | server device · adapter klien · priority array · COV · simulator AHU | `IoTCom.Net.Protocols.Bacnet`, `IoTCom.Net.Adapters.Bacnet` |
 | [EtherNet/IP](protocols/ethernetip.md) | klien explicit · adapter · tag Logix · ListIdentity · simulator PLC | `IoTCom.Net.Protocols.EtherNetIp` |
+| [DTLS](protocols/dtls.md) | transport klien dan server DTLS 1.2 · PSK dan sertifikat ECDSA · coaps:// untuk CoAP dan LwM2M | `IoTCom.Net.Transport.Dtls` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB dan HID](protocols/usb.md) | control · bulk · interrupt · report HID · papan relay · bus virtual (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |

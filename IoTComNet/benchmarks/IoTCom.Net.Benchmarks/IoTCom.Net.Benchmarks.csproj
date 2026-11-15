@@ -7,5 +7,6 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
     <ProjectReference Include="..\..\src\IoTCom.Net\IoTCom.Net.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Dtls\IoTCom.Net.Transport.Dtls.csproj" />
   </ItemGroup>
 </Project>
