@@ -95,7 +95,8 @@ internal sealed class CoapStack : IAsyncDisposable
         _params = parameters;
         _log = log;
         _tap = tap;
-        _loop = Task.Run(() => ReceiveLoopAsync(_cts.Token));
+        var receiveLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _loop = Task.Run(() => ReceiveLoopAsync(receiveLoopToken));
     }
 
     public CoapStatistics Statistics { get; } = new();

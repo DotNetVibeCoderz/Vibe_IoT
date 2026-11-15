@@ -307,8 +307,10 @@ public sealed class Lwm2mClient : EndpointBase, IClientEndpoint
             _transport = _options.TransportFactory!();
             _stack = new CoapStack(_transport, _options.Transmission, Logger, (d, bytes, m) => Tap(d, bytes, () => m.ToString())) { RequestHandler = OnRequestAsync };
             _cts = new CancellationTokenSource();
-            _ = Task.Run(() => NotifyLoopAsync(_cts.Token), CancellationToken.None);
-            _ = Task.Run(() => UpdateLoopAsync(_cts.Token), CancellationToken.None);
+            var notifyLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+            _ = Task.Run(() => NotifyLoopAsync(notifyLoopToken), CancellationToken.None);
+            var updateLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+            _ = Task.Run(() => UpdateLoopAsync(updateLoopToken), CancellationToken.None);
         }
 
         try

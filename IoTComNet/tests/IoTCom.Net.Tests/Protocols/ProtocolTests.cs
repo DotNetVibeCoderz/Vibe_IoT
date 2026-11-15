@@ -240,7 +240,7 @@ public class HostingTests
         var builder = Host.CreateApplicationBuilder();
         builder.Services.AddIoTCom(iot => iot
             .AddModbusServer("sim", o => o.ListenInMemory(listener))
-            .AddModbusClient("plc", o => o.UseInMemory(listener))
+            .AddModbusClient("plc", o => { o.UseInMemory(listener); o.Timeout = TimeSpan.FromSeconds(5); })   // the 1 s default was missed on a cold macOS runner
             .AddHealthChecks());
         using var host = builder.Build();
         await host.StartAsync();

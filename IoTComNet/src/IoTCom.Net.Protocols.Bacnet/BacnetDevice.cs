@@ -181,9 +181,12 @@ public sealed class BacnetDevice : EndpointBase, IServerEndpoint
         }))();
         if (_transport is InMemoryDatagramTransport m && _options.BroadcastAddress is IPEndPoint group && IsMulticast(group.Address)) m.JoinMulticastGroup(group.Address);
         _cts = new CancellationTokenSource();
-        _receive = Task.Run(() => ReceiveLoopAsync(_cts.Token), CancellationToken.None);
-        _notify = Task.Run(() => NotifyLoopAsync(_cts.Token), CancellationToken.None);
-        _expire = Task.Run(() => ExpireLoopAsync(_cts.Token), CancellationToken.None);
+        var receiveLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _receive = Task.Run(() => ReceiveLoopAsync(receiveLoopToken), CancellationToken.None);
+        var notifyLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _notify = Task.Run(() => NotifyLoopAsync(notifyLoopToken), CancellationToken.None);
+        var expireLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _expire = Task.Run(() => ExpireLoopAsync(expireLoopToken), CancellationToken.None);
         SetState(EndpointState.Listening);
         if (_options.AnnounceOnStart) await BroadcastIAmAsync(ct).ConfigureAwait(false);
     }

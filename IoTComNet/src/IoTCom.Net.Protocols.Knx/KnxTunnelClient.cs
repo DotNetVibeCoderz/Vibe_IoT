@@ -136,12 +136,13 @@ public sealed class KnxTunnelClient : EndpointBase, IClientEndpoint, IKnxGroupCl
                 : _options.Gateway;
             _transport = (_options.TransportFactory ?? (() => new UdpDatagramTransport(new IPEndPoint(IPAddress.Any, 0))))();
             _cts = new CancellationTokenSource();
-            _receive = Task.Run(() => ReceiveLoopAsync(_cts.Token), CancellationToken.None);
+            var receiveLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+            _receive = Task.Run(() => ReceiveLoopAsync(receiveLoopToken), CancellationToken.None);
             var response = await RequestAsync(KnxIp.ConnectRequest(Hpai, Hpai), KnxServiceType.ConnectResponse, ct).ConfigureAwait(false);
             var (channel, status, _, assigned) = KnxIp.ReadConnectResponse(response);
             if (status != KnxIpStatus.NoError) throw new DeviceException($"The KNX interface refused the connection: {KnxIpStatus.Name(status)}.", status);
             (_channel, Address, _sendSeq, _receiveSeq) = (channel, assigned, 0, 0);
-            _heartbeat = Task.Run(() => HeartbeatAsync(_cts.Token), CancellationToken.None);
+            _heartbeat = Task.Run(() => HeartbeatAsync(receiveLoopToken), CancellationToken.None);
             SetState(EndpointState.Connected);
         }
         catch (Exception ex)

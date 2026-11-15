@@ -173,7 +173,8 @@ public sealed class Lwm2mServer : EndpointBase, IServerEndpoint
         _transport = _options.TransportFactory!();
         _stack = new CoapStack(_transport, _options.Transmission, Logger, (d, bytes, m) => Tap(d, bytes, () => m.ToString())) { RequestHandler = OnRequestAsync };
         _cts = new CancellationTokenSource();
-        _ = Task.Run(() => ExpiryLoopAsync(_cts.Token), CancellationToken.None);
+        var expiryLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _ = Task.Run(() => ExpiryLoopAsync(expiryLoopToken), CancellationToken.None);
         SetState(EndpointState.Listening);
         return ValueTask.CompletedTask;
     }

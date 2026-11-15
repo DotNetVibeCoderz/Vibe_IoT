@@ -86,7 +86,8 @@ public sealed class KnxRouter : EndpointBase, IClientEndpoint, IKnxGroupClient
         _transport = (_options.TransportFactory ?? (() => UdpDatagramTransport.Multicast(KnxIp.RoutingMulticast, KnxIp.Port)))();
         if (_transport is InMemoryDatagramTransport m) m.JoinMulticastGroup(KnxIp.RoutingMulticast);
         _cts = new CancellationTokenSource();
-        _receive = Task.Run(() => ReceiveLoopAsync(_cts.Token), CancellationToken.None);
+        var receiveLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _receive = Task.Run(() => ReceiveLoopAsync(receiveLoopToken), CancellationToken.None);
         SetState(EndpointState.Connected);
         return ValueTask.CompletedTask;
     }

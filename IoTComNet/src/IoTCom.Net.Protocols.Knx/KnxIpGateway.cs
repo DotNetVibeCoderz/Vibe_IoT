@@ -161,8 +161,10 @@ public sealed class KnxIpGateway : EndpointBase, IServerEndpoint
 
         _cts = new CancellationTokenSource();
         _bus.Telegram += OnBusTelegram;
-        _receive = Task.Run(() => ReceiveLoopAsync(_cts.Token), CancellationToken.None);
-        _supervise = Task.Run(() => SuperviseAsync(_cts.Token), CancellationToken.None);
+        var receiveLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _receive = Task.Run(() => ReceiveLoopAsync(receiveLoopToken), CancellationToken.None);
+        var superviseToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _supervise = Task.Run(() => SuperviseAsync(superviseToken), CancellationToken.None);
         await Task.CompletedTask.ConfigureAwait(false);
         SetState(EndpointState.Listening);
     }

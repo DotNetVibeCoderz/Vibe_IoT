@@ -168,11 +168,13 @@ public sealed class EnipAdapter : EndpointBase, IServerEndpoint
         _listener = (_options.ListenerFactory ?? (() => new TcpTransportListener(new IPEndPoint(IPAddress.Any, EnipPacket.Port))))();
         await _listener.StartAsync(ct).ConfigureAwait(false);
         _cts = new CancellationTokenSource();
-        _accept = Task.Run(() => AcceptLoopAsync(_cts.Token), CancellationToken.None);
+        var acceptLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        _accept = Task.Run(() => AcceptLoopAsync(acceptLoopToken), CancellationToken.None);
         if (_options.DiscoveryFactory is { } f)
         {
             _udp = f();
-            _discovery = Task.Run(() => DiscoveryLoopAsync(_cts.Token), CancellationToken.None);
+            var discoveryLoopToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+            _discovery = Task.Run(() => DiscoveryLoopAsync(discoveryLoopToken), CancellationToken.None);
         }
 
         SetState(EndpointState.Listening);

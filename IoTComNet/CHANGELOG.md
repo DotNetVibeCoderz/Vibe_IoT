@@ -10,8 +10,10 @@ All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI versio
 
 - Matter: unsecured handshake messages (PASE/CASE) are de-duplicated per exchange, so a retransmitted handshake message is no
   longer taken for the next step (commissioning could stall when a datagram was duplicated or an acknowledgement was late).
+- KNX, BACnet, CoAP, EtherCAT, EtherNet/IP, LwM2M, OCPP simulator: background loops capture their cancellation token before they
+  start, so disconnecting while an endpoint is still starting no longer throws `NullReferenceException` on a worker thread.
 
-*Matter: integer DER kini selalu dalam bentuk minimal; pesan handshake PASE/CASE yang dikirim ulang tidak lagi dianggap langkah berikutnya.*
+*Matter: integer DER kini selalu dalam bentuk minimal; pesan handshake PASE/CASE yang dikirim ulang tidak lagi dianggap langkah berikutnya; loop latar tidak lagi melempar NullReferenceException saat diputus ketika baru dimulai.*
 
 ## 0.30.0-preview.1 — 2026-11-15
 

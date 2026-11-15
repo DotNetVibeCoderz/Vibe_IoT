@@ -205,7 +205,8 @@ public sealed class OcppChargePointSimulator : IAsyncDisposable
     {
         await ChargePoint.ConnectAsync(ct).ConfigureAwait(false);
         await BootAsync(_options.Version == OcppVersion.Ocpp16 ? null : V201.BootReason.PowerUp, ct).ConfigureAwait(false);
-        if (_options.AutoRun && _loop is null) _loop = Task.Run(() => RunAsync(_cts.Token), CancellationToken.None);
+        var runToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+        if (_options.AutoRun && _loop is null) _loop = Task.Run(() => RunAsync(runToken), CancellationToken.None);
     }
 
     private async Task BootAsync(V201.BootReason? reason, CancellationToken ct)

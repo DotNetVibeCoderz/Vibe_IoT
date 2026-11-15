@@ -201,7 +201,8 @@ public sealed class EthercatMaster : EndpointBase, IClientEndpoint
         {
             _link = _options.LinkFactory!();
             _cts = new CancellationTokenSource();
-            _pump = Task.Run(() => PumpAsync(_cts.Token), CancellationToken.None);
+            var pumpToken = _cts.Token;   // read now: a concurrent teardown may null _cts before the task runs
+            _pump = Task.Run(() => PumpAsync(pumpToken), CancellationToken.None);
             SetState(EndpointState.Connected);
         }
         catch (Exception ex)
