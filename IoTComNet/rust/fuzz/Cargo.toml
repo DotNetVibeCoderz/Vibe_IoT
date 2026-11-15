@@ -23,6 +23,7 @@ iotcom-canopen = { path = "../crates/iotcom-canopen" }
 iotcom-j1939 = { path = "../crates/iotcom-j1939" }
 iotcom-iec104 = { path = "../crates/iotcom-iec104" }
 iotcom-ntp = { path = "../crates/iotcom-ntp" }
+iotcom-enip = { path = "../crates/iotcom-enip" }
 
 [workspace]
 members = ["."]
@@ -114,6 +115,13 @@ bench = false
 [[bin]]
 name = "ntp"
 path = "fuzz_targets/ntp.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "enip"
+path = "fuzz_targets/enip.rs"
 test = false
 doc = false
 bench = false

@@ -3,6 +3,22 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.26.0-preview.1 — 2026-11-15
+
+EtherNet/IP explicit messaging.
+
+- **New package `IoTCom.Net.Protocols.EtherNetIp`** (in the meta-package): `EnipPacket` (encapsulation, CPF, SendRRData), `CipPath`
+  (logical and symbolic EPATHs), `CipRequest`/`CipResponse`, `EnipIdentity`, `CipTagValue`; `EnipClient` (sessions, Get/Set_Attribute,
+  Get_Attributes_All, Logix Read/Write Tag, Multiple_Service_Packet, Unconnected_Send routing, **read-only by default**), `EnipDiscovery`
+  (ListIdentity over UDP), `EnipAdapter` (Identity, Assembly, symbolic tags) and `EnipPlcSimulator` (packaging line).
+- **New Rust crate `iotcom-enip`**: fuzzed codec twin (14th fuzz target `enip`, 300k local runs, no findings); `/conformance/enip.json`
+  with 28 vectors from the Python reference, run by both suites.
+- CLI `iotcom enip discover|identity|read|write|attr|serve|demo|decode`, VS Code decoder `enip`, pcapng on TCP 44818, Gallery *Packaging line over
+  EtherNet/IP*, EnipTags sample, notebook pair `industrial/27-ethernetip`, docs page *EtherNet/IP*, `AddEnipClient`/`AddEnipAdapter`, benchmark.
+
+*EtherNet/IP explicit messaging: klien (hanya-baca secara bawaan), penemuan ListIdentity, adapter dengan tag Logix, simulator PLC, dan
+kembaran codec Rust yang di-fuzz; CLI, Gallery, sampel, notebook, dan dokumentasi.*
+
 ## 0.25.0-preview.1 — 2026-11-15
 
 BACnet/IP: our own server API and a client adapter.

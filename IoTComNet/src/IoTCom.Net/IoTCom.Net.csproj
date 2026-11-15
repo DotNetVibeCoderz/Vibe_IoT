@@ -21,6 +21,7 @@
     <ProjectReference Include="..\IoTCom.Net.Protocols.Ocpp\IoTCom.Net.Protocols.Ocpp.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Knx\IoTCom.Net.Protocols.Knx.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Bacnet\IoTCom.Net.Protocols.Bacnet.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Protocols.EtherNetIp\IoTCom.Net.Protocols.EtherNetIp.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Nfc\IoTCom.Net.Protocols.Nfc.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Modbus\IoTCom.Net.Protocols.Modbus.csproj" />
     <ProjectReference Include="..\IoTCom.Net.Protocols.Nmea\IoTCom.Net.Protocols.Nmea.csproj" />

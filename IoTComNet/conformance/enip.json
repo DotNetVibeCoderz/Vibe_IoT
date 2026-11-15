@@ -1,0 +1,170 @@
+[
+  {
+    "kind": "encap",
+    "name": "RegisterSession request",
+    "hex": "65000400000000000000000000000000000000000000000001000000",
+    "expected": "command=0x0065 session=0x00000000 status=0 length=4"
+  },
+  {
+    "kind": "encap",
+    "name": "RegisterSession reply",
+    "hex": "65000400011000000000000000000000000000000000000001000000",
+    "expected": "command=0x0065 session=0x00001001 status=0 length=4"
+  },
+  {
+    "kind": "encap",
+    "name": "ListIdentity request",
+    "hex": "630000000000000000000000000000000000000000000000",
+    "expected": "command=0x0063 session=0x00000000 status=0 length=0"
+  },
+  {
+    "kind": "encap",
+    "name": "invalid session",
+    "hex": "6F0000003412000064000000000000000000000000000000",
+    "expected": "command=0x006F session=0x00001234 status=100 length=0"
+  },
+  {
+    "kind": "encap",
+    "name": "SendRRData with Read Tag",
+    "hex": "6F0020000110000000000000000000000000000000000000000000000A00020000000000B20010004C06910A4C696E655F53706565640100",
+    "expected": "command=0x006F session=0x00001001 status=0 length=32 items=0000:0,00B2:16"
+  },
+  {
+    "kind": "encap",
+    "name": "length past the end",
+    "hex": "650004000000000000000000000000000000000000000000010000",
+    "expected": "error"
+  },
+  {
+    "kind": "encap",
+    "name": "shorter than the header",
+    "hex": "650004",
+    "expected": "error"
+  },
+  {
+    "kind": "encap",
+    "name": "CPF item past the end",
+    "hex": "6F000E000000000000000000000000000000000000000000000000000A000100B20009000E03",
+    "expected": "error"
+  },
+  {
+    "kind": "request",
+    "name": "Get_Attributes_All Identity",
+    "hex": "010220012401",
+    "expected": "service=0x01 path=class:1,instance:1 data="
+  },
+  {
+    "kind": "request",
+    "name": "Get_Attribute_Single product name",
+    "hex": "0E03200124013007",
+    "expected": "service=0x0E path=class:1,instance:1,attribute:7 data="
+  },
+  {
+    "kind": "request",
+    "name": "Set_Attribute_Single assembly 150",
+    "hex": "10032004249630030102",
+    "expected": "service=0x10 path=class:4,instance:150,attribute:3 data=0102"
+  },
+  {
+    "kind": "request",
+    "name": "16-bit class and instance",
+    "hex": "0E0521000003250034123001",
+    "expected": "service=0x0E path=class:768,instance:4660,attribute:1 data="
+  },
+  {
+    "kind": "request",
+    "name": "32-bit instance",
+    "hex": "0E042002260000000100",
+    "expected": "service=0x0E path=class:2,instance:65536 data="
+  },
+  {
+    "kind": "request",
+    "name": "Read Tag odd-length name (padded)",
+    "hex": "4C05910752656369706531000100",
+    "expected": "service=0x4C path=symbol:Recipe1 data=0100"
+  },
+  {
+    "kind": "request",
+    "name": "Read Tag member",
+    "hex": "4C0B910C50726F6772616D3A4D61696E91054D6F746F72000100",
+    "expected": "service=0x4C path=symbol:Program:Main,symbol:Motor data=0100"
+  },
+  {
+    "kind": "request",
+    "name": "Read Tag array element",
+    "hex": "4C07910A5A6F6E655F54656D707328020200",
+    "expected": "service=0x4C path=symbol:Zone_Temps,element:2 data=0200"
+  },
+  {
+    "kind": "request",
+    "name": "Write Tag REAL",
+    "hex": "4D06910A4C696E655F5370656564CA0001000000B542",
+    "expected": "service=0x4D path=symbol:Line_Speed data=CA0001000000B542"
+  },
+  {
+    "kind": "request",
+    "name": "path size past the end",
+    "hex": "0E032001",
+    "expected": "error"
+  },
+  {
+    "kind": "request",
+    "name": "reserved logical format",
+    "hex": "0E012300",
+    "expected": "error"
+  },
+  {
+    "kind": "request",
+    "name": "symbol longer than the path",
+    "hex": "4C019105",
+    "expected": "error"
+  },
+  {
+    "kind": "response",
+    "name": "Read Tag DINT",
+    "hex": "CC000000C4001C470000",
+    "expected": "service=0x4C status=0x00 additional= data=C4001C470000"
+  },
+  {
+    "kind": "response",
+    "name": "path destination unknown",
+    "hex": "CC000500",
+    "expected": "service=0x4C status=0x05 additional= data="
+  },
+  {
+    "kind": "response",
+    "name": "general error with additional status",
+    "hex": "CD0004010521",
+    "expected": "service=0x4D status=0x04 additional=2105 data="
+  },
+  {
+    "kind": "response",
+    "name": "Unconnected_Send connection failure",
+    "hex": "D20001010402",
+    "expected": "service=0x52 status=0x01 additional=0204 data="
+  },
+  {
+    "kind": "response",
+    "name": "not a reply",
+    "hex": "4C000000",
+    "expected": "error"
+  },
+  {
+    "kind": "response",
+    "name": "additional status truncated",
+    "hex": "CC0004020521",
+    "expected": "error"
+  },
+  {
+    "kind": "identity",
+    "name": "ControlLogix identity",
+    "hex": "01000002AF12C0A8010A000000000000000001000E00A600210B6000EEFFC0000B313735362D4C3833452F4203",
+    "expected": "vendor=1 type=14 product=166 rev=33.11 status=0x0060 serial=0x00C0FFEE name=1756-L83E/B state=3 address=192.168.1.10:44818"
+  },
+  {
+    "kind": "identity",
+    "name": "name past the end",
+    "hex": "01000002AF12C0A8010A000000000000000001000E00A600210B6000EEFFC0000B313735362D4C3833",
+    "expected": "error"
+  }
+]

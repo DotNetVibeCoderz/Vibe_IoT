@@ -34,6 +34,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Industri | PLC pabrik pintar — baca PLC virtual, nyalakan motor, geser setpoint; beralih antara mesin C# dan **Rust** | Modbus TCP |
 | Industri | Penjelajah tag OPC UA — address space simulator pabrik lewat sesi Basic256Sha256, semua tag dalam satu subscription, tren langsung, penulisan terjaga, dan pemanggilan method | OPC UA |
 | Industri | Modul I/O CANopen — dua modul bergaya CiA 401 di rel DIN dengan LED input/output dan nilai analog dari PDO, NMT start/stop, output pompa dinyalakan lewat SDO di balik penjaga penulisan, konsol SDO | CANopen |
+| Industri | Lini pengemasan lewat EtherNet/IP — kemasan berjalan di bawah seal jaw sementara HMI membaca tag Logix PLC dalam satu Multiple_Service_Packet per detik; jalankan dan hentikan konveyor, ubah kecepatan dan set point seal di balik kunci tulis, dan lihat seal yang dingin memenuhi tempat reject | EtherNet/IP, CIP |
 | Energi & jaringan listrik | Kendali gardu lewat IEC 104 — bay penyulang 20 kV pada diagram segaris (bagian bertegangan, mati, dan ditanahkan), pemutus, pemisah, dan saklar pentanahan dioperasikan dengan select-before-operate di balik interlock dan kunci kendali, tap changer dan set point Q, hubung singkat yang men-trip penyulang, serta urutan kejadian bertanda waktu RTU | IEC 60870-5-104 |
 | Energi & jaringan listrik | Hub pengisian EV lewat OCPP — area pengisian rest area dengan dua wallbox AC ber-OCPP 1.6J dan satu pengisi cepat DC ber-OCPP 2.0.1: colokkan mobil dan tempelkan kartu, lihat baterai terisi dan kabel menyala saat daya mengalir, mulai, hentikan, batasi, dan reset di balik kunci tulis, suntikkan gangguan tanah atau link seluler yang putus, dan biarkan manajemen beban menjaga situs di bawah sambungan listriknya | OCPP 1.6J, OCPP 2.0.1, WebSocket |
 | Otomotif | Diagnostik kendaraan — scan tool dan simulator ECU mesin di bus CAN virtual: takometer dan lampu indikator, data langsung OBD-II, VIN, DTC, security access, dan penulisan yang dijaga | CAN, ISO-TP (Rust), UDS, OBD-II |
@@ -77,6 +78,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Penjelajah tag OPC UA](../../images/gallery-opcua.png)
 ![Modul I/O CANopen](../../images/gallery-canopen.png)
+![Lini pengemasan lewat EtherNet/IP](../../images/gallery-ethernetip.png)
 ![Panel truk lewat J1939](../../images/gallery-j1939.png)
 ![Kendali gardu lewat IEC 104](../../images/gallery-iec104.png)
 ![Sinkronisasi jam armada lewat NTP](../../images/gallery-ntp.png)

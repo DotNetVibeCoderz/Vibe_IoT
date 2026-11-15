@@ -139,6 +139,18 @@ app.Configure(c =>
         l.AddCommand<Lwm2mDemoCommand>("demo").WithDescription("Server and street light in-process: register, read, observe, write.").WithExample("lwm2m", "demo").WithExample("lwm2m", "demo", "--allow-write");
         l.AddCommand<Lwm2mDecodeCommand>("decode").WithDescription("Decode an LwM2M TLV payload.").WithExample("lwm2m", "decode", "3/0/6", "8606410001410105");
     });
+    c.AddBranch("enip", e =>
+    {
+        e.SetDescription("EtherNet/IP explicit messaging (CIP): discover adapters, read the identity, read and write Logix tags, read attributes, or serve a simulated PLC.");
+        e.AddCommand<EnipDiscoverCommand>("discover").WithDescription("ListIdentity broadcast on UDP 44818.").WithExample("enip", "discover").WithExample("enip", "discover", "--sim");
+        e.AddCommand<EnipIdentityCommand>("identity").WithDescription("Read the Identity object.").WithExample("enip", "identity", "--host", "192.168.1.20", "--slot", "0").WithExample("enip", "identity", "--sim");
+        e.AddCommand<EnipReadCommand>("read").WithDescription("Read one tag or several (comma-separated).").WithExample("enip", "read", "Line_Speed,Count_Good,Seal_Temp", "--sim").WithExample("enip", "read", "Zone_Temps", "--count", "4", "--sim");
+        e.AddCommand<EnipWriteCommand>("write").WithDescription("Write a tag (requires --allow-write).").WithExample("enip", "write", "Line_Speed", "REAL", "90", "--sim", "--allow-write");
+        e.AddCommand<EnipAttributeCommand>("attr").WithDescription("Get_Attribute_Single, or Get_Attributes_All without an attribute.").WithExample("enip", "attr", "0x01", "1", "7", "--sim");
+        e.AddCommand<EnipServeCommand>("serve").WithDescription("Run the simulated packaging-line PLC on TCP/UDP 44818.").WithExample("enip", "serve");
+        e.AddCommand<EnipDemoCommand>("demo").WithDescription("Session, identity and tags in-process.").WithExample("enip", "demo").WithExample("enip", "demo", "--allow-write");
+        e.AddCommand<EnipDecodeCommand>("decode").WithDescription("Decode an encapsulation packet or a CIP message.").WithExample("enip", "decode", "4C 06 91 0A 4C 69 6E 65 5F 53 70 65 65 64 01 00");
+    });
     c.AddBranch("bacnet", b =>
     {
         b.SetDescription("BACnet/IP building automation: discover devices, list objects, read, write with priorities, subscribe to COV, serve a simulated air handling unit, or decode a datagram.");

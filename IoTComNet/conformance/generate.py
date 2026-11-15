@@ -1507,6 +1507,90 @@ def bacnet_vectors():
     return out
 
 
+def enip_vectors():
+    """EtherNet/IP encapsulation (Vol. 2 ch. 2), Common Packet Format, CIP Message Router requests and replies with EPATHs
+    (Vol. 1 appendix C) and the ListIdentity item.
+
+    Each vector gives bytes and a normalised description that the C# codec and the Rust twin must both produce, or "error".
+    """
+    import struct
+    out = []
+
+    def encap(command, data=b"", session=0, status=0, context=b"\x00" * 8):
+        return struct.pack("<HHII", command, len(data), session, status) + context + struct.pack("<I", 0) + data
+
+    def cpf(*items):
+        b = struct.pack("<H", len(items))
+        for t, d in items:
+            b += struct.pack("<HH", t, len(d)) + d
+        return b
+
+    def rr(cip):
+        return struct.pack("<IH", 0, 10) + cpf((0x0000, b""), (0x00B2, cip))
+
+    def seg(kind, value):
+        if value <= 0xFF:
+            return bytes([kind, value])
+        if value <= 0xFFFF:
+            return bytes([kind | 1, 0]) + struct.pack("<H", value)
+        return bytes([kind | 2, 0]) + struct.pack("<I", value)
+
+    def sym(name):
+        n = name.encode()
+        return bytes([0x91, len(n)]) + n + (b"\x00" if len(n) % 2 else b"")
+
+    def req(service, path, data=b""):
+        return bytes([service, len(path) // 2]) + path + data
+
+    def rsp(service, status=0, additional=(), data=b""):
+        return bytes([service | 0x80, 0, status, len(additional)]) + b"".join(struct.pack("<H", a) for a in additional) + data
+
+    def vector(kind, name, data, expected):
+        out.append({"kind": kind, "name": name, "hex": data.hex().upper(), "expected": expected})
+
+    # Encapsulation headers.
+    vector("encap", "RegisterSession request", encap(0x65, b"\x01\x00\x00\x00"), "command=0x0065 session=0x00000000 status=0 length=4")
+    vector("encap", "RegisterSession reply", encap(0x65, b"\x01\x00\x00\x00", session=0x1001), "command=0x0065 session=0x00001001 status=0 length=4")
+    vector("encap", "ListIdentity request", encap(0x63), "command=0x0063 session=0x00000000 status=0 length=0")
+    vector("encap", "invalid session", encap(0x6F, session=0x1234, status=0x64), "command=0x006F session=0x00001234 status=100 length=0")
+    read_tag = req(0x4C, sym("Line_Speed"), b"\x01\x00")
+    vector("encap", "SendRRData with Read Tag", encap(0x6F, rr(read_tag), session=0x1001),
+           f"command=0x006F session=0x00001001 status=0 length={len(rr(read_tag))} items=0000:0,00B2:{len(read_tag)}")
+    vector("encap", "length past the end", encap(0x65, b"\x01\x00\x00\x00")[:-1], "error")
+    vector("encap", "shorter than the header", b"\x65\x00\x04", "error")
+    vector("encap", "CPF item past the end", encap(0x6F, struct.pack("<IH", 0, 10) + struct.pack("<HHH", 1, 0xB2, 9) + b"\x0E\x03"), "error")
+
+    # CIP requests.
+    vector("request", "Get_Attributes_All Identity", req(0x01, seg(0x20, 1) + seg(0x24, 1)), "service=0x01 path=class:1,instance:1 data=")
+    vector("request", "Get_Attribute_Single product name", req(0x0E, seg(0x20, 1) + seg(0x24, 1) + seg(0x30, 7)), "service=0x0E path=class:1,instance:1,attribute:7 data=")
+    vector("request", "Set_Attribute_Single assembly 150", req(0x10, seg(0x20, 4) + seg(0x24, 150) + seg(0x30, 3), b"\x01\x02"), "service=0x10 path=class:4,instance:150,attribute:3 data=0102")
+    vector("request", "16-bit class and instance", req(0x0E, seg(0x20, 0x300) + seg(0x24, 0x1234) + seg(0x30, 1)), "service=0x0E path=class:768,instance:4660,attribute:1 data=")
+    vector("request", "32-bit instance", req(0x0E, seg(0x20, 2) + seg(0x24, 0x10000)), "service=0x0E path=class:2,instance:65536 data=")
+    vector("request", "Read Tag odd-length name (padded)", req(0x4C, sym("Recipe1"), b"\x01\x00"), "service=0x4C path=symbol:Recipe1 data=0100")
+    vector("request", "Read Tag member", req(0x4C, sym("Program:Main") + sym("Motor"), b"\x01\x00"), "service=0x4C path=symbol:Program:Main,symbol:Motor data=0100")
+    vector("request", "Read Tag array element", req(0x4C, sym("Zone_Temps") + seg(0x28, 2), b"\x02\x00"), "service=0x4C path=symbol:Zone_Temps,element:2 data=0200")
+    vector("request", "Write Tag REAL", req(0x4D, sym("Line_Speed"), struct.pack("<HH", 0xCA, 1) + struct.pack("<f", 90.5)), "service=0x4D path=symbol:Line_Speed data=CA000100" + struct.pack("<f", 90.5).hex().upper())
+    vector("request", "path size past the end", bytes([0x0E, 3, 0x20, 0x01]), "error")
+    vector("request", "reserved logical format", req(0x0E, bytes([0x23, 0x00])), "error")
+    vector("request", "symbol longer than the path", bytes([0x4C, 1, 0x91, 0x05]), "error")
+
+    # CIP replies.
+    vector("response", "Read Tag DINT", rsp(0x4C, data=struct.pack("<Hi", 0xC4, 18204)), "service=0x4C status=0x00 additional= data=C4001C470000")
+    vector("response", "path destination unknown", rsp(0x4C, 0x05), "service=0x4C status=0x05 additional= data=")
+    vector("response", "general error with additional status", rsp(0x4D, 0x04, (0x2105,)), "service=0x4D status=0x04 additional=2105 data=")
+    vector("response", "Unconnected_Send connection failure", rsp(0x52, 0x01, (0x0204,)), "service=0x52 status=0x01 additional=0204 data=")
+    vector("response", "not a reply", bytes([0x4C, 0, 0, 0]), "error")
+    vector("response", "additional status truncated", bytes([0xCC, 0, 0x04, 2, 0x05, 0x21]), "error")
+
+    # ListIdentity item.
+    name = b"1756-L83E/B"
+    ident = (struct.pack("<H", 1) + struct.pack(">hH", 2, 44818) + bytes([192, 168, 1, 10]) + b"\x00" * 8
+             + struct.pack("<HHHBBHI", 1, 0x0E, 166, 33, 11, 0x0060, 0x00C0FFEE) + bytes([len(name)]) + name + b"\x03")
+    vector("identity", "ControlLogix identity", ident, "vendor=1 type=14 product=166 rev=33.11 status=0x0060 serial=0x00C0FFEE name=1756-L83E/B state=3 address=192.168.1.10:44818")
+    vector("identity", "name past the end", ident[:-4], "error")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1528,6 +1612,7 @@ def main():
         "ocpp.json": ocpp_vectors(),
         "knx.json": knx_vectors(),
         "bacnet.json": bacnet_vectors(),
+        "enip.json": enip_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

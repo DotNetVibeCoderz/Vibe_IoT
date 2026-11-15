@@ -6,8 +6,8 @@ day-to-day status is tracked in [Progress.md](Progress.md).
 Priorities follow the design: **P0** foundation · **P1** first release · **P2** expansion · **P3** optional / community.
 Each protocol is "done" only when it meets the [Definition of Done](#definition-of-done-per-protocol).
 
-**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 is two-thirds done (10 of 15 protocol items);
-the latest release is `0.25.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
+**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 is well past half (11 of 15 protocol items);
+the latest release is `0.26.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
 
 ## Phase 0 — Foundation → `0.1.0-preview` ✅ complete
 
@@ -66,7 +66,7 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | NFC / NDEF | ✅ `0.20.0-preview.1` |
 | OMA LwM2M | ✅ `0.21.0-preview.1` |
 | Zenoh + Kafka / NATS / AMQP adapters | ✅ `0.22.0-preview.1` (Zenoh native library not shipped yet, see Progress) |
-| EtherNet/IP (explicit messaging) | ⏳ deferred twice in 0.19 |
+| EtherNet/IP (explicit messaging) | ✅ `0.26.0-preview.1` |
 | EtherCAT master | ⏳ |
 | SWD/JTAG + DFU (probe-rs) | ⏳ |
 | Matter controller + device/bridge | ⏳ (scope decided 2026-11-15: open question 2) |
@@ -74,8 +74,8 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | BACnet/IP: adapter + own server API | ✅ `0.25.0-preview.1` |
 | DTLS 1.2/1.3 (also unlocks CoAP/LwM2M security) | ⏳ |
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
-| Complete EN/ID documentation | 🚧 55 + 55 pages; grows with every item above |
-| Gallery with all 17 design use cases | 🚧 26 demos, 14 of 17 use cases covered |
+| Complete EN/ID documentation | 🚧 56 + 56 pages; grows with every item above |
+| Gallery with all 17 design use cases | 🚧 27 demos, 14 of 17 use cases covered |
 | Signed and notarised releases | ⏳ |
 
 ## Phase 3 — Optional
@@ -87,7 +87,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 
 ### To reach `1.0.0` (Phase 2)
 
-1. **Protocols:** EtherNet/IP, EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), DTLS.
+1. **Protocols:** EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), DTLS.
 2. **Gallery use cases still missing** (design §8 catalogue):
    - #12 probe & flash firmware — SWD/JTAG, DFU, RTT;
    - #14 cellular module — AT terminal, URC parser, modem status (the package exists, the demo does not);
@@ -111,6 +111,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 | Discovery / plant | mDNS probing/conflicts, IPv6; Sparkplug data sets, templates, offline buffering |
 | Field devices | AT PDU SMS, CMUX; ASTM host query; DMX RDM |
 | Connectivity | BLE peripheral role, pairing, L2CAP; USB isochronous, hotplug, gadget role |
+| EtherNet/IP | Forward_Open connected messaging, Logix UDTs/STRING, Read Tag Fragmented, tag browsing, CIP Security (implicit I/O is Phase 3) |
 | Industrial adapters | OPC UA events/A&C, history, complex types |
 | Building automation | BACnet segmentation, BBMD/foreign devices, alarms/events, schedules, trend logs, BACnet/SC, MS/TP; KNX Secure, KNXnet/IP over TCP, device management, busmonitor mode |
 | EV charging | OCPP firmware management, local authorization lists, reservations, 2.0.1 device-model reports, offline transaction queue, OCPP 2.1 |

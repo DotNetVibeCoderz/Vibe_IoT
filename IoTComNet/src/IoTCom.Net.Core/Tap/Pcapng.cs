@@ -177,6 +177,7 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
         "nmea0183" => ("tcp", 10110),
         "hl7" => ("tcp", 2575),
         "iec104" => ("tcp", 2404),
+        "enip" => ("tcp", 44818),
         "ntp" => ("udp", 123),
         "knxip" => ("udp", 3671),
         "bacnet" => ("udp", 47808),

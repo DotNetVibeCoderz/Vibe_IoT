@@ -195,3 +195,22 @@ public class BacnetBenchmarks
         return IoTCom.Net.Protocols.Bacnet.BacnetServices.DecodeReadPropertyAck(p.Data).Values[0].Value!;
     }
 }
+
+[MemoryDiagnoser]
+public class EnipBenchmarks
+{
+    private static readonly IoTCom.Net.Protocols.EtherNetIp.EnipAdapter Adapter = CreateAdapter();
+    private static readonly byte[] Request = new IoTCom.Net.Protocols.EtherNetIp.CipRequest(IoTCom.Net.Protocols.EtherNetIp.CipService.ReadTag,
+        IoTCom.Net.Protocols.EtherNetIp.CipPath.Tag("Line_Speed"), [1, 0]).Encode();
+
+    private static IoTCom.Net.Protocols.EtherNetIp.EnipAdapter CreateAdapter()
+    {
+        var a = IoTCom.Net.Protocols.EtherNetIp.EnipAdapter.Create(_ => { });
+        a.AddTag("Line_Speed", IoTCom.Net.Protocols.EtherNetIp.CipTagValue.Of(IoTCom.Net.Protocols.EtherNetIp.CipDataType.Real, 120));
+        return a;
+    }
+
+    /// <summary>Decode a Read Tag request, serve it from the tag table and encode the reply: an adapter's work per request.</summary>
+    [Benchmark]
+    public byte[] ServeReadTag() => Adapter.Dispatch(IoTCom.Net.Protocols.EtherNetIp.CipRequest.Decode(Request)).Encode();
+}

@@ -162,6 +162,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "iotcom-enip"
+version = "0.1.0"
+
+[[package]]
 name = "iotcom-fuzz"
 version = "0.0.0"
 dependencies = [
@@ -169,6 +173,7 @@ dependencies = [
  "iotcom-coap",
  "iotcom-core",
  "iotcom-dlms",
+ "iotcom-enip",
  "iotcom-iec104",
  "iotcom-isotp",
  "iotcom-j1939",

@@ -8,6 +8,7 @@ using IoTCom.Net.Protocols.Lwm2m;
 using IoTCom.Net.Protocols.Ocpp;
 using IoTCom.Net.Protocols.Knx;
 using IoTCom.Net.Protocols.Bacnet;
+using IoTCom.Net.Protocols.EtherNetIp;
 using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
@@ -158,6 +159,24 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Bacnet");
+            configure(o);
+        }));
+
+    /// <summary>Registers an EtherNet/IP explicit-messaging client (read-only unless <c>AllowWrites()</c>).</summary>
+    public static IoTComBuilder AddEnipClient(this IoTComBuilder builder, string name, Action<EnipClientOptions> configure)
+        => builder.AddEndpoint(name, sp => EnipClient.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.EtherNetIp");
+            configure(o);
+        }));
+
+    /// <summary>Registers an EtherNet/IP adapter (target); add tags and assemblies to the resolved adapter before the host starts it.</summary>
+    public static IoTComBuilder AddEnipAdapter(this IoTComBuilder builder, string name, Action<EnipAdapterOptions> configure)
+        => builder.AddEndpoint(name, sp => EnipAdapter.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.EtherNetIp");
             configure(o);
         }));
 

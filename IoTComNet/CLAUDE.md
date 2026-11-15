@@ -131,6 +131,9 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `BacnetDevice` server, `BacnetObject` (priority arrays, COV increments), `BacnetAhuSimulator`. `Adapters.Bacnet` (not AOT, not in the
   meta-package): `BacnetIpClient` over ela-compil BACnet 4.0.0 through `IoTComBacnetTransport` (BVLC added/stripped there). In memory,
   broadcasts use the multicast group 239.255.186.192:47808 and every participant binds port 47808. `/conformance/bacnet.json` (C# only).
+- **EtherNet/IP**: `Protocols.EtherNetIp` is managed C# (`EnipPacket`/`CipPath`/`CipRequest`/`CipResponse` codecs, `EnipClient` read-only until
+  `AllowWrites()`, `UseSlot(n)` wraps requests in Unconnected_Send, `EnipDiscovery`, `EnipAdapter` + `EnipPlcSimulator`). Rust twin `iotcom-enip`
+  (fuzz target `enip`) and `/conformance/enip.json` share normalised description strings. pcapng maps `enip` to TCP 44818. Explicit messaging only.
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

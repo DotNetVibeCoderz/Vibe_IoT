@@ -3,9 +3,9 @@
 Development tracking for [PLAN.md](PLAN.md). Update this file whenever a component changes status.
 Built by Gravicode Studios, led by Kang Fadhil.
 
-**Current version:** `0.25.0-preview.1` · **Last update:** 2026-11-15
+**Current version:** `0.26.0-preview.1` · **Last update:** 2026-11-15
 
-**Phase:** 0 and 1 complete · Phase 2 in progress (10 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
+**Phase:** 0 and 1 complete · Phase 2 in progress (11 of 15 protocol items) · next up and follow-ups: [PLAN.md → Remaining work](PLAN.md#remaining-work)
 
 ## Snapshot
 
@@ -13,12 +13,12 @@ Built by Gravicode Studios, led by Kang Fadhil.
 |---|---|---|
 | .NET solution (`IoTCom.Net.slnx`) | ✅ builds clean, warnings as errors on libraries | `dotnet build IoTCom.Net.slnx` |
 | .NET tests | ✅ 880 passing, 13 skipped (NATS, Kafka and native Zenoh tests need a broker or a locally built native library) | `dotnet test tests/IoTCom.Net.Tests` |
-| Rust workspace | ✅ 51 tests passing, clippy `-D warnings` clean; 10 cargo-fuzz targets (≈ 22 M local runs, no findings) | `cargo test --workspace`, `cargo clippy` |
-| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only), OCPP frames and payloads (35, C# only), KNX DPT/cEMI/KNXnet/IP (56, C# only), BACnet tags and BACnet/IP datagrams (45, C# only) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
-| Docs EN/ID | ✅ 55 + 55 pages, parity and links verified | `python build/check_docs_parity.py` |
-| Notebooks | ✅ 28 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
+| Rust workspace | ✅ 51 tests passing, clippy `-D warnings` clean; 14 cargo-fuzz targets (≈ 22 M local runs, no findings; `enip` added in 0.26) | `cargo test --workspace`, `cargo clippy` |
+| Cross-language conformance | ✅ CRC (115 vectors), COBS, SLIP, Modbus frames, CoAP messages (23), MAVLink frames (10), LoRaWAN frames (16, AES/CMAC reference checked against FIPS-197 and RFC 4493), DLMS HDLC + A-XDR (28), M-Bus frames and records (11), CANopen (71), J1939 (28), IEC 104 (53), NTP (25), NDEF (30, C# only), LwM2M TLV (19, C# only), OCPP frames and payloads (35, C# only), KNX DPT/cEMI/KNXnet/IP (56, C# only), BACnet tags and BACnet/IP datagrams (45, C# only), EtherNet/IP encapsulation/CIP/identity (28, C# and Rust) and CRC_EXTRA of all 235 common messages shared by C# and Rust; Rust engine ≡ managed framing | `conformance/`, `NativeModbusTests` |
+| Docs EN/ID | ✅ 56 + 56 pages, parity and links verified | `python build/check_docs_parity.py` |
+| Notebooks | ✅ 29 EN/ID pairs, code identical, all executed | `python build/check_notebooks.py` |
 | Screenshots | ✅ Gallery (headless Skia), dashboard (Edge/CDP), CLI | `docs/images/` |
-| NuGet packages | ✅ 49 packages (+ symbol packages) in `0.25.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
+| NuGet packages | ✅ 50 packages (+ symbol packages) in `0.26.0-preview.1`; native libraries (Modbus, ISO-TP, BLE, USB) for 9 RIDs | release run on tag `iotcomnet-v*` |
 
 ## Components
 
@@ -49,6 +49,7 @@ Built by Gravicode Studios, led by Kang Fadhil.
 |---|---|---|
 | IoTCom.Net.Protocols.Modbus | ✅ | TCP/RTU/ASCII, FC 1–6, 15, 16, 22, 23, 43/14; pipelining; read-only; simulator; anatomy |
 | IoTCom.Net.Native.Modbus + Rust `iotcom-modbus` | ✅ win-x64 · ⏳ other RIDs | arm64/Linux/macOS binaries come from the CI native workflow |
+| IoTCom.Net.Protocols.EtherNetIp + Rust `iotcom-enip` | ✅ | explicit messaging client (sessions, attributes, Logix tags, Multiple_Service_Packet, Unconnected_Send routing, read-only default), ListIdentity discovery, adapter (Identity, Assembly, tags), packaging-line PLC simulator; fuzzed codec twin + 28 vectors · implicit I/O, Forward_Open, UDTs/STRING, fragmented reads, CIP Security ⏳ |
 | IoTCom.Net.Adapters.OpcUa | ✅ | OPC Foundation stack 1.5.378: client (security, user name, browse/read/write/call, subscriptions, read-only) + plant simulator server (None, Basic256Sha256) · events/A&C, history, complex types ⏳ |
 | IoTCom.Net.Protocols.CanOpen + Rust `iotcom-canopen` | ✅ | master (NMT, heartbeat consumer, SDO client, SYNC, PDO/EMCY, scan, read-only), device (SDO server, TPDO/RPDO, heartbeat, EMCY), object dictionary, I/O module simulator; fuzzed codec twin + 71 vectors · SDO block, LSS, EDS import ⏳ |
 | IoTCom.Net.Protocols.Iec104 + Rust `iotcom-iec104` | ✅ | controlling station (interrogations, read, commands/set points with SBO, clock sync, read-only default), controlled station (point table, spontaneous time-tagged data, command handlers, negative answers), APCI windows and timers, feeder bay simulator; fuzzed codec twin + 53 vectors · file transfer, IEC 62351, 101 serial ⏳ |
@@ -124,16 +125,25 @@ Built by Gravicode Studios, led by Kang Fadhil.
 |---|---|---|
 | CLI `iotcom` (IoTCom.Net.Cli) | ✅ | Spectre.Console UI with the frame lane; `sniff tcp/udp/can` with pcapng |
 | VS Code extension | ✅ v0.1 in 0.7.0-preview.1 (frame viewer, traffic monitor, protocols/devices views, snippets; `iotcom rpc`) | |
-| Gallery (Avalonia) | ✅ | 26 demos (Building: air handling unit over BACnet; Building: office floor over KNX; Energy & grid: EV charging hub over OCPP; LPWAN & city: street lights over LwM2M; Workbench: NFC asset tags; Messaging: fleet clock sync over NTP; Energy & grid: substation control over IEC 104; Automotive: truck cluster over J1939; Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
+| Gallery (Avalonia) | ✅ | 27 demos (Industrial: packaging line over EtherNet/IP; Building: air handling unit over BACnet; Building: office floor over KNX; Energy & grid: EV charging hub over OCPP; LPWAN & city: street lights over LwM2M; Workbench: NFC asset tags; Messaging: fleet clock sync over NTP; Energy & grid: substation control over IEC 104; Automotive: truck cluster over J1939; Industrial: CANopen I/O modules; Workbench: USB bench; Building: nearby Bluetooth devices; Industrial: OPC UA tag browser; Messaging: plant network with mDNS + Sparkplug B; Navigation: harbour traffic over AIS; LPWAN & metering: LoRaWAN network monitor, smart meter reading; Navigation: MAVLink drone; Building: CoAP greenhouse; Automotive: vehicle diagnostics; Medical: ICU bedside monitors, imaging AI pre-read), Run/Code/Docs/Traffic, EN/ID runtime switch, light/dark, headless screenshot tool |
 | IoTCom.Gateway web sample | ✅ | Modbus → MQTT (SenML), REST + SSE, HMI dashboard (EN/ID, light/dark, mobile) |
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
-| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient, OcppCharger, KnxMonitor, BacnetBms |
-| Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt); OCPP parse + typed bind per message (`OcppBenchmarks`); KNX tunnelling frame + cEMI + DPT decode (`KnxBenchmarks`); BACnet ReadProperty-ACK decode (`BacnetBenchmarks`) |
+| Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient, OcppCharger, KnxMonitor, BacnetBms, EnipTags |
+| Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt); OCPP parse + typed bind per message (`OcppBenchmarks`); KNX tunnelling frame + cEMI + DPT decode (`KnxBenchmarks`); BACnet ReadProperty-ACK decode (`BacnetBenchmarks`); EtherNet/IP Read Tag served end to end (`EnipBenchmarks`) |
 | CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 
 ## Decisions
 
 Newest first. Each entry records why something was built the way it was.
+
+### 0.26
+
+- **EtherNet/IP follows the codec-twin pattern** (like IEC 104 and CANopen): explicit messaging is request/response over one
+  TCP session whose timing belongs next to the pipe, so the runtime is managed C#; the Rust crate mirrors the encapsulation,
+  CPF and CIP codecs for fuzzing and conformance. Implicit (cyclic) I/O stays in Phase 3, as the design says.
+- **Fuzzing tightened the codecs**: an element segment without a symbol now survives re-encoding, and CIP replies with a
+  non-zero reserved byte are rejected (both twins).
+- **The client is read-only by default**; identity, attributes and tag reads stay allowed.
 
 ### 0.25
 
@@ -407,6 +417,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | EtherNet/IP (`0.26.0-preview.1`): explicit-messaging client, ListIdentity discovery, adapter with tags, PLC simulator, fuzzed Rust twin `iotcom-enip`, 28 conformance vectors, CLI `enip`, Gallery packaging line, EnipTags sample, notebook pair, docs, benchmark. |
 | 2026-11-15 | BACnet/IP (`0.25.0-preview.1`): server package (device, objects with priority arrays, COV, codecs, AHU simulator) and client adapter over ela-compil BACnet 4.0.0, interop-tested; 45 conformance vectors, CLI `bacnet`, Gallery AHU schematic, BacnetBms sample, notebook pair, docs, benchmark. CI: tshark reads the capture from stdin. |
 | 2026-11-15 | KNXnet/IP (`0.24.0-preview.1`): package with tunnelling client, routing, discovery, software KNX IP router, cEMI/KNXnet/IP/DPT codecs, office floor simulator, 56 conformance vectors, CLI `knx`, Gallery office floor with group monitor (design use case 6), KnxMonitor sample, notebook pair, docs, benchmark. |
 | 2026-11-15 | OCPP 1.6J / 2.0.1 (`0.23.0-preview.1`): package with RPC codec, session, typed messages, charge point, CSMS and charger simulator, 35 conformance vectors, CLI `ocpp`, Gallery EV charging hub with load management (design use case 11), OcppCharger sample, notebook pair, docs, benchmarks. .NET servicing packages 10.0.15 (Cbor advisory). Zenoh re-checked: 1.10.2 still needs lz4_flex 0.10. |

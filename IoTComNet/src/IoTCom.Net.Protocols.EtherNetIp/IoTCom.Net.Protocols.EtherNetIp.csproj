@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.EtherNetIp</RootNamespace>
+    <Description>EtherNet/IP explicit messaging (CIP over TCP 44818): an originator client with sessions, Get/Set_Attribute, Get_Attributes_All, Logix Read/Write Tag, Multiple_Service_Packet and Unconnected_Send routing (read-only by default), ListIdentity discovery, a target adapter with Identity and Assembly objects and symbolic tags, encapsulation/CPF/CIP codecs, and a packaging-line PLC simulator. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);ethernet-ip;enip;cip;odva;logix;plc;industrial-ethernet</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

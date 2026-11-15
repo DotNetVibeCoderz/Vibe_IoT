@@ -34,6 +34,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Industrial | Smart factory PLC — read a virtual PLC, start the motor, move the setpoint; switch between the C# and **Rust** engines | Modbus TCP |
 | Industrial | OPC UA tag browser — the plant simulator's address space over a Basic256Sha256 session, every tag in one subscription, a live trend, guarded writes and a method call | OPC UA |
 | Industrial | CANopen I/O modules — two CiA 401-style modules on a DIN rail with input/output LEDs and analog values from PDOs, NMT start/stop, a pump output switched over SDO behind a write guard, an SDO console | CANopen |
+| Industrial | Packaging line over EtherNet/IP — packs travel under the seal jaws while an HMI reads the PLC's Logix tags in one Multiple_Service_Packet per second; start and stop the conveyor, change the speed and the seal set point behind a write lock, and watch a cold seal fill the reject bin | EtherNet/IP, CIP |
 | Energy & grid | Substation control over IEC 104 — a 20 kV feeder bay on a single-line diagram (live, dead and earthed sections), breaker, disconnector and earthing switch operated with select-before-operate behind interlocks and a control lock, tap changer and Q set point, a short circuit that trips the feeder, and the RTU-time-tagged sequence of events | IEC 60870-5-104 |
 | Energy & grid | EV charging hub over OCPP — a rest-area forecourt with two AC wallboxes on OCPP 1.6J and a DC fast charger on OCPP 2.0.1: plug cars in and tap cards, watch each battery fill and the cable glow while power flows, start, stop, cap and reset behind a write lock, inject a ground fault or a lost cellular link, and let load management keep the site under its grid connection | OCPP 1.6J, OCPP 2.0.1, WebSocket |
 | Automotive | Vehicle diagnostics — scan tool and engine ECU simulator on a virtual CAN bus: tachometer and tell-tales, OBD-II live data, VIN, DTCs, security access and a guarded write | CAN, ISO-TP (Rust), UDS, OBD-II |
@@ -77,6 +78,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![OPC UA tag browser](../../images/gallery-opcua.png)
 ![CANopen I/O modules](../../images/gallery-canopen.png)
+![Packaging line over EtherNet/IP](../../images/gallery-ethernetip.png)
 ![Truck cluster over J1939](../../images/gallery-j1939.png)
 ![Substation control over IEC 104](../../images/gallery-iec104.png)
 ![Fleet clock sync over NTP](../../images/gallery-ntp.png)

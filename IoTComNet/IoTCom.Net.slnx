@@ -24,6 +24,7 @@
     <Project Path="samples/console/OcppCharger/OcppCharger.csproj" />
     <Project Path="samples/console/KnxMonitor/KnxMonitor.csproj" />
     <Project Path="samples/console/BacnetBms/BacnetBms.csproj" />
+    <Project Path="samples/console/EnipTags/EnipTags.csproj" />
     <Project Path="samples/console/MavlinkTelemetry/MavlinkTelemetry.csproj" />
     <Project Path="samples/console/MBusScanner/MBusScanner.csproj" />
     <Project Path="samples/console/MdnsDiscovery/MdnsDiscovery.csproj" />
@@ -71,6 +72,7 @@
     <Project Path="src/IoTCom.Net.Protocols.Knx/IoTCom.Net.Protocols.Knx.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Bacnet/IoTCom.Net.Protocols.Bacnet.csproj" />
     <Project Path="src/IoTCom.Net.Adapters.Bacnet/IoTCom.Net.Adapters.Bacnet.csproj" />
+    <Project Path="src/IoTCom.Net.Protocols.EtherNetIp/IoTCom.Net.Protocols.EtherNetIp.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Nfc/IoTCom.Net.Protocols.Nfc.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.LoRaWan/IoTCom.Net.Protocols.LoRaWan.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Mavlink.Generator/IoTCom.Net.Protocols.Mavlink.Generator.csproj" />
