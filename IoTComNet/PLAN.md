@@ -75,7 +75,7 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | DTLS 1.2/1.3 (also unlocks CoAP/LwM2M security) | ⏳ |
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
 | Complete EN/ID documentation | 🚧 56 + 56 pages; grows with every item above |
-| Gallery with all 17 design use cases | 🚧 27 demos, 14 of 17 use cases covered |
+| Gallery with all 17 design use cases | 🚧 29 demos, 16 of 17 use cases covered (#12 firmware probing waits for SWD/DFU) |
 | Signed and notarised releases | ✅ wired 2026-11-15 (Authenticode, NuGet author signing, Developer ID + notarisation; active once the signing secrets are added) |
 
 ## Phase 3 — Optional
@@ -90,8 +90,6 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 1. **Protocols:** EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), DTLS.
 2. **Gallery use cases still missing** (design §8 catalogue):
    - #12 probe & flash firmware — SWD/JTAG, DFU, RTT;
-   - #14 cellular module — AT terminal, URC parser, modem status (the package exists, the demo does not);
-   - #17 multi-broker pub/sub — MQTT/NATS/Zenoh/Kafka latency and bridging (the adapters exist, the demo does not).
 3. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
 4. **Releases:** add the signing secrets (see *Releasing and signing*); a `1.0.0` API review (public surface, naming, obsolete members).
 

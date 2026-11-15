@@ -141,6 +141,19 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-brokers.png"))
+{
+    Show("multi-broker", seconds: 6);
+    Shot("gallery-brokers.png");
+}
+
+if (Want("gallery-at.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("at-cellular", seconds: 6);
+    Shot("gallery-at.png");
+}
+
 if (Want("gallery-ethernetip.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

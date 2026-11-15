@@ -52,7 +52,11 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | LPWAN & smart city | LoRaWAN network monitor — two gateways and four sensors on a radio map with spreading-factor reach; drag a sensor and watch its SF, SNR and airtime change; downlinks in RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & city | Smart meter reading — a household meter with rooftop solar on an LCD faceplate, two days of load profile, the supply relay behind a password, and the building's M-Bus heat, water and electricity meters | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | LPWAN, metering & city | Street lights over LwM2M — four smart street lights on Jalan Asia Afrika register with one server; their glow follows the dimmer, an operator reads, switches, dims and reboots them behind a write lock, driver temperature arrives as notifications, and a power cut lets a registration expire | OMA LwM2M, CoAP, TLV, SenML |
+| LPWAN, metering & city | Cellular module over AT commands — a truck's telematics unit drives its LTE-M module: signal bars and registration from AT+CSQ and AT+CEREG, +CEREG and +CMTI decoded as they arrive between answers, an AT terminal with presets, the dispatcher's SMS read on +CMTI, a reply behind a write lock, and a tunnel and a border crossing on the road | AT commands, 3GPP 27.007/27.005 |
+| LPWAN, metering & city | Cellular module over AT commands — a truck's telematics unit drives its LTE-M module: signal bars and registration from AT+CSQ and AT+CEREG, +CEREG and +CMTI decoded as they arrive between answers, an AT terminal with presets, the dispatcher's SMS read on +CMTI, a reply behind a write lock, and a tunnel and a border crossing on the road | AT commands, 3GPP 27.007/27.005 |
 | Messaging | MQTT publish & subscribe — embedded broker, SenML sensor, wildcard subscriptions | MQTT 5, SenML |
+| Messaging | Pub/sub across brokers — one telemetry stream through MQTT, AMQP 1.0 and Zenoh at once, every delivered message a dot crossing its lane, with latency percentiles, throughput and gaps per lane; raise the rate, then switch to bridge mode where only MQTT is published and a bridge feeds the others | MQTT, AMQP 1.0, Zenoh |
+| Messaging | Pub/sub across brokers — one telemetry stream through MQTT, AMQP 1.0 and Zenoh at once, every delivered message a dot crossing its lane, with latency percentiles, throughput and gaps per lane; raise the rate, then switch to bridge mode where only MQTT is published and a bridge feeds the others | MQTT, AMQP 1.0, Zenoh |
 | Messaging | Plant network · Sparkplug B — mDNS finds the devices on the segment; a Unified Namespace of a bottling line with birth/death lamps; pull the network cable to see the NDEATH will, write metrics with DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Messaging | Fleet clock sync over NTP — six field devices with drifting clocks and SNTP clients, error traces that snap back to GPS time at every sync, sync interval and network latency controls, the four timestamps of the last exchange, and a server that loses GPS | NTP, SNTP |
 | Protocol workbench | Frame & checksum workbench — decode Modbus frames field by field, 23 CRCs, SLIP/COBS/HDLC live | Modbus, CRC, framing |
@@ -72,6 +76,10 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![LoRaWAN network monitor](../../images/gallery-lorawan.png)
 ![Smart meter reading](../../images/gallery-metering.png)
 ![Street lights over LwM2M](../../images/gallery-lwm2m.png)
+![Cellular module over AT commands](../../images/gallery-at.png)
+![Pub/sub across brokers](../../images/gallery-brokers.png)
+![Cellular module over AT commands](../../images/gallery-at.png)
+![Pub/sub across brokers](../../images/gallery-brokers.png)
 ![EV charging hub over OCPP](../../images/gallery-ocpp.png)
 ![Office floor over KNX](../../images/gallery-knx.png)
 ![Air handling unit over BACnet](../../images/gallery-bacnet.png)

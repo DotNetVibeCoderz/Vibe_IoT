@@ -92,6 +92,23 @@ public sealed class AtModemSimulator : EndpointBase, IServerEndpoint
         }
     }
 
+    /// <summary>Signal level as reported by AT+CSQ (0–31; the radio drifts around it).</summary>
+    public int Rssi
+    {
+        get
+        {
+            lock (_gate) return _rssi;
+        }
+
+        set
+        {
+            lock (_gate) _rssi = Math.Clamp(value, 0, 31);
+        }
+    }
+
+    /// <summary>Changes the network registration (a tunnel, roaming, a denied SIM); +CEREG is sent when enabled.</summary>
+    public void ChangeRegistration(AtRegistration state) => SetRegistration(state);
+
     /// <summary>Messages sent by the client (number, text).</summary>
     public List<(string To, string Text)> SentSms { get; } = [];
 
@@ -168,7 +185,7 @@ public sealed class AtModemSimulator : EndpointBase, IServerEndpoint
             SetRegistration(AtRegistration.Home);
             using var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
             while (await timer.WaitForNextTickAsync(ct).ConfigureAwait(false))
-                lock (_gate) _rssi = Math.Clamp(_rssi + _random.Next(-2, 3), 8, 29);
+                lock (_gate) _rssi = _rssi < 8 ? _rssi : Math.Clamp(_rssi + _random.Next(-2, 3), 8, 29);   // a weak signal set by ChangeRegistration/Rssi stays weak
         }
         catch (OperationCanceledException)
         {
@@ -306,6 +323,7 @@ public sealed class AtModemSimulator : EndpointBase, IServerEndpoint
         if (!_pinOk && c.StartsWith("AT+C", StringComparison.Ordinal) && c is not ("AT+CFUN?" or "AT+CMEE?")) return Cme(11);
         if (c is "AT+CCID" or "AT+QCCID") return Ok("+CCID: 8962100123456789012");
         if (c == "AT+CIMI") return Ok("510101234567890");
+        if (c.StartsWith("AT+CNMI=", StringComparison.Ordinal)) return Ok();   // new-message indications: +CMTI is always sent
         if (c == "AT+CSQ")
         {
             lock (_gate) return Ok($"+CSQ: {(_function == 1 ? _rssi : 99)},99");

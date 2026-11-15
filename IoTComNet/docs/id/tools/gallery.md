@@ -52,7 +52,9 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | LPWAN & kota pintar | Monitor jaringan LoRaWAN — dua gateway dan empat sensor di peta radio dengan jangkauan per spreading factor; seret sensor dan lihat SF, SNR, serta airtime-nya berubah; downlink di RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
 | LPWAN, metering & kota | Pembacaan smart meter — meter rumah tangga dengan panel surya atap pada faceplate LCD, dua hari load profile, relay suplai di balik password, serta meter panas, air, dan listrik M-Bus gedung | DLMS/COSEM, HDLC, OBIS, M-Bus |
 | LPWAN, metering & kota | Lampu jalan lewat LwM2M — empat lampu jalan pintar di Jalan Asia Afrika mendaftar ke satu server; cahayanya mengikuti dimmer, operator membaca, menyalakan, meredupkan, dan me-reboot-nya di balik kunci tulis, suhu driver tiba sebagai notifikasi, dan pemutusan listrik membuat registrasi kedaluwarsa | OMA LwM2M, CoAP, TLV, SenML |
+| LPWAN, metering & kota | Modul seluler lewat perintah AT — unit telematika truk mengendalikan modul LTE-M-nya: bar sinyal dan registrasi dari AT+CSQ dan AT+CEREG, +CEREG dan +CMTI diurai saat tiba di sela jawaban, terminal AT dengan preset, SMS dispatcher dibaca saat +CMTI, balasan di balik kunci tulis, serta terowongan dan perlintasan batas di jalan | Perintah AT, 3GPP 27.007/27.005 |
 | Pesan | Publish & subscribe MQTT — broker tertanam, sensor SenML, subscription wildcard | MQTT 5, SenML |
+| Pesan | Pub/sub lintas broker — satu aliran telemetri lewat MQTT, AMQP 1.0, dan Zenoh sekaligus, setiap pesan yang terkirim menjadi titik yang melintasi jalurnya, dengan persentil latensi, throughput, dan celah per jalur; naikkan laju, lalu beralih ke mode jembatan di mana hanya MQTT yang dipublikasikan dan jembatan meneruskan ke yang lain | MQTT, AMQP 1.0, Zenoh |
 | Pesan | Jaringan pabrik · Sparkplug B — mDNS menemukan perangkat di segmen; Unified Namespace sebuah lini pembotolan dengan lampu birth/death; cabut kabel jaringan untuk melihat will NDEATH, tulis metrik dengan DCMD | mDNS, DNS-SD, Sparkplug B, MQTT, Protobuf |
 | Pesan | Sinkronisasi jam armada lewat NTP — enam perangkat lapangan dengan jam melenceng dan klien SNTP, jejak galat yang kembali ke waktu GPS di setiap sinkronisasi, kendali interval sinkronisasi dan latensi jaringan, empat cap waktu pertukaran terakhir, dan server yang kehilangan GPS | NTP, SNTP |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
@@ -72,6 +74,8 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Monitor jaringan LoRaWAN](../../images/gallery-lorawan.png)
 ![Pembacaan smart meter](../../images/gallery-metering.png)
 ![Lampu jalan lewat LwM2M](../../images/gallery-lwm2m.png)
+![Modul seluler lewat perintah AT](../../images/gallery-at.png)
+![Pub/sub lintas broker](../../images/gallery-brokers.png)
 ![Hub pengisian EV lewat OCPP](../../images/gallery-ocpp.png)
 ![Lantai kantor lewat KNX](../../images/gallery-knx.png)
 ![AHU lewat BACnet](../../images/gallery-bacnet.png)
