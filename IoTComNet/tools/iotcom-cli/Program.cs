@@ -139,6 +139,18 @@ app.Configure(c =>
         l.AddCommand<Lwm2mDemoCommand>("demo").WithDescription("Server and street light in-process: register, read, observe, write.").WithExample("lwm2m", "demo").WithExample("lwm2m", "demo", "--allow-write");
         l.AddCommand<Lwm2mDecodeCommand>("decode").WithDescription("Decode an LwM2M TLV payload.").WithExample("lwm2m", "decode", "3/0/6", "8606410001410105");
     });
+    c.AddBranch("bacnet", b =>
+    {
+        b.SetDescription("BACnet/IP building automation: discover devices, list objects, read, write with priorities, subscribe to COV, serve a simulated air handling unit, or decode a datagram.");
+        b.AddCommand<BacnetDiscoverCommand>("discover").WithDescription("Who-Is on the local network.").WithExample("bacnet", "discover").WithExample("bacnet", "discover", "--sim");
+        b.AddCommand<BacnetObjectsCommand>("objects").WithDescription("List a device's objects with names and present values.").WithExample("bacnet", "objects", "2604", "--sim");
+        b.AddCommand<BacnetReadCommand>("read").WithDescription("Read a property (default present-value; 'all' for every property).").WithExample("bacnet", "read", "2604", "AI1", "--sim").WithExample("bacnet", "read", "2604", "BO1", "priority-array", "--sim");
+        b.AddCommand<BacnetWriteCommand>("write").WithDescription("Write a property at a priority (requires --allow-write).").WithExample("bacnet", "write", "2604", "BO1", "inactive", "--priority", "8", "--sim", "--allow-write");
+        b.AddCommand<BacnetSubscribeCommand>("subscribe").WithDescription("Subscribe to COV notifications.").WithExample("bacnet", "subscribe", "2604", "AI1,AI4,BI1", "--sim", "--seconds", "10");
+        b.AddCommand<BacnetServeCommand>("serve").WithDescription("Run the simulated air handling unit on UDP 47808.").WithExample("bacnet", "serve", "--device", "2604");
+        b.AddCommand<BacnetDemoCommand>("demo").WithDescription("Discovery, objects, COV and (with --allow-write) priority commands in-process.").WithExample("bacnet", "demo").WithExample("bacnet", "demo", "--allow-write");
+        b.AddCommand<BacnetDecodeCommand>("decode").WithDescription("Decode a BACnet/IP datagram.").WithExample("bacnet", "decode", "810A00110104000507 0C0C00000001 1955");
+    });
     c.AddBranch("knx", k =>
     {
         k.SetDescription("KNXnet/IP building automation: discover interfaces, monitor the line, read and write group addresses, or watch an office floor in-process.");

@@ -1,0 +1,352 @@
+[
+  {
+    "kind": "value",
+    "name": "null",
+    "tag": "Null",
+    "value": null,
+    "hex": "00"
+  },
+  {
+    "kind": "value",
+    "name": "true",
+    "tag": "Boolean",
+    "value": true,
+    "hex": "11"
+  },
+  {
+    "kind": "value",
+    "name": "false",
+    "tag": "Boolean",
+    "value": false,
+    "hex": "10"
+  },
+  {
+    "kind": "value",
+    "name": "unsigned 0",
+    "tag": "UnsignedInteger",
+    "value": 0,
+    "hex": "2100"
+  },
+  {
+    "kind": "value",
+    "name": "unsigned 255",
+    "tag": "UnsignedInteger",
+    "value": 255,
+    "hex": "21FF"
+  },
+  {
+    "kind": "value",
+    "name": "unsigned 256",
+    "tag": "UnsignedInteger",
+    "value": 256,
+    "hex": "220100"
+  },
+  {
+    "kind": "value",
+    "name": "unsigned 70000",
+    "tag": "UnsignedInteger",
+    "value": 70000,
+    "hex": "23011170"
+  },
+  {
+    "kind": "value",
+    "name": "unsigned 4294967295",
+    "tag": "UnsignedInteger",
+    "value": 4294967295,
+    "hex": "24FFFFFFFF"
+  },
+  {
+    "kind": "value",
+    "name": "signed -1",
+    "tag": "SignedInteger",
+    "value": -1,
+    "hex": "31FF"
+  },
+  {
+    "kind": "value",
+    "name": "signed 127",
+    "tag": "SignedInteger",
+    "value": 127,
+    "hex": "317F"
+  },
+  {
+    "kind": "value",
+    "name": "signed 128",
+    "tag": "SignedInteger",
+    "value": 128,
+    "hex": "320080"
+  },
+  {
+    "kind": "value",
+    "name": "signed -129",
+    "tag": "SignedInteger",
+    "value": -129,
+    "hex": "32FF7F"
+  },
+  {
+    "kind": "value",
+    "name": "signed -2147483648",
+    "tag": "SignedInteger",
+    "value": -2147483648,
+    "hex": "3480000000"
+  },
+  {
+    "kind": "value",
+    "name": "real 21.5",
+    "tag": "Real",
+    "value": 21.5,
+    "hex": "4441AC0000"
+  },
+  {
+    "kind": "value",
+    "name": "double 1.5",
+    "tag": "Double",
+    "value": 1.5,
+    "hex": "55083FF8000000000000"
+  },
+  {
+    "kind": "value",
+    "name": "octet string",
+    "tag": "OctetString",
+    "value": "0102FF",
+    "hex": "630102FF"
+  },
+  {
+    "kind": "value",
+    "name": "character string",
+    "tag": "CharacterString",
+    "value": "AHU",
+    "hex": "7400414855"
+  },
+  {
+    "kind": "value",
+    "name": "UTF-8 string",
+    "tag": "CharacterString",
+    "value": "Lantai 3 \u00b0C",
+    "hex": "750D004C616E746169203320C2B043"
+  },
+  {
+    "kind": "value",
+    "name": "300-character string (16-bit length)",
+    "tag": "CharacterString",
+    "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "hex": "75FE012D00616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161"
+  },
+  {
+    "kind": "value",
+    "name": "status flags",
+    "tag": "BitString",
+    "value": "0101",
+    "hex": "820450"
+  },
+  {
+    "kind": "value",
+    "name": "10-bit string",
+    "tag": "BitString",
+    "value": "1111111111",
+    "hex": "8306FFC0"
+  },
+  {
+    "kind": "value",
+    "name": "enumerated 3",
+    "tag": "Enumerated",
+    "value": 3,
+    "hex": "9103"
+  },
+  {
+    "kind": "value",
+    "name": "date 2026-11-15 Sunday",
+    "tag": "Date",
+    "value": [
+      2026,
+      11,
+      15,
+      7
+    ],
+    "hex": "A47E0B0F07"
+  },
+  {
+    "kind": "value",
+    "name": "time 14:30:15.50",
+    "tag": "Time",
+    "value": [
+      14,
+      30,
+      15,
+      50
+    ],
+    "hex": "B40E1E0F32"
+  },
+  {
+    "kind": "value",
+    "name": "analog input 1",
+    "tag": "ObjectIdentifier",
+    "value": [
+      0,
+      1
+    ],
+    "hex": "C400000001"
+  },
+  {
+    "kind": "value",
+    "name": "device 2604",
+    "tag": "ObjectIdentifier",
+    "value": [
+      8,
+      2604
+    ],
+    "hex": "C402000A2C"
+  },
+  {
+    "kind": "packet",
+    "name": "Who-Is, global broadcast",
+    "hex": "810B000C0120FFFF00FF1008",
+    "describe": "WhoIs",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "Who-Is 10..20",
+    "hex": "810B000C01001008090A1914",
+    "describe": "WhoIs",
+    "data": "090A1914",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "I-Am device 2604",
+    "hex": "810B001501001000C402000A2C2205C491032203E7",
+    "describe": "IAm",
+    "data": "C402000A2C2205C491032203E7",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "ReadProperty AI1 present value",
+    "hex": "810A001101040005070C0C000000011955",
+    "describe": "ReadProperty request #7",
+    "data": "0C000000011955",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "ReadProperty-ACK 21.5",
+    "hex": "810A0017010030070C0C0000000119553E4441AC00003F",
+    "describe": "ReadProperty ComplexACK #7",
+    "data": "0C0000000119553E4441AC00003F",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "WriteProperty SimpleACK",
+    "hex": "810A0009010020070F",
+    "describe": "WriteProperty SimpleACK #7",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "Error unknown-property",
+    "hex": "810A000D010050070C91029120",
+    "describe": "ReadProperty Error #7: Property/UnknownProperty",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "Reject unrecognized service",
+    "hex": "810A00090100600709",
+    "describe": "Reject #7: UnrecognizedService",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "Abort segmentation not supported",
+    "hex": "810A00090100710704",
+    "describe": "Abort #7: SegmentationNotSupported",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "unconfirmed COV notification",
+    "hex": "810A00280100100209651C02000A2C2C0000000439394E09552E44442F00002F096F2E8204002F4F",
+    "describe": "UnconfirmedCovNotification",
+    "data": "09651C02000A2C2C0000000439394E09552E44442F00002F096F2E8204002F4F",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "Who-Is forwarded by a BBMD",
+    "hex": "8104000EC0A8010ABAC001001008",
+    "describe": "WhoIs",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "BVLC-Result NAK",
+    "hex": "810000060030",
+    "describe": "BVLC-Result 0x0030",
+    "data": "",
+    "canonical": false
+  },
+  {
+    "kind": "packet",
+    "name": "SubscribeCOV unconfirmed, 300 s",
+    "hex": "810A001601040005080509651C0000000429003A012C",
+    "describe": "SubscribeCov request #8",
+    "data": "09651C0000000429003A012C",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "BVLC type 0x82",
+    "hex": "820A000801001008",
+    "describe": "error",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "length mismatch",
+    "hex": "810A0008010010",
+    "describe": "error",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "NPDU version 2",
+    "hex": "810A000802001008",
+    "describe": "error",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "truncated confirmed request",
+    "hex": "810A000801040005",
+    "describe": "error",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "APDU type 9",
+    "hex": "810A000801009000",
+    "describe": "error",
+    "data": "",
+    "canonical": true
+  },
+  {
+    "kind": "packet",
+    "name": "shorter than the BVLC header",
+    "hex": "810A",
+    "describe": "error",
+    "data": "",
+    "canonical": true
+  }
+]

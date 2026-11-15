@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Adapters.Bacnet</RootNamespace>
+    <Description>BACnet/IP client for IoTCom.Net as an adapter over the ela-compil BACnet library (MIT, not a rewrite): Who-Is discovery, ReadProperty, ReadPropertyMultiple, WriteProperty with priorities (read-only by default) and SubscribeCOV, with IoTCom's BACnet types and any IoTCom datagram transport, including the in-memory network. Pairs with IoTCom.Net.Protocols.Bacnet (server API). Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);bacnet;bacnet-ip;ashrae-135;building-automation;bms;hvac</PackageTags>
+    <!-- The BACnet library is not annotated for trimming or NativeAOT. -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Protocols.Bacnet\IoTCom.Net.Protocols.Bacnet.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Hosting\IoTCom.Net.Hosting.csproj" />
+    <PackageReference Include="BACnet" />
+  </ItemGroup>
+</Project>

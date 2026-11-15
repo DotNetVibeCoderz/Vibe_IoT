@@ -35,6 +35,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "iec104" => Protocols.Iec104.Iec104Apdu.Describe(data),
             "ntp" => Protocols.Ntp.NtpPacket.Describe(data),
             "ndef" => Protocols.Nfc.NdefMessage.Describe(data),
+            "bacnet" => Protocols.Bacnet.BacnetPacket.DescribeFields(data),
             "knxip" => Protocols.Knx.KnxIp.DescribeFields(data),
             "ocpp" => Protocols.Ocpp.OcppFrame.DescribeFields(System.Text.Encoding.UTF8.GetString(data)),
             _ => [new FrameField("Payload", 0, data.Length, FrameFieldKind.Data)],

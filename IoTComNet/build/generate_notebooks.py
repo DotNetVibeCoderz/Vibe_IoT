@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.24.0-preview.1"
+VERSION = "0.25.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -888,6 +888,52 @@ NOTEBOOKS = {
            "See `docs/en/protocols/knx.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom knx demo`, `iotcom knx discover`, `iotcom knx monitor --gateway <host>`, `iotcom knx read 3/0/1 --sim`, `iotcom knx decode <hex>`, *Lantai kantor lewat KNX* di Gallery, dan sampel KnxMonitor. "
            "Lihat `docs/id/protocols/knx.md`.\n\n" + CREDIT[1]),
+    ],
+    "building/26-bacnet": [
+        md("# BACnet — devices, objects, priorities and COV\n\nIoTCom's own `BacnetDevice` runs an air handling unit; the client is `BacnetIpClient`, an adapter over ela-compil's BACnet library. "
+           "They share an in-memory network where broadcasts use a multicast group. On a real network drop `UseInMemory` and both use UDP 47808.",
+           "# BACnet — device, objek, prioritas, dan COV\n\n`BacnetDevice` milik IoTCom menjalankan air handling unit; kliennya adalah `BacnetIpClient`, adapter di atas pustaka BACnet ela-compil. "
+           "Keduanya berbagi jaringan dalam memori tempat broadcast memakai grup multicast. Di jaringan sungguhan hapus `UseInMemory` dan keduanya memakai UDP 47808."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP + f'\n#r "nuget: IoTCom.Net.Adapters.Bacnet, {VERSION}"'),
+        md("## Objects and the priority array\nA commandable object's present value is its highest-priority command; relinquishing hands it back.",
+           "## Objek dan priority array\nPresent value objek yang dapat diperintah adalah perintah berprioritas tertinggi; relinquish mengembalikannya."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Adapters.Bacnet;\nusing IoTCom.Net.Protocols.Bacnet;\nusing IoTCom.Net.Transports;\nusing System.Net;\n\n"
+             "var fan = BacnetObject.BinaryOutput(1, \"Supply fan\", relinquishDefault: true, \"Start\", \"Stop\");\n"
+             "fan.Write(new(BacnetPropertyId.PresentValue), [BacnetValue.Enumerated(0)], 8);    // operator stops it\n"
+             "fan.Write(new(BacnetPropertyId.PresentValue), [BacnetValue.Enumerated(1)], 16);   // a schedule wants it on\n"
+             "Console.WriteLine($\"{fan.FormatValue()} at priority {fan.ActivePriority}\");\n"
+             "fan.Write(new(BacnetPropertyId.PresentValue), [BacnetValue.Null], 8);\n"
+             "Console.WriteLine($\"{fan.FormatValue()} at priority {fan.ActivePriority}\");\n"
+             "Console.WriteLine(Convert.ToHexString(BacnetServices.ReadProperty(BacnetObjectId.Parse(\"AI1\"), new(BacnetPropertyId.PresentValue))));"),
+        md("## Discover and read\nWho-Is finds the unit; ReadPropertyMultiple reads names and values in one request per object.",
+           "## Menemukan dan membaca\nWho-Is menemukan unit; ReadPropertyMultiple membaca nama dan nilai dalam satu permintaan per objek."),
+        code("var bnNet = new InMemoryDatagramNetwork();\nvar bnGroup = new IPEndPoint(IPAddress.Parse(\"239.255.186.192\"), 47808);\n"
+             "var ahu = BacnetAhuSimulator.Create(o => { o.UseInMemory(bnNet, new IPEndPoint(IPAddress.Parse(\"10.60.0.2\"), 47808)); o.BroadcastAddress = bnGroup; });\nawait ahu.StartAsync();\n"
+             "var bms = BacnetIpClient.Create(o => { o.UseInMemory(bnNet, new IPEndPoint(IPAddress.Parse(\"10.60.0.20\"), 47808)); o.BroadcastAddress = bnGroup; });\nawait bms.ConnectAsync();\n"
+             "foreach (var d in await bms.DiscoverAsync(TimeSpan.FromMilliseconds(300))) Console.WriteLine(d);\n"
+             "foreach (var obj in (await bms.ReadObjectListAsync(2604)).Where(o => o.Type != BacnetObjectType.Device))\n"
+             "{\n    var r = await bms.ReadPropertiesAsync(2604, obj, [BacnetPropertyId.ObjectName, BacnetPropertyId.PresentValue]);\n    Console.WriteLine($\"{obj.ShortName,-5} {r[0].Values![0],-30} {r[1].Values![0]}\");\n}"),
+        md("## Follow a point by COV\nThe device notifies when the supply temperature moves by its COV increment (0.2 °C), and once right after subscribing.",
+           "## Mengikuti titik lewat COV\nDevice memberi notifikasi saat suhu suplai berubah sebesar COV increment-nya (0,2 °C), dan sekali tepat setelah berlangganan."),
+        code("var cov = new List<string>();\nvar sub = await bms.SubscribeCovAsync(2604, BacnetObjectId.Parse(\"AI1\"), n => { lock (cov) cov.Add(n.Values[0].Values[0].ToString()); });\n"
+             "for (var i = 0; i < 6; i++) { ahu.Step(10); await Task.Delay(100); }\n"
+             "await sub.DisposeAsync();\nlock (cov) Console.WriteLine(\"AI1: \" + string.Join(\" -> \", cov));"),
+        md("## Commands are opt-in\nThis client is read-only; a second one with AllowWrites() stops the fan at priority 8 and relinquishes it.",
+           "## Perintah harus diizinkan\nKlien ini hanya-baca; klien kedua dengan AllowWrites() mematikan kipas pada prioritas 8 lalu me-relinquish-nya."),
+        code("try { await bms.WritePropertyAsync(2604, BacnetObjectId.Parse(\"BO1\"), BacnetPropertyId.PresentValue, BacnetValue.Enumerated(0), 8); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }\n"
+             "var operatorBms = BacnetIpClient.Create(o => { o.UseInMemory(bnNet, new IPEndPoint(IPAddress.Parse(\"10.60.0.21\"), 47808)); o.BroadcastAddress = bnGroup; o.AllowWrites(); });\nawait operatorBms.ConnectAsync();\n"
+             "await operatorBms.DiscoverAsync(TimeSpan.FromMilliseconds(300));\n"
+             "await operatorBms.WritePropertyAsync(2604, BacnetObjectId.Parse(\"BO1\"), BacnetPropertyId.PresentValue, BacnetValue.Enumerated(0), 8);\n"
+             "var slots = await operatorBms.ReadPropertyAsync(2604, BacnetObjectId.Parse(\"BO1\"), BacnetPropertyId.PriorityArray);\n"
+             "Console.WriteLine(string.Join(\" \", slots.Select((v, i) => v.Tag == BacnetApplicationTag.Null ? \".\" : $\"{i + 1}:{v}\")));\n"
+             "await operatorBms.WritePropertyAsync(2604, BacnetObjectId.Parse(\"BO1\"), BacnetPropertyId.PresentValue, BacnetValue.Null, 8);\n"
+             "Console.WriteLine($\"fan command {ahu.FanCommand.FormatValue()}\");\n"
+             "await operatorBms.DisposeAsync();\nawait bms.DisposeAsync();\nawait ahu.DisposeAsync();"),
+        md("## Going further\n`iotcom bacnet demo`, `iotcom bacnet discover`, `iotcom bacnet objects 2604 --sim`, `iotcom bacnet serve`, `iotcom bacnet decode <hex>`, the Gallery's *Air handling unit over BACnet* and the BacnetBms sample. "
+           "See `docs/en/protocols/bacnet.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom bacnet demo`, `iotcom bacnet discover`, `iotcom bacnet objects 2604 --sim`, `iotcom bacnet serve`, `iotcom bacnet decode <hex>`, *AHU lewat BACnet* di Gallery, dan sampel BacnetBms. "
+           "Lihat `docs/id/protocols/bacnet.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "

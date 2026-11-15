@@ -179,6 +179,7 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
         "iec104" => ("tcp", 2404),
         "ntp" => ("udp", 123),
         "knxip" => ("udp", 3671),
+        "bacnet" => ("udp", 47808),
         "coap" or "lwm2m" => ("udp", 5683),
         "artnet" => ("udp", 6454),
         "sacn" => ("udp", 5568),

@@ -176,3 +176,22 @@ public class KnxBenchmarks
         return IoTCom.Net.Protocols.Knx.KnxDpt.Decode("9.001", cemi.Value);
     }
 }
+
+[MemoryDiagnoser]
+public class BacnetBenchmarks
+{
+    private static readonly IoTCom.Net.Protocols.Bacnet.BacnetObjectId Ai1 = new(IoTCom.Net.Protocols.Bacnet.BacnetObjectType.AnalogInput, 1);
+    private static readonly byte[] Ack = new IoTCom.Net.Protocols.Bacnet.BacnetPacket
+    {
+        PduType = IoTCom.Net.Protocols.Bacnet.BacnetPduType.ComplexAck, InvokeId = 7, Service = (byte)IoTCom.Net.Protocols.Bacnet.BacnetConfirmedService.ReadProperty,
+        Data = IoTCom.Net.Protocols.Bacnet.BacnetServices.ReadPropertyAck(Ai1, new(IoTCom.Net.Protocols.Bacnet.BacnetPropertyId.PresentValue), [IoTCom.Net.Protocols.Bacnet.BacnetValue.Real(21.5f)]),
+    }.Encode();
+
+    /// <summary>Decode a ReadProperty-ACK datagram down to its REAL value: a BMS poller's work per point.</summary>
+    [Benchmark]
+    public object DecodeReadPropertyAck()
+    {
+        var p = IoTCom.Net.Protocols.Bacnet.BacnetPacket.Decode(Ack);
+        return IoTCom.Net.Protocols.Bacnet.BacnetServices.DecodeReadPropertyAck(p.Data).Values[0].Value!;
+    }
+}

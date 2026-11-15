@@ -42,6 +42,13 @@ public sealed class UdpDatagramTransport : IDatagramTransport
     /// <inheritdoc />
     public EndPoint LocalEndPoint => _socket.LocalEndPoint!;
 
+    /// <summary>Allows sending to broadcast addresses such as 255.255.255.255 (BACnet Who-Is and I-Am).</summary>
+    public bool EnableBroadcast
+    {
+        get => _socket.EnableBroadcast;
+        set => _socket.EnableBroadcast = value;
+    }
+
     /// <summary>Joins an IPv4 or IPv6 multicast group (e.g. CoAP "All CoAP Nodes" 224.0.1.187).</summary>
     public void JoinMulticastGroup(IPAddress group)
     {

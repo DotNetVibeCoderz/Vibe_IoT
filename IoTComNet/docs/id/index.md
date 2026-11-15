@@ -48,6 +48,7 @@ perangkat keras.
 | [LwM2M](protocols/lwm2m.md) | klien · server · TLV/SenML · observe · simulator lampu jalan | `IoTCom.Net.Protocols.Lwm2m` |
 | [OCPP](protocols/ocpp.md) | charge point · CSMS · 1.6J dan 2.0.1 · simulator pengisi dengan model EV | `IoTCom.Net.Protocols.Ocpp` |
 | [KNX](protocols/knx.md) | klien tunnelling · routing · router KNX IP · DPT · simulator lantai kantor | `IoTCom.Net.Protocols.Knx` |
+| [BACnet](protocols/bacnet.md) | server device · adapter klien · priority array · COV · simulator AHU | `IoTCom.Net.Protocols.Bacnet`, `IoTCom.Net.Adapters.Bacnet` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB dan HID](protocols/usb.md) | control · bulk · interrupt · report HID · papan relay · bus virtual (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · simulator ECU | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |

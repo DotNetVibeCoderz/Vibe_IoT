@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Bacnet</RootNamespace>
+    <Description>BACnet/IP server API for building automation (ASHRAE 135 Annex J): a BacnetDevice answering Who-Is/Who-Has, ReadProperty, ReadPropertyMultiple, WriteProperty with priority arrays and SubscribeCOV with confirmed or unconfirmed notifications; analog, binary and multi-state objects; BVLC/NPDU/APDU and tag codecs; an air handling unit simulator. The client side is IoTCom.Net.Adapters.Bacnet. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);bacnet;bacnet-ip;ashrae-135;building-automation;bms;hvac;cov;smart-building</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

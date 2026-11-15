@@ -7,6 +7,7 @@ using IoTCom.Net.Protocols.Iec104;
 using IoTCom.Net.Protocols.Lwm2m;
 using IoTCom.Net.Protocols.Ocpp;
 using IoTCom.Net.Protocols.Knx;
+using IoTCom.Net.Protocols.Bacnet;
 using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
@@ -149,6 +150,15 @@ public static class IoTComBuilderExtensions
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Knx");
             configure?.Invoke(o);
+        }));
+
+    /// <summary>Registers a BACnet/IP device (server); add objects to the resolved device before the host starts it.</summary>
+    public static IoTComBuilder AddBacnetDevice(this IoTComBuilder builder, string name, Action<BacnetDeviceOptions> configure)
+        => builder.AddEndpoint(name, sp => BacnetDevice.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Bacnet");
+            configure(o);
         }));
 
     /// <summary>Registers an SNTP client (measures offsets; it never sets the system clock).</summary>

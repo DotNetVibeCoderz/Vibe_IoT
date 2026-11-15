@@ -3,6 +3,25 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.25.0-preview.1 — 2026-11-15
+
+BACnet/IP: our own server API and a client adapter.
+
+- **New package `IoTCom.Net.Protocols.Bacnet`** (in the meta-package): `BacnetWriter`/`BacnetReader` tag codecs, `BacnetPacket`
+  (BVLC, NPDU, every APDU type), `BacnetServices`, `BacnetDevice` (Who-Is/Who-Has, ReadProperty, ReadPropertyMultiple with
+  ALL/REQUIRED/OPTIONAL, WriteProperty with priorities, SubscribeCOV with confirmed or unconfirmed notifications), `BacnetObject`
+  (analog/binary/multi-state with priority arrays and COV increments) and `BacnetAhuSimulator`.
+- **New package `IoTCom.Net.Adapters.Bacnet`** (not in the meta-package; not trimmable/AOT): `BacnetIpClient` over ela-compil's
+  BACnet library 4.0.0 (MIT) with discovery, reads, guarded writes and COV, bridged onto IoTCom datagram transports so it runs in
+  memory too. Interop tests run it against our own device.
+- `/conformance/bacnet.json`: 45 vectors from the Python reference; pcapng maps BACnet to UDP 47808; `UdpDatagramTransport.EnableBroadcast`.
+- CLI `iotcom bacnet discover|objects|read|write|subscribe|serve|demo|decode`, VS Code decoder `bacnet`, Gallery *Air handling unit over
+  BACnet*, BacnetBms sample, notebook pair `building/26-bacnet`, docs page *BACnet*, `AddBacnetDevice`/`AddBacnetClient`, benchmark.
+- CI: the Wireshark interop gate feeds tshark from stdin (newer packages refused to open the capture by path).
+
+*BACnet/IP: API server sendiri (device dengan priority array dan COV) dan adapter klien di atas pustaka BACnet ela-compil, diuji
+saling berbicara; simulator AHU, CLI, Gallery, sampel, notebook, dan dokumentasi.*
+
 ## 0.24.0-preview.1 — 2026-11-15
 
 KNXnet/IP for building automation.

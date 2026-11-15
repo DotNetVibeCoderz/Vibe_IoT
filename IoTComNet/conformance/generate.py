@@ -1404,6 +1404,109 @@ def knx_vectors():
     return out
 
 
+def bacnet_vectors():
+    """BACnet application-tag encodings (ASHRAE 135 clause 20.2) and BACnet/IP datagrams (Annex J BVLC + NPDU + APDU).
+
+    Value vectors give a value and its tagged encoding. Packet vectors give a datagram and what it decodes to (the
+    APDU description and its service data), or "error".
+    """
+    import struct
+    out = []
+
+    def tag(number, content, context=False):
+        n = len(content)
+        first = (number << 4) | (0x08 if context else 0)
+        if n < 5:
+            return bytes([first | n]) + content
+        if n <= 253:
+            return bytes([first | 5, n]) + content
+        return bytes([first | 5, 254]) + n.to_bytes(2, "big") + content
+
+    def uint(v):
+        n = 1
+        while n < 8 and v >> (8 * n):
+            n += 1
+        return v.to_bytes(n, "big")
+
+    def sint(v):
+        n = 1
+        while n < 8 and not (-(1 << (8 * n - 1)) <= v < (1 << (8 * n - 1))):
+            n += 1
+        return v.to_bytes(n, "big", signed=True)
+
+    def bits(s):
+        unused = (8 - len(s) % 8) % 8
+        padded = s + "0" * unused
+        return bytes([unused]) + bytes(int(padded[i:i + 8], 2) for i in range(0, len(padded), 8))
+
+    def objid(t, i):
+        return ((t << 22) | i).to_bytes(4, "big")
+
+    def value(name, t, v, encoded):
+        out.append({"kind": "value", "name": name, "tag": t, "value": v, "hex": encoded.hex().upper()})
+
+    value("null", "Null", None, bytes([0x00]))
+    value("true", "Boolean", True, bytes([0x11]))
+    value("false", "Boolean", False, bytes([0x10]))
+    for v in (0, 255, 256, 70000, 4294967295):
+        value(f"unsigned {v}", "UnsignedInteger", v, tag(2, uint(v)))
+    for v in (-1, 127, 128, -129, -2147483648):
+        value(f"signed {v}", "SignedInteger", v, tag(3, sint(v)))
+    value("real 21.5", "Real", 21.5, tag(4, struct.pack(">f", 21.5)))
+    value("double 1.5", "Double", 1.5, tag(5, struct.pack(">d", 1.5)))
+    value("octet string", "OctetString", "0102FF", tag(6, bytes([1, 2, 0xFF])))
+    value("character string", "CharacterString", "AHU", tag(7, b"\x00AHU"))
+    value("UTF-8 string", "CharacterString", "Lantai 3 °C", tag(7, b"\x00" + "Lantai 3 °C".encode("utf-8")))
+    value("300-character string (16-bit length)", "CharacterString", "a" * 300, tag(7, b"\x00" + b"a" * 300))
+    value("status flags", "BitString", "0101", tag(8, bits("0101")))
+    value("10-bit string", "BitString", "1111111111", tag(8, bits("1111111111")))
+    value("enumerated 3", "Enumerated", 3, tag(9, uint(3)))
+    value("date 2026-11-15 Sunday", "Date", [2026, 11, 15, 7], tag(10, bytes([2026 - 1900, 11, 15, 7])))
+    value("time 14:30:15.50", "Time", [14, 30, 15, 50], tag(11, bytes([14, 30, 15, 50])))
+    value("analog input 1", "ObjectIdentifier", [0, 1], tag(12, objid(0, 1)))
+    value("device 2604", "ObjectIdentifier", [8, 2604], tag(12, objid(8, 2604)))
+
+    def bvlc(function, body, origin=None):
+        extra = b"" if origin is None else bytes(origin[0]) + origin[1].to_bytes(2, "big")
+        return bytes([0x81, function]) + (4 + len(extra) + len(body)).to_bytes(2, "big") + extra + body
+
+    def packet(name, data, describe, service_data=b"", canonical=True):
+        out.append({"kind": "packet", "name": name, "hex": data.hex().upper(), "describe": describe, "data": service_data.hex().upper(), "canonical": canonical})
+
+    global_npdu = bytes([0x01, 0x20, 0xFF, 0xFF, 0x00, 0xFF])
+    local_npdu = bytes([0x01, 0x00])
+    reply_npdu = bytes([0x01, 0x04])
+    packet("Who-Is, global broadcast", bvlc(0x0B, global_npdu + bytes([0x10, 0x08])), "WhoIs")
+    whois_range = tag(0, uint(10), True) + tag(1, uint(20), True)
+    packet("Who-Is 10..20", bvlc(0x0B, local_npdu + bytes([0x10, 0x08]) + whois_range), "WhoIs", whois_range)
+    iam = tag(12, objid(8, 2604)) + tag(2, uint(1476)) + tag(9, uint(3)) + tag(2, uint(999))
+    packet("I-Am device 2604", bvlc(0x0B, local_npdu + bytes([0x10, 0x00]) + iam), "IAm", iam)
+    rp = tag(0, objid(0, 1), True) + tag(1, uint(85), True)
+    packet("ReadProperty AI1 present value", bvlc(0x0A, reply_npdu + bytes([0x00, 0x05, 0x07, 0x0C]) + rp), "ReadProperty request #7", rp)
+    rp_ack = rp + bytes([0x3E]) + tag(4, struct.pack(">f", 21.5)) + bytes([0x3F])
+    packet("ReadProperty-ACK 21.5", bvlc(0x0A, local_npdu + bytes([0x30, 0x07, 0x0C]) + rp_ack), "ReadProperty ComplexACK #7", rp_ack)
+    packet("WriteProperty SimpleACK", bvlc(0x0A, local_npdu + bytes([0x20, 0x07, 0x0F])), "WriteProperty SimpleACK #7")
+    packet("Error unknown-property", bvlc(0x0A, local_npdu + bytes([0x50, 0x07, 0x0C]) + tag(9, uint(2)) + tag(9, uint(32))), "ReadProperty Error #7: Property/UnknownProperty")
+    packet("Reject unrecognized service", bvlc(0x0A, local_npdu + bytes([0x60, 0x07, 0x09])), "Reject #7: UnrecognizedService")
+    packet("Abort segmentation not supported", bvlc(0x0A, local_npdu + bytes([0x71, 0x07, 0x04])), "Abort #7: SegmentationNotSupported")
+    cov = (tag(0, uint(101), True) + tag(1, objid(8, 2604), True) + tag(2, objid(0, 4), True) + tag(3, uint(57), True)
+           + bytes([0x4E]) + tag(0, uint(85), True) + bytes([0x2E]) + tag(4, struct.pack(">f", 700.0)) + bytes([0x2F])
+           + tag(0, uint(111), True) + bytes([0x2E]) + tag(8, bits("0000")) + bytes([0x2F]) + bytes([0x4F]))
+    packet("unconfirmed COV notification", bvlc(0x0A, local_npdu + bytes([0x10, 0x02]) + cov), "UnconfirmedCovNotification", cov)
+    packet("Who-Is forwarded by a BBMD", bvlc(0x04, local_npdu + bytes([0x10, 0x08]), ((192, 168, 1, 10), 47808)), "WhoIs")
+    packet("BVLC-Result NAK", bytes([0x81, 0x00, 0x00, 0x06, 0x00, 0x30]), "BVLC-Result 0x0030", canonical=False)
+    sub = tag(0, uint(101), True) + tag(1, objid(0, 4), True) + tag(2, b"\x00", True) + tag(3, uint(300), True)
+    packet("SubscribeCOV unconfirmed, 300 s", bvlc(0x0A, reply_npdu + bytes([0x00, 0x05, 0x08, 0x05]) + sub), "SubscribeCov request #8", sub)
+    for name, data in [("BVLC type 0x82", bytes([0x82]) + bvlc(0x0A, local_npdu + bytes([0x10, 0x08]))[1:]),
+                       ("length mismatch", bvlc(0x0A, local_npdu + bytes([0x10, 0x08]))[:-1]),
+                       ("NPDU version 2", bvlc(0x0A, bytes([0x02, 0x00, 0x10, 0x08]))),
+                       ("truncated confirmed request", bvlc(0x0A, reply_npdu + bytes([0x00, 0x05]))),
+                       ("APDU type 9", bvlc(0x0A, local_npdu + bytes([0x90, 0x00]))),
+                       ("shorter than the BVLC header", bytes([0x81, 0x0A]))]:
+        packet(name, data, "error")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1424,6 +1527,7 @@ def main():
         "lwm2m.json": lwm2m_vectors(),
         "ocpp.json": ocpp_vectors(),
         "knx.json": knx_vectors(),
+        "bacnet.json": bacnet_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

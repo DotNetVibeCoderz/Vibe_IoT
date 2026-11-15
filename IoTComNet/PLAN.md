@@ -6,8 +6,8 @@ day-to-day status is tracked in [Progress.md](Progress.md).
 Priorities follow the design: **P0** foundation · **P1** first release · **P2** expansion · **P3** optional / community.
 Each protocol is "done" only when it meets the [Definition of Done](#definition-of-done-per-protocol).
 
-**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 is more than half done (9 of 15 protocol items);
-the latest release is `0.24.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
+**Where we are (2026-11-15):** Phase 0 and Phase 1 are complete. Phase 2 is two-thirds done (10 of 15 protocol items);
+the latest release is `0.25.0-preview.1`. What is left is listed under [Remaining work](#remaining-work).
 
 ## Phase 0 — Foundation → `0.1.0-preview` ✅ complete
 
@@ -71,11 +71,11 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | SWD/JTAG + DFU (probe-rs) | ⏳ |
 | Matter controller + device/bridge | ⏳ (scope decided 2026-11-15: open question 2) |
 | KNXnet/IP | ✅ `0.24.0-preview.1` |
-| BACnet/IP: adapter + own server API | ⏳ (scope decided 2026-11-15: open question 3) |
+| BACnet/IP: adapter + own server API | ✅ `0.25.0-preview.1` |
 | DTLS 1.2/1.3 (also unlocks CoAP/LwM2M security) | ⏳ |
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
-| Complete EN/ID documentation | 🚧 54 + 54 pages; grows with every item above |
-| Gallery with all 17 design use cases | 🚧 25 demos, 14 of 17 use cases covered |
+| Complete EN/ID documentation | 🚧 55 + 55 pages; grows with every item above |
+| Gallery with all 17 design use cases | 🚧 26 demos, 14 of 17 use cases covered |
 | Signed and notarised releases | ⏳ |
 
 ## Phase 3 — Optional
@@ -87,7 +87,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 
 ### To reach `1.0.0` (Phase 2)
 
-1. **Protocols:** EtherNet/IP, EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), BACnet/IP (adapter and our own server API), DTLS.
+1. **Protocols:** EtherNet/IP, EtherCAT master, SWD/JTAG + DFU, Matter (controller and device/bridge), DTLS.
 2. **Gallery use cases still missing** (design §8 catalogue):
    - #12 probe & flash firmware — SWD/JTAG, DFU, RTT;
    - #14 cellular module — AT terminal, URC parser, modem status (the package exists, the demo does not);
@@ -112,7 +112,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 | Field devices | AT PDU SMS, CMUX; ASTM host query; DMX RDM |
 | Connectivity | BLE peripheral role, pairing, L2CAP; USB isochronous, hotplug, gadget role |
 | Industrial adapters | OPC UA events/A&C, history, complex types |
-| Building automation | KNX Secure, KNXnet/IP over TCP, device management, busmonitor mode |
+| Building automation | BACnet segmentation, BBMD/foreign devices, alarms/events, schedules, trend logs, BACnet/SC, MS/TP; KNX Secure, KNXnet/IP over TCP, device management, busmonitor mode |
 | EV charging | OCPP firmware management, local authorization lists, reservations, 2.0.1 device-model reports, offline transaction queue, OCPP 2.1 |
 | Messaging | Zenoh TLS/QUIC, storages, liveliness, **native library (blocked on zenoh moving to a fixed `lz4_flex`)**; NATS JetStream; AMQP transactions, dynamic nodes; Kafka admin, transactions |
 

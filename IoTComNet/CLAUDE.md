@@ -127,6 +127,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `KnxRouter`, `KnxDiscovery`, `KnxIpGateway` = software KNX IP router on an in-process `KnxBus`, `KnxBuildingSimulator` with the group
   address plan 1/x lights, 2/x blinds, 3/x HVAC, 4/x presence/weather). In-memory routing participants must bind port 3671 to get multicast.
   DPT 9 tops out at 670433.28 (0x7FFF = invalid). `/conformance/knx.json` (C# only); pcapng maps `knxip` to UDP 3671.
+- **BACnet**: two packages. `Protocols.Bacnet` (ours, AOT): `BacnetPacket`/`BacnetWriter`/`BacnetReader`/`BacnetServices` codecs,
+  `BacnetDevice` server, `BacnetObject` (priority arrays, COV increments), `BacnetAhuSimulator`. `Adapters.Bacnet` (not AOT, not in the
+  meta-package): `BacnetIpClient` over ela-compil BACnet 4.0.0 through `IoTComBacnetTransport` (BVLC added/stripped there). In memory,
+  broadcasts use the multicast group 239.255.186.192:47808 and every participant binds port 47808. `/conformance/bacnet.json` (C# only).
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

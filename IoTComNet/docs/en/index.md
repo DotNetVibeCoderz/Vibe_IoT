@@ -47,6 +47,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [LwM2M](protocols/lwm2m.md) | client · server · TLV/SenML · observe · street light simulator | `IoTCom.Net.Protocols.Lwm2m` |
 | [OCPP](protocols/ocpp.md) | charge point · CSMS · 1.6J and 2.0.1 · charger simulator with an EV model | `IoTCom.Net.Protocols.Ocpp` |
 | [KNX](protocols/knx.md) | tunnelling client · routing · KNX IP router · DPTs · office floor simulator | `IoTCom.Net.Protocols.Knx` |
+| [BACnet](protocols/bacnet.md) | device server · client adapter · priority arrays · COV · AHU simulator | `IoTCom.Net.Protocols.Bacnet`, `IoTCom.Net.Adapters.Bacnet` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · virtual radio (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB and HID](protocols/usb.md) | control · bulk · interrupt · HID reports · relay boards · virtual bus (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |
 | [ISO-TP · UDS · OBD-II](protocols/uds.md) | tester · scan tool · ECU simulator | `IoTCom.Net.Protocols.IsoTp`, `.Uds` |
