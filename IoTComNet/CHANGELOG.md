@@ -3,6 +3,13 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## Unreleased
+
+- Matter: DER integers (certificate serials, signature r/s) are written in minimal form, so a value with leading zero bytes no longer
+  throws (`ToX509Der` failed for about 1 in 128 signatures; `TbsDer` for about 1 in 65 536 serials).
+
+*Matter: integer DER kini selalu dalam bentuk minimal.*
+
 ## 0.30.0-preview.1 — 2026-11-15
 
 Matter: controller, device and bridge. This completes the protocol list of Phase 2.

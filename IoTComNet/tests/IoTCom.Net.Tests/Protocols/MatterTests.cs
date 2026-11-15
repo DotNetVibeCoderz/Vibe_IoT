@@ -176,6 +176,15 @@ public sealed class MatterCodecTests
         Assert.True(rootKeyFromX509.VerifyData(back.TbsDer(), back.Signature, System.Security.Cryptography.HashAlgorithmName.SHA256,
             System.Security.Cryptography.DSASignatureFormat.IeeeP1363FixedFieldConcatenation));
         Assert.Equal(8, MatterCertificate.CompressedFabricId(rootPub, 0x2906C908D115D362).Length);
+
+        // Leading zero bytes in the serial or in r/s (1 in 256 signatures) must still give valid DER.
+        var zeros = new MatterCertificate
+        {
+            Serial = [0, 0, 0x05], Issuer = root.Subject, Subject = noc.Subject, NotBefore = noc.NotBefore, NotAfter = 0, PublicKey = noc.PublicKey,
+            KeyUsage = 1, SubjectKeyId = noc.SubjectKeyId, AuthorityKeyId = noc.AuthorityKeyId, Signature = [0, 0, .. new byte[29], 1, 0, .. new byte[30], 7],
+        };
+        using var zerosX509 = X509CertificateLoader.LoadCertificate(zeros.ToX509Der());
+        Assert.Equal("05", zerosX509.SerialNumber);
         Assert.Throws<ProtocolException>(() => MatterCertificate.PublicKeyFromCsr([1, 2, 3]));
     }
 }

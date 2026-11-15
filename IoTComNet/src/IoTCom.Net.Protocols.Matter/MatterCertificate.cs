@@ -184,7 +184,7 @@ public sealed class MatterCertificate
         {
             using (w.PushSequence(new Asn1Tag(TagClass.ContextSpecific, 0)))
                 w.WriteInteger(2);
-            w.WriteIntegerUnsigned(Serial.Length > 0 && Serial[0] == 0 && Serial.Length > 1 ? Serial.AsSpan(1) : Serial);
+            w.WriteIntegerUnsigned(Minimal(Serial));
             using (w.PushSequence())
                 w.WriteObjectIdentifier("1.2.840.10045.4.3.2");
             WriteName(w, Issuer);
@@ -275,14 +275,22 @@ public sealed class MatterCertificate
             var sig = new AsnWriter(AsnEncodingRules.DER);
             using (sig.PushSequence())
             {
-                sig.WriteIntegerUnsigned(Signature.AsSpan(0, 32));
-                sig.WriteIntegerUnsigned(Signature.AsSpan(32, 32));
+                sig.WriteIntegerUnsigned(Minimal(Signature.AsSpan(0, 32)));
+                sig.WriteIntegerUnsigned(Minimal(Signature.AsSpan(32, 32)));
             }
 
             w.WriteBitString(sig.Encode());
         }
 
         return w.Encode();
+    }
+
+    /// <summary>An unsigned big-endian integer without redundant leading zero bytes (DER requires the minimal form).</summary>
+    internal static ReadOnlySpan<byte> Minimal(ReadOnlySpan<byte> value)
+    {
+        var i = 0;
+        while (i < value.Length - 1 && value[i] == 0) i++;
+        return value[i..];
     }
 
     /// <summary>Verifies the signature with the issuer's public key.</summary>
