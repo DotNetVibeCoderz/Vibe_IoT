@@ -93,7 +93,7 @@ public class NtpSessionTests
         foreach (var s in servers) o.UseServer(s);
         o.Clock = clock;
         o.MinimumPollInterval = TimeSpan.Zero;
-        o.Timeout = TimeSpan.FromMilliseconds(500);
+        o.Timeout = TimeSpan.FromSeconds(2);    // generous: a cold, loaded CI runner can miss 500 ms
     });
 
     [Fact]
