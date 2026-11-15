@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.23.0-preview.1"
+VERSION = "0.24.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -848,6 +848,46 @@ NOTEBOOKS = {
            "See `docs/en/protocols/ocpp.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom ocpp demo`, `iotcom ocpp csms --frames`, `iotcom ocpp charger --csms ws://127.0.0.1:8887/ocpp/ --tag 04A1B2C3`, `iotcom ocpp decode '<json>'`, *Hub pengisian EV lewat OCPP* di Gallery, dan sampel OcppCharger. "
            "Lihat `docs/id/protocols/ocpp.md`.\n\n" + CREDIT[1]),
+    ],
+    "building/25-knx": [
+        md("# KNX — group addresses, tunnelling and an office floor\n\nA KNX IP router with an office floor on its line shares an in-memory UDP network with a tunnelling client. "
+           "Point the client at a real interface with `UseGateway(\"192.168.1.10\")`; it stays read-only until `AllowWrites()`.",
+           "# KNX — group address, tunnelling, dan lantai kantor\n\nRouter KNX IP dengan lantai kantor di jalurnya berbagi jaringan UDP dalam memori dengan klien tunnelling. "
+           "Arahkan klien ke antarmuka sungguhan dengan `UseGateway(\"192.168.1.10\")`; klien tetap hanya-baca sampai `AllowWrites()`."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Datapoint types and telegrams\nA group address carries one datapoint type; the KNX 2-byte float holds temperatures, and small values ride in the APCI byte.",
+           "## Datapoint type dan telegram\nSebuah group address membawa satu datapoint type; float 2-byte KNX menyimpan suhu, dan nilai kecil menumpang di byte APCI."),
+        code("using IoTCom.Net;\nusing IoTCom.Net.Protocols.Knx;\nusing IoTCom.Net.Transports;\nusing System.Net;\n\n"
+             "foreach (var (dpt, value) in new (string, object)[] { (\"1.001\", true), (\"5.001\", 70.0), (\"9.001\", 21.5), (\"9.001\", -30.0), (\"14.056\", 1234.5) })\n"
+             "    Console.WriteLine($\"{dpt,-7} {value,-7} -> {KnxDpt.Encode(dpt, value),-14} {KnxDpt.Format(dpt, KnxDpt.Encode(dpt, value))}\");\n"
+             "var telegram = Convert.FromHexString(\"2900BCE011041801030080 0C33\".Replace(\" \", \"\"));\n"
+             "var frame = KnxCemiFrame.Decode(telegram);\nConsole.WriteLine($\"{frame} = {KnxDpt.Format(\"9.001\", frame.Value)}\");\n"
+             "foreach (var f in KnxCemiFrame.Describe(telegram)) Console.WriteLine($\"  {f.Name,-13} {f.Value}\");"),
+        md("## Find the router and open a tunnel\nSEARCH_REQUEST goes to the multicast group; CONNECT_REQUEST returns a channel and an individual address.",
+           "## Menemukan router dan membuka tunnel\nSEARCH_REQUEST dikirim ke grup multicast; CONNECT_REQUEST mengembalikan channel dan individual address."),
+        code("var knxNet = new InMemoryDatagramNetwork();\nvar routerAddress = new IPEndPoint(IPAddress.Parse(\"10.50.0.2\"), KnxIp.Port);\n"
+             "var knxBus = new KnxBus();\nvar floor = new KnxBuildingSimulator(knxBus);\n"
+             "var router = KnxIpGateway.Create(o => { o.UseInMemory(knxNet, routerAddress); o.Bus = knxBus; });\nawait router.StartAsync();\n"
+             "foreach (var d in await KnxDiscovery.SearchAsync(knxNet.Bind(), TimeSpan.FromMilliseconds(300))) Console.WriteLine(d);\n"
+             "var tunnel = KnxTunnelClient.Create(o => o.UseInMemory(knxNet).UseGateway(routerAddress));\nawait tunnel.ConnectAsync();\n"
+             "Console.WriteLine($\"tunnel channel {tunnel.Channel}, address {tunnel.Address}\");\n"
+             "foreach (var ga in new[] { \"3/0/1\", \"3/1/1\", \"1/1/1\", \"4/1/0\" })\n"
+             "{\n    var info = floor.Find(KnxGroupAddress.Parse(ga))!;\n    Console.WriteLine($\"{ga,-6} {info.Name,-28} {KnxDpt.Format(info.Dpt, await tunnel.ReadAsync(KnxGroupAddress.Parse(ga)))}\");\n}"),
+        md("## Watch the line, then write after opting in\nThe tunnel reports every telegram; this one is read-only, so a second, write-enabled tunnel switches a light and moves a blind.",
+           "## Mengamati jalur, lalu menulis setelah diizinkan\nTunnel melaporkan setiap telegram; tunnel ini hanya-baca, jadi tunnel kedua yang boleh menulis menyalakan lampu dan menggerakkan tirai."),
+        code("var seen = new List<string>();\ntunnel.GroupValueReceived += e => { var i = floor.Find(e.Destination); lock (seen) seen.Add($\"{e.Source} -> {e.Destination} {(i is null ? e.Value.ToString() : KnxDpt.Format(i.Dpt, e.Value))} {i?.Name}\"); };\n"
+             "try { await tunnel.WriteAsync(\"1/0/1\", \"1.001\", true); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }\n"
+             "var writer = KnxTunnelClient.Create(o => o.UseInMemory(knxNet).UseGateway(routerAddress).AllowWrites());\nawait writer.ConnectAsync();\n"
+             "await writer.WriteAsync(\"1/0/1\", \"1.001\", true);\nawait writer.WriteAsync(\"2/1/1\", \"5.001\", 60);\n"
+             "for (var i = 0; i < 4; i++) { floor.Step(5); await Task.Delay(100); }\n"
+             "lock (seen) foreach (var line in seen.Take(12)) Console.WriteLine(line);\n"
+             "Console.WriteLine($\"{floor.Rooms[0].Name}: light {floor.Rooms[0].LightOn}, blind {floor.Rooms[0].Blind:0} %\");\n"
+             "await writer.DisposeAsync();\nawait tunnel.DisposeAsync();\nawait router.DisposeAsync();\nawait knxBus.DisposeAsync();"),
+        md("## Going further\n`iotcom knx demo`, `iotcom knx discover`, `iotcom knx monitor --gateway <host>`, `iotcom knx read 3/0/1 --sim`, `iotcom knx decode <hex>`, the Gallery's *Office floor over KNX* and the KnxMonitor sample. "
+           "See `docs/en/protocols/knx.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom knx demo`, `iotcom knx discover`, `iotcom knx monitor --gateway <host>`, `iotcom knx read 3/0/1 --sim`, `iotcom knx decode <hex>`, *Lantai kantor lewat KNX* di Gallery, dan sampel KnxMonitor. "
+           "Lihat `docs/id/protocols/knx.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "

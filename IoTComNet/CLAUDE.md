@@ -123,6 +123,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   `OcppCsms` read-only until `AllowCommands()`, `OcppChargePointSimulator`). The CSMS does its own WebSocket upgrade over IoTCom
   listeners (`OcppWebSocketHandshake`, `DuplexPipeStream`); never handle a request by disposing the session from inside a handler.
   `/conformance/ocpp.json` (C# only). Wire JSON goes through `OcppFrame.Format` (relaxed escaping keeps '+' in timestamps).
+- **KNX**: `Protocols.Knx` is managed C# (`KnxIp` + `KnxCemiFrame` codecs, `KnxDpt`, `KnxTunnelClient` read-only until `AllowWrites()`,
+  `KnxRouter`, `KnxDiscovery`, `KnxIpGateway` = software KNX IP router on an in-process `KnxBus`, `KnxBuildingSimulator` with the group
+  address plan 1/x lights, 2/x blinds, 3/x HVAC, 4/x presence/weather). In-memory routing participants must bind port 3671 to get multicast.
+  DPT 9 tops out at 670433.28 (0x7FFF = invalid). `/conformance/knx.json` (C# only); pcapng maps `knxip` to UDP 3671.
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

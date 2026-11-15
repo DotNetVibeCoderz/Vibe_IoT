@@ -3,6 +3,25 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.24.0-preview.1 — 2026-11-15
+
+KNXnet/IP for building automation.
+
+- **New package `IoTCom.Net.Protocols.Knx`** (in the meta-package): `KnxIndividualAddress`/`KnxGroupAddress`, `KnxCemiFrame`
+  (cEMI L_Data), `KnxIp` (KNXnet/IP header, HPAI, CRI/CRD, DIBs and every core, tunnelling and routing service), `KnxDpt`
+  (DPT 1–3, 5–14, 16–18, 20.102, 232.600 with names and units), `KnxTunnelClient` (heartbeats, sequence counters, ack retry,
+  L_Data.con, **read-only by default**), `KnxRouter` (multicast routing), `KnxDiscovery`, `KnxIpGateway` (a KNX IP interface
+  and router in software), `KnxBus` and `KnxBuildingSimulator` (an office floor with lights, blinds, heating and presence).
+- `/conformance/knx.json`: 56 vectors (DPT encodings with the KNX float's edges, cEMI and KNXnet/IP frames, malformed input)
+  from the Python reference; pcapng maps KNXnet/IP to UDP 3671 for Wireshark.
+- CLI `iotcom knx discover|monitor|read|write|demo|decode` (`--sim`, writes need `--allow-write`), VS Code decoders `knxip` and
+  `cemi`, Gallery *Office floor over KNX* (Smart building, design use case 6), KnxMonitor sample, notebook pair
+  `building/25-knx`, docs page *KNX*, `AddKnxTunnel`/`AddKnxRouter` hosting helpers, KNX benchmark.
+
+*KNXnet/IP untuk otomasi gedung: klien tunnelling (hanya-baca secara bawaan), routing, penemuan, router KNX IP dalam perangkat
+lunak, cEMI, datapoint type, dan simulator lantai kantor; CLI, Gallery lantai kantor dengan group monitor, sampel, notebook,
+dan dokumentasi.*
+
 ## 0.23.0-preview.1 — 2026-11-15
 
 OCPP 1.6J and 2.0.1 for EV charging.

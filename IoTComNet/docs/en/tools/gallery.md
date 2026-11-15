@@ -44,6 +44,7 @@ The status bar shows the run lamp, the demo status and the latest frame on the w
 | Navigation & marine | Harbour traffic (AIS) — vessels off Tanjung Priok on a nautical chart, raw !AIVDM sentences and multi-part messages, a vessel table | AIS, NMEA 0183 |
 | Navigation & marine | GNSS vehicle tracker — live track, speed, satellites' signal strength | NMEA 0183 |
 | Smart building & stage | Smart greenhouse over CoAP — observed sensors, actuators, Block2 log, separate response; a packet-loss slider and a live message sequence chart show retransmissions | CoAP, Observe, Block-wise, SenML |
+| Smart building & stage | Office floor over KNX — a floor plan of four rooms whose light glow, blind slats, temperatures and heating valves follow the KNX line; switch, dim, move blinds and change set points over a KNXnet/IP tunnel behind a write lock, and read every telegram in a group monitor decoded with the project's datapoint types | KNXnet/IP, KNX TP1, cEMI |
 | Smart building & stage | Stage lighting over Art-Net — faders, master, chase; fixtures show what the receiver decoded | Art-Net 4, DMX512 |
 | Smart building & stage | Nearby Bluetooth devices — a proximity radar by RSSI, a heart-rate strap and a greenhouse sensor over notifications, a smart plug switched only when writes are allowed | Bluetooth LE, GATT, iBeacon |
 | LPWAN & smart city | LoRaWAN network monitor — two gateways and four sensors on a radio map with spreading-factor reach; drag a sensor and watch its SF, SNR and airtime change; downlinks in RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
@@ -70,6 +71,7 @@ The medical demos use an AI provider when one is configured (see the [medical AI
 ![Smart meter reading](../../images/gallery-metering.png)
 ![Street lights over LwM2M](../../images/gallery-lwm2m.png)
 ![EV charging hub over OCPP](../../images/gallery-ocpp.png)
+![Office floor over KNX](../../images/gallery-knx.png)
 ![Plant network · Sparkplug B](../../images/gallery-sparkplug.png)
 ![OPC UA tag browser](../../images/gallery-opcua.png)
 ![CANopen I/O modules](../../images/gallery-canopen.png)

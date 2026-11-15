@@ -137,6 +137,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("nfc", "NFC / NDEF", "IoTCom.Net.Protocols.Nfc", "PC/SC reader · Type 2 tags · NDEF · virtual reader", "protocols/nfc.md", "devices/20-nfc", "NfcTagReader", ["ndef"]),
         ("lwm2m", "OMA LwM2M", "IoTCom.Net.Protocols.Lwm2m", "client · server · TLV/SenML · street light simulator", "protocols/lwm2m.md", "messaging/21-lwm2m", "Lwm2mClient", ["lwm2m-tlv"]),
         ("ocpp", "OCPP 1.6J / 2.0.1", "IoTCom.Net.Protocols.Ocpp", "charge point · CSMS · charger simulator", "protocols/ocpp.md", "automotive/24-ocpp", "OcppCharger", ["ocpp"]),
+        ("knx", "KNXnet/IP", "IoTCom.Net.Protocols.Knx", "tunnelling client · routing · IP router · office floor simulator", "protocols/knx.md", "building/25-knx", "KnxMonitor", ["knxip", "cemi"]),
         ("uds", "ISO-TP · UDS · OBD-II", "IoTCom.Net.Protocols.Uds", "tester · scan tool · ECU simulator", "protocols/uds.md", "automotive/06-can-uds", "UdsTester", ["uds"]),
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
         ("mavlink", "MAVLink v1 / v2", "IoTCom.Net.Protocols.Mavlink", "link · ground station · simulator · generator", "protocols/mavlink.md", "navigation/08-mavlink", "MavlinkTelemetry", ["mavlink"]),
@@ -268,6 +269,14 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 fields = IoTCom.Net.Protocols.Lwm2m.Lwm2mContent.DescribeTlv(bytes);
                 summary = $"{fields.Count(f => f.Name.StartsWith("resource", StringComparison.Ordinal) || f.Name.StartsWith("res. instance", StringComparison.Ordinal))} value(s)";
                 break;
+            case "knxip":
+                fields = IoTCom.Net.Protocols.Knx.KnxIp.DescribeFields(bytes);
+                summary = IoTCom.Net.Protocols.Knx.KnxIp.Describe(bytes);
+                break;
+            case "cemi":
+                fields = IoTCom.Net.Protocols.Knx.KnxCemiFrame.Describe(bytes);
+                summary = TrySummary(() => IoTCom.Net.Protocols.Knx.KnxCemiFrame.Decode(bytes).ToString());
+                break;
             case "ocpp":
                 var ocppText = System.Text.Encoding.UTF8.GetString(bytes);
                 fields = IoTCom.Net.Protocols.Ocpp.OcppFrame.DescribeFields(ocppText);
@@ -286,7 +295,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
                 summary = bytes.Length == 0 ? "empty" : UdsService.Name(bytes[0]);
                 break;
             default:
-                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, j1939, iec104, ntp, ndef, lwm2m-tlv, ocpp, uds)");
+                throw new RpcError(-32602, $"no decoder for '{protocol}' (modbus-tcp, modbus-rtu, modbus-ascii, coap, mavlink, lorawan, semtech-udp, dlms, mbus, sparkplug, dns, protobuf, msgpack, ber-tlv, ble-adv, can, canopen, j1939, iec104, ntp, ndef, lwm2m-tlv, ocpp, knxip, cemi, uds)");
         }
         return Result(bytes, fields, summary);
     }

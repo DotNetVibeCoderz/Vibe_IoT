@@ -1,0 +1,489 @@
+[
+  {
+    "kind": "dpt",
+    "name": "switch on",
+    "dpt": "1.001",
+    "value": true,
+    "hex": "01",
+    "short": true
+  },
+  {
+    "kind": "dpt",
+    "name": "switch off",
+    "dpt": "1.001",
+    "value": false,
+    "hex": "00",
+    "short": true
+  },
+  {
+    "kind": "dpt",
+    "name": "dimming increase 25 %",
+    "dpt": "3.007",
+    "value": [
+      true,
+      3
+    ],
+    "hex": "0B",
+    "short": true
+  },
+  {
+    "kind": "dpt",
+    "name": "blind stop",
+    "dpt": "3.008",
+    "value": [
+      false,
+      0
+    ],
+    "hex": "00",
+    "short": true
+  },
+  {
+    "kind": "dpt",
+    "name": "percent 100",
+    "dpt": "5.001",
+    "value": 100,
+    "hex": "FF",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "percent 40",
+    "dpt": "5.001",
+    "value": 40,
+    "hex": "66",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "percent 70 rounds half up",
+    "dpt": "5.001",
+    "value": 70,
+    "hex": "B3",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "angle 90",
+    "dpt": "5.003",
+    "value": 90,
+    "hex": "40",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "counter 200",
+    "dpt": "5.010",
+    "value": 200,
+    "hex": "C8",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "signed -100",
+    "dpt": "6.010",
+    "value": -100,
+    "hex": "9C",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "unsigned 16-bit max",
+    "dpt": "7.001",
+    "value": 65535,
+    "hex": "FFFF",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "signed 16-bit -2",
+    "dpt": "8.001",
+    "value": -2,
+    "hex": "FFFE",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float 0",
+    "dpt": "9.001",
+    "value": 0,
+    "hex": "0000",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float 21.5",
+    "dpt": "9.001",
+    "value": 21.5,
+    "hex": "0C33",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float -30",
+    "dpt": "9.001",
+    "value": -30,
+    "hex": "8A24",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float 0.01",
+    "dpt": "9.001",
+    "value": 0.01,
+    "hex": "0001",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float 670433.28",
+    "dpt": "9.004",
+    "value": 670433.28,
+    "hex": "7FFE",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float -671088.64",
+    "dpt": "9.004",
+    "value": -671088.64,
+    "hex": "F800",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float 42000",
+    "dpt": "9.004",
+    "value": 42000,
+    "hex": "6401",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float 1013.25",
+    "dpt": "9.004",
+    "value": 1013.25,
+    "hex": "362F",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "KNX float -0.5",
+    "dpt": "9.001",
+    "value": -0.5,
+    "hex": "87CE",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "time 14:30:15",
+    "dpt": "10.001",
+    "value": "14:30:15",
+    "hex": "0E1E0F",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "date 2026-11-15",
+    "dpt": "11.001",
+    "value": "2026-11-15",
+    "hex": "0F0B1A",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "date 1995-01-02",
+    "dpt": "11.001",
+    "value": "1995-01-02",
+    "hex": "02015F",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "counter 123456",
+    "dpt": "12.001",
+    "value": 123456,
+    "hex": "0001E240",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "signed 32-bit -5",
+    "dpt": "13.001",
+    "value": -5,
+    "hex": "FFFFFFFB",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "IEEE float power",
+    "dpt": "14.056",
+    "value": 1234.5,
+    "hex": "449A5000",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "string",
+    "dpt": "16.000",
+    "value": "KNX is OK",
+    "hex": "4B4E58206973204F4B0000000000",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "scene 5",
+    "dpt": "17.001",
+    "value": 5,
+    "hex": "05",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "learn scene 12",
+    "dpt": "18.001",
+    "value": [
+      true,
+      12
+    ],
+    "hex": "8C",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "HVAC comfort",
+    "dpt": "20.102",
+    "value": 1,
+    "hex": "01",
+    "short": false
+  },
+  {
+    "kind": "dpt",
+    "name": "RGB orange",
+    "dpt": "232.600",
+    "value": [
+      255,
+      128,
+      0
+    ],
+    "hex": "FF8000",
+    "short": false
+  },
+  {
+    "kind": "cemi",
+    "name": "write temperature",
+    "hex": "2900BCE0110418010300800C33",
+    "code": "DataIndication",
+    "source": "1.1.4",
+    "destination": "3/0/1",
+    "apci": "GroupValueWrite",
+    "value": "0C33",
+    "short": false
+  },
+  {
+    "kind": "cemi",
+    "name": "write switch on (short)",
+    "hex": "2900BCE011010801010081",
+    "code": "DataIndication",
+    "source": "1.1.1",
+    "destination": "1/0/1",
+    "apci": "GroupValueWrite",
+    "value": "01",
+    "short": true
+  },
+  {
+    "kind": "cemi",
+    "name": "read request",
+    "hex": "1100BCE000000901010000",
+    "code": "DataRequest",
+    "source": "0.0.0",
+    "destination": "1/1/1",
+    "apci": "GroupValueRead",
+    "value": "",
+    "short": false
+  },
+  {
+    "kind": "cemi",
+    "name": "response percent",
+    "hex": "2900BCE011010B02020040FF",
+    "code": "DataIndication",
+    "source": "1.1.1",
+    "destination": "1/3/2",
+    "apci": "GroupValueResponse",
+    "value": "FF",
+    "short": false
+  },
+  {
+    "kind": "cemi",
+    "name": "confirmation",
+    "hex": "2E00BCE011FA110302008080",
+    "code": "DataConfirmation",
+    "source": "1.1.250",
+    "destination": "2/1/3",
+    "apci": "GroupValueWrite",
+    "value": "80",
+    "short": false
+  },
+  {
+    "kind": "cemi",
+    "name": "response 6-bit zero",
+    "hex": "2900BCE011021004010040",
+    "code": "DataIndication",
+    "source": "1.1.2",
+    "destination": "2/0/4",
+    "apci": "GroupValueResponse",
+    "value": "00",
+    "short": true
+  },
+  {
+    "kind": "cemi",
+    "name": "additional info skipped",
+    "hex": "29020300BCE0FFFFFFFF010081",
+    "code": "DataIndication",
+    "source": "15.15.255",
+    "destination": "31/7/255",
+    "apci": "GroupValueWrite",
+    "value": "01",
+    "short": true
+  },
+  {
+    "kind": "cemi",
+    "name": "message code 0x2A",
+    "hex": "2A00BCE000010001010080",
+    "code": "error"
+  },
+  {
+    "kind": "cemi",
+    "name": "length too long",
+    "hex": "2900BCE000010001020080",
+    "code": "error"
+  },
+  {
+    "kind": "cemi",
+    "name": "extended frame",
+    "hex": "29003CE000010001010080",
+    "code": "error"
+  },
+  {
+    "kind": "cemi",
+    "name": "too short",
+    "hex": "29",
+    "code": "error"
+  },
+  {
+    "kind": "knxip",
+    "name": "search request (NAT)",
+    "hex": "06100201000E0801000000000000",
+    "service": "SEARCH_REQUEST",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "connect request tunnel link layer",
+    "hex": "06100205001A0801000000000000080100000000000004040200",
+    "service": "CONNECT_REQUEST",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "connect response 1.1.250",
+    "hex": "06100206001401000801C0A8010A0E57040411FA",
+    "service": "CONNECT_RESPONSE",
+    "channel": 1,
+    "sequence": null,
+    "status": 0
+  },
+  {
+    "kind": "knxip",
+    "name": "connect response no more connections",
+    "hex": "0610020600080024",
+    "service": "CONNECT_RESPONSE",
+    "channel": 0,
+    "sequence": null,
+    "status": 36
+  },
+  {
+    "kind": "knxip",
+    "name": "connection state request",
+    "hex": "06100207001001000801000000000000",
+    "service": "CONNECTIONSTATE_REQUEST",
+    "channel": 1,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "tunnelling request seq 7",
+    "hex": "061004200015040107001100BCE000000801010081",
+    "service": "TUNNELING_REQUEST",
+    "channel": 1,
+    "sequence": 7,
+    "status": 0
+  },
+  {
+    "kind": "knxip",
+    "name": "tunnelling ack seq 7",
+    "hex": "06100421000A04010700",
+    "service": "TUNNELING_ACK",
+    "channel": 1,
+    "sequence": 7,
+    "status": 0
+  },
+  {
+    "kind": "knxip",
+    "name": "routing indication",
+    "hex": "0610053000132900BCE0110418010300800C33",
+    "service": "ROUTING_INDICATION",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "disconnect request",
+    "hex": "06100209001003000801000000000000",
+    "service": "DISCONNECT_REQUEST",
+    "channel": 3,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "version 2.0",
+    "hex": "06200201000E0801000000000000",
+    "service": "error",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "total length mismatch",
+    "hex": "06100201000E08010000000000",
+    "service": "error",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "header length 5",
+    "hex": "05100201000E0801000000000000",
+    "service": "error",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  },
+  {
+    "kind": "knxip",
+    "name": "shorter than the header",
+    "hex": "061002",
+    "service": "error",
+    "channel": null,
+    "sequence": null,
+    "status": null
+  }
+]

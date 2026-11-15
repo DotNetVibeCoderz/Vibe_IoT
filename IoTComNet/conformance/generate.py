@@ -1297,6 +1297,113 @@ def ocpp_vectors():
     return out
 
 
+def knx_vectors():
+    """KNX datapoint types (KNX Standard 3/7/2), cEMI L_Data frames (3/6/3) and KNXnet/IP frames (3/8/2, 3/8/4, 3/8/5).
+
+    DPT vectors give a value and its encoding ("short" values travel in the 6 low bits of the APCI byte). cEMI vectors
+    give the expected message code, addresses, service and value, or "error". KNXnet/IP vectors give the service and the
+    connection header fields, or "error".
+    """
+    import math
+    import struct
+    out = []
+
+    def rnd(x):
+        # round half away from zero
+        return int(math.floor(abs(x) + 0.5)) * (1 if x >= 0 else -1)
+
+    def f16(v):
+        for e in range(16):
+            m = rnd(v * 100 / (1 << e))
+            if -2048 <= m <= 2047:
+                raw = (0x8000 if m < 0 else 0) | (e << 11) | (m & 0x7FF)
+                return raw.to_bytes(2, "big")
+        raise ValueError(v)
+
+    def dpt(name, d, value, data, short=False):
+        out.append({"kind": "dpt", "name": name, "dpt": d, "value": value, "hex": data.hex().upper(), "short": short})
+
+    dpt("switch on", "1.001", True, b"\x01", True)
+    dpt("switch off", "1.001", False, b"\x00", True)
+    dpt("dimming increase 25 %", "3.007", [True, 3], b"\x0B", True)
+    dpt("blind stop", "3.008", [False, 0], b"\x00", True)
+    dpt("percent 100", "5.001", 100, bytes([255]))
+    dpt("percent 40", "5.001", 40, bytes([rnd(40 * 255 / 100)]))
+    dpt("percent 70 rounds half up", "5.001", 70, bytes([179]))
+    dpt("angle 90", "5.003", 90, bytes([rnd(90 * 255 / 360)]))
+    dpt("counter 200", "5.010", 200, bytes([200]))
+    dpt("signed -100", "6.010", -100, struct.pack(">b", -100))
+    dpt("unsigned 16-bit max", "7.001", 65535, struct.pack(">H", 65535))
+    dpt("signed 16-bit -2", "8.001", -2, struct.pack(">h", -2))
+    for v in (0, 21.5, -30, 0.01, 670433.28, -671088.64, 42000, 1013.25, -0.5):   # 0x7FFF (670760.96) is "invalid data"
+        dpt(f"KNX float {v}", "9.001" if abs(v) < 1000 else "9.004", v, f16(v))
+    dpt("time 14:30:15", "10.001", "14:30:15", bytes([14, 30, 15]))
+    dpt("date 2026-11-15", "11.001", "2026-11-15", bytes([15, 11, 26]))
+    dpt("date 1995-01-02", "11.001", "1995-01-02", bytes([2, 1, 95]))
+    dpt("counter 123456", "12.001", 123456, struct.pack(">I", 123456))
+    dpt("signed 32-bit -5", "13.001", -5, struct.pack(">i", -5))
+    dpt("IEEE float power", "14.056", 1234.5, struct.pack(">f", 1234.5))
+    dpt("string", "16.000", "KNX is OK", b"KNX is OK".ljust(14, b"\x00"))
+    dpt("scene 5", "17.001", 5, bytes([5]))
+    dpt("learn scene 12", "18.001", [True, 12], bytes([0x80 | 12]))
+    dpt("HVAC comfort", "20.102", 1, bytes([1]))
+    dpt("RGB orange", "232.600", [255, 128, 0], bytes([255, 128, 0]))
+
+    def ia(a, l, d):
+        return (a << 12) | (l << 8) | d
+
+    def ga(m, mid, s):
+        return (m << 11) | (mid << 8) | s
+
+    def cemi(code, src, dst, apci, data=b"", short=None, group=True, ctrl1=0xBC):
+        npdu = 1 + len(data)
+        a = apci | (short if short is not None else 0)
+        return bytes([code, 0, ctrl1, 0xE0 if group else 0x60]) + src.to_bytes(2, "big") + dst.to_bytes(2, "big") + bytes([npdu, (a >> 8) & 3, a & 0xFF]) + data
+
+    def frame(name, data, code, src, dst, apci, value, short):
+        out.append({"kind": "cemi", "name": name, "hex": data.hex().upper(), "code": code, "source": src, "destination": dst,
+                    "apci": apci, "value": value, "short": short})
+
+    frame("write temperature", cemi(0x29, ia(1, 1, 4), ga(3, 0, 1), 0x080, f16(21.5)), "DataIndication", "1.1.4", "3/0/1", "GroupValueWrite", f16(21.5).hex().upper(), False)
+    frame("write switch on (short)", cemi(0x29, ia(1, 1, 1), ga(1, 0, 1), 0x080, short=1), "DataIndication", "1.1.1", "1/0/1", "GroupValueWrite", "01", True)
+    frame("read request", cemi(0x11, 0, ga(1, 1, 1), 0x000), "DataRequest", "0.0.0", "1/1/1", "GroupValueRead", "", False)
+    frame("response percent", cemi(0x29, ia(1, 1, 1), ga(1, 3, 2), 0x040, b"\xFF"), "DataIndication", "1.1.1", "1/3/2", "GroupValueResponse", "FF", False)
+    frame("confirmation", cemi(0x2E, ia(1, 1, 250), ga(2, 1, 3), 0x080, b"\x80"), "DataConfirmation", "1.1.250", "2/1/3", "GroupValueWrite", "80", False)
+    frame("response 6-bit zero", cemi(0x29, ia(1, 1, 2), ga(2, 0, 4), 0x040, short=0), "DataIndication", "1.1.2", "2/0/4", "GroupValueResponse", "00", True)
+    frame("additional info skipped", bytes([0x29, 2, 0x03, 0x00]) + cemi(0x29, ia(15, 15, 255), ga(31, 7, 255), 0x080, short=1)[2:],
+          "DataIndication", "15.15.255", "31/7/255", "GroupValueWrite", "01", True)
+    for name, data in [("message code 0x2A", bytes([0x2A]) + cemi(0x29, 1, 1, 0x80)[1:]),
+                       ("length too long", cemi(0x29, 1, 1, 0x80, b"\x01")[:-1]),
+                       ("extended frame", cemi(0x29, 1, 1, 0x80, ctrl1=0x3C)),
+                       ("too short", b"\x29")]:
+        out.append({"kind": "cemi", "name": name, "hex": data.hex().upper(), "code": "error"})
+
+    def knxip(service, body):
+        return bytes([6, 0x10]) + service.to_bytes(2, "big") + (6 + len(body)).to_bytes(2, "big") + body
+
+    def hpai(ip=(0, 0, 0, 0), port=0):
+        return bytes([8, 1]) + bytes(ip) + port.to_bytes(2, "big")
+
+    def ipf(name, data, service, channel=None, sequence=None, status=None):
+        out.append({"kind": "knxip", "name": name, "hex": data.hex().upper(), "service": service, "channel": channel, "sequence": sequence, "status": status})
+
+    ipf("search request (NAT)", knxip(0x0201, hpai()), "SEARCH_REQUEST")
+    ipf("connect request tunnel link layer", knxip(0x0205, hpai() + hpai() + bytes([4, 4, 2, 0])), "CONNECT_REQUEST")
+    ipf("connect response 1.1.250", knxip(0x0206, bytes([1, 0]) + hpai((192, 168, 1, 10), 3671) + bytes([4, 4, 0x11, 0xFA])), "CONNECT_RESPONSE", 1, None, 0)
+    ipf("connect response no more connections", knxip(0x0206, bytes([0, 0x24])), "CONNECT_RESPONSE", 0, None, 0x24)
+    ipf("connection state request", knxip(0x0207, bytes([1, 0]) + hpai()), "CONNECTIONSTATE_REQUEST", 1)
+    ipf("tunnelling request seq 7", knxip(0x0420, bytes([4, 1, 7, 0]) + cemi(0x11, 0, ga(1, 0, 1), 0x080, short=1)), "TUNNELING_REQUEST", 1, 7, 0)
+    ipf("tunnelling ack seq 7", knxip(0x0421, bytes([4, 1, 7, 0])), "TUNNELING_ACK", 1, 7, 0)
+    ipf("routing indication", knxip(0x0530, cemi(0x29, ia(1, 1, 4), ga(3, 0, 1), 0x080, f16(21.5))), "ROUTING_INDICATION")
+    ipf("disconnect request", knxip(0x0209, bytes([3, 0]) + hpai()), "DISCONNECT_REQUEST", 3)
+    for name, data in [("version 2.0", bytes([6, 0x20]) + knxip(0x0201, hpai())[2:]),
+                       ("total length mismatch", knxip(0x0201, hpai())[:-1]),
+                       ("header length 5", bytes([5]) + knxip(0x0201, hpai())[1:]),
+                       ("shorter than the header", b"\x06\x10\x02")]:
+        ipf(name, data, "error")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1316,6 +1423,7 @@ def main():
         "ndef.json": ndef_vectors(),
         "lwm2m.json": lwm2m_vectors(),
         "ocpp.json": ocpp_vectors(),
+        "knx.json": knx_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

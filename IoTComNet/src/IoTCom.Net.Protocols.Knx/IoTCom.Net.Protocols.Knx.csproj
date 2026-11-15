@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.Knx</RootNamespace>
+    <Description>KNXnet/IP for building automation: tunnelling client (heartbeats, sequence counters, acknowledgement retry, L_Data.con), routing participant, discovery, a KNX IP interface/router in software with an in-process KNX line, cEMI and KNXnet/IP codecs, datapoint types (DPT 1–20, 232) and an office-floor simulator. Writes are opt-in. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);knx;knxnet-ip;knxip;building-automation;cemi;tunnelling;routing;dpt;smart-building</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

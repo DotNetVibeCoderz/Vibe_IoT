@@ -44,6 +44,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Navigasi & maritim | Lalu lintas pelabuhan (AIS) — kapal di lepas Tanjung Priok pada peta laut, kalimat !AIVDM mentah dan pesan multi-bagian, tabel kapal | AIS, NMEA 0183 |
 | Navigasi & maritim | Pelacak kendaraan GNSS — lintasan langsung, kecepatan, kekuatan sinyal satelit | NMEA 0183 |
 | Gedung pintar & panggung | Rumah kaca pintar lewat CoAP — sensor yang diamati, aktuator, log Block2, separate response; slider kehilangan paket dan diagram urutan pesan langsung menampilkan pengiriman ulang | CoAP, Observe, Block-wise, SenML |
+| Gedung pintar & panggung | Lantai kantor lewat KNX — denah empat ruangan yang cahaya lampu, bilah tirai, suhu, dan katup pemanasnya mengikuti jalur KNX; nyalakan, redupkan, gerakkan tirai, dan ubah set point lewat tunnel KNXnet/IP di balik kunci tulis, lalu baca setiap telegram di group monitor yang diurai dengan datapoint type proyek | KNXnet/IP, KNX TP1, cEMI |
 | Gedung pintar & panggung | Lampu panggung lewat Art-Net — fader, master, chase; fixture menampilkan apa yang diurai penerima | Art-Net 4, DMX512 |
 | Gedung pintar & panggung | Perangkat Bluetooth di sekitar — radar kedekatan dari RSSI, tali detak jantung dan sensor rumah kaca lewat notifikasi, smart plug yang dinyalakan hanya saat penulisan diizinkan | Bluetooth LE, GATT, iBeacon |
 | LPWAN & kota pintar | Monitor jaringan LoRaWAN — dua gateway dan empat sensor di peta radio dengan jangkauan per spreading factor; seret sensor dan lihat SF, SNR, serta airtime-nya berubah; downlink di RX1, DevStatusReq | LoRaWAN, Semtech UDP, Cayenne LPP |
@@ -70,6 +71,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Pembacaan smart meter](../../images/gallery-metering.png)
 ![Lampu jalan lewat LwM2M](../../images/gallery-lwm2m.png)
 ![Hub pengisian EV lewat OCPP](../../images/gallery-ocpp.png)
+![Lantai kantor lewat KNX](../../images/gallery-knx.png)
 ![Jaringan pabrik · Sparkplug B](../../images/gallery-sparkplug.png)
 ![Penjelajah tag OPC UA](../../images/gallery-opcua.png)
 ![Modul I/O CANopen](../../images/gallery-canopen.png)

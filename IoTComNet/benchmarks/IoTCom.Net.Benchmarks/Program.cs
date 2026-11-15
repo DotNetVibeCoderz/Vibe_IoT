@@ -159,3 +159,20 @@ public class OcppBenchmarks
         IoTCom.Net.Protocols.Ocpp.OcppSession.Serialize(new IoTCom.Net.Protocols.Ocpp.V16.StatusNotificationRequest { ConnectorId = 1, Status = IoTCom.Net.Protocols.Ocpp.V16.ChargePointStatus.Charging },
             typeof(IoTCom.Net.Protocols.Ocpp.V16.StatusNotificationRequest), IoTCom.Net.Protocols.Ocpp.OcppVersion.Ocpp16)).ToJson();
 }
+
+[MemoryDiagnoser]
+public class KnxBenchmarks
+{
+    private static readonly byte[] Frame = IoTCom.Net.Protocols.Knx.KnxIp.TunnelingRequest(1, 7, IoTCom.Net.Protocols.Knx.KnxCemiFrame.GroupTelegram(
+        IoTCom.Net.Protocols.Knx.KnxMessageCode.DataIndication, new IoTCom.Net.Protocols.Knx.KnxIndividualAddress(1, 1, 4), new IoTCom.Net.Protocols.Knx.KnxGroupAddress(3, 0, 1),
+        IoTCom.Net.Protocols.Knx.KnxApci.GroupValueWrite, IoTCom.Net.Protocols.Knx.KnxDpt.Encode("9.001", 21.5)).Encode());
+
+    /// <summary>Parse a tunnelling request, its cEMI frame and the DPT 9.001 value: a group monitor's work per telegram.</summary>
+    [Benchmark]
+    public object ParseTunnellingTemperature()
+    {
+        var (_, body) = IoTCom.Net.Protocols.Knx.KnxIp.Parse(Frame);
+        var cemi = IoTCom.Net.Protocols.Knx.KnxCemiFrame.Decode(IoTCom.Net.Protocols.Knx.KnxIp.ReadConnectionHeader(body).Payload.Span);
+        return IoTCom.Net.Protocols.Knx.KnxDpt.Decode("9.001", cemi.Value);
+    }
+}

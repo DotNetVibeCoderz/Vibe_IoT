@@ -141,6 +141,13 @@ if (Want("gallery-ais.png"))
     Shot("gallery-ais.png");
 }
 
+if (Want("gallery-knx.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("knx-office-floor", seconds: 6);
+    Shot("gallery-knx.png");
+}
+
 if (Want("gallery-ocpp.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

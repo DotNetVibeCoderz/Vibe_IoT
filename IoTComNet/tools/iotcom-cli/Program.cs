@@ -139,6 +139,16 @@ app.Configure(c =>
         l.AddCommand<Lwm2mDemoCommand>("demo").WithDescription("Server and street light in-process: register, read, observe, write.").WithExample("lwm2m", "demo").WithExample("lwm2m", "demo", "--allow-write");
         l.AddCommand<Lwm2mDecodeCommand>("decode").WithDescription("Decode an LwM2M TLV payload.").WithExample("lwm2m", "decode", "3/0/6", "8606410001410105");
     });
+    c.AddBranch("knx", k =>
+    {
+        k.SetDescription("KNXnet/IP building automation: discover interfaces, monitor the line, read and write group addresses, or watch an office floor in-process.");
+        k.AddCommand<KnxDiscoverCommand>("discover").WithDescription("Find KNX IP interfaces and routers (SEARCH_REQUEST).").WithExample("knx", "discover").WithExample("knx", "discover", "--sim");
+        k.AddCommand<KnxMonitorCommand>("monitor").WithDescription("Group monitor (read-only) over a tunnel or routing.").WithExample("knx", "monitor", "--gateway", "192.168.1.10").WithExample("knx", "monitor", "--sim", "--seconds", "10");
+        k.AddCommand<KnxReadCommand>("read").WithDescription("Read a group address.").WithExample("knx", "read", "3/0/1", "--dpt", "9.001", "--gateway", "192.168.1.10").WithExample("knx", "read", "3/0/1", "--sim");
+        k.AddCommand<KnxWriteCommand>("write").WithDescription("Write a group address (requires --allow-write).").WithExample("knx", "write", "1/0/1", "on", "--dpt", "1.001", "--sim", "--allow-write");
+        k.AddCommand<KnxDemoCommand>("demo").WithDescription("Discovery, a tunnel and the office floor in-process.").WithExample("knx", "demo").WithExample("knx", "demo", "--allow-write");
+        k.AddCommand<KnxDecodeCommand>("decode").WithDescription("Decode a KNXnet/IP or cEMI frame.").WithExample("knx", "decode", "29 00 BC E0 11 04 18 01 03 00 80 0C 33", "--dpt", "9.001");
+    });
     c.AddBranch("ocpp", o =>
     {
         o.SetDescription("OCPP 1.6J / 2.0.1 for EV charging: run a CSMS, run a simulated charger against any CSMS, watch both in-process, or decode a message.");

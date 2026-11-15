@@ -38,6 +38,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Ntp\IoTCom.Net.Protocols.Ntp.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Lwm2m\IoTCom.Net.Protocols.Lwm2m.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Ocpp\IoTCom.Net.Protocols.Ocpp.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Knx\IoTCom.Net.Protocols.Knx.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Nfc\IoTCom.Net.Protocols.Nfc.csproj" />
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="Spectre.Console.Cli" />

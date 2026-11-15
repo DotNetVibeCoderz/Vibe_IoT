@@ -6,6 +6,7 @@ using IoTCom.Net.Protocols.Hl7;
 using IoTCom.Net.Protocols.Iec104;
 using IoTCom.Net.Protocols.Lwm2m;
 using IoTCom.Net.Protocols.Ocpp;
+using IoTCom.Net.Protocols.Knx;
 using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
 using IoTCom.Net.Protocols.AtCommand;
@@ -130,6 +131,24 @@ public static class IoTComBuilderExtensions
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.Ocpp");
             configure(o);
+        }));
+
+    /// <summary>Registers a KNXnet/IP tunnelling client (read-only unless <c>AllowWrites()</c>).</summary>
+    public static IoTComBuilder AddKnxTunnel(this IoTComBuilder builder, string name, Action<KnxTunnelClientOptions> configure)
+        => builder.AddEndpoint(name, sp => KnxTunnelClient.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Knx");
+            configure(o);
+        }));
+
+    /// <summary>Registers a KNXnet/IP routing participant (read-only unless <c>AllowWrites()</c>).</summary>
+    public static IoTComBuilder AddKnxRouter(this IoTComBuilder builder, string name, Action<KnxRouterOptions>? configure = null)
+        => builder.AddEndpoint(name, sp => KnxRouter.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Knx");
+            configure?.Invoke(o);
         }));
 
     /// <summary>Registers an SNTP client (measures offsets; it never sets the system clock).</summary>
