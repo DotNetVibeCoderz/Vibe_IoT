@@ -51,6 +51,7 @@ perangkat keras.
 | [BACnet](protocols/bacnet.md) | server device · adapter klien · priority array · COV · simulator AHU | `IoTCom.Net.Protocols.Bacnet`, `IoTCom.Net.Adapters.Bacnet` |
 | [EtherNet/IP](protocols/ethernetip.md) | klien explicit · adapter · tag Logix · ListIdentity · simulator PLC | `IoTCom.Net.Protocols.EtherNetIp` |
 | [EtherCAT](protocols/ethercat.md) | master · pindai jalur · SII · state AL · process image · CoE · Ethernet mentah · simulator rak I/O | `IoTCom.Net.Protocols.EtherCat` |
+| [SWD/JTAG, RTT, DFU](protocols/debug.md) | probe probe-rs · flash · log RTT · USB DFU/DfuSe · Intel HEX/DFU/ELF · MCU simulasi | `IoTCom.Net.Debug` |
 | [DTLS](protocols/dtls.md) | transport klien dan server DTLS 1.2 · PSK dan sertifikat ECDSA · coaps:// untuk CoAP dan LwM2M | `IoTCom.Net.Transport.Dtls` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · radio virtual (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB dan HID](protocols/usb.md) | control · bulk · interrupt · report HID · papan relay · bus virtual (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |

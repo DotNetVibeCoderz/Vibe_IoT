@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.28.0-preview.1"
+VERSION = "0.29.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `industrial/29-ethercat` | EtherCAT: frames, line scan, SAFE-OP inputs, CoE, OP and working counters |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `industrial/29-ethercat` | EtherCAT: frames, line scan, SAFE-OP inputs, CoE, OP and working counters |\n| `devices/30-probe-flash` | SWD flashing, RTT logs and commands, DfuSe updates, firmware files |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `industrial/29-ethercat` | EtherCAT: frame, pindai jalur, input SAFE-OP, CoE, OP, dan working counter |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `industrial/29-ethercat` | EtherCAT: frame, pindai jalur, input SAFE-OP, CoE, OP, dan working counter |\n| `devices/30-probe-flash` | Flash lewat SWD, log dan perintah RTT, pembaruan DfuSe, file firmware |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -1092,6 +1092,63 @@ Console.WriteLine($"after closing the master: DO8 is in {EcatAlStatus.Name(rack.
            "See `docs/en/protocols/ethercat.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom ethercat interfaces`, `iotcom ethercat scan --if <port>`, `iotcom ethercat watch --sim`, `iotcom ethercat sdo 3 1008:00 --sim`, `iotcom ethercat demo`, *Rak I/O lewat EtherCAT* di Gallery, dan sampel EthercatRack. "
            "Lihat `docs/id/protocols/ethercat.md`.\n\n" + CREDIT[1]),
+    ],
+    "devices/30-probe-flash": [
+        md("# Probe and flash — SWD, RTT and DFU\n\nA simulated STM32F411 (`VirtualMcu`) sits behind a virtual CMSIS-DAP probe. We read its memory, flash new firmware, read its RTT log and send it a command, then update it again through its USB DFU bootloader. "
+           "With a real board use `DebugProbe.Create(o => o.UseTarget(\"STM32F411CEUx\"))` (probe-rs) and `DfuClient.Create(o => o.UseDevice(0x0483, 0xDF11))`.",
+           "# Probe dan flash — SWD, RTT, dan DFU\n\nSTM32F411 simulasi (`VirtualMcu`) berada di balik probe CMSIS-DAP virtual. Kita membaca memorinya, mem-flash firmware baru, membaca log RTT-nya dan mengirim perintah, lalu memperbaruinya lagi lewat bootloader USB DFU-nya. "
+           "Dengan board sungguhan pakai `DebugProbe.Create(o => o.UseTarget(\"STM32F411CEUx\"))` (probe-rs) dan `DfuClient.Create(o => o.UseDevice(0x0483, 0xDF11))`."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Firmware images\nIntel HEX, DFU files and ELF load into one model: segments, an entry point, CRCs.",
+           "## Image firmware\nIntel HEX, file DFU, dan ELF dimuat ke satu model: segmen, entry point, CRC."),
+        code("""using IoTCom.Net;
+using IoTCom.Net.Debug;
+using IoTCom.Net.Transport.Usb;
+
+var image = VirtualMcu.BuildDemoFirmware("1.1.0");
+Console.WriteLine($"{image}, version tag {image.FindTag("FWVER:")}");
+var hex = IntelHex.Format(image);
+Console.WriteLine(string.Join("\\n", hex.Split('\\n').Take(3)));
+var dfuFile = DfuFile.Parse(DfuFile.BuildDfuSe(image, 0x0483, 0xDF11));
+Console.WriteLine(dfuFile.Describe());"""),
+        md("## Read-only probe\nMemory reads and the core state work while the firmware runs; writes are refused.",
+           "## Probe hanya-baca\nBaca memori dan state core berjalan saat firmware jalan; penulisan ditolak."),
+        code("""var mcu = new VirtualMcu(firmware: VirtualMcu.BuildDemoFirmware("1.0.0"));
+mcu.Step(1.5);
+var viewer = DebugProbe.Create(o => o.UseVirtual(new VirtualProbeBackend(mcu)).UseTarget("STM32F411CEUx"));
+Console.WriteLine($"core {await viewer.CoreAsync()}, uptime {await viewer.ReadUInt32Async(VirtualMcu.UptimeAddress)} ms");
+var rtt = await viewer.AttachRttAsync(VirtualMcu.RamBase, VirtualMcu.RamSize);
+Console.Write(await rtt.ReadTextAsync());
+try { await viewer.FlashAsync(image); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }
+await viewer.DisposeAsync();"""),
+        md("## Flash over SWD, talk over RTT\nErase, program, verify, reset — then the new firmware boots and answers on the down channel.",
+           "## Flash lewat SWD, bicara lewat RTT\nHapus, program, verifikasi, reset — lalu firmware baru booting dan menjawab di kanal down."),
+        code("""var engineer = DebugProbe.Create(o => o.UseVirtual(new VirtualProbeBackend(mcu)).UseTarget("STM32F411CEUx").AllowWrites());
+await engineer.FlashAsync(image, new Progress<FlashProgress>(p => { if (p.Fraction >= 1) Console.WriteLine($"{p.Phase} done"); }));
+mcu.Step(0.5);
+var terminal = await engineer.AttachRttAsync(VirtualMcu.RamBase, VirtualMcu.RamSize);
+Console.Write(await terminal.ReadTextAsync());
+await terminal.WriteAsync(System.Text.Encoding.ASCII.GetBytes("led on\\n"));
+mcu.Step(0.1);
+Console.Write(await terminal.ReadTextAsync());
+Console.WriteLine($"LED {(mcu.Led ? "on" : "off")}");
+await engineer.DisposeAsync();"""),
+        md("## Update over USB DFU\nThe same chip in its DfuSe bootloader: the memory layout comes from the interface string; page erase, set address, blocks, leave.",
+           "## Pembaruan lewat USB DFU\nChip yang sama di bootloader DfuSe-nya: tata letak memori datang dari string antarmuka; hapus halaman, set alamat, blok, leave."),
+        code("""var bus = new VirtualUsbBus();
+var bootloader = bus.Add(new VirtualDfuDevice(mcu));
+var dfu = DfuClient.Create(o => o.UseVirtual(bus).AllowWrites());
+await dfu.ConnectAsync();
+Console.WriteLine(dfu.Layout!.Describe());
+await dfu.DownloadAsync(VirtualMcu.BuildDemoFirmware("2.0.0"));
+await dfu.LeaveAsync();
+Console.WriteLine($"{bootloader.PagesErased} pages erased, {bootloader.BlocksWritten} blocks; now running {mcu.FirmwareVersion}");
+await dfu.DisposeAsync();"""),
+        md("## Going further\n`iotcom probe list`, `iotcom probe flash <file> --target <chip> --allow-write`, `iotcom probe rtt --sim`, `iotcom dfu download --sim --leave --allow-write`, the Gallery's *Probe and flash firmware* and the ProbeFlash sample. "
+           "See `docs/en/protocols/debug.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom probe list`, `iotcom probe flash <file> --target <chip> --allow-write`, `iotcom probe rtt --sim`, `iotcom dfu download --sim --leave --allow-write`, *Probe dan flash firmware* di Gallery, dan sampel ProbeFlash. "
+           "Lihat `docs/id/protocols/debug.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "

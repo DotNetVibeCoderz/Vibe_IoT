@@ -1,0 +1,21 @@
+[package]
+name = "iotcom-probe-native"
+description = "C ABI over probe-rs (SWD/JTAG debug probes: memory, run control, flashing), consumed by the IoTCom.Net.Debug NuGet package."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+name = "iotcom_probe"
+crate-type = ["cdylib", "rlib"]
+doctest = false
+
+[dependencies]
+iotcom-ffi-support.workspace = true
+probe-rs = "=0.32.0"
+
+[lints]
+workspace = true

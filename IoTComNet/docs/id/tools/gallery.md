@@ -60,6 +60,7 @@ Status bar menampilkan lampu run, status demo, dan frame terakhir di jalur.
 | Pesan | Sinkronisasi jam armada lewat NTP — enam perangkat lapangan dengan jam melenceng dan klien SNTP, jejak galat yang kembali ke waktu GPS di setiap sinkronisasi, kendali interval sinkronisasi dan latensi jaringan, empat cap waktu pertukaran terakhir, dan server yang kehilangan GPS | NTP, SNTP |
 | Meja kerja protokol | Meja kerja frame & checksum — urai frame Modbus per field, 23 CRC, SLIP/COBS/HDLC langsung | Modbus, CRC, framing |
 | Meja kerja protokol | Meja kerja USB — perangkat USB komputer ini (didaftar, tidak dibuka), papan relay USB HID yang dinyalakan dengan feature report di balik penjaga penulisan, perangkat loopback lewat transfer control dan bulk | USB, HID |
+| Meja kerja protokol | Probe dan flash firmware — board pengembangan di meja kerja lewat probe SWD atau, dengan jumper BOOT0 diset, bootloader USB DFU-nya; pilih versi firmware dan lihat peta flash terisi halaman demi halaman, lihat ia booting di terminal RTT, nyalakan LED board dengan perintah RTT, baca memori saat berjalan, halt, reset, atau hapus — setiap perubahan di balik kunci tulis (use case desain 12) | SWD, RTT, USB DFU, DfuSe |
 | Meja kerja protokol | Tag aset NFC — ronde perawatan dengan tag NTAG213 pada pompa, katup, dan panel yang terkunci: tempelkan tag untuk membaca record NDEF dan frame lane-nya, lihat setiap halaman memorinya yang diwarnai per wilayah, dan catat kunjungan servis kembali ke tag saat penulisan diizinkan | NFC Forum Type 2, NDEF, PC/SC |
 
 ![Diagnostik kendaraan](../../images/gallery-can-uds.png)
@@ -90,6 +91,7 @@ Demo medis memakai penyedia AI bila sudah dikonfigurasi (lihat [panduan AI medis
 ![Sinkronisasi jam armada lewat NTP](../../images/gallery-ntp.png)
 ![Perangkat Bluetooth di sekitar](../../images/gallery-ble.png)
 ![Meja kerja USB](../../images/gallery-usb.png)
+![Probe dan flash firmware](../../images/gallery-probe.png)
 ![Tag aset NFC](../../images/gallery-nfc.png)
 ![Pencahayaan](../../images/gallery-lighting.png)
 ![Meja kerja](../../images/gallery-workbench.png)

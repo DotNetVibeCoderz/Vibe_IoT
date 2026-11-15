@@ -293,3 +293,32 @@ public class EthercatBenchmarks
     [Benchmark]
     public Task<int> CyclicExchange() => _master.ExchangeAsync();
 }
+
+[MemoryDiagnoser]
+public class FirmwareBenchmarks
+{
+    private static readonly string Hex = IoTCom.Net.Debug.IntelHex.Format(IoTCom.Net.Debug.VirtualMcu.BuildDemoFirmware("1.0.0", 64 * 1024));
+    private IoTCom.Net.Debug.VirtualMcu _mcu = null!;
+    private IoTCom.Net.Debug.RttClient _rtt = null!;
+
+    [GlobalSetup]
+    public async Task Setup()
+    {
+        _mcu = new IoTCom.Net.Debug.VirtualMcu(firmware: IoTCom.Net.Debug.VirtualMcu.BuildDemoFirmware("1.0.0"));
+        _mcu.Step(0.1);
+        var probe = IoTCom.Net.Debug.DebugProbe.Create(o => o.UseVirtual(new IoTCom.Net.Debug.VirtualProbeBackend(_mcu)).UseTarget("STM32F411CEUx"));
+        _rtt = await probe.AttachRttAsync(IoTCom.Net.Debug.VirtualMcu.RamBase, IoTCom.Net.Debug.VirtualMcu.RamSize);
+    }
+
+    /// <summary>Parse a 64 KiB Intel HEX image (4096 records).</summary>
+    [Benchmark]
+    public long ParseIntelHex64K() => IoTCom.Net.Debug.IntelHex.Parse(Hex).Size;
+
+    /// <summary>One RTT poll: read the descriptor, the new bytes and move the read offset (one log line waiting).</summary>
+    [Benchmark]
+    public async Task<int> RttPoll()
+    {
+        _mcu.Step(1);
+        return (await _rtt.ReadAsync()).Length;
+    }
+}

@@ -19,10 +19,12 @@ members = [
     "crates/iotcom-ntp",
     "crates/iotcom-enip",
     "crates/iotcom-ethercat",
+    "crates/iotcom-firmware",
     "crates/native/iotcom-modbus-native",
     "crates/native/iotcom-isotp-native",
     "crates/native/iotcom-ble-native",
     "crates/native/iotcom-usb-native",
+    "crates/native/iotcom-probe-native",
     "tools/iotcom-bindgen",
 ]
 

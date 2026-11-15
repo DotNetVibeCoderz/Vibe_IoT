@@ -25,6 +25,7 @@ const LIBRARIES: &[Library] = &[
     Library { krate: "iotcom-isotp-native", lib: "iotcom_isotp", class: "IsoTpNative" },
     Library { krate: "iotcom-ble-native", lib: "iotcom_ble", class: "BleNative" },
     Library { krate: "iotcom-usb-native", lib: "iotcom_usb", class: "UsbNative" },
+    Library { krate: "iotcom-probe-native", lib: "iotcom_probe", class: "ProbeNative" },
     // iotcom-zenoh-native is out of the workspace until zenoh drops the vulnerable lz4_flex 0.10 (RUSTSEC-2026-0041).
 ];
 

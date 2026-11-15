@@ -139,6 +139,7 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("ocpp", "OCPP 1.6J / 2.0.1", "IoTCom.Net.Protocols.Ocpp", "charge point · CSMS · charger simulator", "protocols/ocpp.md", "automotive/24-ocpp", "OcppCharger", ["ocpp"]),
         ("knx", "KNXnet/IP", "IoTCom.Net.Protocols.Knx", "tunnelling client · routing · IP router · office floor simulator", "protocols/knx.md", "building/25-knx", "KnxMonitor", ["knxip", "cemi"]),
         ("bacnet", "BACnet/IP", "IoTCom.Net.Protocols.Bacnet", "device server · client adapter · air handling unit simulator", "protocols/bacnet.md", "building/26-bacnet", "BacnetBms", ["bacnet"]),
+        ("debug", "SWD/JTAG · RTT · DFU", "IoTCom.Net.Debug", "probe-rs probes · flashing · RTT logs · DFU/DfuSe · simulated MCU", "protocols/debug.md", "devices/30-probe-flash", "ProbeFlash", ["ihex", "dfu-suffix", "rtt"]),
         ("ethercat", "EtherCAT", "IoTCom.Net.Protocols.EtherCat", "master · CoE · process image · I/O rack simulator", "protocols/ethercat.md", "industrial/29-ethercat", "EthercatRack", ["ethercat"]),
         ("dtls", "DTLS 1.2", "IoTCom.Net.Transport.Dtls", "client · server · PSK · certificates · coaps://", "protocols/dtls.md", "network/28-dtls", "CoapsSecure", []),
         ("enip", "EtherNet/IP (CIP)", "IoTCom.Net.Protocols.EtherNetIp", "explicit client · adapter · Logix tags · PLC simulator", "protocols/ethernetip.md", "industrial/27-ethernetip", "EnipTags", ["enip"]),
@@ -272,6 +273,19 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
             case "lwm2m-tlv":
                 fields = IoTCom.Net.Protocols.Lwm2m.Lwm2mContent.DescribeTlv(bytes);
                 summary = $"{fields.Count(f => f.Name.StartsWith("resource", StringComparison.Ordinal) || f.Name.StartsWith("res. instance", StringComparison.Ordinal))} value(s)";
+                break;
+            case "ihex":
+                var hexText = System.Text.Encoding.ASCII.GetString(bytes);
+                fields = [new FrameField("Intel HEX", 0, bytes.Length, FrameFieldKind.Data)];
+                summary = TrySummary(() => IoTCom.Net.Debug.IntelHex.Parse(hexText).Describe());
+                break;
+            case "dfu-suffix":
+                fields = bytes.Length >= 16 ? [new FrameField("Payload", 0, bytes.Length - 16, FrameFieldKind.Data), new FrameField("DFU suffix", bytes.Length - 16, 12, FrameFieldKind.Header), new FrameField("CRC", bytes.Length - 4, 4, FrameFieldKind.Checksum)] : [new FrameField("Invalid", 0, bytes.Length, FrameFieldKind.Error)];
+                summary = TrySummary(() => IoTCom.Net.Debug.DfuFile.Parse(bytes).Describe());
+                break;
+            case "rtt":
+                fields = bytes.Length >= 24 ? [new FrameField("ID", 0, 16, FrameFieldKind.Header, "SEGGER RTT"), new FrameField("Counts", 16, 8, FrameFieldKind.Length), new FrameField("Descriptors", 24, bytes.Length - 24, FrameFieldKind.Data)] : [new FrameField("Invalid", 0, bytes.Length, FrameFieldKind.Error)];
+                summary = TrySummary(() => IoTCom.Net.Debug.RttControlBlock.Parse(bytes, 0)?.Describe() ?? throw new ProtocolException("not an RTT control block"));
                 break;
             case "ethercat":
                 fields = IoTCom.Net.Protocols.EtherCat.EcatFrame.DescribeFields(bytes);

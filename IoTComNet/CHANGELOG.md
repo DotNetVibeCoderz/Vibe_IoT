@@ -3,6 +3,28 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.29.0-preview.1 — 2026-11-15
+
+Probe and flash microcontrollers: SWD/JTAG, RTT and USB DFU.
+
+- **New package `IoTCom.Net.Debug`** (in the meta-package): `DebugProbe` (attach by probe-rs target name, memory reads, core state, and —
+  **after `AllowWrites()`** — flashing with progress, erase all, memory writes, halt/run/reset) over `IProbeBackend`: `NativeProbeBackend`
+  (new native library `iotcom_probe` on probe-rs 0.32: CMSIS-DAP, ST-Link, J-Link, ESP USB-JTAG, FTDI, WCH-Link) or `VirtualProbeBackend`;
+  `RttClient` (SEGGER RTT over any `ITargetMemory`); `DfuClient` (USB DFU 1.1 + ST DfuSe over Transport.Usb) with `DfuSeLayout`;
+  `FirmwareImage`, `IntelHex`, `DfuFile`, `Elf`, `Crc32`; simulators `VirtualMcu` (demo firmware with RTT log and commands) and
+  `VirtualDfuDevice` (STM32 system bootloader). `AddDebugProbe` for hosting.
+- **New Rust crates**: `iotcom-probe-native` (C ABI over probe-rs, bindings checked by the drift tests, built for every RID best effort) and
+  `iotcom-firmware` (fuzzed twin of the firmware/RTT codecs, 16th fuzz target `firmware`, 3 M local runs; it found and fixed a UTF-8 slicing
+  panic) with `/conformance/firmware.json` (27 vectors from the Python reference).
+- Licensing: probe-rs requires `serialport` (MPL-2.0, file-level copyleft); it ships unmodified inside `iotcom_probe`, is named in NOTICE and
+  is the only MPL exception for shipped code in `deny.toml`. `bincode` (unmaintained, RUSTSEC-2025-0141) is ignored with a reason.
+- CLI `iotcom probe list|info|read|flash|rtt|control|image` and `iotcom dfu list|info|upload|download`, VS Code decoders `ihex`, `dfu-suffix`,
+  `rtt`, Gallery *Probe and flash firmware* (design use case 12 — the Gallery now covers all 17), ProbeFlash sample, notebook pair
+  `devices/30-probe-flash`, docs page *SWD/JTAG, RTT and DFU*, benchmark (`FirmwareBenchmarks`).
+
+*Probe dan flash mikrokontroler: probe SWD/JTAG lewat probe-rs, log RTT, pembaruan USB DFU/DfuSe, dan format firmware (hanya-baca secara
+bawaan), dengan MCU, probe, dan bootloader simulasi serta kembaran codec Rust yang di-fuzz; Gallery kini mencakup ke-17 use case.*
+
 ## 0.28.0-preview.1 — 2026-11-15
 
 EtherCAT master.

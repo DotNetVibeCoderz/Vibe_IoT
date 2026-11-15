@@ -50,6 +50,7 @@ messaging and healthcare protocols, and every protocol ships a simulator so you 
 | [BACnet](protocols/bacnet.md) | device server · client adapter · priority arrays · COV · AHU simulator | `IoTCom.Net.Protocols.Bacnet`, `IoTCom.Net.Adapters.Bacnet` |
 | [EtherNet/IP](protocols/ethernetip.md) | explicit client · adapter · Logix tags · ListIdentity · PLC simulator | `IoTCom.Net.Protocols.EtherNetIp` |
 | [EtherCAT](protocols/ethercat.md) | master · line scan · SII · AL states · process image · CoE · raw Ethernet · I/O rack simulator | `IoTCom.Net.Protocols.EtherCat` |
+| [SWD/JTAG, RTT, DFU](protocols/debug.md) | probe-rs probes · flashing · RTT logs · USB DFU/DfuSe · Intel HEX/DFU/ELF · simulated MCU | `IoTCom.Net.Debug` |
 | [DTLS](protocols/dtls.md) | DTLS 1.2 client and server transports · PSK and ECDSA certificates · coaps:// for CoAP and LwM2M | `IoTCom.Net.Transport.Dtls` |
 | [Bluetooth LE](protocols/ble.md) | central · GATT · iBeacon/Eddystone · virtual radio (Rust btleplug) | `IoTCom.Net.Transport.Ble` |
 | [USB and HID](protocols/usb.md) | control · bulk · interrupt · HID reports · relay boards · virtual bus (Rust nusb/hidapi) | `IoTCom.Net.Transport.Usb` |

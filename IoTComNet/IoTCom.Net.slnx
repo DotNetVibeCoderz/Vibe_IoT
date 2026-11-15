@@ -34,6 +34,7 @@
     <Project Path="samples/console/ModbusSlaveSimulator/ModbusSlaveSimulator.csproj" />
     <Project Path="samples/console/MqttSenMLBridge/MqttSenMLBridge.csproj" />
     <Project Path="samples/console/NmeaGpsReader/NmeaGpsReader.csproj" />
+    <Project Path="samples/console/ProbeFlash/ProbeFlash.csproj" />
     <Project Path="samples/console/OpcUaBrowser/OpcUaBrowser.csproj" />
     <Project Path="samples/console/SparkplugEdgeNode/SparkplugEdgeNode.csproj" />
     <Project Path="samples/console/UdsTester/UdsTester.csproj" />
@@ -74,6 +75,7 @@
     <Project Path="src/IoTCom.Net.Protocols.Knx/IoTCom.Net.Protocols.Knx.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Bacnet/IoTCom.Net.Protocols.Bacnet.csproj" />
     <Project Path="src/IoTCom.Net.Adapters.Bacnet/IoTCom.Net.Adapters.Bacnet.csproj" />
+    <Project Path="src/IoTCom.Net.Debug/IoTCom.Net.Debug.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.EtherCat/IoTCom.Net.Protocols.EtherCat.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.EtherNetIp/IoTCom.Net.Protocols.EtherNetIp.csproj" />
     <Project Path="src/IoTCom.Net.Protocols.Nfc/IoTCom.Net.Protocols.Nfc.csproj" />

@@ -4,7 +4,9 @@ allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-3.
 confidence-threshold = 0.9
 # cbindgen (MPL-2.0) is used only by tools/iotcom-bindgen, an unpublished generator that runs at development time;
 # it is never linked into a shipped native library.
-exceptions = [{ name = "cbindgen", allow = ["MPL-2.0"] }]
+# serialport (MPL-2.0, file-level copyleft) is a non-optional dependency of probe-rs and ships, unmodified, inside the
+# iotcom_probe native library; NOTICE names it and its source is on crates.io. No other MPL crate is allowed.
+exceptions = [{ name = "cbindgen", allow = ["MPL-2.0"] }, { name = "serialport", allow = ["MPL-2.0"] }]
 
 [bans]
 multiple-versions = "warn"
@@ -13,6 +15,8 @@ allow-wildcard-paths = true
 
 [advisories]
 yanked = "deny"
+# bincode 2 is unmaintained (not vulnerable); probe-rs uses it to decode its target database built into the library.
+ignore = [{ id = "RUSTSEC-2025-0141", reason = "unmaintained, no known vulnerability; used by probe-rs for its built-in target database" }]
 
 [sources]
 unknown-registry = "deny"

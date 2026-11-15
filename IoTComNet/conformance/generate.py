@@ -1730,6 +1730,119 @@ def ethercat_vectors():
     return out
 
 
+def firmware_vectors():
+    """Firmware images and debug structures: Intel HEX (records 00-05), the DFU 1.1 suffix (CRC-32 without the final
+    inversion, as dfu-util stores it), ST DfuSe files (prefix, targets, elements), DfuSe memory-layout strings and the
+    SEGGER RTT control block (32-bit targets).
+
+    Each vector gives input (hex bytes, or text for "ihex"/"layout") and a normalised description, or "error".
+    """
+    import struct
+    import zlib
+    out = []
+
+    def crc32(b):
+        return zlib.crc32(b) & 0xFFFFFFFF
+
+    def describe_image(segments, entry):
+        segs = ",".join(f"{a:08X}:{len(d)}:{crc32(d):08X}" for a, d in segments)
+        return f"segments={segs} entry={entry:08X}" if entry is not None else f"segments={segs} entry=-"
+
+    def vector(kind, name, data, expected):
+        out.append({"kind": kind, "name": name, "hex": data.hex().upper() if isinstance(data, bytes) else data.encode().hex().upper(), "expected": expected})
+
+    def rec(rtype, offset, data):
+        b = bytes([len(data), offset >> 8, offset & 0xFF, rtype]) + data
+        return ":" + (b + bytes([(-sum(b)) & 0xFF])).hex().upper() + "\n"
+
+    # Intel HEX.
+    d1 = bytes(range(32))
+    text = rec(4, 0, b"\x08\x00") + rec(0, 0x0000, d1[:16]) + rec(0, 0x0010, d1[16:]) + rec(5, 0, struct.pack(">I", 0x08000189)) + rec(1, 0, b"")
+    vector("ihex", "two records, linear address, start address", text, describe_image([(0x08000000, d1)], 0x08000189))
+    gap = rec(4, 0, b"\x08\x00") + rec(0, 0xFFF0, b"\xAA" * 16) + rec(4, 0, b"\x08\x01") + rec(0, 0x0000, b"\xBB" * 8) + rec(0, 0x0100, b"\xCC" * 4) + rec(1, 0, b"")
+    vector("ihex", "contiguous across 64 KiB, then a gap", gap, describe_image([(0x0800FFF0, b"\xAA" * 16 + b"\xBB" * 8), (0x08010100, b"\xCC" * 4)], None))
+    seg = rec(2, 0, b"\x10\x00") + rec(0, 0x0010, b"\x01\x02") + rec(3, 0, b"\x00\x00\x01\x00") + rec(1, 0, b"")
+    vector("ihex", "segment address (I16HEX)", seg, describe_image([(0x00010010, b"\x01\x02")], 0x00000100))
+    vector("ihex", "missing end-of-file", rec(0, 0, b"\x01"), "error")
+    bad = rec(0, 0, b"\x01\x02")
+    vector("ihex", "checksum mismatch", bad[:-3] + ("00" if bad[-3:-1] != "00" else "01") + "\n" + rec(1, 0, b""), "error")
+    vector("ihex", "length does not match", ":0300000001FC\n" + rec(1, 0, b""), "error")
+    vector("ihex", "data after end-of-file", rec(1, 0, b"") + rec(0, 0, b"\x01"), "error")
+    vector("ihex", "overlapping data", rec(0, 0, b"\x01\x02") + rec(0, 1, b"\x03") + rec(1, 0, b""), "error")
+
+    # DFU suffix.
+    def suffix(payload, vid, pid, dev=0xFFFF, bcd=0x0100, sig=b"UFD", length=16, crc=None):
+        body = payload + struct.pack("<HHHH", dev, pid, vid, bcd) + sig + bytes([length])
+        c = (~crc32(body)) & 0xFFFFFFFF if crc is None else crc
+        return body + struct.pack("<I", c)
+
+    def describe_dfu(vid, pid, dev, bcd, targets, segments):
+        return f"vid={vid:04X} pid={pid:04X} device={dev:04X} dfu={bcd:04X} targets={','.join(targets)} " + describe_image(segments, None)
+
+    fw = b"firmware image\x00\x01\x02"
+    vector("dfu", "plain payload", suffix(fw, 0x0483, 0xDF11), describe_dfu(0x0483, 0xDF11, 0xFFFF, 0x0100, [], [(0, fw)]))
+    vector("dfu", "CRC mismatch", suffix(fw, 0x0483, 0xDF11, crc=0x12345678), "error")
+    vector("dfu", "no UFD signature", suffix(fw, 0x0483, 0xDF11, sig=b"XYZ"), "error")
+    vector("dfu", "suffix length not 16", suffix(fw, 0x0483, 0xDF11, length=17), "error")
+    vector("dfu", "shorter than a suffix", b"UFD\x10", "error")
+
+    def dfuse(targets):
+        body = b""
+        for alt, name, elements in targets:
+            elems = b"".join(struct.pack("<II", a, len(d)) + d for a, d in elements)
+            nm = name.encode().ljust(255, b"\x00")
+            body += b"Target" + bytes([alt]) + struct.pack("<I", 1 if name else 0) + nm + struct.pack("<II", len(elems), len(elements)) + elems
+        prefix = b"DfuSe" + bytes([1]) + struct.pack("<I", 11 + len(body)) + bytes([len(targets)])
+        return prefix + body
+
+    e1, e2 = bytes(range(64)), b"\x5A" * 10
+    good = dfuse([(0, "Internal Flash", [(0x08000000, e1), (0x08004000, e2)])])
+    vector("dfu", "DfuSe, one target, two elements", suffix(good, 0x0483, 0xDF11, dev=0x2200, bcd=0x011A),
+           describe_dfu(0x0483, 0xDF11, 0x2200, 0x011A, ["0:Internal Flash"], [(0x08000000, e1), (0x08004000, e2)]))
+    two = dfuse([(0, "Internal Flash", [(0x08000000, e2)]), (1, "Option Bytes", [(0x1FFFC000, b"\xAA\x55")])])
+    vector("dfu", "DfuSe, two targets", suffix(two, 0x0483, 0xDF11, bcd=0x011A),
+           describe_dfu(0x0483, 0xDF11, 0xFFFF, 0x011A, ["0:Internal Flash", "1:Option Bytes"], [(0x08000000, e2), (0x1FFFC000, b"\xAA\x55")]))
+    broken = bytearray(good)
+    struct.pack_into("<I", broken, 11 + 274 + 4, 9999)   # first element size past the end
+    vector("dfu", "DfuSe element past the end", suffix(bytes(broken), 0x0483, 0xDF11, bcd=0x011A), "error")
+    wrong = bytearray(good)
+    struct.pack_into("<I", wrong, 6, len(good) + 1)
+    vector("dfu", "DfuSe image size mismatch", suffix(bytes(wrong), 0x0483, 0xDF11, bcd=0x011A), "error")
+
+    # DfuSe memory layouts (alternate-setting strings).
+    def layout(name, regions):
+        return name + ": " + ",".join(f"{a:08X}+{n}x{sz}{'r' if t & 1 else ''}{'e' if t & 2 else ''}{'w' if t & 4 else ''}" for a, n, sz, t in regions)
+
+    vector("layout", "STM32F4 sectors", "@Internal Flash  /0x08000000/04*016Kg,01*064Kg,03*128Kg",
+           layout("Internal Flash", [(0x08000000, 4, 16384, 7), (0x08010000, 1, 65536, 7), (0x08020000, 3, 131072, 7)]))
+    vector("layout", "option bytes, readable and writable", "@Option Bytes  /0x1FFFC000/01*016 e", layout("Option Bytes", [(0x1FFFC000, 1, 16, 5)]))
+    vector("layout", "two areas", "@Flash /0x08000000/128*002Kg/0x1FFF7800/01*512 a", layout("Flash", [(0x08000000, 128, 2048, 7), (0x1FFF7800, 1, 512, 1)]))
+    vector("layout", "not a layout", "Internal Flash", "error")
+    vector("layout", "bad sector spec", "@Flash /0x08000000/x*002Kg", "error")
+
+    # RTT control blocks.
+    def rtt_block(up, down):
+        b = b"SEGGER RTT" + b"\x00" * 6 + struct.pack("<ii", len(up), len(down))
+        for d in up + down:
+            b += struct.pack("<IIIIII", *d)
+        return b
+
+    def rtt_desc(d):
+        name, buf, size, wr, rd, flags = d
+        avail = wr - rd if wr >= rd else size - rd + wr
+        ok = buf != 0 and size > 1 and wr < size and rd < size
+        return f"{buf:08X}:{size}:w{wr}:r{rd}:f{flags & 3}:a{avail}:{'ok' if ok else 'bad'}"
+
+    up = [(0x20000480, 0x20000800, 1024, 300, 100, 0), (0x20000490, 0x20000C00, 256, 10, 250, 2)]
+    down = [(0x20000480, 0x20000D00, 16, 0, 0, 0)]
+    vector("rtt", "two up, one down, a wrapped buffer", rtt_block(up, down), f"up={','.join(rtt_desc(d) for d in up)} down={','.join(rtt_desc(d) for d in down)}")
+    vector("rtt", "invalid descriptor (offset past size)", rtt_block([(0, 0x20000800, 64, 70, 0, 1)], []), f"up={rtt_desc((0, 0x20000800, 64, 70, 0, 1))} down=")
+    vector("rtt", "wrong ID", b"SEGGER RTX" + b"\x00" * 6 + struct.pack("<ii", 1, 1) + b"\x00" * 48, "error")
+    vector("rtt", "implausible buffer count", b"SEGGER RTT" + b"\x00" * 6 + struct.pack("<ii", 200, 1), "error")
+    vector("rtt", "descriptors truncated", rtt_block(up, down)[:-4], "error")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1753,6 +1866,7 @@ def main():
         "bacnet.json": bacnet_vectors(),
         "enip.json": enip_vectors(),
         "ethercat.json": ethercat_vectors(),
+        "firmware.json": firmware_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

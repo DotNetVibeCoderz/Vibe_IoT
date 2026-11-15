@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Coap\IoTCom.Net.Protocols.Coap.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Dtls\IoTCom.Net.Transport.Dtls.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.EtherCat\IoTCom.Net.Protocols.EtherCat.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Debug\IoTCom.Net.Debug.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Mavlink\IoTCom.Net.Protocols.Mavlink.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.Protobuf\IoTCom.Net.Serialization.Protobuf.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Serialization.MessagePack\IoTCom.Net.Serialization.MessagePack.csproj" />

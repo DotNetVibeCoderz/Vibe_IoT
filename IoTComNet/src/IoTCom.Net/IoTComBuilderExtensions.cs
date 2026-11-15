@@ -8,6 +8,7 @@ using IoTCom.Net.Protocols.Lwm2m;
 using IoTCom.Net.Protocols.Ocpp;
 using IoTCom.Net.Protocols.Knx;
 using IoTCom.Net.Protocols.Bacnet;
+using IoTCom.Net.Debug;
 using IoTCom.Net.Protocols.EtherCat;
 using IoTCom.Net.Protocols.EtherNetIp;
 using IoTCom.Net.Protocols.Ntp;
@@ -178,6 +179,15 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.EtherNetIp");
+            configure(o);
+        }));
+
+    /// <summary>Registers a SWD/JTAG debug probe attached to a target chip (read-only unless <c>AllowWrites()</c>).</summary>
+    public static IoTComBuilder AddDebugProbe(this IoTComBuilder builder, string name, Action<DebugProbeOptions> configure)
+        => builder.AddEndpoint(name, sp => DebugProbe.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.Debug");
             configure(o);
         }));
 

@@ -68,14 +68,14 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | Zenoh + Kafka / NATS / AMQP adapters | ✅ `0.22.0-preview.1` (Zenoh native library not shipped yet, see Progress) |
 | EtherNet/IP (explicit messaging) | ✅ `0.26.0-preview.1` |
 | EtherCAT master | ✅ `0.28.0-preview.1` |
-| SWD/JTAG + DFU (probe-rs) | ⏳ |
+| SWD/JTAG + DFU (probe-rs) | ✅ `0.29.0-preview.1` |
 | Matter controller + device/bridge | ⏳ (scope decided 2026-11-15: open question 2) |
 | KNXnet/IP | ✅ `0.24.0-preview.1` |
 | BACnet/IP: adapter + own server API | ✅ `0.25.0-preview.1` |
 | DTLS 1.2 (also unlocks CoAP/LwM2M security) | ✅ `0.27.0-preview.1` (DTLS 1.3 is a follow-up) |
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
-| Complete EN/ID documentation | 🚧 59 + 59 pages; grows with every item above |
-| Gallery with all 17 design use cases | 🚧 30 demos, 16 of 17 use cases covered (#12 firmware probing waits for SWD/DFU) |
+| Complete EN/ID documentation | 🚧 60 + 60 pages; grows with every item above |
+| Gallery with all 17 design use cases | ✅ 31 demos, all 17 use cases covered (`0.29.0-preview.1`) |
 | Signed and notarised releases | ✅ wired 2026-11-15 (Authenticode, NuGet author signing, Developer ID + notarisation; active once the signing secrets are added) |
 
 ## Phase 3 — Optional
@@ -87,11 +87,9 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 
 ### To reach `1.0.0` (Phase 2)
 
-1. **Protocols:** SWD/JTAG + DFU, Matter (controller and device/bridge).
-2. **Gallery use cases still missing** (design §8 catalogue):
-   - #12 probe & flash firmware — SWD/JTAG, DFU, RTT;
-3. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
-4. **Releases:** add the signing secrets (see *Releasing and signing*); a `1.0.0` API review (public surface, naming, obsolete members).
+1. **Protocols:** Matter (controller and device/bridge).
+2. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
+3. **Releases:** add the signing secrets (see *Releasing and signing*); a `1.0.0` API review (public surface, naming, obsolete members).
 
 ### Follow-ups on delivered protocols
 
@@ -112,6 +110,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 | Connectivity | BLE peripheral role, pairing, L2CAP; USB isochronous, hotplug, gadget role |
 | EtherNet/IP | Forward_Open connected messaging, Logix UDTs/STRING, Read Tag Fragmented, tag browsing, CIP Security (implicit I/O is Phase 3) |
 | EtherCAT | Distributed clocks, EoE/FoE/SoE, segmented SDO and SDO information, PDO remapping, cable redundancy, hot connect, images larger than one frame; a run on real terminals |
+| SWD/JTAG, RTT, DFU | GDB server, breakpoints and stepping, defmt decoding, SWO, RTT on 64-bit cores, DfuSe option bytes and read-unprotect; a run on a physical probe |
 | Industrial adapters | OPC UA events/A&C, history, complex types |
 | Building automation | BACnet segmentation, BBMD/foreign devices, alarms/events, schedules, trend logs, BACnet/SC, MS/TP; KNX Secure, KNXnet/IP over TCP, device management, busmonitor mode |
 | EV charging | OCPP firmware management, local authorization lists, reservations, 2.0.1 device-model reports, offline transaction queue, OCPP 2.1 |

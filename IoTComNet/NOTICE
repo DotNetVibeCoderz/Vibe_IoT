@@ -12,3 +12,6 @@ Third-party components:
 - JetBrains Mono (SIL Open Font License 1.1) — https://github.com/JetBrains/JetBrainsMono
 - fo-dicom (MS-PL) — https://github.com/fo-dicom/fo-dicom
 - MAVLink message definitions (MIT) — https://github.com/mavlink/mavlink (message_definitions/v1.0)
+- BouncyCastle.Cryptography (MIT) — https://github.com/bcgit/bc-csharp (IoTCom.Net.Transport.Dtls)
+- probe-rs (MIT OR Apache-2.0) — https://github.com/probe-rs/probe-rs (iotcom_probe native library)
+- serialport-rs (MPL-2.0, unmodified, linked into the iotcom_probe native library) — https://github.com/serialport/serialport-rs

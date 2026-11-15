@@ -154,6 +154,13 @@ if (Want("gallery-at.png"))
     Shot("gallery-at.png");
 }
 
+if (Want("gallery-probe.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("probe-flash", seconds: 6);
+    Shot("gallery-probe.png");
+}
+
 if (Want("gallery-ethercat.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

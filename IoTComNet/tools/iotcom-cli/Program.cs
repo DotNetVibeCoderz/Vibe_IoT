@@ -151,6 +151,25 @@ app.Configure(c =>
         e.AddCommand<EnipDemoCommand>("demo").WithDescription("Session, identity and tags in-process.").WithExample("enip", "demo").WithExample("enip", "demo", "--allow-write");
         e.AddCommand<EnipDecodeCommand>("decode").WithDescription("Decode an encapsulation packet or a CIP message.").WithExample("enip", "decode", "4C 06 91 0A 4C 69 6E 65 5F 53 70 65 65 64 01 00");
     });
+    c.AddBranch("probe", p =>
+    {
+        p.SetDescription("SWD/JTAG debug probes through probe-rs: list probes, read memory, flash firmware, stream RTT logs, halt/run/reset. Writes need --allow-write; --sim uses a simulated STM32F411.");
+        p.AddCommand<ProbeListCommand>("list").WithDescription("List debug probes (CMSIS-DAP, ST-Link, J-Link, ESP USB-JTAG, FTDI, WCH-Link).").WithExample("probe", "list");
+        p.AddCommand<ProbeInfoCommand>("info").WithDescription("Attach and show the core state and vector table.").WithExample("probe", "info", "--target", "STM32F411CEUx").WithExample("probe", "info", "--sim");
+        p.AddCommand<ProbeReadCommand>("read").WithDescription("Read memory (hex dump).").WithExample("probe", "read", "0x08000000", "64", "--sim");
+        p.AddCommand<ProbeFlashCommand>("flash").WithDescription("Erase, program and verify an ELF/HEX/DFU/BIN image, then reset (requires --allow-write).").WithExample("probe", "flash", "firmware.elf", "--target", "STM32F411CEUx", "--allow-write").WithExample("probe", "flash", "--sim", "--version", "1.1.0", "--allow-write");
+        p.AddCommand<ProbeRttCommand>("rtt").WithDescription("Stream SEGGER RTT logs; --send a line on the down channel with --allow-write.").WithExample("probe", "rtt", "--sim").WithExample("probe", "rtt", "--sim", "--send", "led on", "--allow-write");
+        p.AddCommand<ProbeControlCommand>("control").WithDescription("halt, run, reset, reset-halt or erase-all (requires --allow-write).").WithExample("probe", "control", "reset", "--sim", "--allow-write");
+        p.AddCommand<FirmwareInfoCommand>("image").WithDescription("Show a firmware file's segments, entry point and DFU suffix; convert to Intel HEX.").WithExample("probe", "image", "firmware.dfu");
+    });
+    c.AddBranch("dfu", d =>
+    {
+        d.SetDescription("USB DFU 1.1 and ST DfuSe bootloaders: list devices, show status and memory layout, upload, download (requires --allow-write). --sim uses a simulated STM32 bootloader.");
+        d.AddCommand<DfuListCommand>("list").WithDescription("List USB devices with a DFU interface.").WithExample("dfu", "list");
+        d.AddCommand<DfuInfoCommand>("info").WithDescription("DFU state, status and DfuSe memory layout.").WithExample("dfu", "info", "--sim");
+        d.AddCommand<DfuUploadCommand>("upload").WithDescription("Read flash into a file.").WithExample("dfu", "upload", "backup.bin", "--sim");
+        d.AddCommand<DfuDownloadCommand>("download").WithDescription("Erase and write firmware; --leave starts it.").WithExample("dfu", "download", "firmware.dfu", "--leave", "--allow-write").WithExample("dfu", "download", "--sim", "--leave", "--allow-write");
+    });
     c.AddBranch("ethercat", e =>
     {
         e.SetDescription("EtherCAT master: list interfaces, scan the line, watch inputs in SAFE-OP, read and write CoE objects, drive an output, or decode a frame. Real lines need a dedicated port and raw-socket rights.");

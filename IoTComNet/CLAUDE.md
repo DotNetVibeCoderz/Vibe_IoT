@@ -18,7 +18,7 @@ dotnet test tests/IoTCom.Net.Tests                                     # all .NE
 dotnet test tests/IoTCom.Net.Tests --filter "FullyQualifiedName~ModbusClientServerTests.Pipelined"   # single test
 cd rust && cargo test --workspace                                      # Rust tests
 cd rust && cargo clippy --workspace --all-targets -- -D warnings
-cd rust && cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native -p iotcom-ble-native -p iotcom-usb-native   # native libs (native tests skip without them)
+cd rust && cargo build --release -p iotcom-modbus-native -p iotcom-isotp-native -p iotcom-ble-native -p iotcom-usb-native -p iotcom-probe-native   # native libs (native tests skip without them)
 dotnet pack IoTCom.Net.slnx -c Release -o artifacts/packages           # natives are picked up from artifacts/native/{rid}/
 python conformance/generate.py        # regenerate shared C#/Rust test vectors
 python build/generate_notebooks.py    # regenerate EN/ID notebooks from one spec (never edit .ipynb by hand)
@@ -142,6 +142,11 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
   until `AllowWrites()`, `IEthercatLink`: `RawEthernetLink` (AF_PACKET via libc, Npcap/libpcap via P/Invoke with a DLL resolver) or
   `VirtualEthercatSegment` of `VirtualEcatSlave` ESCs; `EthercatRackSimulator`). Returned frames have bit 1 of the source MAC set. Rust twin
   `iotcom-ethercat` (fuzz target `ethercat`), `/conformance/ethercat.json`; pcapng writes it as LINKTYPE_ETHERNET. SII strings are ASCII.
+- **Debug (SWD/JTAG, RTT, DFU)**: `IoTCom.Net.Debug`: `DebugProbe` over `IProbeBackend` — `NativeProbeBackend` (Rust `iotcom-probe-native` →
+  `iotcom_probe`, probe-rs 0.32; flash data is queued with `iotcom_probe_flash_add` and committed) or `VirtualProbeBackend` + `VirtualMcu`.
+  `RttClient` runs over any `ITargetMemory`; `DfuClient` (DfuSe) over Transport.Usb; `VirtualDfuDevice` shares the `VirtualMcu` flash.
+  Read-only = reads, core state, RTT reads, DFU uploads. Firmware/RTT codecs have the Rust twin `iotcom-firmware` (fuzz target `firmware`,
+  `/conformance/firmware.json`). probe-rs needs `serialport` (MPL-2.0): the only shipped MPL exception in `deny.toml`, named in NOTICE.
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

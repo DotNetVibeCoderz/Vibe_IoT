@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Debug</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Probe and flash microcontrollers with IoTCom.Net: SWD/JTAG debug probes through probe-rs (CMSIS-DAP, ST-Link, J-Link, ESP USB-JTAG, FTDI, WCH-Link) for memory access, halt/run/reset and flashing; SEGGER RTT logs over any memory access; USB DFU 1.1 with ST DfuSe; Intel HEX, DFU/DfuSe and ELF firmware images; read-only by default; a simulated MCU, probe and DFU bootloader. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);swd;jtag;cmsis-dap;st-link;j-link;probe-rs;rtt;dfu;dfuse;firmware;flash;intel-hex;elf;embedded</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+    <ProjectReference Include="..\IoTCom.Net.Transport.Usb\IoTCom.Net.Transport.Usb.csproj" />
+  </ItemGroup>
+
+  <!-- Native binaries: CI places one folder per RID under artifacts/native/{rid}/; a local cargo build is used in development. -->
+  <ItemGroup>
+    <NativeArtifact Include="$(RepoRoot)artifacts/native/**/*iotcom_probe*" />
+    <None Include="@(NativeArtifact)" Pack="true" PackagePath="runtimes/%(RecursiveDir)native/%(Filename)%(Extension)" Visible="false" />
+  </ItemGroup>
+</Project>
