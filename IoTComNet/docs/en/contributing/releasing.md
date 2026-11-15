@@ -43,4 +43,5 @@ Encode a certificate for a secret with `base64 -w0 certificate.pfx` (Linux) or `
 ## If a push fails
 
 Re-run only the failed jobs after fixing the cause (for example a renewed `NUGET_API_KEY`):
-`gh run rerun <run-id> --failed`. `--skip-duplicate` makes a second push of the same version harmless.
+`gh run rerun <run-id> --failed`. `--skip-duplicate` makes a second push of the same version harmless. The push runs in
+its own job (`nuget-push`), so an expired key does not hold back the GitHub release: the packages are attached to it too.

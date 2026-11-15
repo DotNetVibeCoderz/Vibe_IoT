@@ -3,7 +3,8 @@ name: IoTCom.Net release
 # Tag iotcomnet-vX.Y.Z[-suffix] (prefixed: this repository hosts several projects) →
 #   1. build natives for every RID,
 #   2. sign them (Windows Authenticode, macOS Developer ID + notarisation) when the signing secrets exist,
-#   3. pack all NuGet packages (SourceLink, symbols), author-sign them when a certificate exists, push to nuget.org (NUGET_API_KEY),
+#   3. pack all NuGet packages (SourceLink, symbols), author-sign them when a certificate exists; push to nuget.org (NUGET_API_KEY)
+#      in its own job, so a bad key does not block the GitHub release,
 #   4. publish the CLI and the Gallery as portable, signed archives and attach them to a GitHub release.
 #
 # Signing is optional: without the secrets every signing step is skipped and the release still ships unsigned.
@@ -107,11 +108,26 @@ jobs:
         with:
           name: packages
           path: IoTComNet/artifacts/packages
+
+  # A separate job so an expired NUGET_API_KEY fails visibly without holding back the GitHub release
+  # (rerun it alone with `gh run rerun <id> --job <job-id>` after renewing the key).
+  nuget-push:
+    needs: pack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: packages
       - name: Push to nuget.org
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          dotnet nuget push "artifacts/packages/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          if [ -z "$NUGET_API_KEY" ]; then echo "::error::NUGET_API_KEY is not set"; exit 1; fi
+          dotnet nuget push "packages/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
 
   apps:
     name: apps (${{ matrix.rid }})
@@ -159,7 +175,8 @@ jobs:
         run: |
           for p in tools/iotcom-cli gallery/IoTCom.Net.Gallery; do
             dotnet publish "$p" -c Release -r ${{ matrix.rid }} --self-contained -p:PublishSingleFile=true \
-              -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=none -p:GenerateDocumentationFile=false \n              -p:IoTComVersion=$VERSION -o "out/iotcom-net-$VERSION-${{ matrix.rid }}"
+              -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=none -p:GenerateDocumentationFile=false \
+              -p:IoTComVersion=$VERSION -o "out/iotcom-net-$VERSION-${{ matrix.rid }}"
           done
           cp LICENSE NOTICE "out/iotcom-net-$VERSION-${{ matrix.rid }}/"
           ls -la out/iotcom-net-$VERSION-${{ matrix.rid }}
@@ -211,11 +228,15 @@ jobs:
           pattern: app-*
           merge-multiple: true
           path: assets
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: assets
       - name: Release notes from the changelog
         run: |
           version="${GITHUB_REF_NAME#iotcomnet-v}"
           awk -v v="## $version" 'index($0, v) == 1 { on = 1; next } /^## / && on { exit } on' IoTComNet/CHANGELOG.md > notes.md
-          printf '\n\nPackages: https://www.nuget.org/packages?q=IoTCom.Net — portable CLI and Gallery builds are attached.\n' >> notes.md
+          printf '\n\nPackages: https://www.nuget.org/packages?q=IoTCom.Net (also attached here) — portable CLI and Gallery builds are attached.\n' >> notes.md
       - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

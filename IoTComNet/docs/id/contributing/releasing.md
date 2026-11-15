@@ -44,4 +44,5 @@ Ubah sertifikat menjadi secret dengan `base64 -w0 certificate.pfx` (Linux) atau 
 ## Jika push gagal
 
 Jalankan ulang hanya job yang gagal setelah penyebabnya diperbaiki (misalnya `NUGET_API_KEY` yang diperbarui):
-`gh run rerun <run-id> --failed`. `--skip-duplicate` membuat push kedua untuk versi yang sama tidak berbahaya.
+`gh run rerun <run-id> --failed`. `--skip-duplicate` membuat push kedua untuk versi yang sama tidak berbahaya. Push berjalan
+di job tersendiri (`nuget-push`), sehingga kunci yang kedaluwarsa tidak menahan rilis GitHub: paketnya juga dilampirkan di sana.
