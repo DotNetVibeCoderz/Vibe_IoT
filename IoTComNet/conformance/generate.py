@@ -1591,6 +1591,145 @@ def enip_vectors():
     return out
 
 
+def ethercat_vectors():
+    """EtherCAT frames (ETG.1000.4: EtherCAT header, datagrams with ADP/ADO or logical addresses, the more and circulating
+    flags, working counters), mailboxes and CoE SDO messages (ETG.1000.6) and SII images (ETG.2010 categories).
+
+    Each vector gives bytes and a normalised description that the C# codec and the Rust twin must both produce, or "error".
+    """
+    import struct
+    out = []
+
+    def dg(cmd, idx, addr, data, wkc=0, irq=0, more=False, circ=False):
+        lf = len(data) | (0x4000 if circ else 0) | (0x8000 if more else 0)
+        return struct.pack("<BBIHH", cmd, idx, addr, lf, irq) + data + struct.pack("<H", wkc)
+
+    def payload(*datagrams):
+        body = b"".join(datagrams)
+        return struct.pack("<H", len(body) | 0x1000) + body
+
+    def ethernet(pl, src=b"\x01" * 6):
+        f = b"\xFF" * 6 + src + b"\x88\xA4" + pl
+        return f + b"\x00" * max(0, 60 - len(f))
+
+    names = {0: "NOP", 1: "APRD", 2: "APWR", 3: "APRW", 4: "FPRD", 5: "FPWR", 6: "FPRW", 7: "BRD", 8: "BWR", 9: "BRW",
+             10: "LRD", 11: "LWR", 12: "LRW", 13: "ARMW", 14: "FRMW"}
+
+    def describe(items):
+        return ";".join(f"{names[c]} idx={i} addr=0x{a:08X} len={len(d)} irq=0x{q:04X} wkc={w} c={1 if ci else 0} data={d.hex().upper()}"
+                        for c, i, a, d, w, q, ci in items)
+
+    def vector(kind, name, data, expected):
+        out.append({"kind": kind, "name": name, "hex": data.hex().upper(), "expected": expected})
+
+    # Datagram payloads (EtherCAT header + datagrams); these must also re-encode to the same bytes.
+    brd = payload(dg(7, 1, 0x00000000, b"\x00", wkc=4))
+    vector("payload", "BRD slave count", brd, describe([(7, 1, 0, b"\x00", 4, 0, False)]))
+    apwr = payload(dg(2, 2, 0x0010FFFF, struct.pack("<H", 0x1002), wkc=1))
+    vector("payload", "APWR station address to position 1", apwr, describe([(2, 2, 0x0010FFFF, struct.pack("<H", 0x1002), 1, 0, False)]))
+    fprd = payload(dg(4, 3, 0x01301001, b"\x08\x00", wkc=1, more=True), dg(4, 4, 0x01341001, b"\x00\x00", wkc=1))
+    vector("payload", "two FPRD datagrams (AL status, status code)", fprd,
+           describe([(4, 3, 0x01301001, b"\x08\x00", 1, 0, False), (4, 4, 0x01341001, b"\x00\x00", 1, 0, False)]))
+    lrw = payload(dg(12, 9, 0x00000000, bytes([0x05, 0x0D, 0x40, 0x01, 0x60, 0x09, 0x62, 0x02, 0x08, 0x07]), wkc=4, irq=0x0001))
+    vector("payload", "LRW process image", lrw, describe([(12, 9, 0, bytes([0x05, 0x0D, 0x40, 0x01, 0x60, 0x09, 0x62, 0x02, 0x08, 0x07]), 4, 1, False)]))
+    circ = payload(dg(1, 5, 0x0000FFFE, b"\x11", circ=True))
+    vector("payload", "circulating APRD", circ, describe([(1, 5, 0x0000FFFE, b"\x11", 0, 0, True)]))
+    sii = payload(dg(5, 6, 0x05021001, b"\x00\x01\x08\x00\x00\x00", wkc=1))
+    vector("payload", "FPWR SII read command", sii, describe([(5, 6, 0x05021001, b"\x00\x01\x08\x00\x00\x00", 1, 0, False)]))
+    vector("payload", "frame type 2 is not commands", struct.pack("<H", 13 | 0x2000) + dg(7, 1, 0, b"\x00"), "error")
+    vector("payload", "reserved header bit", struct.pack("<H", 13 | 0x1800) + dg(7, 1, 0, b"\x00"), "error")
+    vector("payload", "length past the end", payload(dg(7, 1, 0, b"\x00"))[:-2], "error")
+    vector("payload", "datagram data past the announced length", struct.pack("<H", 13 | 0x1000) + struct.pack("<BBIHH", 7, 1, 0, 5, 0) + b"\x00\x00\x00", "error")
+    vector("payload", "unknown command 0x1F", payload(dg(0x1F, 1, 0, b"\x00")), "error")
+    vector("payload", "reserved length bits", struct.pack("<H", 13 | 0x1000) + struct.pack("<BBIHH", 7, 1, 0, 1 | 0x0800, 0) + b"\x00\x00\x00", "error")
+    vector("payload", "more flag on the last datagram", payload(dg(7, 1, 0, b"\x00", more=True)), "error")
+    vector("payload", "bytes after the last datagram", struct.pack("<H", 15 | 0x1000) + dg(7, 1, 0, b"\x00") + b"\x00\x00", "error")
+
+    # Ethernet frames: EtherType and the returned flag (bit 1 of the first source byte).
+    vector("ethernet", "sent by the master", ethernet(brd), "returned=0 " + describe([(7, 1, 0, b"\x00", 4, 0, False)]))
+    vector("ethernet", "returned by the slaves", ethernet(brd, b"\x03" + b"\x01" * 5), "returned=1 " + describe([(7, 1, 0, b"\x00", 4, 0, False)]))
+    vector("ethernet", "IPv4 is not EtherCAT", b"\xFF" * 6 + b"\x01" * 6 + b"\x08\x00" + b"\x00" * 46, "error")
+    vector("ethernet", "shorter than an Ethernet header", b"\xFF" * 6 + b"\x01" * 6, "error")
+
+    # Mailboxes.
+    def mbx(t, counter, pl, address=0, prio=0, size=0):
+        b = struct.pack("<HHBB", len(pl), address, prio << 6, t | (counter << 4)) + pl
+        return b + b"\x00" * max(0, size - len(b))
+
+    def sdo(service, command, index, sub, data):
+        return struct.pack("<HBHB", service << 12, command, index, sub) + data
+
+    up = sdo(2, 0x40, 0x1008, 0, b"\x00" * 4)
+    vector("mailbox", "CoE upload request padded to 128", mbx(3, 1, up, size=128), "type=3 counter=1 address=0x0000 priority=0 payload=" + up.hex().upper())
+    vector("mailbox", "mailbox error reply", mbx(0, 2, b"\x01\x00\x02\x00", address=0x1004, prio=1), "type=0 counter=2 address=0x1004 priority=1 payload=01000200")
+    vector("mailbox", "length past the end", mbx(3, 1, up)[:-1], "error")
+    vector("mailbox", "shorter than the header", b"\x0A\x00\x00", "error")
+
+    # CoE SDO messages.
+    vector("sdo", "upload request", up, "service=2 command=0x40 index=0x1008 sub=0 data=00000000")
+    vector("sdo", "expedited upload response, 4 bytes", sdo(3, 0x43, 0x1018, 4, struct.pack("<I", 1004)), "service=3 command=0x43 index=0x1018 sub=4 data=EC030000")
+    vector("sdo", "expedited download, 2 bytes", sdo(2, 0x2B, 0x8000, 0x15, b"\x02\x00\x00\x00"), "service=2 command=0x2B index=0x8000 sub=21 data=0200")
+    vector("sdo", "expedited download, 1 byte", sdo(2, 0x2F, 0x6000, 1, b"\x01\x00\x00\x00"), "service=2 command=0x2F index=0x6000 sub=1 data=01")
+    name = b"Sim DI8 24V"
+    vector("sdo", "normal upload response", sdo(3, 0x41, 0x1008, 0, struct.pack("<I", len(name)) + name), "service=3 command=0x41 index=0x1008 sub=0 data=" + name.hex().upper())
+    vector("sdo", "download response", sdo(3, 0x60, 0x8000, 0x15, b"\x00" * 4), "service=3 command=0x60 index=0x8000 sub=21 data=00000000")
+    vector("sdo", "abort: object does not exist", sdo(3, 0x80, 0x2000, 0, struct.pack("<I", 0x06020000)), "service=3 command=0x80 index=0x2000 sub=0 data=00000206 abort=0x06020000")
+    vector("sdo", "normal transfer past the end", sdo(3, 0x41, 0x1008, 0, struct.pack("<I", 40) + name), "error")
+    vector("sdo", "emergency is not an SDO", struct.pack("<H", 1 << 12) + b"\x00" * 8, "error")
+    vector("sdo", "too short", sdo(2, 0x40, 0x1008, 0, b""), "error")
+
+    # SII images.
+    def sii_image(vendor, product, rev, serial, mbx_cfg, cats):
+        words = [0] * 0x40
+        def dword(at, v):
+            words[at] = v & 0xFFFF
+            words[at + 1] = v >> 16
+        dword(0x08, vendor); dword(0x0A, product); dword(0x0C, rev); dword(0x0E, serial)
+        for i, v in enumerate(mbx_cfg):
+            words[0x18 + i] = v
+        b = b"".join(struct.pack("<H", w) for w in words)
+        for t, d in cats:
+            if len(d) % 2:
+                d += b"\x00"
+            b += struct.pack("<HH", t, len(d) // 2) + d
+        return b + b"\xFF\xFF\x00\x00"
+
+    def strings(*ss):
+        return bytes([len(ss)]) + b"".join(bytes([len(x)]) + x.encode() for x in ss)
+
+    def general(name_idx, coe):
+        g = bytearray(32)
+        g[3] = name_idx
+        g[5] = 1 if coe else 0
+        return bytes(g)
+
+    def syncm(*sms):
+        return b"".join(struct.pack("<HHBBBB", s, l, c, 0, 1, t) for s, l, c, t in sms)
+
+    def pdo(index, sm, *entries):
+        b = struct.pack("<HBBBBH", index, len(entries), sm, 0, 0, 0)
+        for ei, es, bits in entries:
+            b += struct.pack("<HBBBBH", ei, es, 0, 0, bits, 0)
+        return b
+
+    ai = sii_image(0xE5C, 4, 0x10000, 1004, (0x1000, 128, 0x1080, 128, 4),
+                   [(10, strings("Sim AI4 10V")), (30, general(1, True)),
+                    (41, syncm((0x1000, 128, 0x26, 1), (0x1080, 128, 0x22, 2), (0x1180, 8, 0x20, 4))),
+                    (50, pdo(0x1A00, 3, (0x6000, 0x11, 16), (0x6010, 0x11, 16), (0x6020, 0x11, 16), (0x6030, 0x11, 16)))])
+    vector("sii", "analog input terminal", ai, "vendor=0x00000E5C product=0x00000004 revision=0x00010000 serial=1004 name=Sim AI4 10V "
+           "mailbox=1000:128,1080:128,0004 sms=1000:128:26:1,1080:128:22:2,1180:8:20:4 out=0 in=64")
+    do = sii_image(0xE5C, 3, 0x10000, 1003, (0, 0, 0, 0, 0),
+                   [(10, strings("Vendor", "Sim DO8 24V")), (30, general(2, False)),
+                    (41, syncm((0x0F00, 1, 0x44, 3))), (51, pdo(0x1600, 0, *[(0x7000, i + 1, 1) for i in range(8)]))])
+    vector("sii", "digital output terminal, second string", do, "vendor=0x00000E5C product=0x00000003 revision=0x00010000 serial=1003 name=Sim DO8 24V "
+           "mailbox=0000:0,0000:0,0000 sms=0F00:1:44:3 out=8 in=0")
+    vector("sii", "coupler without categories", sii_image(2, 0x044C2C52, 0x00120000, 0, (0, 0, 0, 0, 0), []),
+           "vendor=0x00000002 product=0x044C2C52 revision=0x00120000 serial=0 name= mailbox=0000:0,0000:0,0000 sms= out=0 in=0")
+    vector("sii", "category past the end", ai[:0x80 + 10], "error")
+    vector("sii", "shorter than the header", ai[:100], "error")
+    return out
+
+
 def main():
     files = {
         "crc.json": crc_vectors(),
@@ -1613,6 +1752,7 @@ def main():
         "knx.json": knx_vectors(),
         "bacnet.json": bacnet_vectors(),
         "enip.json": enip_vectors(),
+        "ethercat.json": ethercat_vectors(),
     }
     for name, data in files.items():
         with open(os.path.join(HERE, name), "w", encoding="utf-8", newline="\n") as f:

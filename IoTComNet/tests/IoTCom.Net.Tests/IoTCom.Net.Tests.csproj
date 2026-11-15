@@ -53,6 +53,7 @@
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Ntp\IoTCom.Net.Protocols.Ntp.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Lwm2m\IoTCom.Net.Protocols.Lwm2m.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Transport.Dtls\IoTCom.Net.Transport.Dtls.csproj" />
+    <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.EtherCat\IoTCom.Net.Protocols.EtherCat.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Ocpp\IoTCom.Net.Protocols.Ocpp.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.Knx\IoTCom.Net.Protocols.Knx.csproj" />
     <ProjectReference Include="..\..\src\IoTCom.Net.Protocols.EtherNetIp\IoTCom.Net.Protocols.EtherNetIp.csproj" />

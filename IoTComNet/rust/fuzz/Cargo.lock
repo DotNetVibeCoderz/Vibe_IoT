@@ -166,6 +166,10 @@ name = "iotcom-enip"
 version = "0.1.0"
 
 [[package]]
+name = "iotcom-ethercat"
+version = "0.1.0"
+
+[[package]]
 name = "iotcom-fuzz"
 version = "0.0.0"
 dependencies = [
@@ -174,6 +178,7 @@ dependencies = [
  "iotcom-core",
  "iotcom-dlms",
  "iotcom-enip",
+ "iotcom-ethercat",
  "iotcom-iec104",
  "iotcom-isotp",
  "iotcom-j1939",

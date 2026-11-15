@@ -154,6 +154,13 @@ if (Want("gallery-at.png"))
     Shot("gallery-at.png");
 }
 
+if (Want("gallery-ethercat.png"))
+{
+    Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");
+    Show("ethercat-rack", seconds: 6);
+    Shot("gallery-ethercat.png");
+}
+
 if (Want("gallery-ethernetip.png"))
 {
     Environment.SetEnvironmentVariable("IOTCOM_GALLERY_SCREENSHOT", "1");

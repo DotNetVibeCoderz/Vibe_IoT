@@ -7,6 +7,8 @@ namespace IoTCom.Net;
 /// <summary>Link-layer types used in pcapng interface descriptions.</summary>
 public static class PcapLinkType
 {
+    /// <summary>Ethernet frames (LINKTYPE_ETHERNET); EtherCAT frames are written as captured.</summary>
+    public const ushort Ethernet = 1;
     /// <summary>Raw IPv4/IPv6 packets (LINKTYPE_RAW).</summary>
     public const ushort RawIp = 101;
     /// <summary>User-defined encapsulation 0 (LINKTYPE_USER0); Wireshark shows it as data unless configured.</summary>
@@ -186,6 +188,7 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
         "sacn" => ("udp", 5568),
         "mavlink" => ("udp", 14550),
         "can" or "can-slcan" => ("can", 0),
+        "ethercat" => ("ethernet", 0),
         "lorawan" or "semtech-udp" => ("loratap", 0),
         _ => ("user", 0),
     };
@@ -203,6 +206,9 @@ public sealed class PcapngTap : ITrafficTap, IDisposable
             {
                 case "can":
                     _writer.WritePacket(Interface("can", PcapLinkType.CanSocketCan), frame.Timestamp, frame.Data.Span, inbound, comment);
+                    break;
+                case "ethernet":
+                    _writer.WritePacket(Interface("eth", PcapLinkType.Ethernet), frame.Timestamp, frame.Data.Span, inbound, comment);
                     break;
                 case "loratap":
                     _writer.WritePacket(Interface("lora", PcapLinkType.LoRaTap), frame.Timestamp, LoRaTap(frame.Data.Span), inbound, comment);

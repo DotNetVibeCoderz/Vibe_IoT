@@ -24,6 +24,7 @@ iotcom-j1939 = { path = "../crates/iotcom-j1939" }
 iotcom-iec104 = { path = "../crates/iotcom-iec104" }
 iotcom-ntp = { path = "../crates/iotcom-ntp" }
 iotcom-enip = { path = "../crates/iotcom-enip" }
+iotcom-ethercat = { path = "../crates/iotcom-ethercat" }
 
 [workspace]
 members = ["."]
@@ -122,6 +123,13 @@ bench = false
 [[bin]]
 name = "enip"
 path = "fuzz_targets/enip.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ethercat"
+path = "fuzz_targets/ethercat.rs"
 test = false
 doc = false
 bench = false

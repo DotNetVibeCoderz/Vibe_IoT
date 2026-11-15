@@ -139,6 +139,8 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
         ("ocpp", "OCPP 1.6J / 2.0.1", "IoTCom.Net.Protocols.Ocpp", "charge point · CSMS · charger simulator", "protocols/ocpp.md", "automotive/24-ocpp", "OcppCharger", ["ocpp"]),
         ("knx", "KNXnet/IP", "IoTCom.Net.Protocols.Knx", "tunnelling client · routing · IP router · office floor simulator", "protocols/knx.md", "building/25-knx", "KnxMonitor", ["knxip", "cemi"]),
         ("bacnet", "BACnet/IP", "IoTCom.Net.Protocols.Bacnet", "device server · client adapter · air handling unit simulator", "protocols/bacnet.md", "building/26-bacnet", "BacnetBms", ["bacnet"]),
+        ("ethercat", "EtherCAT", "IoTCom.Net.Protocols.EtherCat", "master · CoE · process image · I/O rack simulator", "protocols/ethercat.md", "industrial/29-ethercat", "EthercatRack", ["ethercat"]),
+        ("dtls", "DTLS 1.2", "IoTCom.Net.Transport.Dtls", "client · server · PSK · certificates · coaps://", "protocols/dtls.md", "network/28-dtls", "CoapsSecure", []),
         ("enip", "EtherNet/IP (CIP)", "IoTCom.Net.Protocols.EtherNetIp", "explicit client · adapter · Logix tags · PLC simulator", "protocols/ethernetip.md", "industrial/27-ethernetip", "EnipTags", ["enip"]),
         ("uds", "ISO-TP · UDS · OBD-II", "IoTCom.Net.Protocols.Uds", "tester · scan tool · ECU simulator", "protocols/uds.md", "automotive/06-can-uds", "UdsTester", ["uds"]),
         ("coap", "CoAP", "IoTCom.Net.Protocols.Coap", "client · server · observe · block-wise", "protocols/coap.md", "messaging/07-coap", "CoapObserve", ["coap"]),
@@ -270,6 +272,12 @@ internal sealed class RpcCommand : AsyncCommand<RpcCommand.Settings>
             case "lwm2m-tlv":
                 fields = IoTCom.Net.Protocols.Lwm2m.Lwm2mContent.DescribeTlv(bytes);
                 summary = $"{fields.Count(f => f.Name.StartsWith("resource", StringComparison.Ordinal) || f.Name.StartsWith("res. instance", StringComparison.Ordinal))} value(s)";
+                break;
+            case "ethercat":
+                fields = IoTCom.Net.Protocols.EtherCat.EcatFrame.DescribeFields(bytes);
+                summary = TrySummary(() => bytes.Length >= 14 && IoTCom.Net.Protocols.EtherCat.EcatFrame.TryDecode(bytes, out var ecat, out _)
+                    ? string.Join("; ", ecat.Select(d => d.ToString()))
+                    : IoTCom.Net.Protocols.EtherCat.EcatFrame.TryDecodePayload(bytes, out var payload, out var why) ? string.Join("; ", payload.Select(d => d.ToString())) : throw new ProtocolException(why ?? "invalid"));
                 break;
             case "enip":
                 fields = IoTCom.Net.Protocols.EtherNetIp.EnipPacket.DescribeFields(bytes);

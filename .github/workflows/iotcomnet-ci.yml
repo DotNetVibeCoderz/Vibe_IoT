@@ -115,7 +115,7 @@ jobs:
           ls -l sample.pcapng && chmod a+r sample.pcapng
           # read from stdin: newer tshark packages refuse some runner paths ("You don't have permission to read the file")
           tshark -r - -T fields -e frame.protocols < sample.pcapng | tee protocols.txt
-          grep -q ':mbtcp' protocols.txt && grep -q ':coap' protocols.txt && grep -q 'can' protocols.txt && grep -q 'lorawan' protocols.txt
+          grep -q ':mbtcp' protocols.txt && grep -q ':coap' protocols.txt && grep -q 'can' protocols.txt && grep -q 'lorawan' protocols.txt && grep -q 'ecat' protocols.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

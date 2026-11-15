@@ -30,7 +30,7 @@ public sealed partial class MainViewModel : ObservableObject, IAsyncDisposable
 
     public MainViewModel()
     {
-        _demos = [new ModbusDemo(), new OpcUaDemo(), new EnipPackLineDemo(), new CanOpenDemo(), new SubstationDemo(), new EvChargingDemo(), new VehicleDiagnosticsDemo(), new J1939Demo(), new BedsideMonitorDemo(), new ImagingDemo(), new NmeaDemo(), new HarbourDemo(), new DroneDemo(), new GreenhouseDemo(), new LightingDemo(), new KnxOfficeDemo(), new BacnetAhuDemo(), new BleDemo(), new LoRaWanDemo(), new MeteringDemo(), new StreetLightDemo(), new CellularModemDemo(), new MqttDemo(), new MultiBrokerDemo(), new PlantNetworkDemo(), new ClockSyncDemo(), new UsbDemo(), new NfcDemo(), new WorkbenchDemo()];
+        _demos = [new ModbusDemo(), new OpcUaDemo(), new EnipPackLineDemo(), new EthercatRackDemo(), new CanOpenDemo(), new SubstationDemo(), new EvChargingDemo(), new VehicleDiagnosticsDemo(), new J1939Demo(), new BedsideMonitorDemo(), new ImagingDemo(), new NmeaDemo(), new HarbourDemo(), new DroneDemo(), new GreenhouseDemo(), new LightingDemo(), new KnxOfficeDemo(), new BacnetAhuDemo(), new BleDemo(), new LoRaWanDemo(), new MeteringDemo(), new StreetLightDemo(), new CellularModemDemo(), new MqttDemo(), new MultiBrokerDemo(), new PlantNetworkDemo(), new ClockSyncDemo(), new UsbDemo(), new NfcDemo(), new WorkbenchDemo()];
         foreach (var d in _demos.OfType<INotifyPropertyChanged>()) d.PropertyChanged += OnDemoPropertyChanged;
         Loc.Instance.LanguageChanged += OnLanguageChanged;
         _flush = new DispatcherTimer(TimeSpan.FromMilliseconds(200), DispatcherPriority.Background, (_, _) => FlushFrames());

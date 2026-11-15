@@ -1,0 +1,224 @@
+[
+  {
+    "kind": "payload",
+    "name": "BRD slave count",
+    "hex": "0D1007010000000001000000000400",
+    "expected": "BRD idx=1 addr=0x00000000 len=1 irq=0x0000 wkc=4 c=0 data=00"
+  },
+  {
+    "kind": "payload",
+    "name": "APWR station address to position 1",
+    "hex": "0E100202FFFF10000200000002100100",
+    "expected": "APWR idx=2 addr=0x0010FFFF len=2 irq=0x0000 wkc=1 c=0 data=0210"
+  },
+  {
+    "kind": "payload",
+    "name": "two FPRD datagrams (AL status, status code)",
+    "hex": "1C1004030110300102800000080001000404011034010200000000000100",
+    "expected": "FPRD idx=3 addr=0x01301001 len=2 irq=0x0000 wkc=1 c=0 data=0800;FPRD idx=4 addr=0x01341001 len=2 irq=0x0000 wkc=1 c=0 data=0000"
+  },
+  {
+    "kind": "payload",
+    "name": "LRW process image",
+    "hex": "16100C09000000000A000100050D40016009620208070400",
+    "expected": "LRW idx=9 addr=0x00000000 len=10 irq=0x0001 wkc=4 c=0 data=050D4001600962020807"
+  },
+  {
+    "kind": "payload",
+    "name": "circulating APRD",
+    "hex": "0D100105FEFF000001400000110000",
+    "expected": "APRD idx=5 addr=0x0000FFFE len=1 irq=0x0000 wkc=0 c=1 data=11"
+  },
+  {
+    "kind": "payload",
+    "name": "FPWR SII read command",
+    "hex": "1210050601100205060000000001080000000100",
+    "expected": "FPWR idx=6 addr=0x05021001 len=6 irq=0x0000 wkc=1 c=0 data=000108000000"
+  },
+  {
+    "kind": "payload",
+    "name": "frame type 2 is not commands",
+    "hex": "0D2007010000000001000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "reserved header bit",
+    "hex": "0D1807010000000001000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "length past the end",
+    "hex": "0D100701000000000100000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "datagram data past the announced length",
+    "hex": "0D1007010000000005000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "unknown command 0x1F",
+    "hex": "0D101F010000000001000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "reserved length bits",
+    "hex": "0D1007010000000001080000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "more flag on the last datagram",
+    "hex": "0D1007010000000001800000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "payload",
+    "name": "bytes after the last datagram",
+    "hex": "0F10070100000000010000000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "ethernet",
+    "name": "sent by the master",
+    "hex": "FFFFFFFFFFFF01010101010188A40D100701000000000100000000040000000000000000000000000000000000000000000000000000000000000000",
+    "expected": "returned=0 BRD idx=1 addr=0x00000000 len=1 irq=0x0000 wkc=4 c=0 data=00"
+  },
+  {
+    "kind": "ethernet",
+    "name": "returned by the slaves",
+    "hex": "FFFFFFFFFFFF03010101010188A40D100701000000000100000000040000000000000000000000000000000000000000000000000000000000000000",
+    "expected": "returned=1 BRD idx=1 addr=0x00000000 len=1 irq=0x0000 wkc=4 c=0 data=00"
+  },
+  {
+    "kind": "ethernet",
+    "name": "IPv4 is not EtherCAT",
+    "hex": "FFFFFFFFFFFF010101010101080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "ethernet",
+    "name": "shorter than an Ethernet header",
+    "hex": "FFFFFFFFFFFF010101010101",
+    "expected": "error"
+  },
+  {
+    "kind": "mailbox",
+    "name": "CoE upload request padded to 128",
+    "hex": "0A00000000130020400810000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": "type=3 counter=1 address=0x0000 priority=0 payload=00204008100000000000"
+  },
+  {
+    "kind": "mailbox",
+    "name": "mailbox error reply",
+    "hex": "04000410402001000200",
+    "expected": "type=0 counter=2 address=0x1004 priority=1 payload=01000200"
+  },
+  {
+    "kind": "mailbox",
+    "name": "length past the end",
+    "hex": "0A0000000013002040081000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "mailbox",
+    "name": "shorter than the header",
+    "hex": "0A0000",
+    "expected": "error"
+  },
+  {
+    "kind": "sdo",
+    "name": "upload request",
+    "hex": "00204008100000000000",
+    "expected": "service=2 command=0x40 index=0x1008 sub=0 data=00000000"
+  },
+  {
+    "kind": "sdo",
+    "name": "expedited upload response, 4 bytes",
+    "hex": "003043181004EC030000",
+    "expected": "service=3 command=0x43 index=0x1018 sub=4 data=EC030000"
+  },
+  {
+    "kind": "sdo",
+    "name": "expedited download, 2 bytes",
+    "hex": "00202B00801502000000",
+    "expected": "service=2 command=0x2B index=0x8000 sub=21 data=0200"
+  },
+  {
+    "kind": "sdo",
+    "name": "expedited download, 1 byte",
+    "hex": "00202F00600101000000",
+    "expected": "service=2 command=0x2F index=0x6000 sub=1 data=01"
+  },
+  {
+    "kind": "sdo",
+    "name": "normal upload response",
+    "hex": "0030410810000B00000053696D2044493820323456",
+    "expected": "service=3 command=0x41 index=0x1008 sub=0 data=53696D2044493820323456"
+  },
+  {
+    "kind": "sdo",
+    "name": "download response",
+    "hex": "00306000801500000000",
+    "expected": "service=3 command=0x60 index=0x8000 sub=21 data=00000000"
+  },
+  {
+    "kind": "sdo",
+    "name": "abort: object does not exist",
+    "hex": "00308000200000000206",
+    "expected": "service=3 command=0x80 index=0x2000 sub=0 data=00000206 abort=0x06020000"
+  },
+  {
+    "kind": "sdo",
+    "name": "normal transfer past the end",
+    "hex": "0030410810002800000053696D2044493820323456",
+    "expected": "error"
+  },
+  {
+    "kind": "sdo",
+    "name": "emergency is not an SDO",
+    "hex": "00100000000000000000",
+    "expected": "error"
+  },
+  {
+    "kind": "sdo",
+    "name": "too short",
+    "hex": "002040081000",
+    "expected": "error"
+  },
+  {
+    "kind": "sii",
+    "name": "analog input terminal",
+    "hex": "000000000000000000000000000000005C0E00000400000000000100EC0300000000000000000000000000000000000000108000801080000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000A000700010B53696D2041493420313056001E001000000000010001000000000000000000000000000000000000000000000000000029000C0000108000260001018010800022000102801108002000010432001400001A0403000000000060110000100000106011000010000020601100001000003060110000100000FFFF0000",
+    "expected": "vendor=0x00000E5C product=0x00000004 revision=0x00010000 serial=1004 name=Sim AI4 10V mailbox=1000:128,1080:128,0004 sms=1000:128:26:1,1080:128:22:2,1180:8:20:4 out=0 in=64"
+  },
+  {
+    "kind": "sii",
+    "name": "digital output terminal, second string",
+    "hex": "000000000000000000000000000000005C0E00000300000000000100EB0300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000A000A00020656656E646F720B53696D20444F38203234561E001000000000020000000000000000000000000000000000000000000000000000000029000400000F01004400010333002400001608000000000000700100000100000070020000010000007003000001000000700400000100000070050000010000007006000001000000700700000100000070080000010000FFFF0000",
+    "expected": "vendor=0x00000E5C product=0x00000003 revision=0x00010000 serial=1003 name=Sim DO8 24V mailbox=0000:0,0000:0,0000 sms=0F00:1:44:3 out=8 in=0"
+  },
+  {
+    "kind": "sii",
+    "name": "coupler without categories",
+    "hex": "0000000000000000000000000000000002000000522C4C040000120000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FFFF0000",
+    "expected": "vendor=0x00000002 product=0x044C2C52 revision=0x00120000 serial=0 name= mailbox=0000:0,0000:0,0000 sms= out=0 in=0"
+  },
+  {
+    "kind": "sii",
+    "name": "category past the end",
+    "hex": "000000000000000000000000000000005C0E00000400000000000100EC0300000000000000000000000000000000000000108000801080000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000A000700010B53696D20",
+    "expected": "error"
+  },
+  {
+    "kind": "sii",
+    "name": "shorter than the header",
+    "hex": "000000000000000000000000000000005C0E00000400000000000100EC0300000000000000000000000000000000000000108000801080000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "expected": "error"
+  }
+]

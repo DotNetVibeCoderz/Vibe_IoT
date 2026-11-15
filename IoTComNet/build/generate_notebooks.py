@@ -10,7 +10,7 @@ import json
 import os
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "notebooks")
-VERSION = "0.27.0-preview.1"
+VERSION = "0.28.0-preview.1"
 SETUP = f'#r "nuget: IoTCom.Net, {VERSION}"\n#r "nuget: IoTCom.Net.Native.Modbus, {VERSION}"'
 LOCAL = ("> Working from a clone? Run `dotnet pack -c Release -o artifacts/packages` at the repo root and add\n"
          "> `#i \"nuget: <repo>/artifacts/packages\"` before the `#r` lines.",
@@ -52,10 +52,10 @@ NOTEBOOKS = {
              "foreach (var f in tap.Snapshot()) Console.WriteLine($\"{f.Direction,-8} {HexDump.ToHex(f.Data.Span),-40} {f.Summary}\");"),
         md("## Where next\n\n| Notebook | Topic |\n|---|---|\n| `industrial/01-modbus` | Modbus master, slave, simulator, Rust engine |\n"
            "| `transport/02-framing-crc` | CRC catalogue, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS with NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
+           "| `messaging/04-mqtt-senml` | MQTT pub/sub with SenML payloads |\n| `messaging/12-mdns-sparkplug` | mDNS discovery, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA browse, read, subscribe, write |\n| `devices/14-ble` | Bluetooth LE advertisements, GATT, notifications |\n| `devices/15-usb` | USB control/bulk transfers and HID reports |\n| `industrial/16-canopen` | CANopen SDO, PDO, NMT, heartbeats |\n| `automotive/17-j1939` | J1939 trucks: PGNs, SPNs, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 substations: interrogation, spontaneous data, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset and delay, drifting clocks, kiss-o'-death |\n| `devices/20-nfc` | NFC tags: NDEF records, Type 2 memory, guarded writes |\n| `messaging/21-lwm2m` | LwM2M: registration, TLV and SenML, observe, guarded writes |\n| `messaging/22-zenoh` | Zenoh: key expressions, subscriptions, queryables, read-only sessions |\n| `messaging/23-brokers` | AMQP 1.0 with an in-process broker; NATS and Kafka usage |\n| `automotive/24-ocpp` | OCPP 1.6J and 2.0.1: chargers, a CSMS, remote commands and power limits |\n| `building/25-knx` | KNXnet/IP: datapoint types, discovery, tunnelling, group monitor, guarded writes |\n| `building/26-bacnet` | BACnet/IP: objects, priority arrays, discovery, COV, guarded commands |\n| `industrial/27-ethernetip` | EtherNet/IP: CIP paths, identity, Logix tags, Multiple_Service_Packet, guarded writes |\n| `network/28-dtls` | DTLS: CoAP over coaps:// with a pre-shared key and a pinned certificate |\n| `industrial/29-ethercat` | EtherCAT: frames, line scan, SAFE-OP inputs, CoE, OP and working counters |\n| `99-protocol-chooser` | Which protocol for which job |\n\n" + CREDIT[0],
            "## Selanjutnya\n\n| Notebook | Topik |\n|---|---|\n| `industrial/01-modbus` | Master, slave, simulator Modbus, mesin Rust |\n"
            "| `transport/02-framing-crc` | Katalog CRC, SLIP, COBS, HDLC |\n| `navigation/03-nmea` | GPS/GNSS dengan NMEA 0183 |\n"
-           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
+           "| `messaging/04-mqtt-senml` | Pub/sub MQTT dengan payload SenML |\n| `messaging/12-mdns-sparkplug` | Penemuan mDNS, Sparkplug B, Protobuf/MessagePack/TLV |\n| `industrial/13-opcua` | OPC UA: jelajah, baca, subscribe, tulis |\n| `devices/14-ble` | Bluetooth LE: advertisement, GATT, notifikasi |\n| `devices/15-usb` | Transfer USB control/bulk dan report HID |\n| `industrial/16-canopen` | CANopen: SDO, PDO, NMT, heartbeat |\n| `automotive/17-j1939` | J1939 truk: PGN, SPN, DM1, transport protocol |\n| `industrial/18-iec104` | IEC 104 gardu: interogasi, data spontan, select-before-operate |\n| `network/19-ntp` | NTP/SNTP: offset dan delay, jam yang melenceng, kiss-o'-death |\n| `devices/20-nfc` | Tag NFC: record NDEF, memori Type 2, penulisan yang dijaga |\n| `messaging/21-lwm2m` | LwM2M: registrasi, TLV dan SenML, observe, penulisan yang dijaga |\n| `messaging/22-zenoh` | Zenoh: key expression, subscription, queryable, sesi hanya-baca |\n| `messaging/23-brokers` | AMQP 1.0 dengan broker dalam proses; cara pakai NATS dan Kafka |\n| `automotive/24-ocpp` | OCPP 1.6J dan 2.0.1: pengisi daya, CSMS, perintah jarak jauh, dan batas daya |\n| `building/25-knx` | KNXnet/IP: datapoint type, penemuan, tunnelling, group monitor, penulisan yang dijaga |\n| `building/26-bacnet` | BACnet/IP: objek, priority array, penemuan, COV, perintah yang dijaga |\n| `industrial/27-ethernetip` | EtherNet/IP: path CIP, identitas, tag Logix, Multiple_Service_Packet, penulisan yang dijaga |\n| `network/28-dtls` | DTLS: CoAP lewat coaps:// dengan pre-shared key dan sertifikat ber-pin |\n| `industrial/29-ethercat` | EtherCAT: frame, pindai jalur, input SAFE-OP, CoE, OP, dan working counter |\n| `99-protocol-chooser` | Protokol mana untuk tugas apa |\n\n" + CREDIT[1]),
     ],
     "industrial/01-modbus": [
         md("# Modbus — master, slave and simulator\n\n**What it is.** Modbus is the request/response lingua franca of PLCs, meters, drives and sensors. "
@@ -1037,6 +1037,61 @@ await gw.DisposeAsync();"""),
            "See `docs/en/protocols/dtls.md`.\n\n" + CREDIT[0],
            "## Lebih lanjut\n`iotcom coap serve --psk id:hex` atau `--cert`, `iotcom coap get coaps://host/path --psk id:hex` (atau `IOTCOM_DTLS_PSK`), `--pin <sha256>`, dan sampel CoapsSecure. LwM2M memakai `UseDtlsClient`/`UseDtlsServer` yang sama. "
            "Lihat `docs/id/protocols/dtls.md`.\n\n" + CREDIT[1]),
+    ],
+    "industrial/29-ethercat": [
+        md("# EtherCAT — one frame through every terminal\n\nA master (`EthercatMaster`) scans a simulated I/O rack on a `VirtualEthercatSegment`: a coupler, 8 digital inputs, 8 digital outputs and 4 analog inputs on a conveyor. "
+           "For a real line use `UseInterface(\"eth1\")` on a dedicated port (Linux: CAP_NET_RAW; Windows: Npcap). The master stays read-only (SAFE-OP) until `AllowWrites()`.",
+           "# EtherCAT — satu frame melewati setiap terminal\n\nMaster (`EthercatMaster`) memindai rak I/O simulasi di `VirtualEthercatSegment`: coupler, 8 input digital, 8 output digital, dan 4 input analog pada sebuah konveyor. "
+           "Untuk jalur sungguhan pakai `UseInterface(\"eth1\")` di port khusus (Linux: CAP_NET_RAW; Windows: Npcap). Master tetap hanya-baca (SAFE-OP) sampai `AllowWrites()`."),
+        md("## Setup\n" + LOCAL[0], "## Persiapan\n" + LOCAL[1]),
+        code(SETUP),
+        md("## Frames and datagrams\nAn Ethernet frame with EtherType 0x88A4 carries datagrams; each ends with a working counter the slaves increment.",
+           "## Frame dan datagram\nFrame Ethernet ber-EtherType 0x88A4 membawa datagram; masing-masing diakhiri working counter yang dinaikkan oleh slave."),
+        code("""using System.Buffers.Binary;
+using IoTCom.Net;
+using IoTCom.Net.Protocols.EtherCat;
+
+var frame = EcatFrame.Encode([
+    EcatDatagram.Broadcast(EcatCommand.Brd, EcatRegister.Type, new byte[1]),
+    EcatDatagram.Configured(EcatCommand.Fprd, 0x1002, EcatRegister.AlStatus, new byte[2]),
+]);
+Console.WriteLine(Convert.ToHexString(frame));
+foreach (var f in EcatFrame.DescribeFields(frame)) Console.WriteLine($"  {f.Name,-12} {f.Value}");"""),
+        md("## Scan the line\nA broadcast read counts the slaves, positional writes give them station addresses, and the SII EEPROM tells who they are.",
+           "## Pindai jalur\nBaca broadcast menghitung slave, tulis posisional memberi alamat stasiun, dan EEPROM SII memberi tahu siapa mereka."),
+        code("""var rack = new EthercatRackSimulator();
+var master = EthercatMaster.Create(o => o.UseLink(rack.Segment));
+foreach (var slave in await master.ScanAsync()) Console.WriteLine(slave);"""),
+        md("## SAFE-OP: inputs live, outputs safe\nThe master maps every terminal into one process image (FMMUs) and reads it with one logical datagram per cycle.",
+           "## SAFE-OP: input hidup, output aman\nMaster memetakan setiap terminal ke satu process image (FMMU) dan membacanya dengan satu datagram logis per siklus."),
+        code("""await master.RequestStateAsync(EcatState.SafeOp);
+for (var i = 0; i < 20; i++) { rack.Step(0.05); await master.ExchangeAsync(); }
+Console.WriteLine($"DI8 {Convert.ToString(master.InputsOf(master.Slaves[1])[0], 2).PadLeft(8, '0')}  (bit 2 e-stop OK, bit 3 guard closed)");
+var ai = master.InputsOf(master.Slaves[3]);
+Console.WriteLine($"air {BinaryPrimitives.ReadInt16LittleEndian(ai[4..]) / 100.0:0.00} bar, gearbox {BinaryPrimitives.ReadInt16LittleEndian(ai[2..]) / 100.0:0.0} °C");
+Console.WriteLine($"CoE 0x1008: {System.Text.Encoding.ASCII.GetString(await master.SdoReadAsync(master.Slaves[3], 0x1008, 0))}");
+Console.WriteLine(master.Statistics);
+try { await master.RequestStateAsync(EcatState.Op); } catch (ReadOnlyModeException e) { Console.WriteLine(e.Message); }"""),
+        md("## OP, a cut cable\nA second master with AllowWrites() runs the conveyor; then the cable is cut after the input terminal and the working counter falls short.",
+           "## OP, kabel putus\nMaster kedua dengan AllowWrites() menjalankan konveyor; lalu kabel diputus setelah terminal input dan working counter berkurang."),
+        code("""await master.DisposeAsync();
+var engineer = EthercatMaster.Create(o => o.UseLink(rack.Segment).AllowWrites());
+await engineer.ScanAsync();
+await engineer.RequestStateAsync(EcatState.Op);
+engineer.SetOutputBit(engineer.Slaves[2], 0, true);   // conveyor motor
+for (var i = 0; i < 300; i++) { rack.Step(0.01); await engineer.ExchangeAsync(); }
+var analog = engineer.InputsOf(engineer.Slaves[3]);
+Console.WriteLine($"belt {BinaryPrimitives.ReadInt16LittleEndian(analog[6..]) / 100.0:0.0} m/min, wkc {engineer.Statistics.LastWorkingCounter}/{engineer.Statistics.ExpectedWorkingCounter}");
+rack.Segment.BreakAfter = 2;
+await engineer.ExchangeAsync();
+Console.WriteLine($"cable cut: wkc {engineer.Statistics.LastWorkingCounter}/{engineer.Statistics.ExpectedWorkingCounter}");
+rack.Segment.BreakAfter = null;
+await engineer.DisposeAsync();
+Console.WriteLine($"after closing the master: DO8 is in {EcatAlStatus.Name(rack.DigitalOut.State)}");"""),
+        md("## Going further\n`iotcom ethercat interfaces`, `iotcom ethercat scan --if <port>`, `iotcom ethercat watch --sim`, `iotcom ethercat sdo 3 1008:00 --sim`, `iotcom ethercat demo`, the Gallery's *I/O rack over EtherCAT* and the EthercatRack sample. "
+           "See `docs/en/protocols/ethercat.md`.\n\n" + CREDIT[0],
+           "## Lebih lanjut\n`iotcom ethercat interfaces`, `iotcom ethercat scan --if <port>`, `iotcom ethercat watch --sim`, `iotcom ethercat sdo 3 1008:00 --sim`, `iotcom ethercat demo`, *Rak I/O lewat EtherCAT* di Gallery, dan sampel EthercatRack. "
+           "Lihat `docs/id/protocols/ethercat.md`.\n\n" + CREDIT[1]),
     ],
     "messaging/22-zenoh": [
         md("# Zenoh — key expressions, subscriptions and queries\n\nTwo sessions share an in-process `VirtualZenohNetwork`, so nothing here needs the native library or a network. "

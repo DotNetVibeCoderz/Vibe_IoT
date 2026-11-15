@@ -138,6 +138,10 @@ dotnet run -c Release --project benchmarks/IoTCom.Net.Benchmarks -- --filter "*"
 - **EtherNet/IP**: `Protocols.EtherNetIp` is managed C# (`EnipPacket`/`CipPath`/`CipRequest`/`CipResponse` codecs, `EnipClient` read-only until
   `AllowWrites()`, `UseSlot(n)` wraps requests in Unconnected_Send, `EnipDiscovery`, `EnipAdapter` + `EnipPlcSimulator`). Rust twin `iotcom-enip`
   (fuzz target `enip`) and `/conformance/enip.json` share normalised description strings. pcapng maps `enip` to TCP 44818. Explicit messaging only.
+- **EtherCAT**: `Protocols.EtherCat` is managed C# (`EcatFrame`/`EcatMailbox`/`CoeSdo`/`EcatSii` codecs, `EthercatMaster` read-only = SAFE-OP + LRD
+  until `AllowWrites()`, `IEthercatLink`: `RawEthernetLink` (AF_PACKET via libc, Npcap/libpcap via P/Invoke with a DLL resolver) or
+  `VirtualEthercatSegment` of `VirtualEcatSlave` ESCs; `EthercatRackSimulator`). Returned frames have bit 1 of the source MAC set. Rust twin
+  `iotcom-ethercat` (fuzz target `ethercat`), `/conformance/ethercat.json`; pcapng writes it as LINKTYPE_ETHERNET. SII strings are ASCII.
 - **Broker adapters**: `Adapters.Nats` (NATS.Client.Core), `Adapters.Amqp` (AMQPNetLite; `AmqpMiniBroker` is the in-process broker used by tests and
   notebooks) and `Adapters.Kafka` (Confluent.Kafka; not trimmable/AOT) are `EndpointBase` endpoints with `AddNats/AddAmqp/AddKafka` in each package, none
   in the meta-package. NATS and Kafka tests skip unless `IOTCOM_NATS_URL` / `IOTCOM_KAFKA_BOOTSTRAP` are set (CI job `brokers`); credentials are secrets.

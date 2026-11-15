@@ -573,6 +573,10 @@ name = "iotcom-enip"
 version = "0.1.0"
 
 [[package]]
+name = "iotcom-ethercat"
+version = "0.1.0"
+
+[[package]]
 name = "iotcom-ffi-support"
 version = "0.1.0"
 dependencies = [

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>IoTCom.Net.Protocols.EtherCat</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>EtherCAT master for IoTCom.Net: frame, datagram, mailbox and CoE SDO codecs; line scan with SII identity, the AL state machine, FMMU/SyncManager process-data mapping, cyclic LRW exchange and CoE object access (read-only by default); raw Ethernet over AF_PACKET (Linux) or Npcap/libpcap; a simulated I/O rack. Built by Gravicode Studios, led by Kang Fadhil.</Description>
+    <PackageTags>$(PackageTags);ethercat;fieldbus;industrial;coe;canopen;plc;io;etg</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IoTCom.Net.Core\IoTCom.Net.Core.csproj" />
+  </ItemGroup>
+</Project>

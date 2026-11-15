@@ -36,6 +36,7 @@ public sealed record FrameRow(string Time, string Direction, bool Outbound, stri
             "ntp" => Protocols.Ntp.NtpPacket.Describe(data),
             "ndef" => Protocols.Nfc.NdefMessage.Describe(data),
             "enip" => Protocols.EtherNetIp.EnipPacket.DescribeFields(data),
+            "ethercat" => Protocols.EtherCat.EcatFrame.DescribeFields(data),
             "bacnet" => Protocols.Bacnet.BacnetPacket.DescribeFields(data),
             "knxip" => Protocols.Knx.KnxIp.DescribeFields(data),
             "ocpp" => Protocols.Ocpp.OcppFrame.DescribeFields(System.Text.Encoding.UTF8.GetString(data)),

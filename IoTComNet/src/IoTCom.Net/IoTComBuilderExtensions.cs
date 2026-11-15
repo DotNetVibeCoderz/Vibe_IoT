@@ -8,6 +8,7 @@ using IoTCom.Net.Protocols.Lwm2m;
 using IoTCom.Net.Protocols.Ocpp;
 using IoTCom.Net.Protocols.Knx;
 using IoTCom.Net.Protocols.Bacnet;
+using IoTCom.Net.Protocols.EtherCat;
 using IoTCom.Net.Protocols.EtherNetIp;
 using IoTCom.Net.Protocols.Ntp;
 using IoTCom.Net.Protocols.Astm;
@@ -177,6 +178,18 @@ public static class IoTComBuilderExtensions
         {
             o.Name = name;
             o.Logger = Logger(sp, "IoTCom.EtherNetIp");
+            configure(o);
+        }));
+
+    /// <summary>
+    /// Registers an EtherCAT master (read-only unless <c>AllowWrites()</c>). The host opens the link; scan and request a state
+    /// from your own service, and run the cycle with <c>RunAsync</c>.
+    /// </summary>
+    public static IoTComBuilder AddEthercatMaster(this IoTComBuilder builder, string name, Action<EthercatMasterOptions> configure)
+        => builder.AddEndpoint(name, sp => EthercatMaster.Create(o =>
+        {
+            o.Name = name;
+            o.Logger = Logger(sp, "IoTCom.EtherCat");
             configure(o);
         }));
 

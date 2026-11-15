@@ -271,3 +271,25 @@ public class DtlsBenchmarks
         return (await _session.ReceiveAsync()).Data.Length;
     }
 }
+
+[MemoryDiagnoser]
+public class EthercatBenchmarks
+{
+    private IoTCom.Net.Protocols.EtherCat.EthercatMaster _master = null!;
+
+    [GlobalSetup]
+    public async Task Setup()
+    {
+        var rack = new IoTCom.Net.Protocols.EtherCat.EthercatRackSimulator();
+        _master = IoTCom.Net.Protocols.EtherCat.EthercatMaster.Create(o => o.UseLink(rack.Segment).AllowWrites());
+        await _master.ScanAsync();
+        await _master.RequestStateAsync(IoTCom.Net.Protocols.EtherCat.EcatState.Op);
+    }
+
+    [GlobalCleanup]
+    public ValueTask Cleanup() => _master.DisposeAsync();
+
+    /// <summary>One cyclic LRW exchange through four simulated terminals: encode, slave processing, decode, working-counter check.</summary>
+    [Benchmark]
+    public Task<int> CyclicExchange() => _master.ExchangeAsync();
+}

@@ -151,6 +151,17 @@ app.Configure(c =>
         e.AddCommand<EnipDemoCommand>("demo").WithDescription("Session, identity and tags in-process.").WithExample("enip", "demo").WithExample("enip", "demo", "--allow-write");
         e.AddCommand<EnipDecodeCommand>("decode").WithDescription("Decode an encapsulation packet or a CIP message.").WithExample("enip", "decode", "4C 06 91 0A 4C 69 6E 65 5F 53 70 65 65 64 01 00");
     });
+    c.AddBranch("ethercat", e =>
+    {
+        e.SetDescription("EtherCAT master: list interfaces, scan the line, watch inputs in SAFE-OP, read and write CoE objects, drive an output, or decode a frame. Real lines need a dedicated port and raw-socket rights.");
+        e.AddCommand<EthercatInterfacesCommand>("interfaces").WithDescription("List network interfaces (AF_PACKET or Npcap/libpcap).").WithExample("ethercat", "interfaces");
+        e.AddCommand<EthercatScanCommand>("scan").WithDescription("Count the slaves, assign station addresses and read their identity.").WithExample("ethercat", "scan", "--if", "eth1").WithExample("ethercat", "scan", "--sim");
+        e.AddCommand<EthercatWatchCommand>("watch").WithDescription("SAFE-OP and a live view of the inputs (read-only).").WithExample("ethercat", "watch", "--sim").WithExample("ethercat", "watch", "--if", "eth1", "--period", "4");
+        e.AddCommand<EthercatSdoCommand>("sdo").WithDescription("Read a CoE object, or write one with --write and --allow-write.").WithExample("ethercat", "sdo", "3", "1008:00", "--sim").WithExample("ethercat", "sdo", "3", "8000:15", "--write", "0200", "--sim", "--allow-write");
+        e.AddCommand<EthercatSetCommand>("set").WithDescription("Go to OP and hold one output for a few seconds (requires --allow-write).").WithExample("ethercat", "set", "2", "0", "on", "--sim", "--allow-write");
+        e.AddCommand<EthercatDemoCommand>("demo").WithDescription("Scan, SAFE-OP and CoE in-process; with --allow-write also OP and the conveyor.").WithExample("ethercat", "demo").WithExample("ethercat", "demo", "--allow-write");
+        e.AddCommand<EthercatDecodeCommand>("decode").WithDescription("Decode an EtherCAT frame.").WithExample("ethercat", "decode", "FFFFFFFFFFFF010101010101 88A4 0D10 0701 00000000 0100 0000 00 0400");
+    });
     c.AddBranch("bacnet", b =>
     {
         b.SetDescription("BACnet/IP building automation: discover devices, list objects, read, write with priorities, subscribe to COV, serve a simulated air handling unit, or decode a datagram.");

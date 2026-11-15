@@ -3,6 +3,27 @@
 All notable changes to IoTCom.Net. Versions follow SemVer; the native ABI version is tracked separately
 (`iotcom_abi_version()`). *Bahasa Indonesia di bawah setiap rilis.*
 
+## 0.28.0-preview.1 — 2026-11-15
+
+EtherCAT master.
+
+- **New package `IoTCom.Net.Protocols.EtherCat`** (in the meta-package): `EcatFrame`/`EcatDatagram`, `EcatMailbox`, `CoeSdo`, `EcatSii` and
+  `EcatAlStatus` codecs; `EthercatMaster` (line scan with station addresses and SII identity, AL state machine with mailbox and process-data
+  SyncManagers and FMMUs, cyclic LRW exchange with working-counter statistics, CoE SDO upload/download, error acknowledgement, **read-only by
+  default**: SAFE-OP and a logical read until `AllowWrites()`); `RawEthernetLink` (AF_PACKET on Linux, Npcap/libpcap elsewhere);
+  `VirtualEthercatSegment` with simulated ESCs (cable cut, frame loss) and `EthercatRackSimulator` (conveyor I/O rack). `AddEthercatMaster`
+  brings the line back to PRE-OP when the host stops.
+- **New Rust crate `iotcom-ethercat`**: fuzzed codec twin (15th fuzz target `ethercat`, 3 M local runs, no findings); `/conformance/ethercat.json`
+  with 37 vectors from the Python reference, run by both suites.
+- CLI `iotcom ethercat interfaces|scan|watch|sdo|set|demo|decode`, VS Code decoder `ethercat`, pcapng as LINKTYPE_ETHERNET (Wireshark's
+  EtherCAT dissector, checked by the tshark gate), Gallery *I/O rack over EtherCAT*, EthercatRack sample, notebook pair `industrial/29-ethercat`,
+  docs page *EtherCAT*, benchmark (`EthercatBenchmarks`).
+- Release workflow: the app publish step is fixed and the nuget.org push runs in its own job, so the GitHub release (with packages and portable
+  apps) no longer waits on the NuGet key.
+
+*Master EtherCAT: pemindaian jalur, state machine AL, process image dengan LRW siklik, objek CoE (hanya-baca secara bawaan), Ethernet mentah
+dan rak I/O simulasi, kembaran codec Rust yang di-fuzz; CLI, Gallery, sampel, notebook, dan dokumentasi.*
+
 ## 0.27.0-preview.1 — 2026-11-15
 
 DTLS 1.2: CoAP and LwM2M over `coaps://`.
