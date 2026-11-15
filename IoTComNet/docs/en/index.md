@@ -97,4 +97,5 @@ The [roadmap](../../PLAN.md) lists the protocols coming next (generated native b
 
 - [Native layer: Rust & the C ABI](native/rust-ffi.md)
 - [Contributing a protocol](contributing/adding-a-protocol.md)
+- [Releasing and signing](contributing/releasing.md)
 - [Glossary](glossary.md)

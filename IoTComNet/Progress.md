@@ -130,11 +130,19 @@ Built by Gravicode Studios, led by Kang Fadhil.
 | Templates | ✅ | iotcom-console (modbus/nmea/mqtt × en/id), iotcom-worker |
 | Console samples | ✅ | ModbusMaster, ModbusSlaveSimulator, NmeaGpsReader, ArtNetPlayer, MqttSenMLBridge, Hl7MllpListener, UdsTester, CoapObserve, MavlinkTelemetry, LoRaWanGatewayMonitor, DlmsMeterReader, MBusScanner, AstmAnalyzerBridge, MdnsDiscovery, SparkplugEdgeNode, OpcUaBrowser, BleHeartRate, UsbRelay, CanOpenMaster, J1939Monitor, Iec104Scada, NtpClock, NfcTagReader, Lwm2mClient, OcppCharger, KnxMonitor, BacnetBms, EnipTags |
 | Benchmarks | ✅ | BenchmarkDotNet (short job, this machine): Modbus request round trip 5.0 µs sequential / 2.2 µs with 16 in flight over the in-memory transport (≈ 200k–450k req/s; design target ≥ 20k req/s on TCP loopback); CRC ≈ 2.2 ns/byte, zero allocations; LoRaWAN ≈ 5 µs per uplink (encrypt + MIC, or decode + verify + decrypt); OCPP parse + typed bind per message (`OcppBenchmarks`); KNX tunnelling frame + cEMI + DPT decode (`KnxBenchmarks`); BACnet ReadProperty-ACK decode (`BacnetBenchmarks`); EtherNet/IP Read Tag served end to end (`EnipBenchmarks`) |
-| CI | ✅ defined | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
+| CI | ✅ green | repo root `.github/workflows/iotcomnet-ci.yml`, `iotcomnet-native.yml`, `iotcomnet-release.yml` (release on tag `iotcomnet-v*`, pushes with the `NUGET_API_KEY` secret) |
 
 ## Decisions
 
 Newest first. Each entry records why something was built the way it was.
+
+### Release signing (after 0.26)
+
+- **Signing is wired but optional.** Each signing step runs only when its secrets exist, so forks and unsigned releases
+  keep working; Windows signing uses `osslsigncode` on Linux/macOS runners, macOS uses a temporary keychain,
+  hardened runtime and `notarytool`.
+- **The Gallery and the CLI ship as portable, single-file archives** attached to each GitHub release (open question 7);
+  installers and stores can follow.
 
 ### 0.26
 
@@ -417,6 +425,7 @@ The phantoms are schematic, so these numbers test the pipeline, not clinical acc
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | Release pipeline: optional Authenticode, NuGet author signing, Developer ID signing and notarisation; portable CLI and Gallery archives on a GitHub release; docs page *Releasing and signing*. |
 | 2026-11-15 | EtherNet/IP (`0.26.0-preview.1`): explicit-messaging client, ListIdentity discovery, adapter with tags, PLC simulator, fuzzed Rust twin `iotcom-enip`, 28 conformance vectors, CLI `enip`, Gallery packaging line, EnipTags sample, notebook pair, docs, benchmark. |
 | 2026-11-15 | BACnet/IP (`0.25.0-preview.1`): server package (device, objects with priority arrays, COV, codecs, AHU simulator) and client adapter over ela-compil BACnet 4.0.0, interop-tested; 45 conformance vectors, CLI `bacnet`, Gallery AHU schematic, BacnetBms sample, notebook pair, docs, benchmark. CI: tshark reads the capture from stdin. |
 | 2026-11-15 | KNXnet/IP (`0.24.0-preview.1`): package with tunnelling client, routing, discovery, software KNX IP router, cEMI/KNXnet/IP/DPT codecs, office floor simulator, 56 conformance vectors, CLI `knx`, Gallery office floor with group monitor (design use case 6), KnxMonitor sample, notebook pair, docs, benchmark. |

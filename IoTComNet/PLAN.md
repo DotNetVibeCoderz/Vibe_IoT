@@ -76,7 +76,7 @@ Open follow-ups per protocol are collected under [Remaining work](#remaining-wor
 | OCPP 1.6J / 2.0.1 | ✅ `0.23.0-preview.1` |
 | Complete EN/ID documentation | 🚧 56 + 56 pages; grows with every item above |
 | Gallery with all 17 design use cases | 🚧 27 demos, 14 of 17 use cases covered |
-| Signed and notarised releases | ⏳ |
+| Signed and notarised releases | ✅ wired 2026-11-15 (Authenticode, NuGet author signing, Developer ID + notarisation; active once the signing secrets are added) |
 
 ## Phase 3 — Optional
 
@@ -93,7 +93,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
    - #14 cellular module — AT terminal, URC parser, modem status (the package exists, the demo does not);
    - #17 multi-broker pub/sub — MQTT/NATS/Zenoh/Kafka latency and bridging (the adapters exist, the demo does not).
 3. **Documentation:** a page per new protocol, a complete support matrix, EN/ID parity kept.
-4. **Releases:** code signing and macOS notarisation; a `1.0.0` API review (public surface, naming, obsolete members).
+4. **Releases:** add the signing secrets (see *Releasing and signing*); a `1.0.0` API review (public surface, naming, obsolete members).
 
 ### Follow-ups on delivered protocols
 
@@ -132,7 +132,7 @@ ISO 15118, WASM build of the sans-I/O machines, Android/iOS subsets.
 | 4 | Final licence policy for industrial modules (Apache-2.0 today) | Open |
 | 5 | Android/iOS as official targets? | Open (Phase 3) |
 | 6 | Managed fallbacks for platforms without native support | Answered: Modbus has a managed engine; later protocols are managed C# with Rust codec twins |
-| 7 | Gallery distribution: installer, portable, Store/Flatpak/Homebrew? | Open |
+| 7 | Gallery distribution: installer, portable, Store/Flatpak/Homebrew? | Answered 2026-11-15: signed portable archives (win-x64, linux-x64, osx-arm64) on each GitHub release; installers and stores later |
 | 8 | Reference hardware for hardware-in-the-loop tests | Open |
 
 ## Definition of Done (per protocol)

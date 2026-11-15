@@ -98,4 +98,5 @@ perangkat keras.
 
 - [Lapisan native: Rust & C ABI](native/rust-ffi.md)
 - [Berkontribusi protokol](contributing/adding-a-protocol.md)
+- [Rilis dan penandatanganan](contributing/releasing.md)
 - [Glosarium](glossary.md)
